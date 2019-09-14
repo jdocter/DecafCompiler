@@ -31,6 +31,20 @@ class Main {
                case DecafScannerTokenTypes.ID:
                 type = " IDENTIFIER";
                 break;
+               case DecafScannerTokenTypes.CHAR_LIT:
+                type = " CHARLITERAL";
+                break;
+               case DecafScannerTokenTypes.STRING_LIT:
+                type = " STRINGLITERAL";
+                break;
+               case DecafScannerTokenTypes.HEX_LIT:
+               case DecafScannerTokenTypes.DEC_LIT:
+                type = " INTLITERAL";
+                break;
+               case DecafScannerTokenTypes.TRUE:
+               case DecafScannerTokenTypes.FALSE:
+                type = " BOOLEANLITERAL";
+                break;
               }
               outputStream.println(token.getLine() + type + " " + text);
             }
@@ -39,6 +53,7 @@ class Main {
             // print the error:
             System.err.println(CLI.infile + " " + e);
             scanner.consume();
+            System.exit(1);
           }
         }
       } else if (CLI.target == Action.PARSE ||

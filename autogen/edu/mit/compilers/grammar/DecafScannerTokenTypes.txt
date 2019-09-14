@@ -1,11 +1,45 @@
 // $ANTLR 2.7.7 (2006-11-01): scanner.g -> DecafScannerTokenTypes.txt$
 DecafScanner    // output token vocab name
-TK_class="class"=4
-LCURLY("{")=5
-RCURLY("}")=6
-ID("an identifier")=7
-WS_=8
-SL_COMMENT=9
-CHAR=10
-STRING=11
-ESC=12
+BOOL="bool"=4
+BREAK="break"=5
+IMPORT="import"=6
+CONTINUE="continue"=7
+ELSE="else"=8
+FALSE="false"=9
+FOR="for"=10
+WHILE="while"=11
+IF="if"=12
+INT="int"=13
+RETURN="return"=14
+LEN="len"=15
+TRUE="true"=16
+VOID="void"=17
+LCURLY("{")=18
+RCURLY("}")=19
+RBRACK=20
+LBRACK=21
+LPAREN=22
+RPAREN=23
+COMMA=24
+SEMICOL=25
+ID("an identifier")=26
+WS_=27
+SL_COMMENT=28
+BLOCK_COMMENT=29
+CHAR_LIT=30
+STRING_LIT=31
+ARITH_OP=32
+REL_OP=33
+EQ_OP=34
+COND_OP=35
+ASSIGN_OP=36
+COMPOUND_ASSIGN_OP=37
+HEX_LIT=38
+DEC_LIT=39
+INC=40
+ESC=41
+ALPHA_NUM=42
+ALPHA=43
+HEX_DIGIT=44
+DIGIT=45
+CHAR=46

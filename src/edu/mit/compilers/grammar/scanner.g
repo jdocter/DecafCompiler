@@ -15,9 +15,22 @@ options
   k = 2;
 }
 
-tokens 
+tokens
 {
-  "class";
+  BOOL="bool";
+  BREAK="break";
+  IMPORT="import";
+  CONTINUE="continue";
+  ELSE="else";
+  FALSE="false";
+  FOR="for";
+  WHILE="while";
+  IF="if";
+  INT="int";
+  RETURN="return";
+  LEN="len";
+  TRUE="true";
+  VOID="void";
 }
 
 // Selectively turns on debug tracing mode.
@@ -45,18 +58,41 @@ tokens
 
 LCURLY options { paraphrase = "{"; } : "{";
 RCURLY options { paraphrase = "}"; } : "}";
+RBRACK : "]";
+LBRACK : "[";
+LPAREN : "(";
+RPAREN : ")";
+COMMA : ",";
+SEMICOL : ";";
 
 ID options { paraphrase = "an identifier"; } : 
-  ('a'..'z' | 'A'..'Z')+;
+  ALPHA (options {greedy=true;} : (ALPHA_NUM))*;
 
 // Note that here, the {} syntax allows you to literally command the lexer
 // to skip mark this token as skipped, or to advance to the next line
 // by directly adding Java commands.
-WS_ : (' ' | '\n' {newline();}) {_ttype = Token.SKIP; };
+WS_ : ('\t' | ' ' | '\n' {newline();}) {_ttype = Token.SKIP; };
 SL_COMMENT : "//" (~'\n')* '\n' {_ttype = Token.SKIP; newline (); };
+BLOCK_COMMENT : "/*" (options {greedy=false;} : (BLOCK_COMMENT |~'\n' | '\n' {newline();} ))* "*/" {_ttype = Token.SKIP; };
 
-CHAR : '\'' (ESC|~'\'') '\'';
-STRING : '"' (ESC|~'"')* '"';
+// INT : ("0x" ('0'..'9' | 'a'..'f' | 'A'..'F')+) | (('-'|'+')? ('0'..'9')+);
+// CHAR_LIT : '\'' (ESC|~('\n'|'"'|'\t'|'\''|'\\')) '\'';
+CHAR_LIT : '\'' (CHAR) '\'';
+STRING_LIT : '"' (CHAR)* '"';
+ARITH_OP : '+' | '-' | '*' | '/' | '%' ;
+REL_OP : '<'|'>'|"<="|">=";
+EQ_OP : "=="|"!=";
+COND_OP : "&&"|"||";
+ASSIGN_OP : "=";
+COMPOUND_ASSIGN_OP : "+=" | "-=";
+HEX_LIT : "0x" (HEX_DIGIT)+;
+DEC_LIT : (DIGIT)+;
+INC : "++" | "--";
+// KEYWORD : "bool"|"break"|"import"|"continue"|"else"|"false"|"for"|"while"|"if"|"int"|"return"|"len"|"true"|"void";
 
-protected
-ESC :  '\\' ('n'|'"');
+protected ESC :  '\\' ('n'|'"'|'\''|'t'|'\\');
+protected ALPHA_NUM : (ALPHA | DIGIT);
+protected ALPHA : ('a'..'z'|'A'..'Z'|'_');
+protected HEX_DIGIT : DIGIT | 'a'..'f' | 'A'..'F';
+protected DIGIT : '0'..'9';
+protected CHAR : (ESC|~('\n'|'"'|'\t'|'\''|'\\'));
