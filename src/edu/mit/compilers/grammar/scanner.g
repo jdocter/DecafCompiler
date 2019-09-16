@@ -64,6 +64,25 @@ LPAREN : "(";
 RPAREN : ")";
 COMMA : ",";
 SEMICOL : ";";
+LEQ : "<=";
+GEQ : ">=";
+INC : "++";
+DEC : "--";
+PEQ : "+=";
+MEQ : "-=";
+AND : "&&";
+OR : "||";
+EQ : "==";
+NEQ : "!=";
+MINUS : "-";
+PLUS : "+";
+MUL : "*";
+DIV : "/";
+MOD : "%";
+LT : "<";
+GT : ">";
+ASSIGN : "=";
+NOT : "!";
 
 ID options { paraphrase = "an identifier"; } : 
   ALPHA (options {greedy=true;} : (ALPHA_NUM))*;
@@ -79,15 +98,15 @@ BLOCK_COMMENT : "/*" (options {greedy=false;} : (BLOCK_COMMENT |~'\n' | '\n' {ne
 // CHAR_LIT : '\'' (ESC|~('\n'|'"'|'\t'|'\''|'\\')) '\'';
 CHAR_LIT : '\'' (CHAR) '\'';
 STRING_LIT : '"' (CHAR)* '"';
-ARITH_OP : '+' | '-' | '*' | '/' | '%' ;
-REL_OP : '<'|'>'|"<="|">=";
-EQ_OP : "=="|"!=";
-COND_OP : "&&"|"||";
-ASSIGN_OP : "=";
-COMPOUND_ASSIGN_OP : "+=" | "-=";
+//ARITH_OP : '+' | '-' | '*' | '/' | '%' ;
+//REL_OP : '<'|'>'|"<="|">=";
+//EQ_OP : "=="|"!=";
+//COND_OP : "&&"|"||";
+//ASSIGN_OP : "=";
+//COMPOUND_ASSIGN_OP : "+=" | "-=";
 HEX_LIT : "0x" (HEX_DIGIT)+;
 DEC_LIT : (DIGIT)+;
-INC : "++" | "--";
+//INC : "++" | "--";
 // KEYWORD : "bool"|"break"|"import"|"continue"|"else"|"false"|"for"|"while"|"if"|"int"|"return"|"len"|"true"|"void";
 
 protected ESC :  '\\' ('n'|'"'|'\''|'t'|'\\');
