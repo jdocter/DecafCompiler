@@ -13,15 +13,22 @@ public class Parser {
     private final List<Token> tokens = new ArrayList<>();
     private int currentTok = 0;
 
-    Parser(DecafScanner scanner) {
+    public Parser(DecafScanner scanner) {
         Token token;
-        for (token = scanner.nextToken();
-        token.getType() != DecafParserTokenTypes.EOF;
-        token = scanner.nextToken()) {
+        try {
+            for (token = scanner.nextToken();
+            token.getType() != DecafParserTokenTypes.EOF;
+            token = scanner.nextToken()) {
+                tokens.add(token);
+            }
             tokens.add(token);
+        } catch(Exception e) {
+            // print the error:
+            System.err.println(CLI.infile + " " + e);
+            System.exit(1);
         }
-        tokens.add(token);
     }
+
     public int parse() {
         try {
             parseProgram();
@@ -32,6 +39,7 @@ public class Parser {
             return 2;
         }
     }
+
     private Program parseProgram() throws DecafParseException {
         Program program = new Program();
         while (isType(DecafScannerTokenTypes.IMPORT)) {
@@ -190,8 +198,9 @@ public class Parser {
             next();
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             return new Statement(Statement.CONTINUE);
+        } else {
+          throw new DecafParseException("");
         }
-
     }
 
     private MethodCall parseMethodCall() throws DecafParseException {
