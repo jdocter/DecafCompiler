@@ -5,6 +5,7 @@ import antlr.Token;
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
+import edu.mit.compilers.parser.*;
 
 class Main {
   public static void main(String[] args) {
@@ -60,12 +61,14 @@ class Main {
                  CLI.target == Action.DEFAULT) {
         DecafScanner scanner =
             new DecafScanner(new DataInputStream(inputStream));
-        DecafParser parser = new DecafParser(scanner);
-        parser.setTrace(CLI.debug);
-        parser.program();
-        if(parser.getError()) {
-          System.exit(1);
-        }
+        Parser myParser = new Parser(scanner);
+        myParser.parse();
+//        DecafParser parser = new DecafParser(scanner);
+//        parser.setTrace(CLI.debug);
+//        parser.program();
+//        if(parser.getError()) {
+//          System.exit(1);
+//        }
       }
     } catch(Exception e) {
       // print the error:

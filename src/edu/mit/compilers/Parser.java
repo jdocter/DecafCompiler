@@ -1,4 +1,4 @@
-package edu.mit.compilers.parser;
+/* package edu.mit.compilers;
 
 import java.util.*;
 import java.io.*;
@@ -6,6 +6,7 @@ import antlr.Token;
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
+import edu.mit.compilers.parser.*;
 
 import java.util.ArrayList;
 
@@ -16,22 +17,13 @@ public class Parser {
     Parser(DecafScanner scanner) {
         Token token;
         for (token = scanner.nextToken();
-        token.getType() != DecafParserTokenTypes.EOF;
-        token = scanner.nextToken()) {
+             token.getType() != DecafParserTokenTypes.EOF;
+             token = scanner.nextToken()) {
             tokens.add(token);
         }
         tokens.add(token);
     }
-    public int parse() {
-        try {
-            parseProgram();
-            return 0;
-        } catch (DecafParseException e) {
-            return 1;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return 2;
-        }
-    }
+
     private Program parseProgram() throws DecafParseException {
         Program program = new Program();
         while (isType(DecafScannerTokenTypes.IMPORT)) {
@@ -41,8 +33,8 @@ public class Parser {
         while (!(isType(DecafScannerTokenTypes.EOF) ||
                 isType(DecafScannerTokenTypes.LPAREN,2))) {
             // not method or EOF so assume field
-           Field field = parseField();
-           program.addField(field);
+            Field field = parseField();
+            program.addField(field);
         }
         while (!isType(DecafScannerTokenTypes.EOF)) {
             Method method = parseMethod();
@@ -152,7 +144,7 @@ public class Parser {
             Block elseBlock = null;
             if (isType(DecafScannerTokenTypes.ELSE)) {
                 next();
-                 elseBlock = parseBlock();
+                elseBlock = parseBlock();
             }
             return new Statement(expr, ifBlock, elseBlock);
         } else if (isType(DecafScannerTokenTypes.FOR)) {
@@ -281,7 +273,7 @@ public class Parser {
 
     private AssignExpr parseAssignExpr() throws DecafParseException {
         if (isType(DecafScannerTokenTypes.INC) ||
-            isType(DecafScannerTokenTypes.DEC)) {
+                isType(DecafScannerTokenTypes.DEC)) {
             String inc = text();
             next();
             return new AssignExpr(inc);
@@ -295,7 +287,7 @@ public class Parser {
             throw new DecafParseException("");
         }
     }
-    
+
     private Id parseId() throws DecafParseException{
         if (isType(DecafScannerTokenTypes.ID)) {
             Id id = new Id(text());
@@ -319,7 +311,7 @@ public class Parser {
 
     private  Lit parseLit() throws DecafParseException {
         if (isType(DecafScannerTokenTypes.TRUE) ||
-            isType(DecafScannerTokenTypes.FALSE)) {
+                isType(DecafScannerTokenTypes.FALSE)) {
             Lit lit = new Lit(isType(DecafScannerTokenTypes.TRUE));
             next();
             return lit;
@@ -419,3 +411,4 @@ public class Parser {
     }
 
 }
+*/
