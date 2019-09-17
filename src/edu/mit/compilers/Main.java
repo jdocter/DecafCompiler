@@ -62,7 +62,10 @@ class Main {
         DecafScanner scanner =
             new DecafScanner(new DataInputStream(inputStream));
         Parser myParser = new Parser(scanner);
-        myParser.parse();
+        int err = myParser.parse();
+        if (err > 0) {
+          System.exit(1);
+        }
 //        DecafParser parser = new DecafParser(scanner);
 //        parser.setTrace(CLI.debug);
 //        parser.program();

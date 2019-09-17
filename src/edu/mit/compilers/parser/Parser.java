@@ -34,6 +34,7 @@ public class Parser {
             parseProgram();
             return 0;
         } catch (DecafParseException e) {
+            e.printStackTrace();
             return 1;
         } catch (ArrayIndexOutOfBoundsException e) {
             return 2;
@@ -106,7 +107,8 @@ public class Parser {
         } else {
             field = new Field(type, id);
         }
-        while (isType(DecafScannerTokenTypes.SEMICOL)) {
+        while (!isType(DecafScannerTokenTypes.SEMICOL)) {
+            assertIsType(DecafScannerTokenTypes.COMMA, "");
             id = parseId();
             if (isType(DecafScannerTokenTypes.LBRACK)) {
                 next();
@@ -123,18 +125,18 @@ public class Parser {
 
     private Block parseBlock() throws DecafParseException{
         Block block = new Block();
-        assertIsType(DecafScannerTokenTypes.LBRACK, "");
+        assertIsType(DecafScannerTokenTypes.LCURLY, "");
         while (isType(DecafScannerTokenTypes.BOOL) ||
                 isType(DecafScannerTokenTypes.INT)) {
             // field declaration
             block.addField(parseField());
         }
 
-        while (!isType(DecafScannerTokenTypes.RBRACK)) {
+        while (!isType(DecafScannerTokenTypes.RCURLY)) {
             // statement
             block.addStatement(parseStatement());
         }
-        assertIsType(DecafScannerTokenTypes.RBRACK, "");
+        assertIsType(DecafScannerTokenTypes.RCURLY, "");
         return block;
     }
 
@@ -174,12 +176,14 @@ public class Parser {
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             Loc loc = parseLoc();
             AssignExpr assignExpr = parseAssignExpr();
+            assertIsType(DecafScannerTokenTypes.RPAREN, "");
             Block block = parseBlock();
             return new Statement(id, init, exit, loc, assignExpr, block);
         } else if (isType(DecafScannerTokenTypes.WHILE)) {
             next();
             assertIsType(DecafScannerTokenTypes.LPAREN, "");
             Expr expr = parseExpr();
+            assertIsType(DecafScannerTokenTypes.RPAREN, "");
             Block block = parseBlock();
             return new Statement(expr, block);
         } else if (isType(DecafScannerTokenTypes.RETURN)) {
@@ -234,21 +238,23 @@ public class Parser {
 
     private Expr parseExpr() throws DecafParseException {
         Expr ret = new Expr(Expr.EXPR, parseSmolExpr());
-        try {
-            while(true) {
-                BinOp binOp = parseBinOp();
-                Expr next = parseSmolExpr();
-                ret.addExpr(binOp, next);
+        
+        while(true) {
+            BinOp binOp;
+            try {
+              binOp = parseBinOp();
+            } catch (DecafParseException e) {
+              break;
             }
-        } catch (DecafParseException e) {
-
+            Expr next = parseSmolExpr();
+            ret.addExpr(binOp, next);
         }
         return ret;
     }
 
     private Expr parseSmolExpr() throws DecafParseException {
         Expr expr;
-        if (isType(DecafScannerTokenTypes.ID) && isType(DecafScannerTokenTypes.LPAREN,2)) {
+        if (isType(DecafScannerTokenTypes.ID) && isType(DecafScannerTokenTypes.LPAREN,1)) {
             return new Expr(parseMethodCall());
         } else if (isType(DecafScannerTokenTypes.ID)) {
             return new Expr(parseLoc());
@@ -294,7 +300,7 @@ public class Parser {
             String inc = text();
             next();
             return new AssignExpr(inc);
-        } else if (isType(DecafScannerTokenTypes.EQ) ||
+        } else if (isType(DecafScannerTokenTypes.ASSIGN) ||
                 isType(DecafScannerTokenTypes.MEQ) ||
                 isType(DecafScannerTokenTypes.PEQ)) {
             String assignOp = text();
