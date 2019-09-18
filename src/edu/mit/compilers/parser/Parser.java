@@ -175,7 +175,20 @@ public class Parser {
             Expr exit = parseExpr();
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             Loc loc = parseLoc();
-            AssignExpr assignExpr = parseAssignExpr();
+            AssignExpr assignExpr;
+            if (isType(DecafScannerTokenTypes.INC) ||
+                isType(DecafScannerTokenTypes.DEC)) {
+                String inc = text();
+                next();
+                assignExpr = new AssignExpr(inc);
+            } else if (isType(DecafScannerTokenTypes.MEQ) ||
+                    isType(DecafScannerTokenTypes.PEQ)) {
+                String assignOp = text();
+                next();
+                assignExpr = new AssignExpr(assignOp, parseExpr());
+            } else {
+                throw new DecafParseException("");
+            }
             assertIsType(DecafScannerTokenTypes.RPAREN, "");
             Block block = parseBlock();
             return new Statement(id, init, exit, loc, assignExpr, block);
