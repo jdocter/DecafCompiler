@@ -7,6 +7,7 @@ import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 
 public class Parser {
@@ -29,6 +30,16 @@ public class Parser {
         }
     }
 
+    // THIS MAY BE BETTER PARSE() FOR OUR PURPOSES
+//    public Program parse() throws DecafParseException {
+//        try {
+//            return parseProgram();
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            // may occur while doing token lookahead
+//            throw new DecafParseException("Premature program end", e);
+//        }
+//    }
+
     public int parse() {
         try {
             parseProgram();
@@ -37,6 +48,7 @@ public class Parser {
             e.printStackTrace();
             return 1;
         } catch (ArrayIndexOutOfBoundsException e) {
+            // may occur while doing token lookahead
             return 2;
         }
     }
@@ -154,6 +166,7 @@ public class Parser {
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             return new Statement(loc, assignExpr);
         } else if (isType(DecafScannerTokenTypes.IF)) {
+            int line = line();
             next();
             assertIsType(DecafScannerTokenTypes.LPAREN,"");
             Expr expr = parseExpr();
@@ -164,8 +177,11 @@ public class Parser {
                 next();
                  elseBlock = parseBlock();
             }
-            return new Statement(expr, ifBlock, elseBlock);
+            Statement statement = new Statement(expr, ifBlock, elseBlock);
+            statement.setLineNumber(line);
+            return statement;
         } else if (isType(DecafScannerTokenTypes.FOR)) {
+            int line = line();
             next();
             assertIsType(DecafScannerTokenTypes.LPAREN, "");
             Id id = parseId();
@@ -175,14 +191,14 @@ public class Parser {
             Expr exit = parseExpr();
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             Loc loc = parseLoc();
-            AssignExpr assignExpr;
+            Statement statement;
             if (isType(DecafScannerTokenTypes.INC) ||
                 isType(DecafScannerTokenTypes.DEC)) {
                 String inc = text();
                 next();
                 assertIsType(DecafScannerTokenTypes.RPAREN, "");
                 Block block = parseBlock();
-                return new Statement(id, init, exit, loc, inc, block);
+                statement = new Statement(id, init, exit, loc, inc, block);
             } else if (isType(DecafScannerTokenTypes.MEQ) ||
                     isType(DecafScannerTokenTypes.PEQ)) {
                 String assignOp = text();
@@ -190,33 +206,43 @@ public class Parser {
                 Expr expr = parseExpr();
                 assertIsType(DecafScannerTokenTypes.RPAREN, "");
                 Block block = parseBlock();
-                return new Statement(id, init, exit, loc, assignOp, expr, block);
+                statement = new Statement(id, init, exit, loc, assignOp, expr, block);
             } else {
                 throw new DecafParseException("");
             }
+            statement.setLineNumber(line);
+            return statement;
+
         } else if (isType(DecafScannerTokenTypes.WHILE)) {
+            int line = line();
             next();
             assertIsType(DecafScannerTokenTypes.LPAREN, "");
             Expr expr = parseExpr();
             assertIsType(DecafScannerTokenTypes.RPAREN, "");
             Block block = parseBlock();
-            return new Statement(expr, block);
+            Statement statement = new Statement(expr, block);
+            return statement;
         } else if (isType(DecafScannerTokenTypes.RETURN)) {
-            next();
             Statement statement = new Statement(Statement.RETURN);
+            statement.setLineNumber(line());
+            next();
             if (!isType(DecafScannerTokenTypes.SEMICOL)) {
                 statement.addReturnExpr(parseExpr());
             }
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
             return statement;
         } else if (isType(DecafScannerTokenTypes.BREAK)) {
+            Statement statement = new Statement(Statement.BREAK);
+            statement.setLineNumber(line());
             next();
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
-            return new Statement(Statement.BREAK);
+            return statement;
         } else if (isType(DecafScannerTokenTypes.CONTINUE)) {
+            Statement statement = new Statement(Statement.CONTINUE);
+            statement.setLineNumber(line());
             next();
             assertIsType(DecafScannerTokenTypes.SEMICOL, "");
-            return new Statement(Statement.CONTINUE);
+            return statement;
         } else {
           throw new DecafParseException("");
         }
@@ -252,8 +278,9 @@ public class Parser {
     }
 
     private Expr parseExpr() throws DecafParseException {
-        Expr ret = new Expr(Expr.EXPR, parseSmolExpr());
-        
+        Expr binOpExpr = new Expr(Expr.EXPR, parseSmolExpr());
+
+        // assume sequence of bin ops and expressions, then handle redundancy in return statement
         while(true) {
             BinOp binOp;
             try {
@@ -262,9 +289,11 @@ public class Parser {
               break;
             }
             Expr next = parseSmolExpr();
-            ret.addExpr(binOp, next);
+            binOpExpr.addExpr(binOp, next);
         }
-        return ret;
+
+        // if the there is no bin ops, then return the "smolExpr"
+        return (binOpExpr.type == Expr.BIN_OP) ? binOpExpr : binOpExpr.mExpr;
     }
 
     private Expr parseSmolExpr() throws DecafParseException {
@@ -280,13 +309,19 @@ public class Parser {
             assertIsType(DecafScannerTokenTypes.RPAREN, "");
             return new Expr(id);
         } else if (isType(DecafScannerTokenTypes.NOT)) {
+            int line = line();
             next();
             Expr nextExpr = parseSmolExpr();
-            return new Expr(Expr.NOT,nextExpr);
+            Expr notExpr = new Expr(Expr.NOT,nextExpr);
+            notExpr.setLineNumber(line);
+            return  notExpr
         } else if (isType(DecafScannerTokenTypes.MINUS)) {
+            int line = line();
             next();
             Expr nextExpr = parseSmolExpr();
-            return new Expr(Expr.MINUS, nextExpr);
+            nextExpr.setLineNumber(line);
+            Expr minusExpr = new Expr(Expr.MINUS, nextExpr);
+            minusExpr.setLineNumber(line);
         } else if (isType(DecafScannerTokenTypes.LPAREN)) {
             next();
             Expr nextExpr = parseExpr();
@@ -329,6 +364,7 @@ public class Parser {
     private Id parseId() throws DecafParseException{
         if (isType(DecafScannerTokenTypes.ID)) {
             Id id = new Id(text());
+            id.setLineNumber(line());
             next();
             return id;
         } else {
@@ -368,13 +404,15 @@ public class Parser {
 
     public IntLit parseIntLit() throws DecafParseException {
         if (isType(DecafScannerTokenTypes.HEX_LIT)) {
-            HexLit hexLit = new HexLit(text());
+            IntLit intLit = new IntLit(new HexLit(text()));
+            intLit.setLineNumber(line());
             next();
-            return new IntLit(hexLit);
+            return intLit;
         } else if (isType(DecafScannerTokenTypes.DEC_LIT)) {
-            DecLit decLit = new DecLit(text());
+            IntLit intLit = new IntLit(new DecLit(text()));
+            intLit.setLineNumber(line());
             next();
-            return new IntLit(decLit);
+            return intLit;
         } else {
             throw new DecafParseException("");
         }
@@ -415,6 +453,7 @@ public class Parser {
                 isType(DecafScannerTokenTypes.DIV) ||
                 isType(DecafScannerTokenTypes.MOD)) {
             BinOp binOp = new BinOp(text());
+            binOp.setLineNumber(line());
             next();
             return binOp;
         } else {
@@ -425,6 +464,10 @@ public class Parser {
 
     private String text() {
         return tokens.get(currentTok).getText();
+    }
+
+    private int line() {
+        return tokens.get(currentTok).getLine();
     }
 
     private void assertIsType(int type, String str) throws DecafParseException {

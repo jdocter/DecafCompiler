@@ -1,7 +1,7 @@
 package edu.mit.compilers.parser;
 
 
-public class Statement {
+public class Statement extends Node {
     public static final int LOC_ASSIGN = 0;
     public static final int METHOD_CALL = 1;
     public static final int IF = 2;

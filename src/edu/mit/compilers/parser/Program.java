@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-public class Program implements DecafNT {
+public class Program extends Node {
     Program() {
 
     }

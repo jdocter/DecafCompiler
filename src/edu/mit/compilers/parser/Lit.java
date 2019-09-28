@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-public class Lit {
+public class Lit extends Node {
     Lit(IntLit intLit) {
 
     }

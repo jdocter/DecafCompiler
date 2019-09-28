@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-public class Method implements DecafNT {
+public class Method extends Node {
     Method(Type type, Id id) {
 
     }

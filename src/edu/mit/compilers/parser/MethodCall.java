@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-public class MethodCall {
+public class MethodCall extends Node {
     MethodCall(Id id) {
 
     }
