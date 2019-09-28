@@ -180,18 +180,20 @@ public class Parser {
                 isType(DecafScannerTokenTypes.DEC)) {
                 String inc = text();
                 next();
-                assignExpr = new AssignExpr(inc);
+                assertIsType(DecafScannerTokenTypes.RPAREN, "");
+                Block block = parseBlock();
+                return new Statement(id, init, exit, loc, inc, block);
             } else if (isType(DecafScannerTokenTypes.MEQ) ||
                     isType(DecafScannerTokenTypes.PEQ)) {
                 String assignOp = text();
                 next();
-                assignExpr = new AssignExpr(assignOp, parseExpr());
+                Expr expr = parseExpr();
+                assertIsType(DecafScannerTokenTypes.RPAREN, "");
+                Block block = parseBlock();
+                return new Statement(id, init, exit, loc, assignOp, expr, block);
             } else {
                 throw new DecafParseException("");
             }
-            assertIsType(DecafScannerTokenTypes.RPAREN, "");
-            Block block = parseBlock();
-            return new Statement(id, init, exit, loc, assignExpr, block);
         } else if (isType(DecafScannerTokenTypes.WHILE)) {
             next();
             assertIsType(DecafScannerTokenTypes.LPAREN, "");

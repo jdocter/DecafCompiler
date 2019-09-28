@@ -14,7 +14,8 @@ public class Statement {
     Statement(Loc loc, AssignExpr assignExpr) {}
     Statement(MethodCall methodCall) {}
     Statement(Expr expr, Block ifBlock, Block elseBlock) {}
-    Statement(Id id, Expr init, Expr exit, Loc loc, AssignExpr assignExpr, Block block) {}
+    Statement(Id id, Expr init, Expr exit, Loc loc, String inc, Block block) {}
+    Statement(Id id, Expr init, Expr exit, Loc loc, String assignOp, Expr expr, Block block) {}
     Statement(Expr expr, Block block) {}
     Statement(int statementType) {}
 
