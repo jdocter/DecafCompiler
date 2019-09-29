@@ -297,7 +297,6 @@ public class Parser {
     }
 
     private Expr parseSmolExpr() throws DecafParseException {
-        Expr expr;
         if (isType(DecafScannerTokenTypes.ID) && isType(DecafScannerTokenTypes.LPAREN,1)) {
             return new Expr(parseMethodCall());
         } else if (isType(DecafScannerTokenTypes.ID)) {
@@ -314,7 +313,7 @@ public class Parser {
             Expr nextExpr = parseSmolExpr();
             Expr notExpr = new Expr(Expr.NOT,nextExpr);
             notExpr.setLineNumber(line);
-            return  notExpr
+            return notExpr;
         } else if (isType(DecafScannerTokenTypes.MINUS)) {
             int line = line();
             next();
@@ -322,6 +321,7 @@ public class Parser {
             nextExpr.setLineNumber(line);
             Expr minusExpr = new Expr(Expr.MINUS, nextExpr);
             minusExpr.setLineNumber(line);
+            return minusExpr;
         } else if (isType(DecafScannerTokenTypes.LPAREN)) {
             next();
             Expr nextExpr = parseExpr();
@@ -360,7 +360,7 @@ public class Parser {
             throw new DecafParseException("");
         }
     }
-    
+
     private Id parseId() throws DecafParseException{
         if (isType(DecafScannerTokenTypes.ID)) {
             Id id = new Id(text());
