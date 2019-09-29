@@ -64,18 +64,7 @@
     </antlr>
   </target>
 
-  <target name="parser" depends="scanner">
-    <antlr
-      target="${src}/${base_package_dir}/grammar/parser.g"
-      outputdirectory="${autogen}/${base_package_dir}/grammar"
-      trace="yes">
-      <classpath>
-        <pathelement location="${lib}/antlr.jar" />
-      </classpath>
-    </antlr>
-  </target>
-
-  <target name="compile" depends="parser">
+  <target name="compile" depends="scanner">
     <javac srcdir="${autogen}:${src}" destdir="${classes}"
            debug="on" includeantruntime="false">
       <classpath refid="libraries" />

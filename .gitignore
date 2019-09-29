@@ -1,7 +1,12 @@
 *.sw*
-.idea
+.idea/*
 .project
 .classpath
+
+autogen/*
+classes/*
+dist/*
+bin/*
 
 # -------
 # Emacs

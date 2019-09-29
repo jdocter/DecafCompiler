@@ -3,6 +3,7 @@ package edu.mit.compilers;
 import java.io.*;
 import antlr.Token;
 import edu.mit.compilers.grammar.*;
+import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.parser.*;
@@ -23,7 +24,7 @@ class Main {
         while (!done) {
           try {
             for (token = scanner.nextToken();
-                 token.getType() != DecafParserTokenTypes.EOF;
+                 token.getType() != DecafScannerTokenTypes.EOF;
                  token = scanner.nextToken()) {
               String type = "";
               String text = token.getText();
@@ -62,17 +63,31 @@ class Main {
         DecafScanner scanner =
             new DecafScanner(new DataInputStream(inputStream));
         Parser myParser = new Parser(scanner);
-        int err = myParser.parse();
-        if (err > 0) {
-          System.exit(1);
+        try {
+            myParser.parse();
+        } catch (DecafParseException e) {
+            e.printStackTrace();
+            System.exit(1);
         }
-//        DecafParser parser = new DecafParser(scanner);
-//        parser.setTrace(CLI.debug);
-//        parser.program();
-//        if(parser.getError()) {
-//          System.exit(1);
-//        }
-      }
+      } else if (CLI.target == Action.INTER) {
+         DecafScanner scanner =
+             new DecafScanner(new DataInputStream(inputStream));
+         Parser myParser = new Parser(scanner);
+         try {
+             Program p = myParser.parse();
+
+             ProgramTable table = new ProgramTable(p);
+             try {
+                 table.typeCheck(p);
+             } catch (SemanticException e) {
+                 e.printStackTrace();
+                 System.exit(1);
+             }
+         } catch (DecafParseException e) {
+             e.printStackTrace();
+             System.exit(1);
+         }
+       }
     } catch(Exception e) {
       // print the error:
       System.err.println(CLI.infile+" "+e);

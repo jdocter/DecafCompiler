@@ -18,7 +18,7 @@ public class Parser {
         Token token;
         try {
             for (token = scanner.nextToken();
-            token.getType() != DecafParserTokenTypes.EOF;
+            token.getType() != DecafScannerTokenTypes.EOF;
             token = scanner.nextToken()) {
                 tokens.add(token);
             }
@@ -31,27 +31,28 @@ public class Parser {
     }
 
     // THIS MAY BE BETTER PARSE() FOR OUR PURPOSES
-//    public Program parse() throws DecafParseException {
-//        try {
-//            return parseProgram();
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            // may occur while doing token lookahead
-//            throw new DecafParseException("Premature program end", e);
-//        }
-//    }
-
-    public int parse() {
+    public Program parse() throws DecafParseException {
         try {
-            parseProgram();
-            return 0;
-        } catch (DecafParseException e) {
-            e.printStackTrace();
-            return 1;
+            return parseProgram();
         } catch (ArrayIndexOutOfBoundsException e) {
             // may occur while doing token lookahead
-            return 2;
+            throw new DecafParseException("Premature program end", e);
         }
     }
+
+    // parse() that returns error code
+//    public int parse() {
+//        try {
+//            parseProgram();
+//            return 0;
+//        } catch (DecafParseException e) {
+//            e.printStackTrace();
+//            return 1;
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            // may occur while doing token lookahead
+//            return 2;
+//        }
+//    }
 
     private Program parseProgram() throws DecafParseException {
         Program program = new Program();
