@@ -1,5 +1,4 @@
-# phase1-jdocter
-java-skeleton
-=============
+# team's Decaf implementation
 
-Java Skeleton Code for 6.035
+
+To build, run `ant clean` then `ant` in the root directory.
