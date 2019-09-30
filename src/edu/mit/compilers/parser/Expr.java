@@ -13,7 +13,7 @@ public class Expr extends Node {
     public static final int LIT = 6;
     public static final int EXPR = 7;
 
-    public int type;
+    public int exprType;
     public Expr mExpr;
     public final List<Expr> mExprs = new ArrayList<>();
     public final List<BinOp> mBinOps = new ArrayList<>();
@@ -23,31 +23,31 @@ public class Expr extends Node {
     public Lit mLit;
 
     Expr(int pre, Expr expr) {
-        type = pre;
+        exprType = pre;
     }
 
     Expr(Id id) {
         mId = id;
-        type = LEN;
+        exprType = LEN;
     }
 
     Expr(MethodCall methodCall) {
         mMethodCall = methodCall;
-        type = METHOD_CALL;
+        exprType = METHOD_CALL;
     }
 
     Expr(Loc loc) {
         mLoc = loc;
-        type = LOC;
+        exprType = LOC;
     }
 
     Expr(Lit lit) {
         mLit = lit;
-        type = LIT;
+        exprType = LIT;
     }
 
     public void addExpr(BinOp binOp, Expr expr) {
-        type = BIN_OP;
+        exprType = BIN_OP;
         mExprs.add(expr);
         mBinOps.add(binOp);
     }

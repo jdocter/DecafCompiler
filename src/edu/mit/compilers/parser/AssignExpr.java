@@ -8,14 +8,14 @@ public class AssignExpr extends Node {
     public static final String INC = "++";
     public static final String DEC = "--";
 
-    public final String type;
+    public final String assignExprType;
     public Expr mExpr;
     AssignExpr(String increment) {
-        type = increment;
+        assignExprType = increment;
     }
 
     AssignExpr(String assignOp, Expr expr) {
-        type = assignOp;
+        assignExprType = assignOp;
         mExpr = expr;
     }
 }

@@ -1,13 +1,18 @@
 package edu.mit.compilers.parser;
 
 public class Lit extends Node {
+
+    public IntLit mIntLit;
+    public char mChar;
+    public boolean mBool;
+
     Lit(IntLit intLit) {
-
+        mIntLit = intLit;
     }
-    Lit(Character c) {
-
+    Lit(char c) {
+        mChar = c;
     }
-    Lit(Boolean bool) {
-
+    Lit(boolean bool) {
+        mBool = bool;
     }
 }

@@ -1,11 +1,16 @@
 package edu.mit.compilers.parser;
 
 public class Loc extends Node {
-    Loc(Id id) {
 
-    }
+    public final Id mId;
+    private Expr mExpr;
+
+    Loc(Id id) {
+            mId = id;
+        }
 
     Loc (Id id, Expr expr) {
-
+        mId = id;
+        mExpr = expr;
     }
 }

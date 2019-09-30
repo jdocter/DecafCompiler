@@ -1,7 +1,9 @@
 package edu.mit.compilers.parser;
 
 public class HexLit extends Node {
-    HexLit(String s) {
+    public final int mHex;
 
+    HexLit(String s) {
+        mHex = Integer.parseInt(s,2,s.length(),16);
     }
 }
