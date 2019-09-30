@@ -1,9 +1,9 @@
 package edu.mit.compilers.parser;
 
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.mit.compilers.util.Pair;
 
 public class Field extends Node {
     public final Type mType;
@@ -16,7 +16,7 @@ public class Field extends Node {
     }
     Field(Type type, Id id, IntLit intLit) {
         mType = type;
-        fieldArrays.add(new Pair(id,intLit));
+        fieldArrays.add(new Pair<Id, IntLit>(id,intLit));
     }
 
     public void addArg(Id id) {
@@ -24,6 +24,6 @@ public class Field extends Node {
     }
 
     public void addArg(Id id, IntLit intLit) {
-        fieldArrays.add(new Pair(id,intLit));
+        fieldArrays.add(new Pair<Id, IntLit>(id,intLit));
     }
 }

@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import javafx.util.Pair;
+import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,10 @@ public class MethodCall extends Node {
         methodName = id;
     }
     public void addExpr(Expr expr) {
-        arguments.add(new Pair(expr,null));
+        arguments.add(new Pair<Expr, StringLit>(expr,null));
     }
 
     public void addStringLit(StringLit stringLit) {
-        arguments.add(new Pair(null, stringLit));
+        arguments.add(new Pair<Expr, StringLit>(null, stringLit));
     }
 }

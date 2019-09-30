@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import javafx.util.Pair;
+import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class Method extends Node {
     }
 
     public void addParam(Type type, Id id) {
-        params.add(new Pair(type,id));
+        params.add(new Pair<Type, Id>(type,id));
     }
 
     public void addBlock(Block block) {

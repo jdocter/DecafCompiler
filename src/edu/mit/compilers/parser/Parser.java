@@ -1,13 +1,9 @@
 package edu.mit.compilers.parser;
 
 import java.util.*;
-import java.io.*;
 import antlr.Token;
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.tools.CLI;
-import edu.mit.compilers.tools.CLI.Action;
-
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 
 public class Parser {
@@ -222,6 +218,7 @@ public class Parser {
             assertIsType(DecafScannerTokenTypes.RPAREN, "");
             Block block = parseBlock();
             Statement statement = new Statement(expr, block);
+            statement.setLineNumber(line);
             return statement;
         } else if (isType(DecafScannerTokenTypes.RETURN)) {
             Statement statement = new Statement(Statement.RETURN);
@@ -294,7 +291,7 @@ public class Parser {
         }
 
         // if the there is no bin ops, then return the "smolExpr"
-        return (binOpExpr.type == Expr.BIN_OP) ? binOpExpr : binOpExpr.mExpr;
+        return (binOpExpr.exprType == Expr.BIN_OP) ? binOpExpr : binOpExpr.mExpr;
     }
 
     private Expr parseSmolExpr() throws DecafParseException {
@@ -419,25 +416,25 @@ public class Parser {
         }
     }
 
-    private HexLit parseHexLit() throws DecafParseException {
-        if (isType(DecafScannerTokenTypes.HEX_LIT)) {
-            HexLit hexLit = new HexLit(text());
-            next();
-            return hexLit;
-        } else {
-            throw new DecafParseException("");
-        }
-    }
-
-    private DecLit parseDecLit() throws DecafParseException {
-        if (isType(DecafScannerTokenTypes.HEX_LIT)) {
-            DecLit decLit = new DecLit(text());
-            next();
-            return decLit;
-        } else {
-            throw new DecafParseException("");
-        }
-    }
+//    private HexLit parseHexLit() throws DecafParseException {
+//        if (isType(DecafScannerTokenTypes.HEX_LIT)) {
+//            HexLit hexLit = new HexLit(text());
+//            next();
+//            return hexLit;
+//        } else {
+//            throw new DecafParseException("");
+//        }
+//    }
+//
+//    private DecLit parseDecLit() throws DecafParseException {
+//        if (isType(DecafScannerTokenTypes.HEX_LIT)) {
+//            DecLit decLit = new DecLit(text());
+//            next();
+//            return decLit;
+//        } else {
+//            throw new DecafParseException("");
+//        }
+//    }
 
     private BinOp parseBinOp() throws DecafParseException {
         if (isType(DecafScannerTokenTypes.AND) ||
