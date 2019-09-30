@@ -53,14 +53,14 @@ public class Parser {
     private Program parseProgram() throws DecafParseException {
         Program program = new Program();
         while (isType(DecafScannerTokenTypes.IMPORT)) {
-            Imp imp = parseImp();
-            program.addImp(imp);
+            ImportDeclaration imp = parseImp();
+            program.addImportDeclaration(imp);
         }
         while (!(isType(DecafScannerTokenTypes.EOF) ||
                 isType(DecafScannerTokenTypes.LPAREN,2))) {
             // not method or EOF so assume field
-           Field field = parseField();
-           program.addField(field);
+           FieldDeclaration field = parseField();
+           program.addFieldDeclaration(field);
         }
         while (!isType(DecafScannerTokenTypes.EOF)) {
             Method method = parseMethod();
@@ -71,11 +71,11 @@ public class Parser {
         return program;
     }
 
-    private Imp parseImp() throws DecafParseException {
+    private ImportDeclaration parseImp() throws DecafParseException {
         assertIsType(DecafScannerTokenTypes.IMPORT, "");
         Id id = parseId();
         assertIsType(DecafScannerTokenTypes.SEMICOL, "");
-        return new Imp(id);
+        return new ImportDeclaration(id);
     }
 
     private Method parseMethod() throws DecafParseException {
@@ -104,17 +104,17 @@ public class Parser {
         return method;
     }
 
-    private Field parseField() throws DecafParseException {
+    private FieldDeclaration parseField() throws DecafParseException {
         Type type = parseType();
         Id id = parseId();
-        final Field field;
+        final FieldDeclaration field;
         if (isType(DecafScannerTokenTypes.LBRACK)) {
             next();
             IntLit intLit = parseIntLit();
             assertIsType(DecafScannerTokenTypes.RBRACK, "");
-            field = new Field(type, id, intLit);
+            field = new FieldDeclaration(type, id, intLit);
         } else {
-            field = new Field(type, id);
+            field = new FieldDeclaration(type, id);
         }
         while (!isType(DecafScannerTokenTypes.SEMICOL)) {
             assertIsType(DecafScannerTokenTypes.COMMA, "");
@@ -138,7 +138,7 @@ public class Parser {
         while (isType(DecafScannerTokenTypes.BOOL) ||
                 isType(DecafScannerTokenTypes.INT)) {
             // field declaration
-            block.addField(parseField());
+            block.addFieldDeclaration(parseField());
         }
 
         while (!isType(DecafScannerTokenTypes.RCURLY)) {

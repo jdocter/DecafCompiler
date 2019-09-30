@@ -6,7 +6,7 @@ class Node {
         mLine = line;
     }
 
-    public int getLineNumber(int line) {
+    public int getLineNumber() {
         return mLine;
     }
 }

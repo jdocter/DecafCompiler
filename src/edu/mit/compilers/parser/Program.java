@@ -6,18 +6,18 @@ import java.util.List;
 public class Program extends Node {
 
     public final List<Method> methods = new ArrayList<>();
-    public final List<Field> fields = new ArrayList<>();
-    public final List<Imp> imps = new ArrayList<>();
+    public final List<FieldDeclaration> fieldDeclarations = new ArrayList<>();
+    public final List<ImportDeclaration> importDeclarations = new ArrayList<>();
     Program() {
 
     }
     public void addMethod(Method method) {
         methods.add(method);
     }
-    public void addField(Field field) {
-        fields.add(field);
+    public void addFieldDeclaration(FieldDeclaration fieldDeclaration) {
+        fieldDeclarations.add(fieldDeclaration);
     }
-    public void addImp(Imp imp) {
-        imps.add(imp);
+    public void addImportDeclaration(ImportDeclaration importDeclaration) {
+        importDeclarations.add(importDeclaration);
     }
 }

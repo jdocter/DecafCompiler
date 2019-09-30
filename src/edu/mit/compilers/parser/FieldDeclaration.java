@@ -5,16 +5,16 @@ import java.util.List;
 
 import edu.mit.compilers.util.Pair;
 
-public class Field extends Node {
+public class FieldDeclaration extends Node {
     public final Type mType;
     public final List<Pair<Id,IntLit>> fieldArrays = new ArrayList<>();
     public final List<Id> fields = new ArrayList<>();
 
-    Field(Type type, Id id) {
+    FieldDeclaration(Type type, Id id) {
         mType = type;
         fields.add(id);
     }
-    Field(Type type, Id id, IntLit intLit) {
+    FieldDeclaration(Type type, Id id, IntLit intLit) {
         mType = type;
         fieldArrays.add(new Pair<Id, IntLit>(id,intLit));
     }

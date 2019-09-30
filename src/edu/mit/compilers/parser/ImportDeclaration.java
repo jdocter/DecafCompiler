@@ -1,8 +1,8 @@
 package edu.mit.compilers.parser;
 
-public class Imp extends Node {
+public class ImportDeclaration extends Node {
     public final Id mId;
-    public Imp(Id id) {
+    public ImportDeclaration(Id id) {
         mId = id;
     }
 }
