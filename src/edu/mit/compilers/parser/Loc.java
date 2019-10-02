@@ -13,4 +13,9 @@ public class Loc extends Node {
         mId = id;
         mExpr = expr;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

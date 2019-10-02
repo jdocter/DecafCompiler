@@ -1,4 +1,11 @@
 package edu.mit.compilers.inter;
 
-public class TypeDescriptor {
+/**
+ * Only four types in decaf language
+ */
+public enum TypeDescriptor {
+    INT,
+    BOOL,
+    INT_ARRAY,
+    BOOL_ARRAY
 }

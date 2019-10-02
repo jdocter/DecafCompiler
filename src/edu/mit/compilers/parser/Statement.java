@@ -83,4 +83,9 @@ public class Statement extends Node {
         mExpr = expr;
     }
 
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
 }

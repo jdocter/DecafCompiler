@@ -6,4 +6,9 @@ public class StringLit extends Node {
     StringLit(String s) {
         mString = s;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

@@ -10,14 +10,14 @@ import edu.mit.compilers.util.Pair;
 
 public class FieldTable extends HashMap<String, FieldDescriptor> {
 
-    public FieldTable(List<FieldDeclaration> fieldDeclarations, TypeTable typeTable) throws SemanticException {
+    public FieldTable(List<FieldDeclaration> fieldDeclarations) throws SemanticException {
         for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
             for (Id field : fieldDeclaration.fields) {
                 if (this.containsKey(field.mId)) {
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new FieldDescriptor()); // TODO
+//                this.put(field.mId, new FieldDescriptor()); // TODO
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
@@ -27,7 +27,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> {
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new FieldDescriptor()); // TODO
+//                this.put(field.mId, new FieldDescriptor()); // TODO
             }
         }
     }

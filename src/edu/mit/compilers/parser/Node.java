@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-class Node {
+abstract class Node {
     private int mLine;
     public void setLineNumber(int line) {
         mLine = line;
@@ -9,4 +9,6 @@ class Node {
     public int getLineNumber() {
         return mLine;
     }
+    
+    abstract public void accept(Visitor v);
 }

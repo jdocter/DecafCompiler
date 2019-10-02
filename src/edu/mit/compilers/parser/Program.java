@@ -20,4 +20,9 @@ public class Program extends Node {
     public void addImportDeclaration(ImportDeclaration importDeclaration) {
         importDeclarations.add(importDeclaration);
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

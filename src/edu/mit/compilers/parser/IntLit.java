@@ -10,4 +10,9 @@ public class IntLit extends Node {
     IntLit(DecLit decLit) {
         mDecLit = decLit;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

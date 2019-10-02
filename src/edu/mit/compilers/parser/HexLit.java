@@ -6,4 +6,9 @@ public class HexLit extends Node {
     HexLit(String s) {
         mHex = Integer.parseInt(s,2,s.length(),16);
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

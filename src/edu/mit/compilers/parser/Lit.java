@@ -15,4 +15,9 @@ public class Lit extends Node {
     Lit(boolean bool) {
         mBool = bool;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

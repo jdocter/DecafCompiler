@@ -8,7 +8,7 @@ import edu.mit.compilers.parser.Method;
 
 public class MethodTable extends HashMap<String, MethodDescriptor> {
 
-    public MethodTable(List<?> methodsOrImps, TypeTable typeTable) {
+    public MethodTable(List<?> methodsOrImps) {
         if (methodsOrImps.isEmpty()) {
             return;
         }

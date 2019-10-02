@@ -24,4 +24,9 @@ public class Method extends Node {
     public void addBlock(Block block) {
         mBlock = block;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

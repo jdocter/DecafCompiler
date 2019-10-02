@@ -5,4 +5,9 @@ public class DecLit extends Node {
     DecLit(String s) {
         mDec = Integer.valueOf(s);
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

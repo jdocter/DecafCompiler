@@ -24,6 +24,7 @@ public class Expr extends Node {
 
     Expr(int pre, Expr expr) {
         exprType = pre;
+        mExpr = expr;
     }
 
     Expr(Id id) {
@@ -50,5 +51,10 @@ public class Expr extends Node {
         exprType = BIN_OP;
         mExprs.add(expr);
         mBinOps.add(binOp);
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

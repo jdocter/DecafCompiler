@@ -5,4 +5,9 @@ public class BinOp extends Node {
     BinOp(String s) {
         mBinOp = s;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

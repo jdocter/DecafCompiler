@@ -2,7 +2,6 @@ package edu.mit.compilers;
 
 import java.io.*;
 import antlr.Token;
-import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
@@ -76,7 +75,7 @@ class Main {
          try {
              Program p = myParser.parse();
 
-             ProgramTable table = new ProgramTable(p);
+             ProgramDescriptor table = new ProgramDescriptor(p);
              try {
                  table.typeCheck(p);
              } catch (SemanticException e) {

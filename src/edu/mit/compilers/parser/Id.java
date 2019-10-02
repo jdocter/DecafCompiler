@@ -5,4 +5,9 @@ public class Id extends Node {
     public Id(String id) {
         mId = id;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

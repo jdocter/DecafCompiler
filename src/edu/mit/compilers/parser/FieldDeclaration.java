@@ -26,4 +26,9 @@ public class FieldDeclaration extends Node {
     public void addArg(Id id, IntLit intLit) {
         fieldArrays.add(new Pair<Id, IntLit>(id,intLit));
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

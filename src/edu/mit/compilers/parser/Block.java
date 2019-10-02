@@ -16,4 +16,9 @@ public class Block extends Node  {
     public void addFieldDeclaration(FieldDeclaration field) {
         mFields.add(field);
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

@@ -21,4 +21,9 @@ public class MethodCall extends Node {
     public void addStringLit(StringLit stringLit) {
         arguments.add(new Pair<Expr, StringLit>(null, stringLit));
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

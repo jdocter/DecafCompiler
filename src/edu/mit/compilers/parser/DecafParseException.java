@@ -7,4 +7,5 @@ public class DecafParseException extends Exception {
     public DecafParseException(String s) {
         super(s);
     }
+
 }

@@ -10,4 +10,9 @@ public class Type extends Node {
     Type(int i) {
         mType = i;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

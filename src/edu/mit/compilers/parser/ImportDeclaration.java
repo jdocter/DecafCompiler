@@ -5,4 +5,9 @@ public class ImportDeclaration extends Node {
     public ImportDeclaration(Id id) {
         mId = id;
     }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }
