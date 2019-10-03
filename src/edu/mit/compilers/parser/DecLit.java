@@ -1,5 +1,7 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.visitor.Visitor;
+
 public class DecLit extends Node {
     public final int mDec;
     DecLit(String s) {

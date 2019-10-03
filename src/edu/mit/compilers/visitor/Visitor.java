@@ -1,14 +1,14 @@
-package edu.mit.compilers.parser;
+package edu.mit.compilers.visitor;
 
-import edu.mit.compilers.inter.FieldDescriptor;
+import edu.mit.compilers.parser.*;
 
 public interface Visitor {
+    void visit(Program program);
     void visit(Type type);
     void visit(StringLit stringLit);
     void visit(Statement statement);
-    void visit(Program program);
     void visit(MethodCall methodCall);
-    void visit(Method method);
+    void visit(MethodDeclaration method);
     void visit(Loc loc);
     void visit(Lit lit);
     void visit(IntLit intLit);
@@ -21,8 +21,4 @@ public interface Visitor {
     void visit(Block block);
     void visit(BinOp binOp);
     void visit(AssignExpr assignExpr);
-
-
-
-
 }

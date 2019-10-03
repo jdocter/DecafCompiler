@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.Visitor;
 
 public class FieldDeclaration extends Node {
     public final Type mType;

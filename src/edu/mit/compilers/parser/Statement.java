@@ -1,6 +1,8 @@
 package edu.mit.compilers.parser;
 
 
+import edu.mit.compilers.visitor.Visitor;
+
 public class Statement extends Node {
     public static final int LOC_ASSIGN = 0;
     public static final int METHOD_CALL = 1;

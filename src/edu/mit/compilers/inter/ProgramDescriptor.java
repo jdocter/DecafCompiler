@@ -16,12 +16,12 @@ public class ProgramDescriptor {
 
     private FieldTable fieldTable;
     private MethodTable methodTable;
-    private MethodTable importTable;
+    private ImportTable importTable;
 
     public ProgramDescriptor(Program p) throws SemanticException {
         fieldTable = new FieldTable(p.fieldDeclarations);
-        methodTable = new MethodTable(p.methods);
-        importTable = new MethodTable(p.importDeclarations);
+        methodTable = new MethodTable(p.methodDeclarations, fieldTable);
+        importTable = new ImportTable(p.importDeclarations);
     }
 
     public void typeCheck(Program p) throws SemanticException {

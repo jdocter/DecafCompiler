@@ -1,6 +1,8 @@
 package edu.mit.compilers.parser;
 
 
+import edu.mit.compilers.visitor.Visitor;
+
 public class AssignExpr extends Node {
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";

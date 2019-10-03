@@ -1,5 +1,9 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.inter.FieldTable;
+import edu.mit.compilers.inter.LocalTable;
+import edu.mit.compilers.visitor.Visitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +11,8 @@ public class Block extends Node  {
 
     public final List<Statement> mStatements = new ArrayList<>();
     public final List<FieldDeclaration> mFields = new ArrayList<>();
+    public LocalTable localTable;
+
     Block () { }
 
     public void addStatement(Statement statement) {

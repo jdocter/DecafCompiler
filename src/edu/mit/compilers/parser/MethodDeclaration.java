@@ -1,18 +1,19 @@
 package edu.mit.compilers.parser;
 
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Method extends Node {
+public class MethodDeclaration extends Node {
 
     public final Type returnType;
     public final Id methodName;
     public final List<Pair<Type,Id>> params = new ArrayList<>();
     public Block mBlock;
 
-    Method(Type type, Id id) {
+    MethodDeclaration(Type type, Id id) {
         returnType = type;
         methodName = id;
     }

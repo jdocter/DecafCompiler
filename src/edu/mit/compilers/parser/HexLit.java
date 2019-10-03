@@ -1,5 +1,7 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.visitor.Visitor;
+
 public class HexLit extends Node {
     public final int mHex;
 

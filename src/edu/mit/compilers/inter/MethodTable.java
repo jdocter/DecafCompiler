@@ -3,25 +3,16 @@ package edu.mit.compilers.inter;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.mit.compilers.parser.ImportDeclaration;
-import edu.mit.compilers.parser.Method;
+import edu.mit.compilers.parser.MethodDeclaration;
 
 public class MethodTable extends HashMap<String, MethodDescriptor> {
 
-    public MethodTable(List<?> methodsOrImps) {
-        if (methodsOrImps.isEmpty()) {
-            return;
+
+    public MethodTable(List<MethodDeclaration> methods, FieldTable fieldTable) throws SemanticException {
+        for (MethodDeclaration method: methods) {
+            this.put(method.methodName.mId, new MethodDescriptor(method, fieldTable));
         }
 
-        Object elem = methodsOrImps.get(0);
-
-        if (elem instanceof Method) {
-            // build method table
-        } else if (elem instanceof ImportDeclaration) {
-            // build method table but with foreign == true
-        } else {
-            throw new UnsupportedOperationException("Trying to build method table with something that is not a method or import");
-        }
     }
 
 }

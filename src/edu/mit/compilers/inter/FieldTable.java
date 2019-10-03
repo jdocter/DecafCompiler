@@ -6,9 +6,10 @@ import java.util.List;
 import edu.mit.compilers.parser.FieldDeclaration;
 import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.IntLit;
+import edu.mit.compilers.parser.Type;
 import edu.mit.compilers.util.Pair;
 
-public class FieldTable extends HashMap<String, FieldDescriptor> {
+public class FieldTable extends HashMap<String, FieldDescriptor> implements VariableTable {
 
     public FieldTable(List<FieldDeclaration> fieldDeclarations) throws SemanticException {
         for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
@@ -17,7 +18,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> {
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
                 }
 
-//                this.put(field.mId, new FieldDescriptor()); // TODO
+                this.put(field.mId, new FieldDescriptor(new TypeDescriptor(fieldDeclaration.mType))); // TODO
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
@@ -27,9 +28,10 @@ public class FieldTable extends HashMap<String, FieldDescriptor> {
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
                 }
 
-//                this.put(field.mId, new FieldDescriptor()); // TODO
+                this.put(field.mId, new FieldDescriptor(new TypeDescriptor(fieldDeclaration.mType, size.integer()))); // TODO
             }
         }
     }
+
 
 }

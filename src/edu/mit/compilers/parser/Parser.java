@@ -2,7 +2,6 @@ package edu.mit.compilers.parser;
 
 import java.util.*;
 import antlr.Token;
-import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.tools.CLI;
 import java.util.ArrayList;
 
@@ -63,7 +62,7 @@ public class Parser {
            program.addFieldDeclaration(field);
         }
         while (!isType(DecafScannerTokenTypes.EOF)) {
-            Method method = parseMethod();
+            MethodDeclaration method = parseMethodDeclaration();
             program.addMethod(method);
         }
 
@@ -78,16 +77,16 @@ public class Parser {
         return new ImportDeclaration(id);
     }
 
-    private Method parseMethod() throws DecafParseException {
+    private MethodDeclaration parseMethodDeclaration() throws DecafParseException {
         Type methodType;
         if (isType(DecafScannerTokenTypes.VOID)) {
             next();
-            methodType = null;
+            methodType = null; // TODO don't use null
         } else {
             methodType = parseType();
         }
         Id methodId = parseId();
-        final Method method = new Method(methodType, methodId);
+        final MethodDeclaration method = new MethodDeclaration(methodType, methodId);
         assertIsType(DecafScannerTokenTypes.LPAREN, "");
         boolean firstParam = true;
         while (!isType(DecafScannerTokenTypes.RPAREN)) {

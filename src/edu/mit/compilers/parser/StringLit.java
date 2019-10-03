@@ -1,5 +1,7 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.visitor.Visitor;
+
 public class StringLit extends Node {
 
     public final String mString;

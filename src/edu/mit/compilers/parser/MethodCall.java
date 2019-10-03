@@ -1,6 +1,7 @@
 package edu.mit.compilers.parser;
 
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
