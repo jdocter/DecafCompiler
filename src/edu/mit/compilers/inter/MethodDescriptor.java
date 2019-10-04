@@ -2,15 +2,10 @@ package edu.mit.compilers.inter;
 
 
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.FileHandler;
 
 public class MethodDescriptor {
 
-    private boolean foreign;
+    private final boolean returnVoid;
     private TypeDescriptor returnType = null;
     private final LocalTable localTable;
     private final Block block;
@@ -18,9 +13,13 @@ public class MethodDescriptor {
     MethodDescriptor(MethodDeclaration methodDeclaration, FieldTable globalFieldTable) throws SemanticException {
         if (methodDeclaration.returnType != null) {
             returnType = new TypeDescriptor(methodDeclaration.returnType);
+            returnVoid = false;
+        } else {
+            returnVoid = true;
         }
+
         block = methodDeclaration.mBlock;
-        localTable = new LocalTable(block.mFields, globalFieldTable);
+        localTable = new LocalTable(block.fieldDeclarations, globalFieldTable);
         localTable.putParams(methodDeclaration.params);
 
         buildLocalTable(block, localTable);
@@ -28,17 +27,18 @@ public class MethodDescriptor {
 
 
     private void buildLocalTable(Block block, LocalTable parentTable) throws SemanticException {
-        block.localTable = new LocalTable(block.mFields, parentTable);
-        for (Statement statement: block.mStatements) {
-            if (statement.mBlock != null) {
-                buildLocalTable(statement.mBlock, block.localTable);
-            }
-            if (statement.mIfBlock != null) {
-                buildLocalTable(statement.mIfBlock, block.localTable);
-            }
-            if (statement.mElseBlock != null) {
-                buildLocalTable(statement.mElseBlock, block.localTable);
-            }
+        block.localTable = new LocalTable(block.fieldDeclarations, parentTable);
+        for (Statement statement: block.statements) {
+            for (Block innerBlock: statement.getBlocks())
+                buildLocalTable(innerBlock, localTable);
         }
     }
+
+//    private void attachLocalTable(Expr expr, LocalTable localTable) throws SemanticException {
+//        expr.localTable = localTable;
+//        for (Expr innerExpr: expr.exprs) attachLocalTable(innerExpr, localTable);
+//        attachLocalTable(expr.expr, localTable);
+//        attachLocalTable(expr.loc.expr, localTable);
+//        // also method calls have exprs
+//    }
 }

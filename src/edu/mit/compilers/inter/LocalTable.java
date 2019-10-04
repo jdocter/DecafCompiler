@@ -17,28 +17,33 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
         this.parentTable = parentTable;
         for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
             for (Id field : fieldDeclaration.fields) {
-                if (this.containsKey(field.mId)) {
-                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
+                if (this.containsKey(field.getName())) {
+                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new LocalDescriptor(new TypeDescriptor(fieldDeclaration.mType)));
+                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type)));
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
                 Id field = fieldArray.getKey();
                 IntLit size = fieldArray.getValue();
-                if (this.containsKey(field.mId)) {
-                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
+                if (this.containsKey(field.getName())) {
+                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new LocalDescriptor(new TypeDescriptor(fieldDeclaration.mType, size.integer()))); // TODO
+                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type, size.integer()))); // TODO
             }
         }
     }
 
     public void putParams(List<Pair<Type, Id>> params) throws SemanticException {
         for (Pair<Type, Id> param: params) {
-            this.put(param.getValue().mId,new LocalDescriptor(new TypeDescriptor(param.getKey())));
+            this.put(param.getValue().getName(), new LocalDescriptor(new TypeDescriptor(param.getKey())));
         }
+    }
+
+    @Override
+    public boolean contains(String id) {
+        return this.containsKey(id) || parentTable.contains(id);
     }
 }

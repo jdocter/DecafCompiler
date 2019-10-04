@@ -290,7 +290,7 @@ public class Parser {
         }
 
         // if the there is no bin ops, then return the "smolExpr"
-        return (binOpExpr.exprType == Expr.BIN_OP) ? binOpExpr : binOpExpr.mExpr;
+        return (binOpExpr.exprType == Expr.BIN_OP) ? binOpExpr : binOpExpr.expr;
     }
 
     private Expr parseSmolExpr() throws DecafParseException {

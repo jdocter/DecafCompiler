@@ -8,8 +8,11 @@ import java.util.List;
 public class ImportTable extends HashMap<String, ImportDescriptor> {
     public ImportTable(List<ImportDeclaration> importDeclarations) throws SemanticException {
         for (ImportDeclaration importDeclaration : importDeclarations) {
-            put(importDeclaration.mId.mId, new ImportDescriptor(importDeclaration));
+            if (this.containsKey(importDeclaration.id.getName()))
+                throw new SemanticException(importDeclaration.id.getLineNumber(), "Identifier '"
+                        + importDeclaration.id.getName() + "' declared twice in the same scope.");
 
+            put(importDeclaration.id.getName(), new ImportDescriptor(importDeclaration));
         }
     }
 

@@ -6,32 +6,35 @@ import java.util.List;
 import edu.mit.compilers.parser.FieldDeclaration;
 import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.IntLit;
-import edu.mit.compilers.parser.Type;
 import edu.mit.compilers.util.Pair;
+
 
 public class FieldTable extends HashMap<String, FieldDescriptor> implements VariableTable {
 
     public FieldTable(List<FieldDeclaration> fieldDeclarations) throws SemanticException {
         for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
             for (Id field : fieldDeclaration.fields) {
-                if (this.containsKey(field.mId)) {
-                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
+                if (this.containsKey(field.getName())) {
+                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new FieldDescriptor(new TypeDescriptor(fieldDeclaration.mType))); // TODO
+                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type))); // TODO
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
                 Id field = fieldArray.getKey();
                 IntLit size = fieldArray.getValue();
-                if (this.containsKey(field.mId)) {
-                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.mId + "' declared twice in the same scope.");
+                if (this.containsKey(field.getName())) {
+                    throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.mId, new FieldDescriptor(new TypeDescriptor(fieldDeclaration.mType, size.integer()))); // TODO
+                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type, size.integer()))); // TODO
             }
         }
     }
 
-
+    @Override
+    public boolean contains(String id) {
+        return this.containsKey(id);
+    }
 }
