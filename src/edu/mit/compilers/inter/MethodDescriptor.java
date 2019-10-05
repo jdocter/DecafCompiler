@@ -26,7 +26,7 @@ public class MethodDescriptor {
     }
 
 
-    private void buildLocalTable(Block block, LocalTable parentTable) throws SemanticException {
+    static private void buildLocalTable(Block block, LocalTable parentTable) throws SemanticException {
         block.localTable = new LocalTable(block.fieldDeclarations, parentTable);
         for (Statement statement: block.statements) {
             switch (statement.statementType) {
@@ -37,12 +37,12 @@ public class MethodDescriptor {
                 case Statement.CONTINUE:
                     break;
                 case Statement.IF:
-                    buildLocalTable(statement.ifBlock, localTable);
-                    if (statement.elseBlock != null) buildLocalTable(statement.elseBlock, localTable);
+                    buildLocalTable(statement.ifBlock, block.localTable);
+                    if (statement.elseBlock != null) buildLocalTable(statement.elseBlock, block.localTable);
                     break;
                 case Statement.FOR:
                 case Statement.WHILE:
-                    buildLocalTable(statement.block, localTable);
+                    buildLocalTable(statement.block, block.localTable);
                     break;
             }
         }

@@ -100,6 +100,8 @@ class Main {
                  }
                  System.exit(1);
              }
+             System.out.println("Finished");
+             System.exit(0);
          } catch (DecafParseException e) {
              e.printStackTrace();
              System.exit(1);
@@ -107,6 +109,7 @@ class Main {
        }
     } catch(Exception e) {
       // print the error:
+        e.printStackTrace();
       System.err.println(CLI.infile+" "+e);
     }
   }

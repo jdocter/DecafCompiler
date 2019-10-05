@@ -50,11 +50,15 @@ public class CheckIdDeclared implements SemanticChecker {
                 if (statement.elseBlock != null) statement.elseBlock.accept(this);
                 break;
             case Statement.FOR:
+//                System.out.println("HERE IS A LOCAL TABLE STACK at " + statement.getLineNumber());
+//                System.out.println(localTableStack.toString());
+//                System.out.println("----");
                 statement.id.accept(this);
                 statement.initExpr.accept(this);
                 statement.exitExpr.accept(this);
                 statement.loc.accept(this);
-                statement.expr.accept(this);
+                if (statement.expr != null) statement.expr.accept(this);
+                statement.block.accept(this);
                 break;
             case Statement.WHILE:
                 statement.expr.accept(this);
@@ -90,9 +94,15 @@ public class CheckIdDeclared implements SemanticChecker {
 
     @Override
     public void visit(Id id) {
-        if (!localTableStack.peek().isDeclared(id.getName()))
+        if (!localTableStack.peek().isDeclared(id.getName())) {
+//            System.out.println("HERE IS A LOCAL TABLE STACK's parents DURING AN EXCEPTION at " + id.getLineNumber());
+//            System.out.println(localTableStack.peek().toString());
+//            System.out.println(localTableStack.peek().parentTable.toString());
+//            System.out.println(((LocalTable)localTableStack.peek().parentTable).parentTable.toString());
+//            System.out.println("----");
             semanticExceptions.add(new SemanticException(id.getLineNumber(),"Identifier '" + id.getName()
                     + "' referenced before declaration"));
+        }
     }
 
     @Override
@@ -115,7 +125,6 @@ public class CheckIdDeclared implements SemanticChecker {
                 expr.methodCall.accept(this);
                 break;
             case Expr.BIN_OP:
-                expr.expr.accept(this);
                 for (Expr binOpExpr : expr.binOpExprs) {
                     binOpExpr.accept(this);
                 }
