@@ -14,7 +14,7 @@ function run-semantics {
 }
 
 for INPUT_FILE in $(dirname $0)/illegal/*; do
-  if run-semantics "$INPUT_FILE" &> /dev/null; then
+  if run-semantics "$INPUT_FILE"; then
     red "ILLEGAL FILE '$INPUT_FILE' PASSED"
   else
     green "SUCCESSFULLY FAILED '$INPUT_FILE'"
@@ -24,7 +24,7 @@ for INPUT_FILE in $(dirname $0)/illegal/*; do
 done
 
 for INPUT_FILE in $(dirname $0)/legal/*; do
-  if run-semantics "$INPUT_FILE" &> /dev/null; then
+  if run-semantics "$INPUT_FILE"; then
     green "PASSED '$INPUT_FILE'"
     count_pass=$(( count_pass + 1 ))
   else
