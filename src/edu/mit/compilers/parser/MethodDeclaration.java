@@ -8,21 +8,24 @@ import edu.mit.compilers.visitor.Visitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodCall extends Node {
+public class MethodDeclaration extends Node {
 
+    public final Type returnType;
     public final Id methodName;
-    // every pair will contain one null item, purpose is to preserve order of arguments
-    public final List<Pair<Expr,StringLit>> arguments = new ArrayList<>();
+    public final List<Pair<Type,Id>> params = new ArrayList<>();
+    public Block mBlock;
 
-    MethodCall(Id id) {
+    MethodDeclaration(Type type, Id id) {
+        returnType = type; // may be null??
         methodName = id;
     }
-    public void addExpr(Expr expr) {
-        arguments.add(new Pair<Expr, StringLit>(expr,null));
+
+    public void addParam(Type type, Id id) {
+        params.add(new Pair<Type, Id>(type,id));
     }
 
-    public void addStringLit(StringLit stringLit) {
-        arguments.add(new Pair<Expr, StringLit>(null, stringLit));
+    public void addBlock(Block block) {
+        mBlock = block;
     }
 
     @Override

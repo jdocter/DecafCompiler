@@ -1,5 +1,10 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.inter.LocalTable;
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.visitor.SemanticChecker;
+import edu.mit.compilers.visitor.Visitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,41 +19,52 @@ public class Expr extends Node {
     public static final int EXPR = 7;
 
     public int exprType;
-    public Expr mExpr;
-    public final List<Expr> mExprs = new ArrayList<>();
-    public final List<BinOp> mBinOps = new ArrayList<>();
-    public Id mId;
-    public MethodCall mMethodCall;
-    public Loc mLoc;
-    public Lit mLit;
+    public Expr expr;
+    public final List<Expr> exprs = new ArrayList<>();
+    public final List<BinOp> binOps = new ArrayList<>();
+    public Id id;
+    public MethodCall methodCall;
+    public Loc loc;
+    public Lit lit;
 
-    Expr(int pre, Expr expr) {
-        exprType = pre;
+    Expr(int exprType, Expr expr) {
+        this.exprType = exprType;
+        this.expr = expr;
     }
 
     Expr(Id id) {
-        mId = id;
+        this.id = id;
         exprType = LEN;
     }
 
     Expr(MethodCall methodCall) {
-        mMethodCall = methodCall;
+        this.methodCall = methodCall;
         exprType = METHOD_CALL;
     }
 
     Expr(Loc loc) {
-        mLoc = loc;
+        this.loc = loc;
         exprType = LOC;
     }
 
     Expr(Lit lit) {
-        mLit = lit;
+        this.lit = lit;
         exprType = LIT;
     }
 
     public void addExpr(BinOp binOp, Expr expr) {
         exprType = BIN_OP;
-        mExprs.add(expr);
-        mBinOps.add(binOp);
+        exprs.add(expr);
+        binOps.add(binOp);
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
+    @Override
+    public void accept(SemanticChecker semanticChecker) throws SemanticException {
+        semanticChecker.check(this);
     }
 }

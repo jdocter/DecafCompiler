@@ -1,5 +1,11 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.inter.LocalTable;
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.visitor.SemanticChecker;
+import edu.mit.compilers.visitor.Visitor;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Statement extends Node {
     public static final int LOC_ASSIGN = 0;
@@ -16,71 +22,89 @@ public class Statement extends Node {
     public static final String MEQ = "-=";
     public static final String PEQ = "+=";
 
-
-
     // for private fields, if statement type has unique private field use field with prefix "m"
     // otherwise use descriptive fields
-    public final int mStatementType;
-    public Loc mLoc;
-    public AssignExpr mAssignExpr;
-    public Id mId;
-    public Expr mInitExpr;
-    public Expr mExitExpr;
-    public Expr mExpr;
-    public Block mIfBlock;
-    public Block mElseBlock;
-    public Block mBlock;
-    public MethodCall mMethodCall;
-    public String mInc;
-    public String mAssignOp;
+    public final int statementType;
+    public Loc loc;
+    public AssignExpr assignExpr;
+    public Id id;
+    public Expr initExpr;
+    public Expr exitExpr;
+    public Expr expr;
+    public Block ifBlock;
+    public Block elseBlock;
+    public Block block;
+    public MethodCall methodCall;
+    public String inc;
+    public String assignOp;
 
 
     Statement(Loc loc, AssignExpr assignExpr) {
-        mStatementType = LOC_ASSIGN;
-        mAssignExpr = assignExpr;
-        mLoc = loc;
+        statementType = LOC_ASSIGN;
+        this.assignExpr = assignExpr;
+        this.loc = loc;
     }
     Statement(MethodCall methodCall) {
-        mStatementType = METHOD_CALL;
-        mMethodCall = methodCall;
+        statementType = METHOD_CALL;
+        this.methodCall = methodCall;
     }
     Statement(Expr expr, Block ifBlock, Block elseBlock) {
         // else block may be null
-        mStatementType = IF;
-        mExpr = expr;
-        mIfBlock = ifBlock;
-        mElseBlock = elseBlock;
+        statementType = IF;
+        this.expr = expr;
+        this.ifBlock = ifBlock;
+        this.elseBlock = elseBlock;
     }
-    Statement(Id id, Expr init, Expr exit, Loc loc, String inc, Block block) {
-        mStatementType = FOR;
-        mId = id;
-        mInitExpr = init;
-        mExitExpr = exit;
-        mLoc = loc;
-        mInc = inc;
-        mBlock = block;
+    Statement(Id id, Expr initExpr, Expr exitExpr, Loc loc, String inc, Block block) {
+        statementType = FOR;
+        this.id = id;
+        this.initExpr = initExpr;
+        this.exitExpr = exitExpr;
+        this.loc = loc;
+        this.inc = inc;
+        this.block = block;
     }
-    Statement(Id id, Expr init, Expr exit, Loc loc, String assignOp, Expr expr, Block block) {
-        mStatementType = FOR;
-        mId = id;
-        mInitExpr = init;
-        mExitExpr = exit;
-        mLoc = loc;
-        mAssignOp = assignOp;
-        mExpr = expr;
-        mBlock = block;
+    Statement(Id id, Expr initExpr, Expr exitExpr, Loc loc, String assignOp, Expr expr, Block block) {
+        statementType = FOR;
+        this.id = id;
+        this.initExpr = initExpr;
+        this.exitExpr = exitExpr;
+        this.loc = loc;
+        this.assignOp = assignOp;
+        this.expr = expr;
+        this.block = block;
     }
     Statement(Expr expr, Block block) {
-        mStatementType = WHILE;
-        mExpr = expr;
-        mBlock = block;
+        statementType = WHILE;
+        this.expr = expr;
+        this.block = block;
     }
+
     Statement(int statementType) {
-        mStatementType = statementType;
+        this.statementType = statementType;
+    }
+
+    public List<Block> getBlocks() {
+        final List<Block> blocks = new ArrayList<>();
+        if (ifBlock != null) blocks.add(ifBlock);
+        if (elseBlock != null) blocks.add(elseBlock);
+        if (block != null) blocks.add(block);
+        return blocks;
+
     }
 
     public void addReturnExpr(Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
+
+    @Override
+    public void accept(SemanticChecker semanticChecker) throws SemanticException {
+        semanticChecker.check(this);
     }
 
 }

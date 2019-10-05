@@ -12,18 +12,16 @@ import edu.mit.compilers.parser.*;
  * call it on the MethodTable.).
  *
  */
-public class ProgramTable {
+public class ProgramDescriptor {
 
     private FieldTable fieldTable;
     private MethodTable methodTable;
-    private MethodTable importTable;
-    private TypeTable typeTable;
+    private ImportTable importTable;
 
-    public ProgramTable(Program p) throws SemanticException {
-        typeTable = new TypeTable();
-        fieldTable = new FieldTable(p.fieldDeclarations, typeTable);
-        methodTable = new MethodTable(p.methods, typeTable);
-        importTable = new MethodTable(p.importDeclarations, typeTable);
+    public ProgramDescriptor(Program p) throws SemanticException {
+        fieldTable = new FieldTable(p.fieldDeclarations);
+        methodTable = new MethodTable(p.methodDeclarations, fieldTable);
+        importTable = new ImportTable(p.importDeclarations);
     }
 
     public void typeCheck(Program p) throws SemanticException {
