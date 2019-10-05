@@ -5,8 +5,8 @@ import edu.mit.compilers.visitor.SemanticChecker;
 import edu.mit.compilers.visitor.Visitor;
 
 public class DecLit extends Node {
-    public final int dec;
-    DecLit(String s) { dec = Integer.valueOf(s);
+    public final String dec;
+    DecLit(String s) { dec = s;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
     }
 
     @Override
-    public boolean contains(String id) {
-        return this.containsKey(id) || parentTable.contains(id);
+    public boolean isDeclared(String id) {
+        return this.containsKey(id) || parentTable.isDeclared(id);
     }
 }
