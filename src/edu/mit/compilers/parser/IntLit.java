@@ -13,11 +13,11 @@ public class IntLit extends Node {
         this.decLit = decLit;
     }
 
-    public int integer() {
+    public long integer() {
         if (hexLit != null) {
-            return hexLit.hex;
+            return Long.parseLong(hexLit.hex,16);
         } else {
-            return decLit.dec;
+            return Long.parseLong(decLit.dec);
         }
     }
 

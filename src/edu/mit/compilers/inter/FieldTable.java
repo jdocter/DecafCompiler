@@ -34,7 +34,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
     }
 
     @Override
-    public boolean contains(String id) {
+    public boolean isDeclared(String id) {
         return this.containsKey(id);
     }
 }

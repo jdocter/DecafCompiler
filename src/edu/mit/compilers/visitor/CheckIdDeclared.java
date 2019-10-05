@@ -4,39 +4,38 @@ import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.inter.SemanticException;
 import edu.mit.compilers.parser.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
- * Semantic Check 2
+ * Semantic Check 2, 10
  * Checks that all Identifiers are declared before their use
  */
-public class CheckIdDefined implements SemanticChecker {
+public class CheckIdDeclared implements Visitor {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
+    private final List<SemanticException> semanticExceptions = new ArrayList<>();
+
+    public CheckIdDeclared() {
+
+    }
 
     @Override
-    public void check(Program program) throws SemanticException {
+    public void visit(Program program) {
         for (MethodDeclaration methodDeclaration: program.methodDeclarations) {
             methodDeclaration.accept(this);
         }
     }
 
     @Override
-    public void check(Type type) throws SemanticException {
-
-    }
+    public void visit(Type type) { }
 
     @Override
-    public void check(StringLit stringLit) throws SemanticException {
-
-    }
+    public void visit(StringLit stringLit) { }
 
     @Override
-    public void check(Statement statement) throws SemanticException {
-
-        if (!localTableStack.peek().contains(statement.id.getName()))
-            throw new SemanticException(statement.id.getLineNumber(),"Identifier '" + statement.id.getName()
-                    + "' referenced before assignment");
+    public void visit(Statement statement) {
         switch (statement.statementType) {
             case Statement.LOC_ASSIGN:
                 statement.loc.accept(this);
@@ -65,68 +64,76 @@ public class CheckIdDefined implements SemanticChecker {
                 if (statement.expr != null) statement.expr.accept(this);
                 break;
         }
-        for (Block block: statement.getBlocks()) {
-            block.accept(this);
-        }
     }
 
     @Override
-    public void check(MethodCall methodCall) throws SemanticException {
-
-    }
+    public void visit(MethodCall methodCall) { }
 
     @Override
-    public void check(MethodDeclaration method) throws SemanticException {
+    public void visit(MethodDeclaration method) {
         method.mBlock.accept(this);
     }
 
     @Override
-    public void check(Loc loc) throws SemanticException {
-
+    public void visit(Loc loc) {
+        loc.id.accept(this);
     }
 
     @Override
-    public void check(Lit lit) throws SemanticException {
+    public void visit(Lit lit) { }
 
+    @Override
+    public void visit(IntLit intLit) { }
+
+    @Override
+    public void visit(ImportDeclaration importDeclaration) { }
+
+    @Override
+    public void visit(Id id) {
+        if (!localTableStack.peek().isDeclared(id.getName()))
+            semanticExceptions.add(new SemanticException(id.getLineNumber(),"Identifier '" + id.getName()
+                    + "' referenced before declaration"));
     }
 
     @Override
-    public void check(IntLit intLit) throws SemanticException {
+    public void visit(HexLit hexLit) { }
 
+    @Override
+    public void visit(FieldDeclaration fieldDeclaration) { }
+
+    @Override
+    public void visit(Expr expr) {
+        switch (expr.exprType) {
+            case Expr.MINUS:
+            case Expr.NOT:
+                expr.expr.accept(this);
+                break;
+            case Expr.LOC:
+                expr.loc.accept(this);
+                break;
+            case Expr.METHOD_CALL:
+                expr.methodCall.accept(this);
+                break;
+            case Expr.BIN_OP:
+                expr.expr.accept(this);
+                for (Expr binOpExpr : expr.binOpExprs) {
+                    binOpExpr.accept(this);
+                }
+                break;
+            case Expr.LIT:
+                break;
+            case Expr.LEN:
+                expr.id.accept(this);
+                break;
+
+        }
     }
 
     @Override
-    public void check(ImportDeclaration importDeclaration) throws SemanticException {
-
-    }
+    public void visit(DecLit decLit) { }
 
     @Override
-    public void check(Id id) throws SemanticException {
-
-    }
-
-    @Override
-    public void check(HexLit hexLit) throws SemanticException {
-
-    }
-
-    @Override
-    public void check(FieldDeclaration fieldDeclaration) throws SemanticException {
-
-    }
-
-    @Override
-    public void check(Expr expr) throws SemanticException {
-
-    }
-
-    @Override
-    public void check(DecLit decLit) throws SemanticException {
-
-    }
-
-    @Override
-    public void check(Block block) throws SemanticException {
+    public void visit(Block block) {
         localTableStack.push(block.localTable);
         for (Statement statement: block.statements) {
             statement.accept(this);
@@ -135,13 +142,10 @@ public class CheckIdDefined implements SemanticChecker {
     }
 
     @Override
-    public void check(BinOp binOp) throws SemanticException {
-
-    }
+    public void visit(BinOp binOp) { }
 
     @Override
-    public void check(AssignExpr assignExpr) throws SemanticException {
-
+    public void visit(AssignExpr assignExpr) {
+        assignExpr.expr.accept(this);
     }
-
 }
