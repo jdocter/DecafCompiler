@@ -12,7 +12,7 @@ import java.util.Stack;
  * Semantic Check 2, 10
  * Checks that all Identifiers are declared before their use
  */
-public class CheckIdDeclared implements Visitor {
+public class CheckIdDeclared implements SemanticChecker {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
     private final List<SemanticException> semanticExceptions = new ArrayList<>();
@@ -147,5 +147,10 @@ public class CheckIdDeclared implements Visitor {
     @Override
     public void visit(AssignExpr assignExpr) {
         assignExpr.expr.accept(this);
+    }
+
+    @Override
+    public List<SemanticException> getSemanticExceptions() {
+        return this.semanticExceptions;
     }
 }

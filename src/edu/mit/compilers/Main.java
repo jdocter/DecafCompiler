@@ -86,6 +86,7 @@ class Main {
              List<SemanticException> semanticExceptions = new ArrayList<>();
 
              SemanticChecker[] visitors = {
+                     new CheckIdDeclared(),
                      new BreakAndContinueInAnyLoop(),
              };
 

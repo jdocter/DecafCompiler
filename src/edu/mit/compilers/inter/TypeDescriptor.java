@@ -26,7 +26,7 @@ public class TypeDescriptor {
         }
     }
 
-    TypeDescriptor(Type arrayType, int length) throws SemanticException {
+    TypeDescriptor(Type arrayType, long length) throws SemanticException {
         switch (arrayType.mType) {
             case Type.BOOL:
                 this.type = BOOL_ARRAY;
