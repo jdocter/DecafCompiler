@@ -26,11 +26,25 @@ public class MethodDescriptor {
     }
 
 
-    private void buildLocalTable(Block block, LocalTable parentTable) throws SemanticException {
+    static private void buildLocalTable(Block block, LocalTable parentTable) throws SemanticException {
         block.localTable = new LocalTable(block.fieldDeclarations, parentTable);
         for (Statement statement: block.statements) {
-            for (Block innerBlock: statement.getBlocks())
-                buildLocalTable(innerBlock, localTable);
+            switch (statement.statementType) {
+                case Statement.LOC_ASSIGN:
+                case Statement.METHOD_CALL:
+                case Statement.RETURN:
+                case Statement.BREAK:
+                case Statement.CONTINUE:
+                    break;
+                case Statement.IF:
+                    buildLocalTable(statement.ifBlock, block.localTable);
+                    if (statement.elseBlock != null) buildLocalTable(statement.elseBlock, block.localTable);
+                    break;
+                case Statement.FOR:
+                case Statement.WHILE:
+                    buildLocalTable(statement.block, block.localTable);
+                    break;
+            }
         }
     }
 

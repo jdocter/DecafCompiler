@@ -11,7 +11,7 @@ import java.util.List;
 
 public class LocalTable extends HashMap<String, LocalDescriptor> implements VariableTable {
 
-    private final VariableTable parentTable;
+    public final VariableTable parentTable;
 
     public LocalTable(List<FieldDeclaration> fieldDeclarations, VariableTable parentTable) throws SemanticException {
         this.parentTable = parentTable;
@@ -43,7 +43,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
     }
 
     @Override
-    public boolean contains(String id) {
-        return this.containsKey(id) || parentTable.contains(id);
+    public boolean isDeclared(String id) {
+        return this.containsKey(id) || parentTable.isDeclared(id);
     }
 }

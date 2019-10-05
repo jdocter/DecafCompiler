@@ -1,7 +1,5 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.inter.SemanticException;
-import edu.mit.compilers.visitor.SemanticChecker;
 import edu.mit.compilers.visitor.Visitor;
 
 public class BinOp extends Node {
@@ -15,8 +13,4 @@ public class BinOp extends Node {
         v.visit(this);
     }
 
-    @Override
-    public void accept(SemanticChecker semanticChecker) throws SemanticException {
-        semanticChecker.check(this);
-    }
 }

@@ -1,5 +1,5 @@
 package edu.mit.compilers.inter;
 
 public interface VariableTable {
-    boolean contains(String id);
+    boolean isDeclared(String id);
 }

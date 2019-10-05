@@ -11,7 +11,7 @@ public class TypeDescriptor {
     public static final int INT_ARRAY = 2;
     public static final int BOOL_ARRAY = 3;
 
-    private int length;
+    private long length;
     public final int type;
 
     TypeDescriptor(Type type) throws SemanticException {
@@ -26,7 +26,7 @@ public class TypeDescriptor {
         }
     }
 
-    TypeDescriptor(Type arrayType, int length) throws SemanticException {
+    TypeDescriptor(Type arrayType, long length) throws SemanticException {
         switch (arrayType.mType) {
             case Type.BOOL:
                 this.type = BOOL_ARRAY;

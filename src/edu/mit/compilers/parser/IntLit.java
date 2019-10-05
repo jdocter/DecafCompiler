@@ -1,7 +1,5 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.inter.SemanticException;
-import edu.mit.compilers.visitor.SemanticChecker;
 import edu.mit.compilers.visitor.Visitor;
 
 public class IntLit extends Node {
@@ -15,21 +13,16 @@ public class IntLit extends Node {
         this.decLit = decLit;
     }
 
-    public int integer() {
+    public long integer() {
         if (hexLit != null) {
-            return hexLit.hex;
+            return Long.parseLong(hexLit.hex,16);
         } else {
-            return decLit.dec;
+            return Long.parseLong(decLit.dec);
         }
     }
 
     @Override
     public void accept(Visitor v) {
         v.visit(this);
-    }
-
-    @Override
-    public void accept(SemanticChecker semanticChecker) throws SemanticException {
-        semanticChecker.check(this);
     }
 }

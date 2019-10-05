@@ -1,10 +1,15 @@
 package edu.mit.compilers;
 
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
+
+
 import antlr.Token;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
+import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.grammar.*; // Use compiled files in grammar
 import edu.mit.compilers.parser.*;
 
@@ -77,10 +82,22 @@ class Main {
              Program p = myParser.parse();
 
              ProgramDescriptor table = new ProgramDescriptor(p);
-             try {
-                 table.typeCheck(p);
-             } catch (SemanticException e) {
-                 e.printStackTrace();
+
+             List<SemanticException> semanticExceptions = new ArrayList<>();
+
+             SemanticChecker[] visitors = {
+                     new CheckIdDeclared(),
+                     new BreakAndContinueInAnyLoop(),
+             };
+
+             for (SemanticChecker checker : visitors) {
+                 p.accept(checker);
+                 semanticExceptions.addAll(checker.getSemanticExceptions());
+             }
+             if (!semanticExceptions.isEmpty()) {
+                 for (SemanticException e : semanticExceptions) {
+                     e.printStackTrace();
+                 }
                  System.exit(1);
              }
          } catch (DecafParseException e) {
@@ -90,6 +107,7 @@ class Main {
        }
     } catch(Exception e) {
       // print the error:
+        e.printStackTrace();
       System.err.println(CLI.infile+" "+e);
     }
   }
