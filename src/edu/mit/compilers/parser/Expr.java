@@ -16,11 +16,10 @@ public class Expr extends Node {
     public static final int METHOD_CALL = 4;
     public static final int BIN_OP = 5;
     public static final int LIT = 6;
-    public static final int EXPR = 7;
 
     public int exprType;
     public Expr expr;
-    public final List<Expr> exprs = new ArrayList<>();
+    public final List<Expr> binOpExprs = new ArrayList<>();
     public final List<BinOp> binOps = new ArrayList<>();
     public Id id;
     public MethodCall methodCall;
@@ -52,10 +51,10 @@ public class Expr extends Node {
         exprType = LIT;
     }
 
-    public void addExpr(BinOp binOp, Expr expr) {
+    Expr(List<Expr> binOpExprs, List<BinOp> binOps) {
+        this.binOpExprs.addAll(binOpExprs);
+        this.binOps.addAll(binOps);
         exprType = BIN_OP;
-        exprs.add(expr);
-        binOps.add(binOp);
     }
 
     @Override

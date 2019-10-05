@@ -9,13 +9,17 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Semantic Check 2
+ * Semantic Check 2, 10
  * Checks that all Identifiers are declared before their use
  */
-public class CheckIdDefined implements Visitor {
+public class CheckIdDeclared implements Visitor {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
     private final List<SemanticException> semanticExceptions = new ArrayList<>();
+
+    public CheckIdDeclared() {
+
+    }
 
     @Override
     public void visit(Program program) {
@@ -25,21 +29,13 @@ public class CheckIdDefined implements Visitor {
     }
 
     @Override
-    public void visit(Type type) {
-
-    }
+    public void visit(Type type) { }
 
     @Override
-    public void visit(StringLit stringLit) {
-
-    }
+    public void visit(StringLit stringLit) { }
 
     @Override
     public void visit(Statement statement) {
-
-        if (!localTableStack.peek().isDeclared(statement.id.getName()))
-            semanticExceptions.add(new SemanticException(statement.id.getLineNumber(),"Identifier '" + statement.id.getName()
-                    + "' referenced before assignment"));
         switch (statement.statementType) {
             case Statement.LOC_ASSIGN:
                 statement.loc.accept(this);
@@ -68,15 +64,10 @@ public class CheckIdDefined implements Visitor {
                 if (statement.expr != null) statement.expr.accept(this);
                 break;
         }
-        for (Block block: statement.getBlocks()) {
-            block.accept(this);
-        }
     }
 
     @Override
-    public void visit(MethodCall methodCall) {
-
-    }
+    public void visit(MethodCall methodCall) { }
 
     @Override
     public void visit(MethodDeclaration method) {
@@ -85,48 +76,61 @@ public class CheckIdDefined implements Visitor {
 
     @Override
     public void visit(Loc loc) {
-        
+        loc.id.accept(this);
     }
 
     @Override
-    public void visit(Lit lit) {
-
-    }
+    public void visit(Lit lit) { }
 
     @Override
-    public void visit(IntLit intLit) {
-
-    }
+    public void visit(IntLit intLit) { }
 
     @Override
-    public void visit(ImportDeclaration importDeclaration) {
-
-    }
+    public void visit(ImportDeclaration importDeclaration) { }
 
     @Override
     public void visit(Id id) {
-
+        if (!localTableStack.peek().isDeclared(id.getName()))
+            semanticExceptions.add(new SemanticException(id.getLineNumber(),"Identifier '" + id.getName()
+                    + "' referenced before declaration"));
     }
 
     @Override
-    public void visit(HexLit hexLit) {
-
-    }
+    public void visit(HexLit hexLit) { }
 
     @Override
-    public void visit(FieldDeclaration fieldDeclaration) {
-
-    }
+    public void visit(FieldDeclaration fieldDeclaration) { }
 
     @Override
     public void visit(Expr expr) {
+        switch (expr.exprType) {
+            case Expr.MINUS:
+            case Expr.NOT:
+                expr.expr.accept(this);
+                break;
+            case Expr.LOC:
+                expr.loc.accept(this);
+                break;
+            case Expr.METHOD_CALL:
+                expr.methodCall.accept(this);
+                break;
+            case Expr.BIN_OP:
+                expr.expr.accept(this);
+                for (Expr binOpExpr : expr.binOpExprs) {
+                    binOpExpr.accept(this);
+                }
+                break;
+            case Expr.LIT:
+                break;
+            case Expr.LEN:
+                expr.id.accept(this);
+                break;
 
+        }
     }
 
     @Override
-    public void visit(DecLit decLit) {
-
-    }
+    public void visit(DecLit decLit) { }
 
     @Override
     public void visit(Block block) {
@@ -138,12 +142,10 @@ public class CheckIdDefined implements Visitor {
     }
 
     @Override
-    public void visit(BinOp binOp) {
-
-    }
+    public void visit(BinOp binOp) { }
 
     @Override
     public void visit(AssignExpr assignExpr) {
-
+        assignExpr.expr.accept(this);
     }
 }

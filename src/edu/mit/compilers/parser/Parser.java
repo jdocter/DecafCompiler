@@ -275,7 +275,11 @@ public class Parser {
     }
 
     private Expr parseExpr() throws DecafParseException {
-        Expr binOpExpr = new Expr(Expr.EXPR, parseSmolExpr());
+        Expr smolExpr = parseSmolExpr();
+
+        final List<BinOp> binOps= new ArrayList<>();
+        final List<Expr> binOpExprs= new ArrayList<>();
+        binOpExprs.add(smolExpr);
 
         // assume sequence of bin ops and expressions, then handle redundancy in return statement
         while(true) {
@@ -286,11 +290,12 @@ public class Parser {
               break;
             }
             Expr next = parseSmolExpr();
-            binOpExpr.addExpr(binOp, next);
+            binOps.add(binOp);
+            binOpExprs.add(next);
         }
 
         // if the there is no bin ops, then return the "smolExpr"
-        return (binOpExpr.exprType == Expr.BIN_OP) ? binOpExpr : binOpExpr.expr;
+        return (binOps.isEmpty()) ? smolExpr : new Expr(binOpExprs, binOps);
     }
 
     private Expr parseSmolExpr() throws DecafParseException {

@@ -84,15 +84,6 @@ public class Statement extends Node {
         this.statementType = statementType;
     }
 
-    public List<Block> getBlocks() {
-        final List<Block> blocks = new ArrayList<>();
-        if (ifBlock != null) blocks.add(ifBlock);
-        if (elseBlock != null) blocks.add(elseBlock);
-        if (block != null) blocks.add(block);
-        return blocks;
-
-    }
-
     public void addReturnExpr(Expr expr) {
         this.expr = expr;
     }
