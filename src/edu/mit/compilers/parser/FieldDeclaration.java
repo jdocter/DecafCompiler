@@ -3,9 +3,7 @@ package edu.mit.compilers.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mit.compilers.inter.SemanticException;
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.SemanticChecker;
 import edu.mit.compilers.visitor.Visitor;
 
 public class FieldDeclaration extends Node {
@@ -33,10 +31,5 @@ public class FieldDeclaration extends Node {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
-    }
-
-    @Override
-    public void accept(SemanticChecker semanticChecker) throws SemanticException {
-        semanticChecker.check(this);
     }
 }
