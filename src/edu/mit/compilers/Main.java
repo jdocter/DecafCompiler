@@ -5,6 +5,7 @@ import antlr.Token;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
+import edu.mit.compilers.grammar.*; // Use compiled files in grammar
 import edu.mit.compilers.parser.*;
 
 class Main {

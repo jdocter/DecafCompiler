@@ -1,5 +1,6 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.grammar.*; // Use compiled files in grammar
 import java.util.*;
 import antlr.Token;
 import edu.mit.compilers.tools.CLI;
