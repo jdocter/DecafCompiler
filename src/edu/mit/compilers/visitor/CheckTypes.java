@@ -75,6 +75,7 @@ public class CheckTypes implements SemanticChecker {
             case AssignExpr.MEQ:
             case AssignExpr.INC:
             case AssignExpr.DEC:
+                lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
                 break;
         }
     }
@@ -283,37 +284,38 @@ public class CheckTypes implements SemanticChecker {
         String method = methodCall.methodName.getName();
         if (methodTable.containsKey(method)) {
             MethodDescriptor descriptor = methodTable.get(method);
-            if (!descriptor.isVoid()) {
-                List<Pair<Type, Id>> signatureParams = descriptor.getParams();
-                int callLength = methodCall.arguments.size();
-                int signatureLength = signatureParams.size();
-                if (callLength != signatureLength) {
-                    semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
-                            "Incorrect number of arguments to method '" + method + "': expected " +
-                                    signatureLength + ", but found " + callLength));
-                } else {
-                    for (int i = 0; i < callLength; i++) {
-                        Pair<Expr, StringLit> arg = methodCall.arguments.get(i);
-                        Pair<Type, Id> formalParam = signatureParams.get(i);
+            List<Pair<Type, Id>> signatureParams = descriptor.getParams();
+            int callLength = methodCall.arguments.size();
+            int signatureLength = signatureParams.size();
+            if (callLength != signatureLength) {
+                semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
+                        "Incorrect number of arguments to method '" + method + "': expected " +
+                                signatureLength + ", but found " + callLength));
+            } else {
+                for (int i = 0; i < callLength; i++) {
+                    Pair<Expr, StringLit> arg = methodCall.arguments.get(i);
+                    Pair<Type, Id> formalParam = signatureParams.get(i);
 
-                        if (arg.getValue() != null) {
-                            // Rule 7
-                            semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
-                                    "Incorrect type for param '" + formalParam.getValue().getName() + "': expected " +
-                                            formalParam.getKey().toString() + ", but found STRINGLITERAL"));
-                            continue;
-                        }
+                    if (arg.getValue() != null) {
+                        // Rule 7
+                        semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
+                                "Incorrect type for param '" + formalParam.getValue().getName() + "': expected " +
+                                        formalParam.getKey().toString() + ", but found STRINGLITERAL"));
+                        continue;
+                    }
 
-                        arg.getKey().accept(this); // set lastVisitedType
-                        if (lastVisitedType.isPresent() && formalParam.getKey().mType != lastVisitedType.get().type) {
-                            // Rule 5
-                            semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
-                                    "Incorrect type for param '" + formalParam.getValue().getName() + "': expected " +
-                                            formalParam.getKey() + ", but found " + lastVisitedType.get()));
-                            continue;
-                        }
+                    arg.getKey().accept(this); // set lastVisitedType
+                    if (lastVisitedType.isPresent() && formalParam.getKey().mType != lastVisitedType.get().type) {
+                        // Rule 5
+                        semanticExceptions.add(new SemanticException(methodCall.getLineNumber(),
+                                "Incorrect type for param '" + formalParam.getValue().getName() + "': expected " +
+                                        formalParam.getKey() + ", but found " + lastVisitedType.get()));
+                        continue;
                     }
                 }
+            }
+
+            if (!descriptor.isVoid()) {
                 lastVisitedType = Optional.of(descriptor.getReturnType());
                 return;
             }
@@ -354,7 +356,7 @@ public class CheckTypes implements SemanticChecker {
                 if (locType.isPresent() && assignExprType.isPresent()) {
                     if (locType.get().type != assignExprType.get().type) {
                         // Rule 19
-                        semanticExceptions.add(new SemanticException(statement.getLineNumber(),
+                        semanticExceptions.add(new SemanticException(statement.assignExpr.getLineNumber(),
                                 "Mismatched types in an assignment: " + locType.get() + " and " + assignExprType.get()));
                     }
                 }
@@ -424,12 +426,18 @@ public class CheckTypes implements SemanticChecker {
                                 "Return value in the body of a void method"));
                     }
                 } else {
-                    if (statement.expr != null) statement.expr.accept(this);
-                    if (lastVisitedType.isPresent() && lastVisitedType.get().type != enclosingMethodReturnType.mType) {
+                    if (statement.expr == null) {
                         // Rule 9
                         semanticExceptions.add(new SemanticException(statement.getLineNumber(),
-                                "Returning incorrect type: expected " + enclosingMethodReturnType +
-                                " but got " + lastVisitedType.get()));
+                                "Void return value for method with return type " + enclosingMethodReturnType));
+                    } else {
+                        statement.expr.accept(this);
+                        if (lastVisitedType.isPresent() && lastVisitedType.get().type != enclosingMethodReturnType.mType) {
+                            // Rule 9
+                            semanticExceptions.add(new SemanticException(statement.getLineNumber(),
+                                    "Returning incorrect type: expected " + enclosingMethodReturnType +
+                                    " but got " + lastVisitedType.get()));
+                        }
                     }
                 }
                 break;
