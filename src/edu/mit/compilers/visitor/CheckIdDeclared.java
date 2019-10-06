@@ -118,6 +118,9 @@ public class CheckIdDeclared implements SemanticChecker {
     @Override
     public void visit(Loc loc) {
         loc.id.accept(this);
+        if (loc.expr != null) {
+            loc.expr.accept(this);
+        }
     }
 
     @Override
@@ -125,15 +128,21 @@ public class CheckIdDeclared implements SemanticChecker {
         if (localTableStack.peek().isDeclared(methodCall.methodName.getName())) {
             semanticExceptions.add(new SemanticException(methodCall.methodName.getLineNumber(),
                     "'" + methodCall.methodName.getName() + "' is not callable"));
-        }
-        if (!(programDescriptor.methodTable.containsKey(methodCall.methodName.getName()) ||
-                programDescriptor.importTable.containsKey(methodCall.methodName.getName()))) {
+        
+        } else if (programDescriptor.methodTable.containsKey(methodCall.methodName.getName())) {
+          int methodDeclarationLineNumber = programDescriptor.methodTable.get(methodCall.methodName.getName()).declarationLineNumber;
+          if (methodDeclarationLineNumber > methodCall.methodName.getLineNumber()) {
+            semanticExceptions.add(new SemanticException(methodCall.methodName.getLineNumber(),
+                    "Method '" + methodCall.methodName.getName() + "' cannot be called before it is defined"));
+          
+          }
+        } else if (!programDescriptor.importTable.containsKey(methodCall.methodName.getName())) {
             semanticExceptions.add(new SemanticException(methodCall.methodName.getLineNumber(),
                     "Method '" + methodCall.methodName.getName() + "' is not defined"));
         }
         for (Pair<Expr, StringLit> argument : methodCall.arguments) {
             if (argument.getKey() != null) {
-                argument.getKey().accept(this);
+              argument.getKey().accept(this);
             }
         }
     }

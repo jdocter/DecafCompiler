@@ -9,6 +9,7 @@ public class MethodDescriptor {
     private TypeDescriptor returnType = null;
     private final LocalTable localTable;
     private final Block block;
+    public final int declarationLineNumber;
 
     MethodDescriptor(MethodDeclaration methodDeclaration, FieldTable globalFieldTable) throws SemanticException {
         if (methodDeclaration.returnType != null) {
@@ -17,7 +18,8 @@ public class MethodDescriptor {
         } else {
             returnVoid = true;
         }
-
+        
+        declarationLineNumber = methodDeclaration.methodName.getLineNumber();
         block = methodDeclaration.mBlock;
         localTable = new LocalTable(block.fieldDeclarations, globalFieldTable);
         localTable.putParams(methodDeclaration.params);
