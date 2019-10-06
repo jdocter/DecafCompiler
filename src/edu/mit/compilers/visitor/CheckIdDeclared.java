@@ -155,7 +155,12 @@ public class CheckIdDeclared implements SemanticChecker {
 
     @Override
     public void visit(AssignExpr assignExpr) {
-        assignExpr.expr.accept(this);
+        if (assignExpr.expr != null) {
+            // assign
+            assignExpr.expr.accept(this);
+        } else {
+            // increment
+        }
     }
 
     @Override
