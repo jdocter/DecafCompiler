@@ -17,4 +17,8 @@ public class HexLit extends Node {
     public String toString() {
         return "0x"+hex;
     }
+
+    public String negHex() {
+        return "-" + hex;
+    }
 }

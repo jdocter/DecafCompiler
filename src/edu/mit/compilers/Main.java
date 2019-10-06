@@ -91,6 +91,7 @@ class Main {
                      new VoidMainNoArgs(table),
                      new BreakAndContinueInAnyLoop(),
                      new CheckTypes(table),
+                     new IntLiteralInRange(),
              };
 
              for (SemanticChecker checker : visitors) {

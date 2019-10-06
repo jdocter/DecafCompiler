@@ -28,7 +28,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type, size.integer()))); // TODO
+                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type, size.posInteger()))); // TODO
             }
         }
     }
