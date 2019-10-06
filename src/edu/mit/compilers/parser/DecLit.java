@@ -12,4 +12,8 @@ public class DecLit extends Node {
         v.visit(this);
     }
 
+    public String negDec() {
+        return "-" + dec;
+    }
+
 }

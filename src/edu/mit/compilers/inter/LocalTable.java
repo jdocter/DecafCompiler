@@ -31,7 +31,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type, size.integer()))); // TODO
+                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type, size.posInteger()))); // TODO
             }
         }
     }

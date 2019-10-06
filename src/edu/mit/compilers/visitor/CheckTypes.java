@@ -36,9 +36,6 @@ import edu.mit.compilers.util.Pair;
 
 
 public class CheckTypes implements SemanticChecker {
-    /**
-     * Break and continue occur inside of a for/while  (Semantic Rule 20)
-     */
 
     private List<SemanticException> semanticExceptions = new ArrayList<>();
     private final Stack<LocalTable> localTableStack = new Stack<>();
