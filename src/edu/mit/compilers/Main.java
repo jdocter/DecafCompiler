@@ -88,6 +88,7 @@ class Main {
              SemanticChecker[] visitors = {
                      new CheckIdDeclared(p, table),
                      new UniqueGlobalIds(p, table),
+                     new VoidMainNoArgs(table),
                      new BreakAndContinueInAnyLoop(),
                      new CheckTypes(table),
              };
