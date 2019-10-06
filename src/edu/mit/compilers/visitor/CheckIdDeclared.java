@@ -1,8 +1,10 @@
 package edu.mit.compilers.visitor;
 
 import edu.mit.compilers.inter.LocalTable;
+import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.inter.SemanticException;
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,12 @@ public class CheckIdDeclared implements SemanticChecker {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
     private final List<SemanticException> semanticExceptions = new ArrayList<>();
+    private final Program program;
+    private final ProgramDescriptor programDescriptor;
 
-    public CheckIdDeclared() {
-
+    public CheckIdDeclared(Program program, ProgramDescriptor programDescriptor) {
+        this.program = program;
+        this.programDescriptor = programDescriptor;
     }
 
     @Override
@@ -116,7 +121,22 @@ public class CheckIdDeclared implements SemanticChecker {
     }
 
     @Override
-    public void visit(MethodCall methodCall) { }
+    public void visit(MethodCall methodCall) {
+        if (localTableStack.peek().isDeclared(methodCall.methodName.getName())) {
+            semanticExceptions.add(new SemanticException(methodCall.methodName.getLineNumber(),
+                    "'" + methodCall.methodName.getName() + "' is not callable"));
+        }
+        if (!(programDescriptor.methodTable.containsKey(methodCall.methodName.getName()) ||
+                programDescriptor.importTable.containsKey(methodCall.methodName.getName()))) {
+            semanticExceptions.add(new SemanticException(methodCall.methodName.getLineNumber(),
+                    "Method '" + methodCall.methodName.getName() + "' is not defined"));
+        }
+        for (Pair<Expr, StringLit> argument : methodCall.arguments) {
+            if (argument.getKey() != null) {
+                argument.getKey().accept(this);
+            }
+        }
+    }
 
     @Override
     public void visit(MethodDeclaration method) {

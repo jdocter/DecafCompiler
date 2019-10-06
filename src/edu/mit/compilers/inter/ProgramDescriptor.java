@@ -14,9 +14,9 @@ import edu.mit.compilers.parser.*;
  */
 public class ProgramDescriptor {
 
-    private FieldTable fieldTable;
-    private MethodTable methodTable;
-    private ImportTable importTable;
+    public FieldTable fieldTable;
+    public MethodTable methodTable;
+    public ImportTable importTable;
 
     public ProgramDescriptor(Program p) throws SemanticException {
         fieldTable = new FieldTable(p.fieldDeclarations);
