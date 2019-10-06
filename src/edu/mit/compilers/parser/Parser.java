@@ -260,6 +260,7 @@ public class Parser {
             }
         }
         assertIsType(DecafScannerTokenTypes.RPAREN, "");
+        methodCall.setLineNumber(line());
         return methodCall;
     }
 
@@ -348,20 +349,27 @@ public class Parser {
     }
 
     private AssignExpr parseAssignExpr() throws DecafParseException {
+        AssignExpr result;
+        int line;
         if (isType(DecafScannerTokenTypes.INC) ||
             isType(DecafScannerTokenTypes.DEC)) {
             String inc = text();
+            line = line();
             next();
-            return new AssignExpr(inc);
+            result = new AssignExpr(inc);
         } else if (isType(DecafScannerTokenTypes.ASSIGN) ||
                 isType(DecafScannerTokenTypes.MEQ) ||
                 isType(DecafScannerTokenTypes.PEQ)) {
             String assignOp = text();
+            line = line();
             next();
-            return new AssignExpr(assignOp, parseExpr());
+            result = new AssignExpr(assignOp, parseExpr());
         } else {
             throw new DecafParseException("");
         }
+
+        result.setLineNumber(line);
+        return result;
     }
 
     private Id parseId() throws DecafParseException{

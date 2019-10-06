@@ -37,4 +37,9 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
     public boolean isDeclared(String id) {
         return this.containsKey(id);
     }
+
+    @Override
+    public VariableDescriptor getDescriptor(String id) {
+        return this.get(id);
+    }
 }

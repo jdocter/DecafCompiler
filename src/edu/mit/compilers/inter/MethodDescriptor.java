@@ -1,12 +1,18 @@
 package edu.mit.compilers.inter;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.util.Pair;
 
 public class MethodDescriptor {
 
     private final boolean returnVoid;
     private TypeDescriptor returnType = null;
+    private List<Pair<Type, Id>> params = new ArrayList<>();
+
     private final LocalTable localTable;
     private final Block block;
     public final int declarationLineNumber;
@@ -22,6 +28,8 @@ public class MethodDescriptor {
         declarationLineNumber = methodDeclaration.methodName.getLineNumber();
         block = methodDeclaration.mBlock;
         localTable = new LocalTable(block.fieldDeclarations, globalFieldTable);
+
+        this.params = methodDeclaration.params;
         localTable.putParams(methodDeclaration.params);
 
         buildLocalTable(block, localTable);
@@ -48,6 +56,19 @@ public class MethodDescriptor {
                     break;
             }
         }
+    }
+
+
+    public boolean isVoid() {
+        return returnVoid;
+    }
+
+    public TypeDescriptor getReturnType() {
+        return returnType;
+    }
+
+    public List<Pair<Type, Id>> getParams() {
+        return this.params; // in order
     }
 
 //    private void attachLocalTable(Expr expr, LocalTable localTable) throws SemanticException {

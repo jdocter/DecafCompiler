@@ -49,4 +49,12 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
     public boolean isDeclared(String id) {
         return this.containsKey(id) || parentTable.isDeclared(id);
     }
+
+    @Override
+    public VariableDescriptor getDescriptor(String id) {
+        if (this.containsKey(id)) {
+            return this.get(id);
+        }
+        return parentTable.getDescriptor(id);
+    }
 }

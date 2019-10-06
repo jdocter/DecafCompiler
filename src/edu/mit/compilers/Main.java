@@ -89,6 +89,7 @@ class Main {
                      new CheckIdDeclared(p, table),
                      new UniqueGlobalIds(p, table),
                      new BreakAndContinueInAnyLoop(),
+                     new CheckTypes(table),
              };
 
              for (SemanticChecker checker : visitors) {
@@ -97,7 +98,7 @@ class Main {
              }
              if (!semanticExceptions.isEmpty()) {
                  for (SemanticException e : semanticExceptions) {
-                     e.printStackTrace();
+                     System.out.println(e.getMessage());
                  }
                  System.exit(1);
              }
