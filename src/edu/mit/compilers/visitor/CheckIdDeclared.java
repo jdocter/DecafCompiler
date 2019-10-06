@@ -22,17 +22,109 @@ public class CheckIdDeclared implements SemanticChecker {
     }
 
     @Override
+    public List<SemanticException> getSemanticExceptions() {
+        return this.semanticExceptions;
+    }
+
+    @Override
+    public void visit(AssignExpr assignExpr) {
+        if (assignExpr.expr != null) {
+            // assign
+            assignExpr.expr.accept(this);
+        } else {
+            // increment
+        }
+    }
+
+    @Override
+    public void visit(BinOp binOp) { }
+
+    @Override
+    public void visit(Block block) {
+        localTableStack.push(block.localTable);
+        for (Statement statement: block.statements) {
+            statement.accept(this);
+        }
+        localTableStack.pop();
+    }
+
+    @Override
+    public void visit(DecLit decLit) { }
+
+    @Override
+    public void visit(Expr expr) {
+        switch (expr.exprType) {
+            case Expr.MINUS:
+            case Expr.NOT:
+                expr.expr.accept(this);
+                break;
+            case Expr.LOC:
+                expr.loc.accept(this);
+                break;
+            case Expr.METHOD_CALL:
+                expr.methodCall.accept(this);
+                break;
+            case Expr.BIN_OP:
+                for (Expr binOpExpr : expr.binOpExprs) {
+                    binOpExpr.accept(this);
+                }
+                break;
+            case Expr.LIT:
+                break;
+            case Expr.LEN:
+                expr.id.accept(this);
+                break;
+
+        }
+    }
+
+    @Override
+    public void visit(FieldDeclaration fieldDeclaration) { }
+
+    @Override
+    public void visit(HexLit hexLit) { }
+
+    @Override
+    public void visit(Id id) {
+        if (!localTableStack.peek().isDeclared(id.getName())) {
+//            System.out.println("HERE IS A LOCAL TABLE STACK's parents DURING AN EXCEPTION at " + id.getLineNumber());
+//            System.out.println(localTableStack.peek().toString());
+//            System.out.println(localTableStack.peek().parentTable.toString());
+//            System.out.println(((LocalTable)localTableStack.peek().parentTable).parentTable.toString());
+//            System.out.println("----");
+            semanticExceptions.add(new SemanticException(id.getLineNumber(),"Identifier '" + id.getName()
+                    + "' referenced before declaration"));
+        }
+    }
+
+    @Override
+    public void visit(ImportDeclaration importDeclaration) { }
+
+    @Override
+    public void visit(IntLit intLit) { }
+
+    @Override
+    public void visit(Lit lit) { }
+
+    @Override
+    public void visit(Loc loc) {
+        loc.id.accept(this);
+    }
+
+    @Override
+    public void visit(MethodCall methodCall) { }
+
+    @Override
+    public void visit(MethodDeclaration method) {
+        method.mBlock.accept(this);
+    }
+
+    @Override
     public void visit(Program program) {
         for (MethodDeclaration methodDeclaration: program.methodDeclarations) {
             methodDeclaration.accept(this);
         }
     }
-
-    @Override
-    public void visit(Type type) { }
-
-    @Override
-    public void visit(StringLit stringLit) { }
 
     @Override
     public void visit(Statement statement) {
@@ -71,100 +163,8 @@ public class CheckIdDeclared implements SemanticChecker {
     }
 
     @Override
-    public void visit(MethodCall methodCall) { }
+    public void visit(StringLit stringLit) { }
 
     @Override
-    public void visit(MethodDeclaration method) {
-        method.mBlock.accept(this);
-    }
-
-    @Override
-    public void visit(Loc loc) {
-        loc.id.accept(this);
-    }
-
-    @Override
-    public void visit(Lit lit) { }
-
-    @Override
-    public void visit(IntLit intLit) { }
-
-    @Override
-    public void visit(ImportDeclaration importDeclaration) { }
-
-    @Override
-    public void visit(Id id) {
-        if (!localTableStack.peek().isDeclared(id.getName())) {
-//            System.out.println("HERE IS A LOCAL TABLE STACK's parents DURING AN EXCEPTION at " + id.getLineNumber());
-//            System.out.println(localTableStack.peek().toString());
-//            System.out.println(localTableStack.peek().parentTable.toString());
-//            System.out.println(((LocalTable)localTableStack.peek().parentTable).parentTable.toString());
-//            System.out.println("----");
-            semanticExceptions.add(new SemanticException(id.getLineNumber(),"Identifier '" + id.getName()
-                    + "' referenced before declaration"));
-        }
-    }
-
-    @Override
-    public void visit(HexLit hexLit) { }
-
-    @Override
-    public void visit(FieldDeclaration fieldDeclaration) { }
-
-    @Override
-    public void visit(Expr expr) {
-        switch (expr.exprType) {
-            case Expr.MINUS:
-            case Expr.NOT:
-                expr.expr.accept(this);
-                break;
-            case Expr.LOC:
-                expr.loc.accept(this);
-                break;
-            case Expr.METHOD_CALL:
-                expr.methodCall.accept(this);
-                break;
-            case Expr.BIN_OP:
-                for (Expr binOpExpr : expr.binOpExprs) {
-                    binOpExpr.accept(this);
-                }
-                break;
-            case Expr.LIT:
-                break;
-            case Expr.LEN:
-                expr.id.accept(this);
-                break;
-
-        }
-    }
-
-    @Override
-    public void visit(DecLit decLit) { }
-
-    @Override
-    public void visit(Block block) {
-        localTableStack.push(block.localTable);
-        for (Statement statement: block.statements) {
-            statement.accept(this);
-        }
-        localTableStack.pop();
-    }
-
-    @Override
-    public void visit(BinOp binOp) { }
-
-    @Override
-    public void visit(AssignExpr assignExpr) {
-        if (assignExpr.expr != null) {
-            // assign
-            assignExpr.expr.accept(this);
-        } else {
-            // increment
-        }
-    }
-
-    @Override
-    public List<SemanticException> getSemanticExceptions() {
-        return this.semanticExceptions;
-    }
+    public void visit(Type type) { }
 }

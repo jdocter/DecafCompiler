@@ -33,18 +33,65 @@ public class BreakAndContinueInAnyLoop implements Visitor, SemanticChecker {
     private List<SemanticException> semanticExceptions = new ArrayList<>();
 
     @Override
+    public List<SemanticException> getSemanticExceptions() {
+        return this.semanticExceptions;
+    }
+
+    @Override
+    public void visit(AssignExpr assignExpr) {}
+
+    @Override
+    public void visit(BinOp binOp) {}
+
+    @Override
+    public void visit(Block block) {
+        for (Statement statement : block.statements) {
+            statement.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(DecLit decLit) {}
+
+    @Override
+    public void visit(Expr expr) {}
+
+    @Override
+    public void visit(FieldDeclaration fieldDeclaration) {}
+
+    @Override
+    public void visit(HexLit hexLit) {}
+
+    @Override
+    public void visit(Id id) {}
+
+    @Override
+    public void visit(ImportDeclaration importDeclaration) {}
+
+    @Override
+    public void visit(IntLit intLit) {}
+
+    @Override
+    public void visit(Lit lit) {}
+
+    @Override
+    public void visit(Loc loc) {}
+
+    @Override
+    public void visit(MethodCall methodCall) {}
+
+    @Override
+    public void visit(MethodDeclaration method) {
+        method.mBlock.accept(this);
+    }
+
+    @Override
     public void visit(Program program) {
         loopDepth = 0;
         for (MethodDeclaration methodDeclaration: program.methodDeclarations) {
             methodDeclaration.accept(this);
         }
     }
-
-    @Override
-    public void visit(Type type) {}
-
-    @Override
-    public void visit(StringLit stringLit) {}
 
     @Override
     public void visit(Statement statement) {
@@ -79,56 +126,9 @@ public class BreakAndContinueInAnyLoop implements Visitor, SemanticChecker {
     }
 
     @Override
-    public void visit(MethodCall methodCall) {}
+    public void visit(StringLit stringLit) {}
 
     @Override
-    public void visit(MethodDeclaration method) {
-        method.mBlock.accept(this);
-    }
-
-    @Override
-    public void visit(Loc loc) {}
-
-    @Override
-    public void visit(Lit lit) {}
-
-    @Override
-    public void visit(IntLit intLit) {}
-
-    @Override
-    public void visit(ImportDeclaration importDeclaration) {}
-
-    @Override
-    public void visit(Id id) {}
-
-    @Override
-    public void visit(HexLit hexLit) {}
-
-    @Override
-    public void visit(FieldDeclaration fieldDeclaration) {}
-
-    @Override
-    public void visit(Expr expr) {}
-
-    @Override
-    public void visit(DecLit decLit) {}
-
-    @Override
-    public void visit(Block block) {
-        for (Statement statement : block.statements) {
-            statement.accept(this);
-        }
-    }
-
-    @Override
-    public void visit(BinOp binOp) {}
-
-    @Override
-    public void visit(AssignExpr assignExpr) {}
-
-    @Override
-    public List<SemanticException> getSemanticExceptions() {
-        return this.semanticExceptions;
-    }
+    public void visit(Type type) {}
 
 }
