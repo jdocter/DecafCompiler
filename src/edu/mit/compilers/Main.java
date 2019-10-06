@@ -87,6 +87,7 @@ class Main {
 
              SemanticChecker[] visitors = {
                      new CheckIdDeclared(p, table),
+                     new UniqueGlobalIds(p, table),
                      new BreakAndContinueInAnyLoop(),
              };
 
@@ -101,6 +102,10 @@ class Main {
                  System.exit(1);
              }
          } catch (DecafParseException e) {
+             e.printStackTrace();
+             System.exit(1);
+         } catch (SemanticException e) {
+             // exception while building symbol tables
              e.printStackTrace();
              System.exit(1);
          }

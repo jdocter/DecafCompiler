@@ -35,10 +35,10 @@ public class CheckIdDeclared implements SemanticChecker {
     public void visit(AssignExpr assignExpr) {
         switch (assignExpr.assignExprOp) {
             case AssignExpr.ASSIGN:
-                assignExpr.expr.accept(this);
-                break;
             case AssignExpr.PEQ:
             case AssignExpr.MEQ:
+                assignExpr.expr.accept(this);
+                break;
             case AssignExpr.INC:
             case AssignExpr.DEC:
                 break;

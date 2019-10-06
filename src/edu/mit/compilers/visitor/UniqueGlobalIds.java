@@ -61,7 +61,7 @@ public class UniqueGlobalIds implements SemanticChecker {
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        if (programDescriptor.importTable.containsKey(methodDeclaration.methodName.getLineNumber())) {
+        if (programDescriptor.importTable.containsKey(methodDeclaration.methodName.getName())) {
             semanticExceptions.add(new SemanticException(methodDeclaration.methodName.getLineNumber(), "Identifier '"
                     + methodDeclaration.methodName.getName() + "' cannot be declared twice in the same scope."));
         }

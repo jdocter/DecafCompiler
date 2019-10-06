@@ -38,6 +38,9 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
 
     public void putParams(List<Pair<Type, Id>> params) throws SemanticException {
         for (Pair<Type, Id> param: params) {
+            if (this.containsKey(param.getValue().getName())) {
+                throw new SemanticException(param.getValue().getLineNumber(), "Identifier '" + param.getValue().getName() + "' declared twice in the same scope.");
+            }
             this.put(param.getValue().getName(), new LocalDescriptor(new TypeDescriptor(param.getKey())));
         }
     }
