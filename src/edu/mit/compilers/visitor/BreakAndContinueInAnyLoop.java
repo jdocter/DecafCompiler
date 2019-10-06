@@ -81,8 +81,8 @@ public class BreakAndContinueInAnyLoop implements Visitor, SemanticChecker {
     public void visit(MethodCall methodCall) {}
 
     @Override
-    public void visit(MethodDeclaration method) {
-        method.mBlock.accept(this);
+    public void visit(MethodDeclaration methodDeclaration) {
+        methodDeclaration.mBlock.accept(this);
     }
 
     @Override

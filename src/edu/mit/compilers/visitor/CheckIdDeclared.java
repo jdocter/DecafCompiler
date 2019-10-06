@@ -148,8 +148,8 @@ public class CheckIdDeclared implements SemanticChecker {
     }
 
     @Override
-    public void visit(MethodDeclaration method) {
-        method.mBlock.accept(this);
+    public void visit(MethodDeclaration methodDeclaration) {
+        methodDeclaration.mBlock.accept(this);
     }
 
     @Override
