@@ -28,11 +28,15 @@ public class CheckIdDeclared implements SemanticChecker {
 
     @Override
     public void visit(AssignExpr assignExpr) {
-        if (assignExpr.expr != null) {
-            // assign
-            assignExpr.expr.accept(this);
-        } else {
-            // increment
+        switch (assignExpr.assignExprOp) {
+            case AssignExpr.ASSIGN:
+                assignExpr.expr.accept(this);
+                break;
+            case AssignExpr.PEQ:
+            case AssignExpr.MEQ:
+            case AssignExpr.INC:
+            case AssignExpr.DEC:
+                break;
         }
     }
 
