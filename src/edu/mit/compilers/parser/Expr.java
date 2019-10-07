@@ -48,6 +48,7 @@ public class Expr extends Node {
     Expr(Expr left, Expr right, BinOp binOp) {
         this.expr = left;
         this.binOpExpr = right;
+        this.binOp = binOp;
         exprType = BIN_OP;
     }
 

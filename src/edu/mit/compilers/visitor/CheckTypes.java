@@ -98,7 +98,7 @@ public class CheckTypes implements SemanticChecker {
     public void visit(DecLit decLit) {
         lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
     }
-
+/*
     private void handleBinOpExpr(Expr bigExpr) {
         // Could be better with a Visitor pattern on expr parse tree.
 
@@ -135,6 +135,7 @@ public class CheckTypes implements SemanticChecker {
                 break;
         }
     }
+*/
 
     @Override
     public void visit(Expr expr) {
@@ -157,7 +158,7 @@ public class CheckTypes implements SemanticChecker {
                 break;
             case Expr.MINUS:
                 expr.expr.accept(this);
-                if (!lastVisitedType.isPresent() || lastVisitedType.get().type != TypeDescriptor.INT) {
+                if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
                     semanticExceptions.add(new SemanticException(expr.getLineNumber(),
                             "The '-' operator expected operand to be of type 'INT', but was " + lastVisitedType.get()));
                 }
@@ -203,7 +204,7 @@ public class CheckTypes implements SemanticChecker {
                         for (Expr binOpExpr : List.of(expr.expr, expr.binOpExpr)) {
                             binOpExpr.accept(this);
                             if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
-                                semanticExceptions.add(new SemanticException(binOpExpr.getLineNumber(),
+                                semanticExceptions.add(new SemanticException(expr.binOp.getLineNumber(),
                                         "The '" + expr.binOp + "' operator expected operand of type INT," +
                                                 " but found " +lastVisitedType.get()));
                                 lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
@@ -219,7 +220,7 @@ public class CheckTypes implements SemanticChecker {
                                 Optional.of(lastVisitedType.get()) : Optional.empty();
                         expr.expr.accept(this);
                         if (lastVisitedType.isPresent() && leftExprType.isPresent() &&
-                                lastVisitedType.get() != leftExprType.get()) {
+                                lastVisitedType.get().type != leftExprType.get().type) {
                             semanticExceptions.add(new SemanticException(expr.binOp.getLineNumber(),
                                     "The '" + expr.binOp + "' operator expects operands of same type," +
                                             " but the left operand was type " +leftExprType.get() +
@@ -235,6 +236,7 @@ public class CheckTypes implements SemanticChecker {
                         }
                         break;
                 }
+                break;
             case Expr.LIT:
                 expr.lit.accept(this);
                 break;
