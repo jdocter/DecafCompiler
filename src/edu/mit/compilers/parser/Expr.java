@@ -2,9 +2,6 @@ package edu.mit.compilers.parser;
 
 import edu.mit.compilers.visitor.Visitor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Expr extends Node {
     public static final int LEN = 0;
     public static final int MINUS = 1;
@@ -16,8 +13,8 @@ public class Expr extends Node {
 
     public int exprType;
     public Expr expr;
-    public final List<Expr> binOpExprs = new ArrayList<>();
-    public final List<BinOp> binOps = new ArrayList<>();
+    public BinOp binOp;
+    public Expr binOpExpr;
     public Id id;
     public MethodCall methodCall;
     public Loc loc;
@@ -48,9 +45,9 @@ public class Expr extends Node {
         exprType = LIT;
     }
 
-    Expr(List<Expr> binOpExprs, List<BinOp> binOps) {
-        this.binOpExprs.addAll(binOpExprs);
-        this.binOps.addAll(binOps);
+    Expr(Expr left, Expr right, BinOp binOp) {
+        this.expr = left;
+        this.binOpExpr = right;
         exprType = BIN_OP;
     }
 

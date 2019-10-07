@@ -144,6 +144,7 @@ public class CheckTypes implements SemanticChecker {
                 String method = methodCall.methodName.getName();
                 if (importTable.containsKey(method)) {
                     // no typechecking
+                    break;
                 } else if (methodTable.containsKey(method)) {
                     MethodDescriptor descriptor = methodTable.get(method);
                     if (descriptor.isVoid()) { // Rule 6
@@ -156,18 +157,84 @@ public class CheckTypes implements SemanticChecker {
                 break;
             case Expr.MINUS:
                 expr.expr.accept(this);
+                if (!lastVisitedType.isPresent() || lastVisitedType.get().type != TypeDescriptor.INT) {
+                    semanticExceptions.add(new SemanticException(expr.getLineNumber(),
+                            "The '-' operator expected operand to be of type 'INT', but was " + lastVisitedType.get()));
+                }
                 lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
                 break;
             case Expr.NOT:
                 expr.expr.accept(this);
+                if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.BOOL) {
+                    semanticExceptions.add(new SemanticException(expr.getLineNumber(),
+                            "The '!' operator operator expected operand of type BOOL," +
+                                    " but found " +lastVisitedType.get()));
+                }
                 lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
                 break;
             case Expr.LOC:
                 expr.loc.accept(this);
                 break;
             case Expr.BIN_OP:
-                handleBinOpExpr(expr);
-                break;
+                switch (expr.binOp.binOp) {
+                    case BinOp.OR:
+                    case BinOp.AND:
+                        for (Expr binOpExpr : List.of(expr.expr, expr.binOpExpr)) {
+                            binOpExpr.accept(this);
+                            if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.BOOL) {
+                                semanticExceptions.add(new SemanticException(binOpExpr.getLineNumber(),
+                                        "The '" + expr.binOp + "' operator expected operand of type BOOL," +
+                                                " but found " +lastVisitedType.get()));
+                                lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
+                                break;
+                            }
+                        }
+                        lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
+                        break;
+                    case BinOp.DIV:
+                    case BinOp.MINUS:
+                    case BinOp.MOD:
+                    case BinOp.GEQ:
+                    case BinOp.LEQ:
+                    case BinOp.PLUS:
+                    case BinOp.MUL:
+                    case BinOp.LT:
+                    case BinOp.GT:
+                        for (Expr binOpExpr : List.of(expr.expr, expr.binOpExpr)) {
+                            binOpExpr.accept(this);
+                            if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
+                                semanticExceptions.add(new SemanticException(binOpExpr.getLineNumber(),
+                                        "The '" + expr.binOp + "' operator expected operand of type INT," +
+                                                " but found " +lastVisitedType.get()));
+                                lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
+                                break;
+                            }
+                        }
+                        lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
+                        break;
+                    case BinOp.EQ:
+                    case BinOp.NEQ:
+                        expr.expr.accept(this);
+                        final Optional<TypeDescriptor> leftExprType = lastVisitedType.isPresent() ?
+                                Optional.of(lastVisitedType.get()) : Optional.empty();
+                        expr.expr.accept(this);
+                        if (lastVisitedType.isPresent() && leftExprType.isPresent() &&
+                                lastVisitedType.get() != leftExprType.get()) {
+                            semanticExceptions.add(new SemanticException(expr.binOp.getLineNumber(),
+                                    "The '" + expr.binOp + "' operator expects operands of same type," +
+                                            " but the left operand was type " +leftExprType.get() +
+                                            " while the right operand was type " + lastVisitedType.get()));
+                            // type is ambiguous
+                            lastVisitedType = Optional.empty();
+                        } else if (lastVisitedType.isPresent()) {
+                            // ok as is
+                        } else if (leftExprType.isPresent()) {
+                            lastVisitedType = Optional.of(leftExprType.get());
+                        } else {
+                            lastVisitedType = Optional.empty();
+                        }
+                        break;
+                }
             case Expr.LIT:
                 expr.lit.accept(this);
                 break;

@@ -276,6 +276,27 @@ public class Parser {
 
     }
 
+    /**
+     * @param binOps list of BinOp
+     * @param binOpExprs list of expressions that are arguments of the binary operators in binOps respectively
+     * @return Expr that reflects the decaf precedence rules of binary operators
+     */
+    private static Expr organizeExprs(List<BinOp> binOps, List<Expr> binOpExprs) {
+        if (binOps.size() == 0) {
+            return binOpExprs.get(0);
+        }
+        BinOp weakest = binOps.get(0);
+        for (BinOp binOp : binOps) {
+            weakest = BinOp.weakerPrecedence(weakest, binOp);
+        }
+        int weakestIndex = binOps.indexOf(weakest);
+        // passes view of binOps, but this is OK because this is a private method that we know we are not mutating
+        Expr left = organizeExprs(binOps.subList(0,weakestIndex), binOpExprs.subList(0,weakestIndex+1));
+        Expr right = organizeExprs(binOps.subList(weakestIndex+1, binOps.size()),
+                binOpExprs.subList(weakestIndex+1,binOpExprs.size()));
+        return new Expr(left,right,weakest);
+    }
+
     private Expr parseExpr() throws DecafParseException {
         Expr smolExpr = parseSmolExpr();
 
@@ -296,8 +317,7 @@ public class Parser {
             binOpExprs.add(next);
         }
 
-        // if the there is no bin ops, then return the "smolExpr"
-        return (binOps.isEmpty()) ? smolExpr : new Expr(binOpExprs, binOps);
+        return organizeExprs(binOps,binOpExprs);
     }
 
     private Expr parseSmolExpr() throws DecafParseException {

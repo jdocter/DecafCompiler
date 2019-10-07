@@ -74,9 +74,8 @@ public class CheckIdDeclared implements SemanticChecker {
                 expr.methodCall.accept(this);
                 break;
             case Expr.BIN_OP:
-                for (Expr binOpExpr : expr.binOpExprs) {
-                    binOpExpr.accept(this);
-                }
+                expr.expr.accept(this);
+                expr.binOpExpr.accept(this);
                 break;
             case Expr.LIT:
                 break;

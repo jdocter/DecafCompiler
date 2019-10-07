@@ -105,10 +105,8 @@ public class IntLiteralInRange implements SemanticChecker {
                 break;
             case Expr.BIN_OP:
                 numMinuses = 0;
-
-                for (Expr innerExpr : expr.binOpExprs) {
-                    innerExpr.accept(this);
-                }
+                expr.expr.accept(this);
+                expr.binOpExpr.accept(this);
 
                 numMinuses = beforeNumMinuses;
                 break;
