@@ -70,6 +70,13 @@ public class CheckTypes implements SemanticChecker {
                 break;
             case AssignExpr.PEQ:
             case AssignExpr.MEQ:
+                assignExpr.expr.accept(this);
+                if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
+                    semanticExceptions.add(new SemanticException(assignExpr.expr.getLineNumber(),
+                            "The '" + assignExpr.assignExprOp + "' operator expected operand to be of type 'INT', but was " + lastVisitedType.get()));
+                
+                }
+                lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
             case AssignExpr.INC:
             case AssignExpr.DEC:
                 lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
@@ -194,13 +201,9 @@ public class CheckTypes implements SemanticChecker {
                         break;
                     case BinOp.DIV:
                     case BinOp.MINUS:
-                    case BinOp.MOD:
-                    case BinOp.GEQ:
-                    case BinOp.LEQ:
                     case BinOp.PLUS:
                     case BinOp.MUL:
-                    case BinOp.LT:
-                    case BinOp.GT:
+                    case BinOp.MOD:
                         for (Expr binOpExpr : List.of(expr.expr, expr.binOpExpr)) {
                             binOpExpr.accept(this);
                             if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
@@ -213,12 +216,27 @@ public class CheckTypes implements SemanticChecker {
                         }
                         lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.INT));
                         break;
+                    case BinOp.GEQ:
+                    case BinOp.LEQ:
+                    case BinOp.LT:
+                    case BinOp.GT:
+                        for (Expr binOpExpr : List.of(expr.expr, expr.binOpExpr)) {
+                            binOpExpr.accept(this);
+                            if (lastVisitedType.isPresent() && lastVisitedType.get().type != TypeDescriptor.INT) {
+                                semanticExceptions.add(new SemanticException(expr.binOp.getLineNumber(),
+                                        "The '" + expr.binOp + "' operator expected operand of type INT," +
+                                                " but found " +lastVisitedType.get()));
+                                lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
+                                break;
+                            }
+                        }
+                        lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
+                        break;
                     case BinOp.EQ:
                     case BinOp.NEQ:
                         expr.expr.accept(this);
-                        final Optional<TypeDescriptor> leftExprType = lastVisitedType.isPresent() ?
-                                Optional.of(lastVisitedType.get()) : Optional.empty();
-                        expr.expr.accept(this);
+                        final Optional<TypeDescriptor> leftExprType = lastVisitedType.ofNullable(lastVisitedType.orElse(null));
+                        expr.binOpExpr.accept(this);
                         if (lastVisitedType.isPresent() && leftExprType.isPresent() &&
                                 lastVisitedType.get().type != leftExprType.get().type) {
                             semanticExceptions.add(new SemanticException(expr.binOp.getLineNumber(),
@@ -226,14 +244,8 @@ public class CheckTypes implements SemanticChecker {
                                             " but the left operand was type " +leftExprType.get() +
                                             " while the right operand was type " + lastVisitedType.get()));
                             // type is ambiguous
-                            lastVisitedType = Optional.empty();
-                        } else if (lastVisitedType.isPresent()) {
-                            // ok as is
-                        } else if (leftExprType.isPresent()) {
-                            lastVisitedType = Optional.of(leftExprType.get());
-                        } else {
-                            lastVisitedType = Optional.empty();
                         }
+                        lastVisitedType = Optional.of(new TypeDescriptor(TypeDescriptor.BOOL));
                         break;
                 }
                 break;
@@ -416,15 +428,14 @@ public class CheckTypes implements SemanticChecker {
         switch (statement.statementType) {
             case Statement.LOC_ASSIGN:
                 statement.loc.accept(this);
-                Optional<TypeDescriptor> locType = lastVisitedType;
+                Optional<TypeDescriptor> locType = Optional.ofNullable(lastVisitedType.orElse(null));
                 statement.assignExpr.accept(this);
                 Optional<TypeDescriptor> assignExprType = lastVisitedType;
-                if (locType.isPresent() && assignExprType.isPresent()) {
-                    if (locType.get().type != assignExprType.get().type) {
-                        // Rule 19
-                        semanticExceptions.add(new SemanticException(statement.assignExpr.getLineNumber(),
-                                "Mismatched types in an assignment: " + locType.get() + " and " + assignExprType.get()));
-                    }
+                if (locType.isPresent() && assignExprType.isPresent() && 
+                      locType.get().type != assignExprType.get().type) {
+                    // Rule 19
+                    semanticExceptions.add(new SemanticException(statement.assignExpr.getLineNumber(),
+                            "Mismatched types in an assignment: " + locType.get() + " and " + assignExprType.get()));
                 }
                 break;
             case Statement.METHOD_CALL:
