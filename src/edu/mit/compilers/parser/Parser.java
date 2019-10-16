@@ -25,8 +25,7 @@ public class Parser {
             System.exit(1);
         }
     }
-
-    // THIS MAY BE BETTER PARSE() FOR OUR PURPOSES
+    
     public Program parse() throws DecafParseException {
         try {
             return parseProgram();
@@ -35,20 +34,6 @@ public class Parser {
             throw new DecafParseException("Premature program end", e);
         }
     }
-
-    // parse() that returns error code
-//    public int parse() {
-//        try {
-//            parseProgram();
-//            return 0;
-//        } catch (DecafParseException e) {
-//            e.printStackTrace();
-//            return 1;
-//        } catch (ArrayIndexOutOfBoundsException e) {
-//            // may occur while doing token lookahead
-//            return 2;
-//        }
-//    }
 
     private Program parseProgram() throws DecafParseException {
         Program program = new Program();
@@ -346,6 +331,13 @@ public class Parser {
             Expr minusExpr = new Expr(Expr.MINUS, nextExpr);
             minusExpr.setLineNumber(line);
             return minusExpr;
+        }
+        else if (isType(DecafScannerTokenTypes.DEC)) {
+            int line = line();
+            next();
+            Expr nextExpr = parseSmolExpr();
+            nextExpr.setLineNumber(line);
+            return nextExpr;
         } else if (isType(DecafScannerTokenTypes.LPAREN)) {
             next();
             Expr nextExpr = parseExpr();
