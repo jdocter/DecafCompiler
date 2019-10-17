@@ -20,12 +20,18 @@ import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.parser.Type;
 import edu.mit.compilers.visitor.Visitor;
 
+import java.util.*;
+
 
 public class CFBuilder implements Visitor {
+    private HashMap<String,CFNode> methodCFGs = new HashMap<>();
+    Optional<CFNode> nextNode = Optional.empty();
+    Stack<CFNode> CFNodes = new Stack<>();
 
     public void visit(Program program) {
-        // TODO Auto-generated method stub
-
+        for (MethodDeclaration methodDeclaration: program.methodDeclarations) {
+            methodDeclaration.accept(this);
+        }
     }
 
     public void visit(ImportDeclaration importDeclaration) {
@@ -40,7 +46,7 @@ public class CFBuilder implements Visitor {
 
     public void visit(MethodDeclaration methodDeclaration) {
         // TODO Auto-generated method stub
-
+        methodDeclaration.mBlock.accept(this);
     }
 
     public void visit(Expr expr) {
@@ -50,7 +56,6 @@ public class CFBuilder implements Visitor {
 
     public void visit(Statement statement) {
         // TODO Auto-generated method stub
-
     }
 
     public void visit(AssignExpr assignExpr) {
@@ -65,7 +70,9 @@ public class CFBuilder implements Visitor {
 
     public void visit(Block block) {
         // TODO Auto-generated method stub
-
+        for (Statement statement: block.statements) {
+            statement.accept(this);
+        }
     }
 
     public void visit(DecLit decLit) {

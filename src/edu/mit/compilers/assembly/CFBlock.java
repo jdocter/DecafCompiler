@@ -24,6 +24,7 @@ public class CFBlock implements CFNode {
     Set<CFBlock> parents = new HashSet<CFBlock>();
 
     boolean isEnd; // end of function
+    private boolean isSplitPoint;
 
     public CFBlock(Statement statement) {
         int type = statement.statementType;
@@ -55,18 +56,6 @@ public class CFBlock implements CFNode {
 
         // Visitor?
         return List.of();
-    }
-
-    @Override
-    public CFNode getSuccessorIfTrue() {
-        // TODO Auto-generated method stub
-        return successorIfTrue;
-    }
-
-    @Override
-    public CFNode getSuccessorIfFalse() {
-        // TODO Auto-generated method stub
-        return successorIfFalse;
     }
 
     @Override
