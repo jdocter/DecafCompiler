@@ -1,7 +1,7 @@
 package edu.mit.compilers.parser;
 
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class AssignExpr extends Node {
     public static final String ASSIGN = "=";
@@ -22,7 +22,7 @@ public class AssignExpr extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 

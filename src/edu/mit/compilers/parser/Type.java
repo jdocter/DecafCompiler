@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class Type extends Node {
     public static final int BOOL = 1;
@@ -23,7 +23,7 @@ public class Type extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 }

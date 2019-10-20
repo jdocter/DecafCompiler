@@ -4,6 +4,7 @@ import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
+import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.HashSet;
 import java.util.List;
@@ -52,5 +53,10 @@ public class CFReturn extends UIDObject implements CFNode {
     @Override
     public List<CFNode> dfsTraverse() {
         return List.of(next);
+    }
+
+    @Override
+    public void accept(CFVisitor v) {
+        v.visit(this);
     }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import edu.mit.compilers.inter.SemanticException;
 
-public interface SemanticChecker extends Visitor {
+public interface SemanticChecker extends ASTVisitor {
 
     List<SemanticException> getSemanticExceptions();
 

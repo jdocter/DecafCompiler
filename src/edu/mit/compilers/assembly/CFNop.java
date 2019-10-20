@@ -3,6 +3,7 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.UIDObject;
+import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.HashSet;
 import java.util.List;
@@ -47,5 +48,10 @@ public class CFNop extends UIDObject implements CFNode {
     public List<CFNode> dfsTraverse() {
         if (next == null) return List.of();
         return List.of(next);
+    }
+
+    @Override
+    public void accept(CFVisitor v) {
+        v.visit(this);
     }
 }

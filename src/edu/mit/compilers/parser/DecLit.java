@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class DecLit extends Node {
     public final String dec;
@@ -8,7 +8,7 @@ public class DecLit extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 

@@ -2,7 +2,7 @@ package edu.mit.compilers.visitor;
 
 import edu.mit.compilers.parser.*;
 
-public interface Visitor {
+public interface ASTVisitor {
     void visit(Program program);
     void visit(ImportDeclaration importDeclaration);
     void visit(FieldDeclaration fieldDeclaration);

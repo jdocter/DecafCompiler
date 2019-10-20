@@ -3,7 +3,7 @@ package edu.mit.compilers.parser;
 import java.util.Comparator;
 import java.util.Map;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class BinOp extends Node {
     public static final String AND = "&&";
@@ -84,7 +84,7 @@ public class BinOp extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
     List<String> toAssembly(VariableTable variableTable, MethodTable methodTable);
@@ -20,4 +21,6 @@ public interface CFNode {
     List<CFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
 
     int getUID();
+
+    void accept(CFVisitor v);
 }
