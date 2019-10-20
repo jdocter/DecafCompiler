@@ -10,11 +10,12 @@ import java.util.Set;
 
 public class CFNop extends UIDObject implements CFNode {
     @Override public String toString() {
-        if (next == null) return "UID " + UID + " CFNop";
+        if (isEnd) return "UID " + UID + " CFNop";
         return "UID " + UID + " CFNop [next=" + next.getUID() + "]";
     }
 
     CFNode next;
+    boolean isEnd = true; // end of function
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
@@ -29,6 +30,7 @@ public class CFNop extends UIDObject implements CFNode {
 
     @Override
     public void setNext(CFNode next) {
+        isEnd = false;
         this.next = next;
         next.addParent(this);
     }

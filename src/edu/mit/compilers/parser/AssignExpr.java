@@ -27,6 +27,7 @@ public class AssignExpr extends Node {
     }
 
     @Override public String toString() {
+        if (expr == null) return assignExprOp + "";
         return assignExprOp + " " + expr;
     }
 }

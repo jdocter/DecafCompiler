@@ -17,6 +17,7 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     private CFNode next;
+    boolean isEnd; // end of function
     private Expr returnExpr;
     private Set<CFNode> parents = new HashSet<CFNode>();
 
@@ -51,6 +52,6 @@ public class CFReturn extends UIDObject implements CFNode {
 
     @Override
     public List<CFNode> dfsTraverse() {
-        return List.of(next);
+        return List.of();
     }
 }
