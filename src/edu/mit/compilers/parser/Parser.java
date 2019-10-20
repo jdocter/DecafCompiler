@@ -274,7 +274,7 @@ public class Parser {
         for (BinOp binOp : binOps) {
             weakest = BinOp.weakerPrecedence(weakest, binOp);
         }
-        int weakestIndex = binOps.indexOf(weakest);
+        int weakestIndex = binOps.lastIndexOf(weakest); // last is weaker when evaluating from left to right
         // passes view of binOps, but this is OK because this is a private method that we know we are not mutating
         Expr left = organizeExprs(binOps.subList(0,weakestIndex), binOpExprs.subList(0,weakestIndex+1));
         Expr right = organizeExprs(binOps.subList(weakestIndex+1, binOps.size()),

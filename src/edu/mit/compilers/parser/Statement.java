@@ -112,18 +112,18 @@ public class Statement extends Node {
     @Override public String toString() {
         switch (this.statementType) {
             case Statement.LOC_ASSIGN:
-                return "Statement.LOC_ASSIGN line " + getLineNumber() + " [" + loc + " " + assignExpr + "]";
+                return "LOC_ASSIGN [" + loc + " " + assignExpr + "]";
             case Statement.METHOD_CALL:
-                return "Statement.METHOD_CALL line " + getLineNumber() + " [" + methodCall + "]";
+                return "METHOD_CALL [" + methodCall + "]";
             case Statement.IF:
-                return "Statement.IF line " + getLineNumber() + " [" + expr + ", " + ifBlock + ", "
+                return "IF [" + expr + ", " + ifBlock + ", "
                         + elseBlock + "]";
             case Statement.FOR:
-                return "Statement.FOR line " + getLineNumber() + " [initAssignment=" + initAssignment + ", updateAssignment=" + updateAssignment + ", exitExpr=" + exitExpr + ", block=" + block + "]";
+                return "FOR [init=" + initAssignment + ", update=" + updateAssignment + ", exit=" + exitExpr + ", block=" + block + "]";
             case Statement.WHILE:
-                return "Statement.WHILE line " + getLineNumber() + " [" + expr + ", " + block + "]";
+                return "WHILE [" + expr + ", " + block + "]";
             case Statement.RETURN:
-                return "Statement.RETURN line " + getLineNumber() + " [" + expr + "]";
+                return "RETURN [" + expr + "]";
             default:
                 throw new RuntimeException("Unknown statement type: " + this.statementType);
         }
