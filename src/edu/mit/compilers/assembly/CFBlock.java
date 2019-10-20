@@ -17,10 +17,8 @@ public class CFBlock implements CFNode {
     List<Statement> statements = new ArrayList<Statement>();
     CFNode next;
 
-    Set<CFBlock> parents = new HashSet<CFBlock>();
-
     boolean isEnd; // end of function
-    private boolean isSplitPoint;
+    private Set<CFNode> parents;
 
     public CFBlock(Statement statement) {
         int type = statement.statementType;
@@ -31,8 +29,15 @@ public class CFBlock implements CFNode {
         isEnd = true;
     }
 
-    void setNext(CFBlock next) {
+    @Override
+    public void setNext(CFNode next) {
         isEnd = false;
+        this.next = next;
+    }
+
+    @Override
+    public CFNode getNext() {
+        return next;
     }
 
     @Override
@@ -44,13 +49,12 @@ public class CFBlock implements CFNode {
     }
 
     @Override
-    public List<CFNode> parents() {
-        // TODO Auto-generated method stub
-        return null;
+    public Set<CFNode> parents() {
+        return this.parents;
     }
 
     @Override
-    public void setNext(CFNode next) {
-        this.next = next;
+    public void addParent(CFNode parent) {
+        this.parents.add(parent);
     }
 }

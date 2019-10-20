@@ -1,6 +1,5 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.inter.SemanticException;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 
@@ -88,7 +87,7 @@ public class CFFactory {
      * @param expr
      * @param ifTrue
      * @param ifFalse
-     * @return
+     * @return CFNode representing conditional evaluation of the expr
      */
     public static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse) {
         switch (expr.exprType) {
