@@ -1,12 +1,10 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.parser.Block;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.parser.Loc;
-import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 
-public class CFGFactory {
+public class CFFactory {
 
     public static CFNode makeCFG(Block block) {
         CFNode contLoop = new CFNop(); // dummy node
@@ -16,16 +14,17 @@ public class CFGFactory {
 
     /**
      * make a CFG of a decaf block
-     * @param block block to make CFG of
-     * @param endBlock the CFNode that all sequential flow should end at
-     * @param contLoop the CFNode that control should flow towards to continue a loop
+     *
+     * @param block     block to make CFG of
+     * @param endBlock  the CFNode that all sequential flow should end at
+     * @param contLoop  the CFNode that control should flow towards to continue a loop
      * @param breakLoop the CFNode that control should flow towards to break out of a loop
      * @return the start CFNode of the CFG that represents block
      */
     public static CFNode makeCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop) {
         final CFNode startBlock = new CFNop();
         CFNode previousCFNode = startBlock;
-        for (Statement statement: block.statements) {
+        for (Statement statement : block.statements) {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
                 case Statement.METHOD_CALL:
@@ -34,7 +33,7 @@ public class CFGFactory {
                     previousCFNode = cfBlock;
                     break;
                 case Statement.RETURN:
-                    CFNode cfReturn = new CFReturn(statement.expr); // TODO
+                    CFNode cfReturn = new CFReturn(statement.expr);
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
                 case Statement.IF:
@@ -52,12 +51,13 @@ public class CFGFactory {
                     break;
                 case Statement.FOR:
                     CFNode endFor = new CFNop();
-                    CFNode initAssignment = new CFBlock(/* initial assignment */); // TODO
-                    CFNode contFor = new CFBlock(/* iteration expression */); // TODO
+                    CFNode initAssignment = new CFBlock(statement.initAssignment);
+                    CFNode contFor = new CFBlock(statement.updateAssignment);
                     CFNode cfForBlock = makeCFG(statement.block, contFor, contFor, endFor);
                     CFNode startFor = shortCircuit(statement.exitExpr, cfForBlock, endFor);
                     previousCFNode.setNext(initAssignment);
                     initAssignment.setNext(startFor);
+                    contFor.setNext(startFor);
                     previousCFNode = endFor;
                     break;
                 case Statement.WHILE:
@@ -74,7 +74,7 @@ public class CFGFactory {
                     cfBreak.setNext(breakLoop);
                     return startBlock;
                 case Statement.CONTINUE:
-                    CFNode cfContinue = new CFNop();
+                    CFNode cfContinue = new CFContinue();
                     previousCFNode.setNext(cfContinue);
                     cfContinue.setNext(contLoop);
                     return startBlock;
@@ -85,13 +85,51 @@ public class CFGFactory {
     }
 
     /**
-     *
      * @param expr
      * @param ifTrue
      * @param ifFalse
      * @return
      */
     public static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse) {
-        // TODO
+        switch (expr.exprType) {
+            case Expr.LEN:
+            case Expr.MINUS:
+                // shouldn't ever get here if semantic checks done correctly
+                return null;
+            case Expr.LOC:
+            case Expr.METHOD_CALL:
+            case Expr.LIT: // assume bool
+                return new CFConditional(expr, ifTrue, ifFalse);
+            case Expr.NOT:
+                return shortCircuit(expr, ifFalse, ifTrue);
+            case Expr.BIN_OP:
+                switch (expr.binOp.binOp) {
+                    case BinOp.AND:
+                        CFNode secondAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
+                        CFNode firstAnd = shortCircuit(expr.expr, secondAnd, ifFalse);
+                        return firstAnd;
+                    case BinOp.OR:
+                        CFNode secondOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
+                        CFNode firstOr = shortCircuit(expr.expr, ifTrue, secondOr);
+                        return firstOr;
+                    case BinOp.EQ:
+                    case BinOp.NEQ:
+                    case BinOp.GEQ:
+                    case BinOp.LEQ:
+                    case BinOp.GT:
+                    case BinOp.LT:
+                        // for these comparisons, both arguments of the binOp can and should be evaluated
+                        return new CFConditional(expr, ifTrue, ifFalse);
+                    case BinOp.MINUS:
+                    case BinOp.MOD:
+                    case BinOp.MUL:
+                    case BinOp.PLUS:
+                    case BinOp.DIV:
+                        // shouldn't ever get here if semantic checks done correctly
+                        return null;
+                }
+            default:
+                return null;
+        }
     }
 }

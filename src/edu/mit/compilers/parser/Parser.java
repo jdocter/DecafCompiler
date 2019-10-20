@@ -25,7 +25,7 @@ public class Parser {
             System.exit(1);
         }
     }
-    
+
     public Program parse() throws DecafParseException {
         try {
             return parseProgram();
@@ -333,11 +333,16 @@ public class Parser {
             return minusExpr;
         }
         else if (isType(DecafScannerTokenTypes.DEC)) {
+            // don't optimize bc need for type checking
             int line = line();
             next();
             Expr nextExpr = parseSmolExpr();
             nextExpr.setLineNumber(line);
-            return nextExpr;
+            Expr minusExpr = new Expr(Expr.MINUS, nextExpr);
+            minusExpr.setLineNumber(line);
+            Expr doubleMinusExpr = new Expr(Expr.MINUS, minusExpr);
+            doubleMinusExpr.setLineNumber(line);
+            return doubleMinusExpr;
         } else if (isType(DecafScannerTokenTypes.LPAREN)) {
             next();
             Expr nextExpr = parseExpr();

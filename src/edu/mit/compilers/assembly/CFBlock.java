@@ -15,11 +15,7 @@ public class CFBlock implements CFNode {
 
     // Should all be either LOC_ASSIGN, METHOD_CALL, or RETURN
     List<Statement> statements = new ArrayList<Statement>();
-    CFBlock successor;
-
-    Expr splitCondition; // if !isSplitPoint: condition is null
-    CFBlock successorIfTrue; // if !isSplitPoint: successorIfTrue is null
-    CFBlock successorIfFalse; // if !isSplitPoint: successorIfFalse is null
+    CFNode next;
 
     Set<CFBlock> parents = new HashSet<CFBlock>();
 
@@ -35,23 +31,12 @@ public class CFBlock implements CFNode {
         isEnd = true;
     }
 
-    public CFBlock(Expr condition, CFBlock ifTrue, CFBlock ifFalse) {
-        splitCondition = condition;
-
-        successorIfTrue = ifTrue;
-        ifTrue.parents.add(this);
-        successorIfFalse = ifFalse;
-        ifFalse.parents.add(this);
-
-        isEnd = false;
-    }
-
     void setNext(CFBlock next) {
         isEnd = false;
     }
 
     @Override
-    public List<String> getAssemblyCode(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
         // TODO Auto-generated method stub
 
         // Visitor?
@@ -61,13 +46,11 @@ public class CFBlock implements CFNode {
     @Override
     public List<CFNode> parents() {
         // TODO Auto-generated method stub
-        return parents;
+        return null;
     }
 
     @Override
-    public boolean isSplitPoint() {
-        // TODO Auto-generated method stub
-        return isSplitPoint;
+    public void setNext(CFNode next) {
+        this.next = next;
     }
-
 }

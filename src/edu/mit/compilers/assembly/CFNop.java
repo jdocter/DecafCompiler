@@ -6,8 +6,9 @@ import edu.mit.compilers.inter.VariableTable;
 import java.util.List;
 
 public class CFNop implements CFNode {
+    private CFNode next;
     @Override
-    public List<String> getAssemblyCode(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
         return null;
     }
 
@@ -17,12 +18,7 @@ public class CFNop implements CFNode {
     }
 
     @Override
-    public boolean isSplitPoint() {
-        return false;
-    }
-
-    @Override
     public void setNext(CFNode next) {
-
+        this.next = next;
     }
 }

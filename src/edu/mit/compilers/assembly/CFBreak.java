@@ -8,18 +8,13 @@ import java.util.List;
 public class CFBreak implements CFNode {
 
     @Override
-    public List<String> getAssemblyCode(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
         return null;
     }
 
     @Override
     public List<CFNode> parents() {
         return null;
-    }
-
-    @Override
-    public boolean isSplitPoint() {
-        return false;
     }
 
     @Override
