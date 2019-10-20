@@ -27,4 +27,7 @@ public class MethodCall extends Node {
     public void accept(Visitor v) {
         v.visit(this);
     }
+    @Override public String toString() {
+        return methodName + "" + arguments;
+    }
 }

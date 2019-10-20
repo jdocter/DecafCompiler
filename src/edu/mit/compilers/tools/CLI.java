@@ -49,9 +49,10 @@ public class CLI {
    * INTER: produce a high-level intermediate representation from the input,
    *        and stop. This is not one of the segment targets for Fall 2006,
    *        but you may wish to use it for your own purposes.
+   * CFG: Produce CFG from input and print them out.
    * ASSEMBLY: produce assembly from the input.
    */
-    public enum Action {DEFAULT, ABOUT, SCAN, PARSE, INTER, ASSEMBLY};
+    public enum Action {DEFAULT, ABOUT, SCAN, PARSE, INTER, CFG, ASSEMBLY};
 
   /**
    * Array indicating which optimizations should be performed.  If
@@ -112,6 +113,7 @@ public class CLI {
    * <TT>scan</TT> or <TT>scanner</TT> specifies Action.SCAN
    * <TT>parse</TT> specifies Action.PARSE
    * <TT>inter</TT> specifies Action.INTER
+   * <TT>cfg</TT> specifies Action.CFG
    * <TT>assembly</TT> or <TT>codegen</TT> specifies Action.ASSEMBLY
    *
    * The boolean array opts[] indicates which, if any, of the
@@ -172,7 +174,7 @@ public class CLI {
             for (int k = 0; k < optnames.length; k++) {
               if (optsList[j].equals(optnames[k])) {
                 opts[k] = true;
-              } else if (optsList[j].charAt(0) == '-' && 
+              } else if (optsList[j].charAt(0) == '-' &&
                          optsList[j].substring(1).equals(optnames[k])) {
                 opts[k] = false;
               }
@@ -189,18 +191,19 @@ public class CLI {
       if (targetStr.equals("scan")) target = Action.SCAN;
       else if (targetStr.equals("parse")) target = Action.PARSE;
       else if (targetStr.equals("inter")) target = Action.INTER;
+      else if (targetStr.equals("cfg")) target = Action.CFG;
       else if (targetStr.equals("assembly")) target = Action.ASSEMBLY;
       else if (targetStr.equals("about")) {
 	  printUsage("Test run successful. Command line parameters: ");
 	  System.exit(0);
       }
- 
+
       else {
         printUsage("Invalid target: " + targetStr);
         throw new IllegalArgumentException(targetStr);
       }
     }
-  
+
     // grab infile and lose extra args
     int i = 0;
     while (infile == null && i < extras.size()) {

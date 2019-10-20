@@ -1,8 +1,11 @@
 package edu.mit.compilers.parser;
 
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.inter.TypeDescriptor;
 import edu.mit.compilers.visitor.Visitor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Statement extends Node {
     public static final int LOC_ASSIGN = 0;
@@ -104,6 +107,25 @@ public class Statement extends Node {
         }
         if (this.updateAssignment != null) {
             this.updateAssignment.setLineNumber(line);
+        }
+    }
+    @Override public String toString() {
+        switch (this.statementType) {
+            case Statement.LOC_ASSIGN:
+                return "Statement.LOC_ASSIGN line " + getLineNumber() + " [" + loc + " " + assignExpr + "]";
+            case Statement.METHOD_CALL:
+                return "Statement.METHOD_CALL line " + getLineNumber() + " [" + methodCall + "]";
+            case Statement.IF:
+                return "Statement.IF line " + getLineNumber() + " [" + expr + ", " + ifBlock + ", "
+                        + elseBlock + "]";
+            case Statement.FOR:
+                return "Statement.FOR line " + getLineNumber() + " [initAssignment=" + initAssignment + ", updateAssignment=" + updateAssignment + ", exitExpr=" + exitExpr + ", block=" + block + "]";
+            case Statement.WHILE:
+                return "Statement.WHILE line " + getLineNumber() + " [" + expr + ", " + block + "]";
+            case Statement.RETURN:
+                return "Statement.RETURN line " + getLineNumber() + " [" + expr + "]";
+            default:
+                throw new RuntimeException("Unknown statement type: " + this.statementType);
         }
     }
 }

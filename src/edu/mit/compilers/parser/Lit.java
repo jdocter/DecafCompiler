@@ -26,6 +26,18 @@ public class Lit extends Node {
         mBool = bool;
     }
 
+    @Override public String toString() {
+        switch (litType) {
+            case BOOL:
+                return "" + mBool;
+            case CHAR:
+                return "" + mChar;
+            case INT:
+                return "" + mIntLit;
+            default:
+                throw new RuntimeException("Unknown Lit type: " + litType);
+        }
+    }
     @Override
     public void accept(Visitor v) {
         v.visit(this);

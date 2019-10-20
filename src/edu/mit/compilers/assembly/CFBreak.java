@@ -2,13 +2,19 @@ package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.util.UIDObject;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CFBreak implements CFNode {
+public class CFBreak extends UIDObject implements CFNode {
 
-    private Set<CFNode> parents;
+    @Override public String toString() {
+        return "UID " + UID + " CFBreak [next=" + next.getUID() + "]";
+    }
+
+    private Set<CFNode> parents = new HashSet<CFNode>();
     CFNode next;
 
     @Override
@@ -35,5 +41,10 @@ public class CFBreak implements CFNode {
     @Override
     public CFNode getNext() {
         return next;
+    }
+
+    @Override
+    public List<CFNode> dfsTraverse() {
+        return List.of(next);
     }
 }

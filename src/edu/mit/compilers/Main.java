@@ -2,14 +2,17 @@ package edu.mit.compilers;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
-
+import java.util.HashSet;
 
 import antlr.Token;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
+import edu.mit.compilers.assembly.CFFactory;
+import edu.mit.compilers.assembly.CFNode;
 import edu.mit.compilers.grammar.*; // Use compiled files in grammar
 import edu.mit.compilers.parser.*;
 
@@ -112,11 +115,69 @@ class Main {
              e.printStackTrace();
              System.exit(1);
          }
-       }
+       } else if (CLI.target == Action.CFG) {
+           DecafScanner scanner =
+               new DecafScanner(new DataInputStream(inputStream));
+           Parser myParser = new Parser(scanner);
+           try {
+               Program p = myParser.parse();
+
+               ProgramDescriptor table = new ProgramDescriptor(p);
+
+               List<SemanticException> semanticExceptions = new ArrayList<>();
+
+               SemanticChecker[] visitors = {
+                       new CheckIdDeclared(p, table),
+                       new UniqueGlobalIds(p, table),
+                       new VoidMainNoArgs(table),
+                       new BreakAndContinueInAnyLoop(),
+                       new CheckTypes(table),
+                       new IntLiteralInRange(),
+               };
+
+               for (SemanticChecker checker : visitors) {
+                   p.accept(checker);
+                   semanticExceptions.addAll(checker.getSemanticExceptions());
+               }
+               if (!semanticExceptions.isEmpty()) {
+                   for (SemanticException e : semanticExceptions) {
+                       System.out.println(e.getMessage());
+                   }
+                   System.exit(1);
+               }
+
+               for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
+                   CFNode cfg = CFFactory.makeCFG(methodDeclaration.mBlock);
+
+                   System.out.println("CFG for " + methodDeclaration.methodName.getName());
+                   System.out.println("----------");
+                   dfsPrint(cfg, new HashSet<Integer>());
+                   System.out.println("----------");
+               }
+           } catch (DecafParseException e) {
+               e.printStackTrace();
+               System.exit(1);
+           } catch (SemanticException e) {
+               // exception while building symbol tables
+               e.printStackTrace();
+               System.exit(1);
+           }
+      }
     } catch(Exception e) {
       // print the error:
         e.printStackTrace();
       System.err.println(CLI.infile+" "+e);
     }
   }
+
+    private static void dfsPrint(CFNode cfg, Set<Integer> visited) {
+        int cfgID = cfg.getUID();
+        if (!visited.contains(cfgID)) {
+            visited.add(cfgID);
+            System.out.println(cfg.toString());
+            for (CFNode neighbor : cfg.dfsTraverse()) {
+                dfsPrint(neighbor, visited);
+            }
+        }
+    }
 }

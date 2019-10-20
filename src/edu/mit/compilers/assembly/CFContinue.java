@@ -2,12 +2,17 @@ package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.util.UIDObject;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CFContinue implements CFNode {
+public class CFContinue extends UIDObject implements CFNode {
+
+    @Override public String toString() {
+        return "UID " + UID + " CFContinue [next=" + next.getUID() + "]";
+    }
 
     CFNode next;
     private Set<CFNode> parents = new HashSet<CFNode>();
@@ -36,5 +41,10 @@ public class CFContinue implements CFNode {
     @Override
     public CFNode getNext() {
         return next;
+    }
+
+    @Override
+    public List<CFNode> dfsTraverse() {
+        return List.of(next);
     }
 }

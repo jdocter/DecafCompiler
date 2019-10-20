@@ -9,18 +9,20 @@ import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.util.UIDObject;
 
 
-public class CFBlock implements CFNode {
+public class CFBlock extends UIDObject implements CFNode {
 
     // Should all be either LOC_ASSIGN, METHOD_CALL, or RETURN
     List<Statement> statements = new ArrayList<Statement>();
     CFNode next;
 
     boolean isEnd; // end of function
-    private Set<CFNode> parents;
+    private Set<CFNode> parents = new HashSet<CFNode>();
 
     public CFBlock(Statement statement) {
+        super();
         int type = statement.statementType;
         assert type == Statement.LOC_ASSIGN ||
                 type == Statement.METHOD_CALL ||
@@ -56,5 +58,16 @@ public class CFBlock implements CFNode {
     @Override
     public void addParent(CFNode parent) {
         this.parents.add(parent);
+    }
+
+    @Override public String toString() {
+        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "]";
+        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "]";
+    }
+
+    @Override
+    public List<CFNode> dfsTraverse() {
+        if (isEnd) return List.of();
+        return List.of(next);
     }
 }

@@ -3,13 +3,18 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.util.UIDObject;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CFReturn implements CFNode {
+public class CFReturn extends UIDObject implements CFNode {
 
+
+    @Override public String toString() {
+        return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "]";
+    }
 
     private CFNode next;
     private Expr returnExpr;
@@ -42,5 +47,10 @@ public class CFReturn implements CFNode {
     @Override
     public void addParent(CFNode parent) {
         this.parents.add(parent);
+    }
+
+    @Override
+    public List<CFNode> dfsTraverse() {
+        return List.of(next);
     }
 }

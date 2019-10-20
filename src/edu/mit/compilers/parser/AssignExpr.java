@@ -25,4 +25,8 @@ public class AssignExpr extends Node {
     public void accept(Visitor v) {
         v.visit(this);
     }
+
+    @Override public String toString() {
+        return assignExprOp + " " + expr;
+    }
 }

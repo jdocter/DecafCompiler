@@ -16,4 +16,8 @@ public interface CFNode {
     void setNext(CFNode next);
 
     CFNode getNext();
+
+    List<CFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
+
+    int getUID();
 }
