@@ -1,7 +1,8 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.util.Pair;
+
+import java.util.Set;
 
 public class CFFactory {
 
@@ -26,6 +27,9 @@ public class CFFactory {
         for (Statement statement : block.statements) {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
+                    if (statement.assignExpr.expr != null && hasPotentialToSC(statement.assignExpr.expr)) {
+
+                    }
                 case Statement.METHOD_CALL:
                     CFNode cfBlock = new CFBlock(statement);
                     previousCFNode.setNext(cfBlock);
@@ -79,6 +83,7 @@ public class CFFactory {
                     return startBlock;
             }
         }
+        // note that if we reach this point, CFNode cannot be a CFBreak, CFContinue, or CFReturn
         previousCFNode.setNext(endBlock);
         return startBlock;
     }
@@ -93,8 +98,7 @@ public class CFFactory {
         switch (expr.exprType) {
             case Expr.LEN:
             case Expr.MINUS:
-                // shouldn't ever get here if semantic checks done correctly
-                return null;
+                throw new UnsupportedOperationException("Error in semantic checking");
             case Expr.LOC:
             case Expr.METHOD_CALL:
             case Expr.LIT: // assume bool
@@ -104,15 +108,33 @@ public class CFFactory {
             case Expr.BIN_OP:
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
-                        CFNode secondAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
-                        CFNode firstAnd = shortCircuit(expr.expr, secondAnd, ifFalse);
-                        return firstAnd;
+                        CFNode rightAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
+                        CFNode leftAnd = shortCircuit(expr.expr, rightAnd, ifFalse);
+                        return leftAnd;
                     case BinOp.OR:
-                        CFNode secondOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
-                        CFNode firstOr = shortCircuit(expr.expr, ifTrue, secondOr);
-                        return firstOr;
+                        CFNode rightOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse);
+                        CFNode leftOr = shortCircuit(expr.expr, ifTrue, rightOr);
+                        return leftOr;
                     case BinOp.EQ:
+                        // if either left or right side of EQ may short circuit, we must expand CFG
+                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
+                            CFNode rightEqTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
+                            CFNode rightEqFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
+                            CFNode leftEq = shortCircuit(expr.expr, rightEqTrue, rightEqFalse);
+                            return leftEq;
+                        } else {
+                            return new CFConditional(expr, ifTrue, ifFalse);
+                        }
                     case BinOp.NEQ:
+                        // if either left or right side of EQ may short circuit, we must expand CFG
+                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
+                            CFNode rightNeqTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
+                            CFNode rightNeqFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
+                            CFNode leftNeq = shortCircuit(expr.expr, rightNeqFalse, rightNeqTrue);
+                            return leftNeq;
+                        } else {
+                            return new CFConditional(expr, ifTrue, ifFalse);
+                        }
                     case BinOp.GEQ:
                     case BinOp.LEQ:
                     case BinOp.GT:
@@ -125,10 +147,19 @@ public class CFFactory {
                     case BinOp.PLUS:
                     case BinOp.DIV:
                         // shouldn't ever get here if semantic checks done correctly
-                        return null;
+                        throw new UnsupportedOperationException("Error in semantic checking");
                 }
-            default:
-                return null;
         }
+        // default for both switch statements
+        throw new UnsupportedOperationException("Error in semantic checking");
+    }
+
+    /**
+     * @param expr
+     * @return true if expr has potential to short circuit (NOT, AND, OR, EQ, NEQ)
+     */
+    private static boolean hasPotentialToSC(Expr expr) {
+        return expr.exprType == Expr.NOT ||
+                (expr.exprType == Expr.BIN_OP && Set.of(BinOp.AND, BinOp.OR, BinOp.EQ, BinOp.NEQ).contains(expr.binOp));
     }
 }

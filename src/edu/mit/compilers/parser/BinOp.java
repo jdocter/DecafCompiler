@@ -1,7 +1,7 @@
 package edu.mit.compilers.parser;
 
-import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 
 import edu.mit.compilers.visitor.Visitor;
 
@@ -35,6 +35,8 @@ public class BinOp extends Node {
             Map.entry(BinOp.AND, 5),
             Map.entry(BinOp.OR, 6)
             );
+
+    private static Set<String> boolResultOps = Set.of(AND, OR, EQ, NEQ, GT, LT, GEQ, LEQ);
 
     public final String binOp;
     BinOp(String s) {
@@ -88,4 +90,7 @@ public class BinOp extends Node {
         v.visit(this);
     }
 
+    public boolean evaluatesToBool() {
+        return boolResultOps.contains(binOp);
+}
 }

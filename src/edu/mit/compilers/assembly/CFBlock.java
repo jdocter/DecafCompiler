@@ -14,7 +14,7 @@ import edu.mit.compilers.util.UIDObject;
 
 public class CFBlock extends UIDObject implements CFNode {
 
-    // Should all be either LOC_ASSIGN, METHOD_CALL, or RETURN
+    // Should all be either LOC_ASSIGN, METHOD_CALL
     List<Statement> statements = new ArrayList<Statement>();
     CFNode next;
 
@@ -25,8 +25,7 @@ public class CFBlock extends UIDObject implements CFNode {
         super();
         int type = statement.statementType;
         assert type == Statement.LOC_ASSIGN ||
-                type == Statement.METHOD_CALL ||
-                type == Statement.RETURN;
+                type == Statement.METHOD_CALL;
         statements.add(statement);
         isEnd = true;
     }
