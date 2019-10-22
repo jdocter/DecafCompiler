@@ -31,30 +31,16 @@ public class CFFactory {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
                     final CFNode endAssign = new CFNop();
-                    final CFNode cfBlockAssign = makeAssignCFG(new CFAssign(statement.loc,
-                            statement.assignExpr.assignExprOp, statement.assignExpr.expr), endAssign);
+                    final CFNode cfBlockAssign = makeAssignCFG(new CFAssign(statement), endAssign);
                     previousCFNode.setNext(cfBlockAssign);
                     previousCFNode = endAssign;
                     break;
                 case Statement.METHOD_CALL:
                     final CFNode endMethodCall = new CFNop();
-                    final CFNode cfBlockMethodCall = makeMethodCFG(new CFMethodCall(statement.methodCall.methodName,
-                                    statement.methodCall.arguments), endMethodCall);
+                    final CFNode cfBlockMethodCall = makeMethodCFG(new CFMethodCall(statement), endMethodCall);
                     previousCFNode.setNext(cfBlockMethodCall);
                     previousCFNode = endMethodCall;
                     break;
-                case Statement.RETURN:
-                    final CFNode cfReturn;
-                    if(statement.expr != null && hasPotentialToSC(statement.expr)) {
-                        final cfReturnTrue = new CFReturn(Expr.makeTrueExpr());
-                        final cfReturnFalse = new CFReturn(Expr.makeFalseExpr());
-                        cfReturn = shortCircuit(statement.expr, cfReturnTrue, cfReturnFalse);
-                    } else {
-                      cfReturn = new CFReturn(statement.expr);                      
-                    }
-                    previousCFNode.setNext(cfReturn);
-                    return startBlock;
-
                 case Statement.IF:
                     final CFNode endIf = new CFNop();
                     final CFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop);
@@ -87,6 +73,17 @@ public class CFFactory {
                     previousCFNode.setNext(contWhile);
                     previousCFNode = endWhile;
                     break;
+                case Statement.RETURN:
+                    final CFNode cfReturn;
+                    if(statement.expr != null && hasPotentialToSC(statement.expr)) {
+                        final CFNode cfReturnTrue = new CFReturn(Expr.makeTrueExpr());
+                        final CFNode cfReturnFalse = new CFReturn(Expr.makeFalseExpr());
+                        cfReturn = shortCircuit(statement.expr, cfReturnTrue, cfReturnFalse);
+                    } else {
+                      cfReturn = new CFReturn(statement.expr);
+                    }
+                    previousCFNode.setNext(cfReturn);
+                    return startBlock;
                 case Statement.BREAK:
                     final CFNode cfBreak = new CFBreak();
                     previousCFNode.setNext(cfBreak);
@@ -99,7 +96,8 @@ public class CFFactory {
                     return startBlock;
             }
         }
-        // note that if we reach this point, CFNode cannot be a CFBreak, CFContinue, or CFReturn
+        // note that if we reach this point, previousCFNode must
+        // be a CFNop, and so it supports setNext.
         previousCFNode.setNext(endBlock);
         return startBlock;
     }
@@ -114,7 +112,7 @@ public class CFFactory {
     public static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign) {
         if (cfAssign.expr != null && hasPotentialToSC(cfAssign.expr)) {
             final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
-            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
+            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeFalseExpr()));
             cfBlockAssignTrue.setNext(endAssign);
             cfBlockAssignFalse.setNext(endAssign);
             return shortCircuit(cfAssign.expr, cfBlockAssignTrue, cfBlockAssignFalse);
@@ -133,6 +131,10 @@ public class CFFactory {
      *      return CFNode of methodCall
      *
      * this runs in n^2 time where n is number of arguments
+     *
+     * Also note that the compiled code will only take a path of up to length n.
+     * O(n^2) space is required so O(n^2) time to build is required
+     *
      * @param cfMethodCall
      * @param end
      * @return
@@ -165,7 +167,7 @@ public class CFFactory {
         switch (expr.exprType) {
             case Expr.LEN:
             case Expr.MINUS:
-                throw new UnsupportedOperationException("Error in semantic checking");
+                throw new RuntimeException("Incorrect semantic checking, tried to shortCircuit a non-boolean");
             case Expr.LOC:
             case Expr.METHOD_CALL:
             case Expr.LIT: // assume bool
@@ -185,9 +187,9 @@ public class CFFactory {
                     case BinOp.EQ:
                         // if either left or right side of EQ may short circuit, we must expand CFG
                         if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode rightEqTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
-                            CFNode rightEqFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
-                            CFNode leftEq = shortCircuit(expr.expr, rightEqTrue, rightEqFalse);
+                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
+                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
+                            CFNode leftEq = shortCircuit(expr.expr, scIfRightEvaluatesTrue, scIfRightEvaluatesFalse);
                             return leftEq;
                         } else {
                             return new CFConditional(expr, ifTrue, ifFalse);
@@ -195,9 +197,9 @@ public class CFFactory {
                     case BinOp.NEQ:
                         // if either left or right side of EQ may short circuit, we must expand CFG
                         if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode rightNeqTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
-                            CFNode rightNeqFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
-                            CFNode leftNeq = shortCircuit(expr.expr, rightNeqFalse, rightNeqTrue);
+                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse);
+                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue);
+                            CFNode leftNeq = shortCircuit(expr.expr, scIfRightEvaluatesFalse, scIfRightEvaluatesTrue);
                             return leftNeq;
                         } else {
                             return new CFConditional(expr, ifTrue, ifFalse);
@@ -214,16 +216,19 @@ public class CFFactory {
                     case BinOp.PLUS:
                     case BinOp.DIV:
                         // shouldn't ever get here if semantic checks done correctly
-                        throw new UnsupportedOperationException("Error in semantic checking");
+                        throw new RuntimeException("Incorrect semantic checking, tried to shortCircuit a non-boolean");
+                    default:
+                        throw new RuntimeException("Unknown BinOp: " + expr.binOp.binOp);
+
                 }
+            default:
+                throw new RuntimeException("Unknown exprType: " + expr.exprType);
         }
-        // default for both switch statements
-        throw new UnsupportedOperationException("Error in semantic checking");
     }
 
     /**
      * @param expr
-     * @return true if expr has potential to short circuit (NOT, AND, OR, EQ, NEQ)
+     * @return true if expr or child of expr has potential to short circuit (NOT, AND, OR, EQ, NEQ)
      */
     private static boolean hasPotentialToSC(Expr expr) {
         return expr.exprType == Expr.NOT ||

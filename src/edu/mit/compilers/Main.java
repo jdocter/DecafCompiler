@@ -13,6 +13,11 @@ import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.CFFactory;
 import edu.mit.compilers.assembly.CFNode;
+/*
+ * You have to include this line, or else when you ant clean,
+ * `ant` won't work on the second try.
+ */
+import edu.mit.compilers.grammar.*; // MANUALLY ADDED see note above; use compiled files
 import edu.mit.compilers.parser.*;
 
 class Main {

@@ -14,27 +14,19 @@ import edu.mit.compilers.util.UIDObject;
 
 public class CFBlock extends UIDObject implements CFNode {
 
-    // Should all be either LOC_ASSIGN, METHOD_CALL
-    List<Statement> statements = new ArrayList<Statement>();
+    // Should all be either CFAssign or CFMethodCall
+    List<CFStatement> statements = new ArrayList<CFStatement>();
     CFNode next;
 
     boolean isEnd; // end of function
     private Set<CFNode> parents = new HashSet<CFNode>();
 
-    public CFBlock(Statement statement) {
-        int type = statement.statementType;
-        assert type == Statement.LOC_ASSIGN ||
-                type == Statement.METHOD_CALL;
-        statements.add(statement);
-        isEnd = true;
-    }
-
     public CFBlock(CFAssign cfAssign) {
-
+        this.statements.add(cfAssign);
     }
 
     public CFBlock(CFMethodCall methodCall) {
-
+        this.statements.add(methodCall);
     }
 
     @Override
