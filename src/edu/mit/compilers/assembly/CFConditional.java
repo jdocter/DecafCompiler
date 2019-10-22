@@ -38,12 +38,13 @@ public class CFConditional extends UIDObject implements CFNode {
 
     @Override
     public void setNext(CFNode next) {
-        if (this.ifTrue != this) {
-            this.ifTrue.setNext(next);
-        }
-        if (this.ifFalse != this) {
-            this.ifFalse.setNext(next);
-        }
+        throw new UnsupportedOperationException("CFConditional doesn't support setNext");
+//        if (this.ifTrue != this) {
+//            this.ifTrue.setNext(next);
+//        }
+//        if (this.ifFalse != this) {
+//            this.ifFalse.setNext(next);
+//        }
     }
 
     @Override

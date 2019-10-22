@@ -5,7 +5,6 @@ import edu.mit.compilers.inter.TypeDescriptor;
 import edu.mit.compilers.visitor.ASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class Statement extends Node {
     public static final int LOC_ASSIGN = 0;
@@ -37,7 +36,6 @@ public class Statement extends Node {
     public Block elseBlock;
     public Block block;
     public MethodCall methodCall;
-    public String inc;
     public String assignOp;
 
 
@@ -63,7 +61,7 @@ public class Statement extends Node {
         this.initExpr = initExpr;
         this.exitExpr = exitExpr;
         this.loc = loc;
-        this.inc = inc;
+        this.assignOp = inc;
         this.block = block;
         this.initAssignment = new Statement(new Loc(id), new AssignExpr(AssignExpr.ASSIGN, initExpr));
         this.updateAssignment = new Statement(loc, new AssignExpr(inc));
@@ -107,25 +105,6 @@ public class Statement extends Node {
         }
         if (this.updateAssignment != null) {
             this.updateAssignment.setLineNumber(line);
-        }
-    }
-    @Override public String toString() {
-        switch (this.statementType) {
-            case Statement.LOC_ASSIGN:
-                return "LOC_ASSIGN [" + loc + " " + assignExpr + "]";
-            case Statement.METHOD_CALL:
-                return "METHOD_CALL [" + methodCall + "]";
-            case Statement.IF:
-                return "IF [" + expr + ", " + ifBlock + ", "
-                        + elseBlock + "]";
-            case Statement.FOR:
-                return "FOR [init=" + initAssignment + ", update=" + updateAssignment + ", exit=" + exitExpr + ", block=" + block + "]";
-            case Statement.WHILE:
-                return "WHILE [" + expr + ", " + block + "]";
-            case Statement.RETURN:
-                return "RETURN [" + expr + "]";
-            default:
-                throw new RuntimeException("Unknown statement type: " + this.statementType);
         }
     }
 }

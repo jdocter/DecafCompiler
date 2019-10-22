@@ -1,6 +1,5 @@
 package edu.mit.compilers.parser;
 
-import java.util.Comparator;
 import java.util.Map;
 
 import edu.mit.compilers.visitor.ASTVisitor;
@@ -87,5 +86,4 @@ public class BinOp extends Node {
     public void accept(ASTVisitor v) {
         v.visit(this);
     }
-
 }

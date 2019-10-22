@@ -418,7 +418,7 @@ public class Parser {
             next();
             return lit;
         } else if (isType(DecafScannerTokenTypes.CHAR_LIT)) {
-            Lit lit = new Lit(text().charAt(0));
+            Lit lit = new Lit(text().charAt(1)); // charAt(0) == charAt(2) == '
             next();
             return lit;
         } else if (isType(DecafScannerTokenTypes.HEX_LIT) ||

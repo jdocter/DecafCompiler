@@ -13,7 +13,11 @@ import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.CFFactory;
 import edu.mit.compilers.assembly.CFNode;
-import edu.mit.compilers.grammar.*; // Use compiled files in grammar
+/*
+ * You have to include this line, or else when you ant clean,
+ * `ant` won't work on the second try.
+ */
+import edu.mit.compilers.grammar.*; // MANUALLY ADDED see note above; use compiled files
 import edu.mit.compilers.parser.*;
 
 class Main {
@@ -147,7 +151,7 @@ class Main {
                }
 
                for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
-                   CFNode cfg = CFFactory.makeCFG(methodDeclaration.mBlock);
+                   CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
 
                    System.out.println("CFG for " + methodDeclaration.methodName.getName());
                    System.out.println("----------");
