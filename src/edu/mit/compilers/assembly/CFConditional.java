@@ -16,14 +16,17 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     private final Expr boolExpr;
-    private final CFNode ifTrue;
-    private final CFNode ifFalse;
+    private CFNode ifTrue;
+    private CFNode ifFalse;
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse) {
         this.boolExpr = expr;
         this.ifTrue= ifTrue;
+        ifTrue.addParent(this);
+
         this.ifFalse = ifFalse;
+        ifFalse.addParent(this);
     }
 
     @Override
@@ -65,5 +68,22 @@ public class CFConditional extends UIDObject implements CFNode {
     @Override
     public void accept(CFVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public void removeParent(CFNode parent) {
+        this.parents.remove(parent);
+    }
+
+    @Override
+    public void replacePointers(CFNode original, CFNode replacement) {
+        if (this.ifFalse == original) {
+            this.ifFalse = replacement;
+            this.ifFalse.addParent(this);
+        }
+        if (this.ifTrue == original) {
+            this.ifTrue = replacement;
+            this.ifTrue.addParent(this);
+        }
     }
 }

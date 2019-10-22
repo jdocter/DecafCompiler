@@ -18,7 +18,7 @@ public class MergeBasicBlocks implements CFVisitor {
 
     @Override
     public void visit(CFBlock cfBlock) {
-        cfBlock
+        // TODO
     }
 
     @Override

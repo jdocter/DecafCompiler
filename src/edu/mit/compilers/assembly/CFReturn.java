@@ -57,6 +57,18 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
+    public void removeParent(CFNode parent) {
+        this.parents.remove(parent);
+    }
+
+    @Override
+    public void replacePointers(CFNode original, CFNode replacement) {
+        if (this.next == original) {
+            this.setNext(replacement);
+        }
+    }
+
+    @Override
     public void accept(CFVisitor v) {
         v.visit(this);
     }

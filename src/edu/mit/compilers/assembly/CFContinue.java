@@ -53,4 +53,16 @@ public class CFContinue extends UIDObject implements CFNode {
     public void accept(CFVisitor v) {
         v.visit(this);
     }
+
+    @Override
+    public void removeParent(CFNode parent) {
+        this.parents.remove(parent);
+    }
+
+    @Override
+    public void replacePointers(CFNode original, CFNode replacement) {
+        if (this.next == original) {
+            this.setNext(replacement);
+        }
+    }
 }
