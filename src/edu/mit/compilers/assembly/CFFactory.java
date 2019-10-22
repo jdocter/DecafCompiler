@@ -173,7 +173,7 @@ public class CFFactory {
             case Expr.LIT: // assume bool
                 return new CFConditional(expr, ifTrue, ifFalse);
             case Expr.NOT:
-                return shortCircuit(expr, ifFalse, ifTrue);
+                return shortCircuit(expr.expr, ifFalse, ifTrue);
             case Expr.BIN_OP:
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
