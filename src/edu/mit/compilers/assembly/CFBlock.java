@@ -22,7 +22,6 @@ public class CFBlock extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     public CFBlock(Statement statement) {
-        super();
         int type = statement.statementType;
         assert type == Statement.LOC_ASSIGN ||
                 type == Statement.METHOD_CALL;
