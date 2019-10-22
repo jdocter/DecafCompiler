@@ -83,4 +83,12 @@ public class Expr extends Node {
                 throw new RuntimeException("Unknown exprType: " + expr.exprType);
         }
     }
+
+    public static Expr makeTrueExpr() {
+        return new Expr(new Lit(true));
+    }
+
+    public static Expr makeFalseExpr() {
+        return new Expr(new Lit(false));
+    }
 }

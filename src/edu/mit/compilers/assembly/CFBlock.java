@@ -30,6 +30,14 @@ public class CFBlock extends UIDObject implements CFNode {
         isEnd = true;
     }
 
+    public CFBlock(CFAssign cfAssign) {
+
+    }
+
+    public CFBlock(CFMethodCall methodCall) {
+
+    }
+
     @Override
     public void setNext(CFNode next) {
         isEnd = false;

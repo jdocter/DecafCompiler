@@ -13,7 +13,6 @@ import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.CFFactory;
 import edu.mit.compilers.assembly.CFNode;
-import edu.mit.compilers.grammar.*; // Use compiled files in grammar
 import edu.mit.compilers.parser.*;
 
 class Main {
@@ -147,7 +146,7 @@ class Main {
                }
 
                for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
-                   CFNode cfg = CFFactory.makeCFG(methodDeclaration.mBlock);
+                   CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
 
                    System.out.println("CFG for " + methodDeclaration.methodName.getName());
                    System.out.println("----------");
