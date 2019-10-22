@@ -44,9 +44,17 @@ public class CFFactory {
                     previousCFNode = endMethodCall;
                     break;
                 case Statement.RETURN:
-                    final CFNode cfReturn = new CFReturn(statement.expr);
+                    final CFNode cfReturn;
+                    if(statement.expr != null && hasPotentialToSC(statement.expr)) {
+                        final cfReturnTrue = new CFReturn(Expr.makeTrueExpr());
+                        final cfReturnFalse = new CFReturn(Expr.makeFalseExpr());
+                        cfReturn = shortCircuit(statement.expr, cfReturnTrue, cfReturnFalse);
+                    } else {
+                      cfReturn = new CFReturn(statement.expr);                      
+                    }
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
+
                 case Statement.IF:
                     final CFNode endIf = new CFNop();
                     final CFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop);
@@ -105,8 +113,8 @@ public class CFFactory {
      */
     public static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign) {
         if (cfAssign.expr != null && hasPotentialToSC(cfAssign.expr)) {
-            final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign( cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
-            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign( cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
+            final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
+            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()));
             cfBlockAssignTrue.setNext(endAssign);
             cfBlockAssignFalse.setNext(endAssign);
             return shortCircuit(cfAssign.expr, cfBlockAssignTrue, cfBlockAssignFalse);
