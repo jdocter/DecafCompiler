@@ -30,4 +30,9 @@ public class MethodDeclaration extends Node {
     public void accept(Visitor v) {
         v.visit(this);
     }
+
+    @Override public String toString() {
+        return "MethodDeclaration [returnType=" + returnType + ", methodName=" + methodName + ", params=" + params
+                + ", mBlock=" + mBlock + "]";
+    }
 }

@@ -20,4 +20,12 @@ public class Loc extends Node {
     public void accept(Visitor v) {
         v.visit(this);
     }
+
+    @Override public String toString() {
+        if (expr != null) {
+            return id + "[" + expr + "]";
+        } else {
+            return "" + id;
+        }
+    }
 }

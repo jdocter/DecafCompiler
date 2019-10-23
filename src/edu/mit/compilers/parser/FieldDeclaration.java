@@ -28,6 +28,9 @@ public class FieldDeclaration extends Node {
         fieldArrays.add(new Pair<Id, IntLit>(id,intLit));
     }
 
+    @Override public String toString() {
+        return "FieldDeclaration [type=" + type + ", fieldArrays=" + fieldArrays + ", fields=" + fields + "]";
+    }
     @Override
     public void accept(Visitor v) {
         v.visit(this);

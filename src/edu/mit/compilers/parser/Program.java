@@ -28,4 +28,8 @@ public class Program extends Node {
     public void accept(Visitor v) {
         v.visit(this);
     }
+    @Override public String toString() {
+        return "Program [methodDeclarations=" + methodDeclarations + ", fieldDeclarations=" + fieldDeclarations
+                + ", importDeclarations=" + importDeclarations + "]";
+    }
 }

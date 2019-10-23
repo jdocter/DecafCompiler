@@ -20,7 +20,12 @@ public class Pair<K, V> {
     }
 
     @Override public String toString() {
-        return "Pair<" + getKey().toString() + ", " + getValue().toString() + ">";
+        if (getKey() == null) {
+            return "" + getValue();
+        } else if (getValue() == null) {
+            return "" + getKey();
+        }
+        return "Pair<" + getKey() + ", " + getValue() + ">";
     }
 
     // autogen

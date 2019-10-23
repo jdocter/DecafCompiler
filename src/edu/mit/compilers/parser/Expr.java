@@ -1,5 +1,11 @@
 package edu.mit.compilers.parser;
 
+import java.util.List;
+import java.util.Optional;
+
+import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.inter.TypeDescriptor;
 import edu.mit.compilers.visitor.Visitor;
 
 public class Expr extends Node {
@@ -55,5 +61,34 @@ public class Expr extends Node {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    @Override public String toString() {
+        switch (exprType) {
+            case Expr.METHOD_CALL:
+                return "METHOD_CALL[" + methodCall + "]";
+            case Expr.MINUS:
+                return "MINUS[" + expr + "]";
+            case Expr.NOT:
+                return "NOT[" + expr + "]";
+            case Expr.LOC:
+                return "" + loc;
+            case Expr.BIN_OP:
+                return "(" + expr + ") " + binOp + " (" + binOpExpr + ")";
+            case Expr.LIT:
+                return "" + lit;
+            case Expr.LEN:
+                return "len(" + id + ")";
+            default:
+                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+        }
+    }
+
+    public static Expr makeTrueExpr() {
+        return new Expr(new Lit(true));
+    }
+
+    public static Expr makeFalseExpr() {
+        return new Expr(new Lit(false));
     }
 }

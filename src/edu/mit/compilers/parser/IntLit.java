@@ -29,6 +29,10 @@ public class IntLit extends Node {
         }
     }
 
+    @Override public String toString() {
+        return posString();
+    }
+
     public long negInteger() {
         if (hexLit != null) {
             return Long.parseLong(hexLit.negHex(),16);

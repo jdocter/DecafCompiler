@@ -27,4 +27,8 @@ public class Block extends Node  {
     public void accept(Visitor v) {
         v.visit(this);
     }
+
+    @Override public String toString() {
+        return "Block [" + statements + ", fieldDeclarations=" + fieldDeclarations + "]";
+    }
 }

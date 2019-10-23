@@ -25,7 +25,7 @@ public class Parser {
             System.exit(1);
         }
     }
-    
+
     public Program parse() throws DecafParseException {
         try {
             return parseProgram();
@@ -274,7 +274,7 @@ public class Parser {
         for (BinOp binOp : binOps) {
             weakest = BinOp.weakerPrecedence(weakest, binOp);
         }
-        int weakestIndex = binOps.indexOf(weakest);
+        int weakestIndex = binOps.lastIndexOf(weakest); // last is weaker when evaluating from left to right
         // passes view of binOps, but this is OK because this is a private method that we know we are not mutating
         Expr left = organizeExprs(binOps.subList(0,weakestIndex), binOpExprs.subList(0,weakestIndex+1));
         Expr right = organizeExprs(binOps.subList(weakestIndex+1, binOps.size()),
@@ -333,11 +333,16 @@ public class Parser {
             return minusExpr;
         }
         else if (isType(DecafScannerTokenTypes.DEC)) {
+            // don't optimize bc need for type checking
             int line = line();
             next();
             Expr nextExpr = parseSmolExpr();
             nextExpr.setLineNumber(line);
-            return nextExpr;
+            Expr minusExpr = new Expr(Expr.MINUS, nextExpr);
+            minusExpr.setLineNumber(line);
+            Expr doubleMinusExpr = new Expr(Expr.MINUS, minusExpr);
+            doubleMinusExpr.setLineNumber(line);
+            return doubleMinusExpr;
         } else if (isType(DecafScannerTokenTypes.LPAREN)) {
             next();
             Expr nextExpr = parseExpr();
@@ -413,7 +418,7 @@ public class Parser {
             next();
             return lit;
         } else if (isType(DecafScannerTokenTypes.CHAR_LIT)) {
-            Lit lit = new Lit(text().charAt(0));
+            Lit lit = new Lit(text().charAt(1)); // charAt(0) == charAt(2) == '
             next();
             return lit;
         } else if (isType(DecafScannerTokenTypes.HEX_LIT) ||

@@ -16,4 +16,8 @@ public class DecLit extends Node {
         return "-" + dec;
     }
 
+    @Override public String toString() {
+        return "DecLit [dec=" + dec + "]";
+    }
+
 }

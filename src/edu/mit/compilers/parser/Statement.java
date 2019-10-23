@@ -25,6 +25,8 @@ public class Statement extends Node {
     public Loc loc;
     public AssignExpr assignExpr;
     public Id id;
+    public Statement initAssignment; // redundant info for FOR loop
+    public Statement updateAssignment;
     public Expr initExpr;
     public Expr exitExpr;
     public Expr expr;
@@ -32,7 +34,6 @@ public class Statement extends Node {
     public Block elseBlock;
     public Block block;
     public MethodCall methodCall;
-    public String inc;
     public String assignOp;
 
 
@@ -58,8 +59,10 @@ public class Statement extends Node {
         this.initExpr = initExpr;
         this.exitExpr = exitExpr;
         this.loc = loc;
-        this.inc = inc;
+        this.assignOp = inc;
         this.block = block;
+        this.initAssignment = new Statement(new Loc(id), new AssignExpr(AssignExpr.ASSIGN, initExpr));
+        this.updateAssignment = new Statement(loc, new AssignExpr(inc));
     }
     Statement(Id id, Expr initExpr, Expr exitExpr, Loc loc, String assignOp, Expr expr, Block block) {
         statementType = FOR;
@@ -70,6 +73,8 @@ public class Statement extends Node {
         this.assignOp = assignOp;
         this.expr = expr;
         this.block = block;
+        this.initAssignment = new Statement(new Loc(id), new AssignExpr(AssignExpr.ASSIGN, initExpr));
+        this.updateAssignment = new Statement(loc, new AssignExpr(assignOp, expr));
     }
     Statement(Expr expr, Block block) {
         statementType = WHILE;
@@ -90,4 +95,14 @@ public class Statement extends Node {
         v.visit(this);
     }
 
+    @Override
+    public void setLineNumber(int line) {
+        super.setLineNumber(line);
+        if (this.initAssignment != null) {
+            this.initAssignment.setLineNumber(line);
+        }
+        if (this.updateAssignment != null) {
+            this.updateAssignment.setLineNumber(line);
+        }
+    }
 }
