@@ -71,6 +71,8 @@ public class MethodDescriptor {
         return this.params; // in order
     }
 
+    public Block getMethodBlock() { return block; }
+
 //    private void attachLocalTable(Expr expr, LocalTable localTable) throws SemanticException {
 //        expr.localTable = localTable;
 //        for (Expr innerExpr: expr.exprs) attachLocalTable(innerExpr, localTable);

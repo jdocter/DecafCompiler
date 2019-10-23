@@ -17,11 +17,10 @@ public class AssemblyGen {
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
             // maybe create cfg here? maybe not and just pass in as param
             /*CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
-
             CFVisitor[] cfVisitors = {
                     new MergeBasicBlocksAndRemoveNops(),
             };
-             */
+            */
             // methodAssemblyGen(/*cfMethodStart*/, methodDescriptor)
 
         }

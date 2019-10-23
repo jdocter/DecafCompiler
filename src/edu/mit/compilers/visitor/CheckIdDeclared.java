@@ -18,11 +18,9 @@ public class CheckIdDeclared implements SemanticChecker {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
     private final List<SemanticException> semanticExceptions = new ArrayList<>();
-    private final Program program;
     private final ProgramDescriptor programDescriptor;
 
-    public CheckIdDeclared(Program program, ProgramDescriptor programDescriptor) {
-        this.program = program;
+    public CheckIdDeclared(ProgramDescriptor programDescriptor) {
         this.programDescriptor = programDescriptor;
     }
 

@@ -5,17 +5,21 @@ import java.util.Set;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.MergeBasicBlocksAndRemoveNops;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class CFFactory {
+public class MethodCFGFactory {
 
-    public static CFNode makeBlockCFG(Block block) {
+    public static CFNode makeMethodCFG(Block block) {
         CFNode contLoop = new CFNop(); // dummy node
         CFNode endBlock = new CFNop();
-        return makeBlockCFG(block, endBlock, contLoop, endBlock);
+        CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock);
+        MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops();
+        methodCFG.accept(mergeBasicBlocksAndRemoveNops);
+        return methodCFG;
     }
 
     /**
@@ -27,7 +31,7 @@ public class CFFactory {
      * @param breakLoop the CFNode that control should flow towards to break out of a loop
      * @return the start CFNode of the CFG that represents block
      */
-    public static CFNode makeBlockCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop) {
+    private static CFNode makeBlockCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop) {
         final CFNode startBlock = new CFNop();
         CFNode previousCFNode = startBlock;
         for (Statement statement : block.statements) {
@@ -112,7 +116,7 @@ public class CFFactory {
      * @param endAssign
      * @return
      */
-    public static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign, VariableTable variableTable) {
+    private static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign, VariableTable variableTable) {
         if (cfAssign.expr != null && hasPotentialToSC(cfAssign.expr)) {
             final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()), variableTable);
             final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeFalseExpr()), variableTable);
@@ -142,7 +146,7 @@ public class CFFactory {
      * @param end
      * @return
      */
-    public static CFNode makeMethodCFG(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
+    private static CFNode makeMethodCFG(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
         for (int i = 0; i < cfMethodCall.arguments.size(); i++) {
             Expr arg = cfMethodCall.arguments.get(i).getKey();
             if (arg != null && hasPotentialToSC(arg)) {
@@ -166,7 +170,7 @@ public class CFFactory {
      * @param ifFalse
      * @return CFNode representing conditional evaluation of the expr
      */
-    public static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
+    private static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
         switch (expr.exprType) {
             case Expr.LEN:
             case Expr.MINUS:

@@ -11,13 +11,12 @@ import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
-import edu.mit.compilers.assembly.CFFactory;
+import edu.mit.compilers.assembly.MethodCFGFactory;
 import edu.mit.compilers.assembly.CFNode;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
  */
-import edu.mit.compilers.grammar.*; // MANUALLY ADDED see note above; use compiled files
 import edu.mit.compilers.parser.*;
 
 class Main {
@@ -131,8 +130,8 @@ class Main {
                List<SemanticException> semanticExceptions = new ArrayList<>();
 
                SemanticChecker[] semanticCheckers = {
-                       new CheckIdDeclared(p, table),
-                       new UniqueGlobalIds(p, table),
+                       new CheckIdDeclared(table),
+                       new UniqueGlobalIds(table),
                        new VoidMainNoArgs(table),
                        new BreakAndContinueInAnyLoop(),
                        new CheckTypes(table),
@@ -151,22 +150,24 @@ class Main {
                }
 
                for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
-                   CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
-
-                   CFVisitor[] cfVisitors = {
-                           new MergeBasicBlocksAndRemoveNops(),
-                   };
-
-                   for (CFVisitor cfVisitor : cfVisitors) {
-
-                       if (CLI.debug) {
-                           System.out.println("CFG before visitor " + cfVisitor + " for " + methodDeclaration.methodName.getName());
-                           System.out.println("D---------");
-                           dfsPrint(cfg, new HashSet<Integer>());
-                           System.out.println("D---------");
-                       }
-                       cfg.accept(cfVisitor);
-                   }
+                   CFNode cfg = MethodCFGFactory.makeMethodCFG(methodDeclaration.mBlock);
+                   // I think logic that I commented out should go in MethodCFGFactory, but if
+                   // we think otherwise I can change it back :)
+//
+//                   CFVisitor[] cfVisitors = {
+//                           new MergeBasicBlocksAndRemoveNops(),
+//                   };
+//
+//                   for (CFVisitor cfVisitor : cfVisitors) {
+//
+//                       if (CLI.debug) {
+//                           System.out.println("CFG before visitor " + cfVisitor + " for " + methodDeclaration.methodName.getName());
+//                           System.out.println("D---------");
+//                           dfsPrint(cfg, new HashSet<Integer>());
+//                           System.out.println("D---------");
+//                       }
+//                       cfg.accept(cfVisitor);
+//                   }
 
                    System.out.println("CFG for " + methodDeclaration.methodName.getName());
                    System.out.println("----------");

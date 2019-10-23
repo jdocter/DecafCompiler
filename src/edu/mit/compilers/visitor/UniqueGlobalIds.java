@@ -12,11 +12,9 @@ public class UniqueGlobalIds implements SemanticChecker {
 
     private final List<SemanticException> semanticExceptions = new ArrayList<>();
 
-    private final Program program;
     private final ProgramDescriptor programDescriptor;
 
-    public UniqueGlobalIds(Program program, ProgramDescriptor programDescriptor) {
-        this.program = program;
+    public UniqueGlobalIds(ProgramDescriptor programDescriptor) {
         this.programDescriptor = programDescriptor;
     }
     @Override
