@@ -1,15 +1,11 @@
 package edu.mit.compilers.visitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.assembly.CFBlock;
-import edu.mit.compilers.assembly.CFBreak;
-import edu.mit.compilers.assembly.CFConditional;
-import edu.mit.compilers.assembly.CFContinue;
-import edu.mit.compilers.assembly.CFNode;
-import edu.mit.compilers.assembly.CFNop;
-import edu.mit.compilers.assembly.CFReturn;
+import edu.mit.compilers.assembly.*;
 
 
 public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
@@ -59,8 +55,11 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
             if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
                 // any execution of cfBlock implies execution of parent
                 if (cfBlockParents.size() == 1) {
-                    boolean sameVariableTable = cfBlock.tryPrependBlock(lastSeenCFBlock);
-                    if (sameVariableTable) {
+                    // check variable tables are same
+                    if (!(lastSeenCFBlock.getVariableTable() == null) &&
+                            !(cfBlock.getVariableTable() == null) &&
+                            lastSeenCFBlock.getVariableTable() != cfBlock.getVariableTable()) {
+                        cfBlock.addAllStatements(lastSeenCFBlock);
                         peepholeRemove(lastSeenCFBlock);
                     }
                 }

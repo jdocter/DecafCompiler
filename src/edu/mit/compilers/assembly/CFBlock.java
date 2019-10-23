@@ -8,6 +8,7 @@ import java.util.Set;
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.inter.LocalTable;
+import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -15,7 +16,7 @@ import edu.mit.compilers.visitor.CFVisitor;
 public class CFBlock extends UIDObject implements CFNode {
 
     // Should all be either CFAssign or CFMethodCall
-    List<CFStatement> statements = new ArrayList<CFStatement>();
+    private final List<CFStatement> statements = new ArrayList<CFStatement>();
     CFNode next;
 
     boolean isEnd; // end of function
@@ -30,19 +31,6 @@ public class CFBlock extends UIDObject implements CFNode {
     public CFBlock(CFMethodCall methodCall, VariableTable variableTable) {
         this.statements.add(methodCall);
         this.variableTable = variableTable;
-    }
-
-    /**
-     * Prepend the block if possible, or else return False for failure.
-     */
-    public boolean tryPrependBlock(CFBlock beforeBlock) {
-        if (this.variableTable != beforeBlock.variableTable) {
-            return false;
-        }
-        List<CFStatement> newStatements = new ArrayList<>(beforeBlock.statements); // defensive copy
-        newStatements.addAll(statements);
-        statements = newStatements;
-        return true;
     }
 
     @Override
@@ -107,4 +95,9 @@ public class CFBlock extends UIDObject implements CFNode {
             this.setNext(replacement);
         }
     }
+
+    public void addAllStatements(CFBlock block) {
+        this.statements.addAll(block.statements);
+    }
+
 }
