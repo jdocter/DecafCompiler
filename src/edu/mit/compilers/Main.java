@@ -154,7 +154,7 @@ class Main {
                    CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
 
                    CFVisitor[] cfVisitors = {
-                           new PeepholeRemoveNops(),
+                           new MergeBasicBlocksAndRemoveNops(),
                    };
 
                    for (CFVisitor cfVisitor : cfVisitors) {
