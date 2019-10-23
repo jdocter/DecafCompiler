@@ -8,7 +8,7 @@ import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
-    List<String> toAssembly(VariableTable variableTable, MethodTable methodTable);
+    List<String> toAssembly(MethodTable methodTable);
 
     /*
      * Invariant:
@@ -22,6 +22,8 @@ public interface CFNode {
     List<CFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
     void setNext(CFNode next);
     CFNode getNext();
+
+    VariableTable getVariableTable();
 
     /*
      * WARNING!!! Doesn't automatically maintain parent pointers invariant for original!

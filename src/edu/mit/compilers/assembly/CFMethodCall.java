@@ -22,7 +22,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         this.arguments = arguments;
     }
 
-    public CFMethodCall(Statement statement) {
+    CFMethodCall(Statement statement) {
         assert statement.statementType == Statement.METHOD_CALL;
         methodName = statement.methodCall.methodName;
         arguments = statement.methodCall.arguments;

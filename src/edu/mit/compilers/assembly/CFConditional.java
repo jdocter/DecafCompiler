@@ -19,18 +19,20 @@ public class CFConditional extends UIDObject implements CFNode {
     private CFNode ifTrue;
     private CFNode ifFalse;
     private Set<CFNode> parents = new HashSet<CFNode>();
+    private final VariableTable variableTable;
 
-    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse) {
+    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
         this.boolExpr = expr;
         this.ifTrue= ifTrue;
         ifTrue.addParent(this);
 
         this.ifFalse = ifFalse;
         ifFalse.addParent(this);
+        this.variableTable = variableTable;
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         return null;
     }
 
@@ -73,6 +75,11 @@ public class CFConditional extends UIDObject implements CFNode {
     @Override
     public void removeParent(CFNode parent) {
         this.parents.remove(parent);
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return variableTable;
     }
 
     @Override

@@ -22,13 +22,16 @@ public class CFBlock extends UIDObject implements CFNode {
 
     boolean isEnd; // end of function
     private Set<CFNode> parents = new HashSet<CFNode>();
+    private final VariableTable variableTable;
 
-    public CFBlock(CFAssign cfAssign) {
+    public CFBlock(CFAssign cfAssign, VariableTable variableTable) {
         this.statements.add(cfAssign);
+        this.variableTable = variableTable;
     }
 
-    public CFBlock(CFMethodCall methodCall) {
+    public CFBlock(CFMethodCall methodCall, VariableTable variableTable) {
         this.statements.add(methodCall);
+        this.variableTable = variableTable;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         // TODO Auto-generated method stub
 
         // Visitor?
@@ -80,6 +83,11 @@ public class CFBlock extends UIDObject implements CFNode {
     @Override
     public void removeParent(CFNode parent) {
         this.parents.remove(parent);
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return variableTable;
     }
 
     @Override

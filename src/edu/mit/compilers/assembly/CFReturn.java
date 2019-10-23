@@ -19,15 +19,17 @@ public class CFReturn extends UIDObject implements CFNode {
 
     private CFNode next;
     boolean isEnd; // end of function
-    private Expr returnExpr;
-    private Set<CFNode> parents = new HashSet<CFNode>();
+    private final Expr returnExpr;
+    private final Set<CFNode> parents = new HashSet<CFNode>();
+    private final VariableTable variableTable;
 
-    public CFReturn(Expr returnExpr) {
+    public CFReturn(Expr returnExpr, VariableTable variableTable) {
         this.returnExpr = returnExpr;
+        this.variableTable = variableTable;
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         return null;
     }
 
@@ -66,6 +68,11 @@ public class CFReturn extends UIDObject implements CFNode {
         if (this.next == original) {
             this.setNext(replacement);
         }
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return variableTable;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.inter.MethodTable;
+import edu.mit.compilers.inter.VariableDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
@@ -75,5 +77,10 @@ public class CFNop extends UIDObject implements CFNode {
         if (this.next == original) {
             this.setNext(replacement);
         }
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return null;
     }
 }

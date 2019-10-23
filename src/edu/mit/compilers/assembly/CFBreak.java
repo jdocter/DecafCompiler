@@ -19,7 +19,7 @@ public class CFBreak extends UIDObject implements CFNode {
     CFNode next;
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         return null;
     }
 
@@ -57,6 +57,11 @@ public class CFBreak extends UIDObject implements CFNode {
     @Override
     public void removeParent(CFNode parent) {
         this.parents.remove(parent);
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return null;
     }
 
     @Override

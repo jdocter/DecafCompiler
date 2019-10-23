@@ -19,7 +19,7 @@ public class CFContinue extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         return null;
     }
 
@@ -42,6 +42,11 @@ public class CFContinue extends UIDObject implements CFNode {
     @Override
     public CFNode getNext() {
         return next;
+    }
+
+    @Override
+    public VariableTable getVariableTable() {
+        return null;
     }
 
     @Override
