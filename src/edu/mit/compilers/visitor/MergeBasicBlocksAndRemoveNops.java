@@ -12,7 +12,7 @@ import edu.mit.compilers.assembly.CFNop;
 import edu.mit.compilers.assembly.CFReturn;
 
 
-public class PeepholeRemoveNops implements CFVisitor {
+public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
     Set<CFNode> visited = new HashSet<>();
 
@@ -27,7 +27,7 @@ public class PeepholeRemoveNops implements CFVisitor {
         }
     }
 
-    private void peepholeRemove(CFNode toRemove) {
+    private static void peepholeRemove(CFNode toRemove) {
         Set<CFNode> parents = toRemove.parents();
         // System.out.println("parents of " + cfNop.getUID() + ": " + parents);
         CFNode next = toRemove.getNext();
