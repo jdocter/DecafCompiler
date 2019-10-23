@@ -56,10 +56,8 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
                 // any execution of cfBlock implies execution of parent
                 if (cfBlockParents.size() == 1) {
                     // check variable tables are same
-                    if (!(lastSeenCFBlock.getVariableTable() == null) &&
-                            !(cfBlock.getVariableTable() == null) &&
-                            lastSeenCFBlock.getVariableTable() != cfBlock.getVariableTable()) {
-                        cfBlock.addAllStatements(lastSeenCFBlock);
+                    if (lastSeenCFBlock.isSameScope(cfBlock)) {
+                        cfBlock.prependAllStatements(lastSeenCFBlock);
                         peepholeRemove(lastSeenCFBlock);
                     }
                 }
@@ -90,7 +88,9 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         if (visited.contains(cfNop)) return;
 
         visited.add(cfNop);
-        if (cfNop.isEnd()) return;
+        if (cfNop.isEnd()) {
+            cfNop.setNext(new CFReturn(null, null));
+        }
 
         peepholeRemove(cfNop);
         cfNop.getNext().accept(this);

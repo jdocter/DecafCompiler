@@ -96,8 +96,14 @@ public class CFBlock extends UIDObject implements CFNode {
         }
     }
 
-    public void addAllStatements(CFBlock block) {
+    public void prependAllStatements(CFBlock block) {
+        List<CFStatement> thisCopy = new ArrayList<>(this.statements);
+        this.statements.clear();
         this.statements.addAll(block.statements);
+        this.statements.addAll(thisCopy);
     }
 
+    public boolean isSameScope(CFBlock other) {
+        return !(variableTable == null) && !(other.variableTable == null) && variableTable == other.variableTable;
+    }
 }
