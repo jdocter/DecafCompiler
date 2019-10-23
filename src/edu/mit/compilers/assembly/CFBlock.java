@@ -7,6 +7,7 @@ import java.util.Set;
 
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -31,10 +32,17 @@ public class CFBlock extends UIDObject implements CFNode {
         this.variableTable = variableTable;
     }
 
-    public void prependBlock(CFBlock beforeBlock) {
+    /**
+     * Prepend the block if possible, or else return False for failure.
+     */
+    public boolean tryPrependBlock(CFBlock beforeBlock) {
+        if (this.variableTable != beforeBlock.variableTable) {
+            return false;
+        }
         List<CFStatement> newStatements = new ArrayList<>(beforeBlock.statements); // defensive copy
         newStatements.addAll(statements);
         statements = newStatements;
+        return true;
     }
 
     @Override
@@ -68,8 +76,8 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override public String toString() {
-        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "]";
-        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "]";
+        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     @Override

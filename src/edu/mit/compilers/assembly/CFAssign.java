@@ -41,6 +41,9 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override public String toString() {
+        if (expr == null) {
+            return "" + loc + assignOp;
+        }
         return "" + loc + " " + assignOp + " " + expr;
     }
 }

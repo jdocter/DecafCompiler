@@ -22,7 +22,7 @@ public class CFNop extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(MethodTable methodTable) {
         return null;
     }
 

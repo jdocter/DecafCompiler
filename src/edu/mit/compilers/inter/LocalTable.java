@@ -13,7 +13,12 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
 
     public final VariableTable parentTable;
 
+    public static int counter = 1;
+    private int UID;
+
     public LocalTable(List<FieldDeclaration> fieldDeclarations, VariableTable parentTable) throws SemanticException {
+        this.UID = counter;
+        counter++;
         this.parentTable = parentTable;
         for (FieldDeclaration fieldDeclaration : fieldDeclarations) {
             for (Id field : fieldDeclaration.fields) {
@@ -56,5 +61,10 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
             return this.get(id);
         }
         return parentTable.getDescriptor(id);
+    }
+
+    @Override
+    public int getUID() {
+        return UID;
     }
 }

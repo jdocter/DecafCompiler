@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
-        return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "]";
+        return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     private final Expr boolExpr;

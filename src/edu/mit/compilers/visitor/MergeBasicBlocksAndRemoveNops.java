@@ -27,15 +27,26 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         }
     }
 
-    private static void peepholeRemove(CFNode toRemove) {
+    /**
+     * True if successful, false if failure
+     *
+     * Failure means the node to remove was the head of the CFG.
+     *
+     * @param toRemove
+     * @return true if success
+     */
+    private static boolean peepholeRemove(CFNode toRemove) {
         Set<CFNode> parents = toRemove.parents();
-        // System.out.println("parents of " + cfNop.getUID() + ": " + parents);
+        if (parents.isEmpty()) return false;
+
+        System.out.println("removing " + toRemove.getUID());
         CFNode next = toRemove.getNext();
         for (CFNode parent : parents) {
             parent.replacePointers(toRemove, next);
         }
         // Don't care about parents for toRemove because it's removed from the graph
         next.removeParent(toRemove);
+        return true;
     }
 
     @Override
@@ -48,8 +59,10 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
             if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
                 // any execution of cfBlock implies execution of parent
                 if (cfBlockParents.size() == 1) {
-                    peepholeRemove(lastSeenCFBlock);
-                    cfBlock.prependBlock(lastSeenCFBlock);
+                    boolean sameVariableTable = cfBlock.tryPrependBlock(lastSeenCFBlock);
+                    if (sameVariableTable) {
+                        peepholeRemove(lastSeenCFBlock);
+                    }
                 }
             }
 

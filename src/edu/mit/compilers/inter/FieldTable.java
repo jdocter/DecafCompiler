@@ -42,4 +42,9 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
     public VariableDescriptor getDescriptor(String id) {
         return this.get(id);
     }
+
+    @Override
+    public int getUID() {
+        return 0; // should only be one field table, depth 0
+    }
 }
