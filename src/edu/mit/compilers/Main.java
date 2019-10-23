@@ -130,7 +130,7 @@ class Main {
 
                List<SemanticException> semanticExceptions = new ArrayList<>();
 
-               SemanticChecker[] visitors = {
+               SemanticChecker[] semanticCheckers = {
                        new CheckIdDeclared(p, table),
                        new UniqueGlobalIds(p, table),
                        new VoidMainNoArgs(table),
@@ -139,7 +139,7 @@ class Main {
                        new IntLiteralInRange(),
                };
 
-               for (SemanticChecker checker : visitors) {
+               for (SemanticChecker checker : semanticCheckers) {
                    p.accept(checker);
                    semanticExceptions.addAll(checker.getSemanticExceptions());
                }
@@ -152,6 +152,21 @@ class Main {
 
                for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
                    CFNode cfg = CFFactory.makeBlockCFG(methodDeclaration.mBlock);
+
+                   CFVisitor[] cfVisitors = {
+                           new PeepholeRemoveNops(),
+                   };
+
+                   for (CFVisitor cfVisitor : cfVisitors) {
+
+                       if (CLI.debug) {
+                           System.out.println("CFG before visitor " + cfVisitor + " for " + methodDeclaration.methodName.getName());
+                           System.out.println("D---------");
+                           dfsPrint(cfg, new HashSet<Integer>());
+                           System.out.println("D---------");
+                       }
+                       cfg.accept(cfVisitor);
+                   }
 
                    System.out.println("CFG for " + methodDeclaration.methodName.getName());
                    System.out.println("----------");

@@ -24,7 +24,7 @@ import java.util.List;
 
 import edu.mit.compilers.inter.SemanticException;
 
-public class BreakAndContinueInAnyLoop implements Visitor, SemanticChecker {
+public class BreakAndContinueInAnyLoop implements ASTVisitor, SemanticChecker {
     /**
      * Break and continue occur inside of a for/while  (Semantic Rule 20)
      */

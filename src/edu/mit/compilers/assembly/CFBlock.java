@@ -10,6 +10,8 @@ import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
+import edu.mit.compilers.visitor.ASTVisitor;
+import edu.mit.compilers.visitor.CFVisitor;
 
 
 public class CFBlock extends UIDObject implements CFNode {
@@ -33,6 +35,7 @@ public class CFBlock extends UIDObject implements CFNode {
     public void setNext(CFNode next) {
         isEnd = false;
         this.next = next;
+        next.addParent(this);
     }
 
     @Override
@@ -67,5 +70,22 @@ public class CFBlock extends UIDObject implements CFNode {
     public List<CFNode> dfsTraverse() {
         if (isEnd) return List.of();
         return List.of(next);
+    }
+
+    @Override
+    public void accept(CFVisitor v) {
+        v.visit(this);
+    }
+
+    @Override
+    public void removeParent(CFNode parent) {
+        this.parents.remove(parent);
+    }
+
+    @Override
+    public void replacePointers(CFNode original, CFNode replacement) {
+        if (this.next == original) {
+            this.setNext(replacement);
+        }
     }
 }

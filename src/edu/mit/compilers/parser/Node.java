@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 abstract class Node {
     private int mLine;
@@ -12,5 +12,5 @@ abstract class Node {
         return mLine;
     }
 
-    abstract public void accept(Visitor v);
+    abstract public void accept(ASTVisitor v);
 }

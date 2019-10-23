@@ -1,6 +1,6 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class HexLit extends Node {
     public final String hex;
@@ -10,7 +10,7 @@ public class HexLit extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
     @Override

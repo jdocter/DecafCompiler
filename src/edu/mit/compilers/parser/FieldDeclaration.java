@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.visitor.ASTVisitor;
 
 public class FieldDeclaration extends Node {
     public final Type type;
@@ -32,7 +32,7 @@ public class FieldDeclaration extends Node {
         return "FieldDeclaration [type=" + type + ", fieldArrays=" + fieldArrays + ", fields=" + fields + "]";
     }
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 }

@@ -1,5 +1,7 @@
 package edu.mit.compilers.assembly;
 
+import java.util.Set;
+
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 

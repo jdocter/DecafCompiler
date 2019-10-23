@@ -1,6 +1,8 @@
 package edu.mit.compilers.parser;
 
-import edu.mit.compilers.visitor.Visitor;
+import edu.mit.compilers.inter.SemanticException;
+import edu.mit.compilers.inter.TypeDescriptor;
+import edu.mit.compilers.visitor.ASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +93,7 @@ public class Statement extends Node {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(ASTVisitor v) {
         v.visit(this);
     }
 
