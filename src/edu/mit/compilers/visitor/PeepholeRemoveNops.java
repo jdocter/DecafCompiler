@@ -16,6 +16,8 @@ public class PeepholeRemoveNops implements CFVisitor {
 
     Set<CFNode> visited = new HashSet<>();
 
+    CFBlock lastSeenCFBlock;
+
     private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
             visited.add(node);
@@ -25,9 +27,35 @@ public class PeepholeRemoveNops implements CFVisitor {
         }
     }
 
+    private void peepholeRemove(CFNode toRemove) {
+        Set<CFNode> parents = toRemove.parents();
+        // System.out.println("parents of " + cfNop.getUID() + ": " + parents);
+        CFNode next = toRemove.getNext();
+        for (CFNode parent : parents) {
+            parent.replacePointers(toRemove, next);
+        }
+        // Don't care about parents for toRemove because it's removed from the graph
+        next.removeParent(toRemove);
+    }
+
     @Override
     public void visit(CFBlock cfBlock) {
-        visitNeighbors(cfBlock);
+        if (!visited.contains(cfBlock)) {
+            visited.add(cfBlock);
+
+            Set<CFNode> cfBlockParents = cfBlock.parents();
+            // Any execution of parent implies execution of cfBlock
+            if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
+                // any execution of cfBlock implies execution of parent
+                if (cfBlockParents.size() == 1) {
+                    peepholeRemove(lastSeenCFBlock);
+                    cfBlock.prependBlock(lastSeenCFBlock);
+                }
+            }
+
+            lastSeenCFBlock = cfBlock;
+            cfBlock.getNext().accept(this);
+        }
     }
 
     @Override
@@ -52,15 +80,8 @@ public class PeepholeRemoveNops implements CFVisitor {
         visited.add(cfNop);
         if (cfNop.isEnd()) return;
 
-        Set<CFNode> parents = cfNop.parents();
-        // System.out.println("parents of " + cfNop.getUID() + ": " + parents);
-        CFNode next = cfNop.getNext();
-        for (CFNode parent : parents) {
-            parent.replacePointers(cfNop, next);
-        }
-        // Don't care about parents for cfNop because it's removed from the graph
-        next.removeParent(cfNop);
-        next.accept(this);
+        peepholeRemove(cfNop);
+        cfNop.getNext().accept(this);
     }
 
     @Override

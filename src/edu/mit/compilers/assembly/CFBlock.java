@@ -7,10 +7,7 @@ import java.util.Set;
 
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
-import edu.mit.compilers.visitor.ASTVisitor;
 import edu.mit.compilers.visitor.CFVisitor;
 
 
@@ -29,6 +26,12 @@ public class CFBlock extends UIDObject implements CFNode {
 
     public CFBlock(CFMethodCall methodCall) {
         this.statements.add(methodCall);
+    }
+
+    public void prependBlock(CFBlock beforeBlock) {
+        List<CFStatement> newStatements = new ArrayList<>(beforeBlock.statements); // defensive copy
+        newStatements.addAll(statements);
+        statements = newStatements;
     }
 
     @Override
