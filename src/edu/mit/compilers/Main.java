@@ -149,8 +149,15 @@ class Main {
                    System.exit(1);
                }
 
-               for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
-                   CFNode cfg = MethodCFGFactory.makeMethodCFG(methodDeclaration.mBlock);
+               MethodCFGFactory.makeAndSetMethodCFGs(table);
+               for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
+                   System.out.println("CFG for " + methodDescriptor.getMethodName());
+                   System.out.println("----------");
+                   dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>());
+                   System.out.println("----------");
+               }
+//               for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
+//                   CFNode cfg = MethodCFGFactory.makeMethodCFG(methodDeclaration.mBlock);
                    // I think logic that I commented out should go in MethodCFGFactory, but if
                    // we think otherwise I can change it back :)
 //
@@ -168,12 +175,12 @@ class Main {
 //                       }
 //                       cfg.accept(cfVisitor);
 //                   }
-
-                   System.out.println("CFG for " + methodDeclaration.methodName.getName());
-                   System.out.println("----------");
-                   dfsPrint(cfg, new HashSet<Integer>());
-                   System.out.println("----------");
-               }
+//
+//                   System.out.println("CFG for " + methodDeclaration.methodName.getName());
+//                   System.out.println("----------");
+//                   dfsPrint(cfg, new HashSet<Integer>());
+//                   System.out.println("----------");
+//               }
            } catch (DecafParseException e) {
                e.printStackTrace();
                System.exit(1);

@@ -9,21 +9,30 @@ import edu.mit.compilers.visitor.MergeBasicBlocksAndRemoveNops;
 
 import java.util.List;
 
-public class AssemblyGen {
+public class AssemblyFactory {
 
-    public List<String> programAssemblyGen(ProgramDescriptor programDescriptor) {
+    /**
+     *
+     * @param programDescriptor that has populated MethodCFGs
+     * @return
+     */
+    public static List<String> programAssemblyGen(ProgramDescriptor programDescriptor) {
+        for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
+            if (methodDescriptor.getMethodCFG() == null) {
+                throw new RuntimeException("Method CFGs must be created before converting to assembly");
+            }
+        }
         // global fields
         // something about main function
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
-            // maybe create cfg here? maybe not and just pass in as param
 
             // methodAssemblyGen(methodDescriptor);
 
         }
         return null;
     }
-    public List<String> methodAssemblyGen(MethodDescriptor methodDescriptor) {
-        CFNode methodCFGStart = MethodCFGFactory.makeMethodCFG(methodDescriptor.getMethodBlock());
+
+    private static List<String> methodAssemblyGen(MethodDescriptor methodDescriptor) {
         // populate stack offset and get count (in methodDescriptor.block)
         long variablesCount = new MethodStackOffsetsPopulator(methodDescriptor).populate();
         // possibly get largest temp depth?

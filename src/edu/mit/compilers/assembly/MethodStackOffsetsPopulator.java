@@ -15,7 +15,7 @@ public class MethodStackOffsetsPopulator {
      * Requires that all Blocks have nonnull references to local tables
      * @param methodDescriptor
      */
-    public MethodStackOffsetsPopulator(MethodDescriptor methodDescriptor) {
+    MethodStackOffsetsPopulator(MethodDescriptor methodDescriptor) {
         this.methodDescriptor = methodDescriptor;
     }
 
@@ -24,7 +24,7 @@ public class MethodStackOffsetsPopulator {
      * @return total number of variables in this method (including parameters and locals)
      *         where a shadowed variable is considered unique
      */
-    public long populate() {
+    long populate() {
         populate(methodDescriptor.getMethodBlock());
         return offsetCount;
     }

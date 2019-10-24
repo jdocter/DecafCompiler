@@ -2,6 +2,8 @@ package edu.mit.compilers.assembly;
 
 import java.util.Set;
 
+import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
@@ -13,7 +15,19 @@ import java.util.Set;
 
 public class MethodCFGFactory {
 
-    public static CFNode makeMethodCFG(Block block) {
+    /**
+     * Creates CFG for all methods,
+     * Cleans CFG for all methods (removal of Nops and Merging Basic Blocks)
+     * Sets CFG as in all MethodDescriptors (mutates programDescriptor)
+     * @param programDescriptor
+     */
+    public static void makeAndSetMethodCFGs(ProgramDescriptor programDescriptor) {
+        for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
+            methodDescriptor.setMethodCFG(makeMethodCFG(methodDescriptor.getMethodBlock()));
+        }
+    }
+
+    private static CFNode makeMethodCFG(Block block) {
         CFNode contLoop = new CFNop(); // dummy node
         CFNode endBlock = new CFNop();
         CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock);
