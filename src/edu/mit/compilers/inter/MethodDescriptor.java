@@ -11,7 +11,7 @@ public class MethodDescriptor {
 
     private final boolean returnVoid;
     private TypeDescriptor returnType = null;
-    private List<Pair<Type, Id>> params = new ArrayList<>();
+    private final List<Pair<Type, Id>> params;
 
     private final LocalTable localTable;
     private final Block block;
@@ -73,11 +73,4 @@ public class MethodDescriptor {
 
     public Block getMethodBlock() { return block; }
 
-//    private void attachLocalTable(Expr expr, LocalTable localTable) throws SemanticException {
-//        expr.localTable = localTable;
-//        for (Expr innerExpr: expr.exprs) attachLocalTable(innerExpr, localTable);
-//        attachLocalTable(expr.expr, localTable);
-//        attachLocalTable(expr.loc.expr, localTable);
-//        // also method calls have exprs
-//    }
 }
