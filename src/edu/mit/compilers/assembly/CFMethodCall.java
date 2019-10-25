@@ -7,6 +7,7 @@ import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.util.Triad;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.List;
@@ -15,22 +16,17 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     public final Id methodName;
     // every pair will contain one null item, purpose is to preserve order of arguments
-    public final List<Pair<Expr, StringLit>> arguments;
+    public final List<Triad<Temp, Id, StringLit>> arguments;
 
-    CFMethodCall(Id id, List<Pair<Expr, StringLit>> arguments) {
+    CFMethodCall(Id id, List<Triad<Temp, Id, StringLit>> arguments) {
         methodName = id;
-        this.arguments = arguments;
-    }
-
-    CFMethodCall(Statement statement) {
-        assert statement.statementType == Statement.METHOD_CALL;
-        methodName = statement.methodCall.methodName;
-        arguments = statement.methodCall.arguments;
+        this.arguments = List.copyOf(arguments);
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
-        // TODO Auto-generated method stub
+    public List<String> toAssembly(VariableTable variableTable) {
+
+        // push stack according to size of arguments
         return null;
     }
 

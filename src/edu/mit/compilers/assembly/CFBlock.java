@@ -5,10 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.inter.LocalTable;
-import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -23,13 +20,8 @@ public class CFBlock extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
 
-    public CFBlock(CFAssign cfAssign, VariableTable variableTable) {
-        this.statements.add(cfAssign);
-        this.variableTable = variableTable;
-    }
-
-    public CFBlock(CFMethodCall methodCall, VariableTable variableTable) {
-        this.statements.add(methodCall);
+    public CFBlock(CFStatement cfStatement, VariableTable variableTable) {
+        this.statements.add(cfStatement);
         this.variableTable = variableTable;
     }
 
@@ -46,7 +38,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly(MethodTable methodTable) {
+    public List<String> toAssembly() {
         // TODO Auto-generated method stub
 
         // Visitor?

@@ -6,7 +6,7 @@ import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 
 public interface CFStatement {
-    List<String> toAssembly(VariableTable variableTable, MethodTable methodTable);
+    List<String> toAssembly(VariableTable variableTable);
 
     int getUID();
 }

@@ -3,12 +3,12 @@ package edu.mit.compilers.assembly;
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
-    List<String> toAssembly(MethodTable methodTable);
+    List<String> toAssembly();
 
     /*
      * Invariant:

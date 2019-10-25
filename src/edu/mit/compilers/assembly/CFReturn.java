@@ -1,6 +1,5 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
@@ -29,7 +28,7 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly(MethodTable methodTable) {
+    public List<String> toAssembly() {
         return null;
     }
 

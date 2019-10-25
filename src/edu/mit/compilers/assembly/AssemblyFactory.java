@@ -5,6 +5,7 @@ import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.parser.Block;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.MethodDeclaration;
+import edu.mit.compilers.visitor.AssemblyCollector;
 import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MergeBasicBlocksAndRemoveNops;
 
@@ -42,7 +43,8 @@ public class AssemblyFactory {
         // move params 1-6 from registers onto stack!!!! important
         // if more params, move params 7... onto stack, access from rbp
         // assemblyGen for CFMethodStart
+        List<String> instructions = new AssemblyCollector(methodDescriptor.getMethodCFG()).getInstructions();
         return null;
     }
-    
+
 }
