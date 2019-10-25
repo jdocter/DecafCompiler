@@ -69,18 +69,8 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     }
 
     @Override
-    public void visit(CFBreak cfBreak) {
-        visitNeighbors(cfBreak);
-    }
-
-    @Override
     public void visit(CFConditional cfConditional) {
         visitNeighbors(cfConditional);
-    }
-
-    @Override
-    public void visit(CFContinue cfContinue) {
-        visitNeighbors(cfContinue);
     }
 
     @Override

@@ -106,14 +106,10 @@ public class MethodCFGFactory {
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
                 case Statement.BREAK:
-                    final CFNode cfBreak = new CFBreak();
-                    previousCFNode.setNext(cfBreak);
-                    cfBreak.setNext(breakLoop);
+                    previousCFNode.setNext(breakLoop);
                     return startBlock;
                 case Statement.CONTINUE:
-                    final CFNode cfContinue = new CFContinue();
-                    previousCFNode.setNext(cfContinue);
-                    cfContinue.setNext(contLoop);
+                    previousCFNode.setNext(contLoop);
                     return startBlock;
             }
         }
