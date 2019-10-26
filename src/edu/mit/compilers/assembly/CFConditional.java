@@ -1,6 +1,5 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
@@ -12,25 +11,27 @@ import java.util.Set;
 
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
-        return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "]";
+        return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     private final Expr boolExpr;
     private CFNode ifTrue;
     private CFNode ifFalse;
     private Set<CFNode> parents = new HashSet<CFNode>();
+    private final VariableTable variableTable;
 
-    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse) {
+    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
         this.boolExpr = expr;
         this.ifTrue= ifTrue;
         ifTrue.addParent(this);
 
         this.ifFalse = ifFalse;
         ifFalse.addParent(this);
+        this.variableTable = variableTable;
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly() {
         return null;
     }
 
@@ -76,6 +77,11 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     @Override
+    public VariableTable getVariableTable() {
+        return variableTable;
+    }
+
+    @Override
     public void replacePointers(CFNode original, CFNode replacement) {
         if (this.ifFalse == original) {
             this.ifFalse = replacement;
@@ -85,5 +91,13 @@ public class CFConditional extends UIDObject implements CFNode {
             this.ifTrue = replacement;
             this.ifTrue.addParent(this);
         }
+    }
+
+    public CFNode getIfTrue() {
+        return ifTrue;
+    }
+
+    public CFNode getIfFalse() {
+        return ifFalse;
     }
 }

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
@@ -14,24 +13,16 @@ import edu.mit.compilers.visitor.CFVisitor;
 public class CFBlock extends UIDObject implements CFNode {
 
     // Should all be either CFAssign or CFMethodCall
-    List<CFStatement> statements = new ArrayList<CFStatement>();
+    private final List<CFStatement> statements = new ArrayList<CFStatement>();
     CFNode next;
 
     boolean isEnd; // end of function
     private Set<CFNode> parents = new HashSet<CFNode>();
+    private final VariableTable variableTable;
 
-    public CFBlock(CFAssign cfAssign) {
-        this.statements.add(cfAssign);
-    }
-
-    public CFBlock(CFMethodCall methodCall) {
-        this.statements.add(methodCall);
-    }
-
-    public void prependBlock(CFBlock beforeBlock) {
-        List<CFStatement> newStatements = new ArrayList<>(beforeBlock.statements); // defensive copy
-        newStatements.addAll(statements);
-        statements = newStatements;
+    public CFBlock(CFStatement cfStatement, VariableTable variableTable) {
+        this.statements.add(cfStatement);
+        this.variableTable = variableTable;
     }
 
     @Override
@@ -47,7 +38,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly() {
         // TODO Auto-generated method stub
 
         // Visitor?
@@ -65,8 +56,8 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override public String toString() {
-        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "]";
-        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "]";
+        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     @Override
@@ -86,9 +77,25 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
+    public VariableTable getVariableTable() {
+        return variableTable;
+    }
+
+    @Override
     public void replacePointers(CFNode original, CFNode replacement) {
         if (this.next == original) {
             this.setNext(replacement);
         }
+    }
+
+    public void prependAllStatements(CFBlock block) {
+        List<CFStatement> thisCopy = new ArrayList<>(this.statements);
+        this.statements.clear();
+        this.statements.addAll(block.statements);
+        this.statements.addAll(thisCopy);
+    }
+
+    public boolean isSameScope(CFBlock other) {
+        return !(variableTable == null) && !(other.variableTable == null) && variableTable == other.variableTable;
     }
 }

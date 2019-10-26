@@ -35,12 +35,15 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable, MethodTable methodTable) {
+    public List<String> toAssembly(VariableTable variableTable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override public String toString() {
+        if (expr == null) {
+            return "" + loc + assignOp;
+        }
         return "" + loc + " " + assignOp + " " + expr;
     }
 }

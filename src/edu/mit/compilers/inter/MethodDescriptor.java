@@ -4,6 +4,7 @@ package edu.mit.compilers.inter;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.mit.compilers.assembly.CFNode;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 
@@ -11,10 +12,12 @@ public class MethodDescriptor {
 
     private final boolean returnVoid;
     private TypeDescriptor returnType = null;
-    private List<Pair<Type, Id>> params = new ArrayList<>();
+    private final List<Pair<Type, Id>> params;
 
     private final LocalTable localTable;
     private final Block block;
+    private final String methodName;
+    private CFNode methodCFG;
     public final int declarationLineNumber;
 
     MethodDescriptor(MethodDeclaration methodDeclaration, FieldTable globalFieldTable) throws SemanticException {
@@ -24,7 +27,8 @@ public class MethodDescriptor {
         } else {
             returnVoid = true;
         }
-        
+
+        methodName = methodDeclaration.methodName.getName();
         declarationLineNumber = methodDeclaration.methodName.getLineNumber();
         block = methodDeclaration.mBlock;
         localTable = new LocalTable(block.fieldDeclarations, globalFieldTable);
@@ -71,11 +75,17 @@ public class MethodDescriptor {
         return this.params; // in order
     }
 
-//    private void attachLocalTable(Expr expr, LocalTable localTable) throws SemanticException {
-//        expr.localTable = localTable;
-//        for (Expr innerExpr: expr.exprs) attachLocalTable(innerExpr, localTable);
-//        attachLocalTable(expr.expr, localTable);
-//        attachLocalTable(expr.loc.expr, localTable);
-//        // also method calls have exprs
-//    }
+    public Block getMethodBlock() { return block; }
+
+    public void setMethodCFG(CFNode cfMethodStart) {
+        this.methodCFG = cfMethodStart;
+    }
+
+    public CFNode getMethodCFG() {
+        return methodCFG;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
 }

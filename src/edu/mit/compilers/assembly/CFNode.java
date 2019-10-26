@@ -3,12 +3,12 @@ package edu.mit.compilers.assembly;
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
-    List<String> toAssembly(VariableTable variableTable, MethodTable methodTable);
+    List<String> toAssembly();
 
     /*
      * Invariant:
@@ -23,6 +23,8 @@ public interface CFNode {
     void setNext(CFNode next);
     CFNode getNext();
 
+    VariableTable getVariableTable();
+
     /*
      * WARNING!!! Doesn't automatically maintain parent pointers invariant for original!
      * This is because parents is a set, so there may be multiple
@@ -33,4 +35,5 @@ public interface CFNode {
     int getUID();
 
     void accept(CFVisitor v);
+
 }

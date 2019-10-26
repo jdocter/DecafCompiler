@@ -9,6 +9,10 @@ public class LocalDescriptor implements VariableDescriptor {
         this.type = type;
     }
 
+    public void setStackOffset(long stackOffset) {
+        this.stackOffset = stackOffset;
+    }
+
     @Override
     public TypeDescriptor getTypeDescriptor() {
         return type;

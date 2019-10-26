@@ -1,0 +1,18 @@
+import printf;
+bool i ( ) {
+    return true;
+    printf("fail");
+}
+void main ( ) {
+    if (i() == true) {
+	int i;
+	for (i = 0; i < 3; i++) {
+	    int i;
+	    i = 4;
+	    printf("Iter");
+	}
+	printf("%d", i);
+    } else {
+	printf("fail");
+    }
+}

@@ -1,15 +1,11 @@
 package edu.mit.compilers.visitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.assembly.CFBlock;
-import edu.mit.compilers.assembly.CFBreak;
-import edu.mit.compilers.assembly.CFConditional;
-import edu.mit.compilers.assembly.CFContinue;
-import edu.mit.compilers.assembly.CFNode;
-import edu.mit.compilers.assembly.CFNop;
-import edu.mit.compilers.assembly.CFReturn;
+import edu.mit.compilers.assembly.*;
 
 
 public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
@@ -20,22 +16,33 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
     private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
-            visited.add(node);
+             visited.add(node);
             for (CFNode neighbor : node.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
     }
 
-    private static void peepholeRemove(CFNode toRemove) {
+    /**
+     * True if successful, false if failure
+     *
+     * Failure means the node to remove was the head of the CFG.
+     *
+     * @param toRemove
+     * @return true if success
+     */
+    private static boolean peepholeRemove(CFNode toRemove) {
         Set<CFNode> parents = toRemove.parents();
-        // System.out.println("parents of " + cfNop.getUID() + ": " + parents);
+        if (parents.isEmpty()) return false;
+
+        System.out.println("removing " + toRemove.getUID());
         CFNode next = toRemove.getNext();
         for (CFNode parent : parents) {
             parent.replacePointers(toRemove, next);
         }
         // Don't care about parents for toRemove because it's removed from the graph
         next.removeParent(toRemove);
+        return true;
     }
 
     @Override
@@ -48,8 +55,11 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
             if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
                 // any execution of cfBlock implies execution of parent
                 if (cfBlockParents.size() == 1) {
-                    peepholeRemove(lastSeenCFBlock);
-                    cfBlock.prependBlock(lastSeenCFBlock);
+                    // check variable tables are same
+                    if (lastSeenCFBlock.isSameScope(cfBlock)) {
+                        cfBlock.prependAllStatements(lastSeenCFBlock);
+                        peepholeRemove(lastSeenCFBlock);
+                    }
                 }
             }
 
@@ -59,18 +69,8 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     }
 
     @Override
-    public void visit(CFBreak cfBreak) {
-        visitNeighbors(cfBreak);
-    }
-
-    @Override
     public void visit(CFConditional cfConditional) {
         visitNeighbors(cfConditional);
-    }
-
-    @Override
-    public void visit(CFContinue cfContinue) {
-        visitNeighbors(cfContinue);
     }
 
     @Override
@@ -78,7 +78,9 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         if (visited.contains(cfNop)) return;
 
         visited.add(cfNop);
-        if (cfNop.isEnd()) return;
+        if (cfNop.isEnd()) {
+            cfNop.setNext(new CFReturn(null, null));
+        }
 
         peepholeRemove(cfNop);
         cfNop.getNext().accept(this);
