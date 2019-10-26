@@ -49,18 +49,46 @@ public class MethodCFGFactory2 {
         for (Statement statement : block.statements) {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
-                    final CFNode endAssign = new CFNop();
-                    final CFNode cfBlockAssign = makeAssignCFG(new CFAssign(statement), endAssign, block.localTable);
-                    previousCFNode.setNext(cfBlockAssign);
-                    previousCFNode = endAssign;
+                    final Temp tempLocExpr = new Temp();
+                    final Pair<CFNode, CFNode> locExprCFG = statement.loc.expr != null ?
+                            destructExprAssignTemp(statement.loc.expr, tempLocExpr, block.localTable) : null;
+                    final Temp tempAssignExpr = new Temp();
+                    Pair<CFNode, CFNode> assignExprCFG = statement.assignExpr.expr != null ?
+                            destructExprAssignTemp(statement.assignExpr.expr, tempAssignExpr, block.localTable) : null;
+                    final CFNode cfBlockAssign;
+                    if (statement.loc.expr != null && statement.assignExpr.expr != null) {
+                        // a[b] += c
+                        cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr), block.localTable);
+                        locExprCFG.getValue().setNext(assignExprCFG.getKey());
+                        assignExprCFG.getValue().setNext(cfBlockAssign);
+                        previousCFNode.setNext(locExprCFG.getKey());
+                        previousCFNode = cfBlockAssign;
+                    } else if (statement.loc.expr == null && statement.assignExpr.expr == null){
+                        // a++
+                        cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, null),
+                                block.localTable);
+                        previousCFNode.setNext(cfBlockAssign);
+                        previousCFNode = cfBlockAssign;
+                    } else if (statement.loc.expr != null && statement.assignExpr.expr == null) {
+                        // a[b] ++
+                        cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, null), block.localTable);
+                        locExprCFG.getValue().setNext(cfBlockAssign);
+                        previousCFNode.setNext(locExprCFG.getKey());
+                        previousCFNode = cfBlockAssign;
+                    } else if (statement.loc.expr == null && statement.assignExpr.expr != null) {
+                        // a += b
+                        cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, tempAssignExpr), block.localTable);
+                        assignExprCFG.getValue().setNext(cfBlockAssign);
+                        previousCFNode.setNext(assignExprCFG.getKey());
+                        previousCFNode = cfBlockAssign;
+                    }
                     break;
                 case Statement.METHOD_CALL:
-                    final CFNode endMethodCall = new CFNop();
-                    final CFNode cfBlockMethodCall = destructMethodCall(new CFMethodCall(statement), endMethodCall, block.localTable);
-                    previousCFNode.setNext(cfBlockMethodCall);
-                    previousCFNode = endMethodCall;
+                    Pair<CFNode, CFNode> methodCallCFG = destructMethodCall(statement.methodCall, block.localTable);
+                    previousCFNode.setNext(methodCallCFG.getKey());
+                    previousCFNode = methodCallCFG.getValue();
                     break;
-                case Statement.IF:
+                case Statement.IF: // TODO
                     final CFNode endIf = new CFNop();
                     final Pair<CFNode, CFNode> cfIfBlock = destructBlock(statement.ifBlock, contLoop, breakLoop);
                     cfIfBlock.getValue().setNext(endIf);
@@ -77,7 +105,7 @@ public class MethodCFGFactory2 {
                     previousCFNode.setNext(startIf);
                     previousCFNode = endIf;
                     break;
-                case Statement.FOR:
+                case Statement.FOR: // TODO
                     final CFNode endFor = new CFNop();
                     final CFNode initAssignment = new CFBlock(new CFAssign(statement.initAssignment),block.localTable);
                     final CFNode contFor = new CFBlock(new CFAssign(statement.updateAssignment), block.localTable);
@@ -89,7 +117,7 @@ public class MethodCFGFactory2 {
                     contFor.setNext(startFor);
                     previousCFNode = endFor;
                     break;
-                case Statement.WHILE:
+                case Statement.WHILE: // TODO
                     final CFNode endWhile = new CFNop();
                     final CFNode contWhile = new CFNop();
                     final Pair<CFNode,CFNode> cfWhileBlock = destructBlock(statement.block, contWhile, endWhile);
@@ -98,16 +126,16 @@ public class MethodCFGFactory2 {
                     previousCFNode.setNext(contWhile);
                     previousCFNode = endWhile;
                     break;
-                case Statement.RETURN:
+                case Statement.RETURN: // TODO
                     final CFNode cfReturn;
                     if(statement.expr != null) {
                         final Temp returnTemp = new Temp();
-                        final Pair<CFNode, CFNode> cfReturnExpr = destructExpr(statement.expr, returnTemp, block.localTable);
+                        final Pair<CFNode, CFNode> cfReturnExpr = destructExprAssignTemp(statement.expr, returnTemp, block.localTable);
                         final CFNode cfReturnTrue = new CFReturn(Expr.makeTrueExpr(), block.localTable);
                         final CFNode cfReturnFalse = new CFReturn(Expr.makeFalseExpr(), block.localTable);
                         cfReturn = shortCircuit(statement.expr, cfReturnTrue, cfReturnFalse, block.localTable);
                     } else {
-                      cfReturn = new CFReturn(statement.expr, block.localTable);
+                        cfReturn = new CFReturn(statement.expr, block.localTable);
                     }
                     previousCFNode.setNext(cfReturn);
                     return new Pair(startBlock, endBlock);
@@ -125,162 +153,110 @@ public class MethodCFGFactory2 {
         return new Pair(startBlock, endBlock);
     }
 
-    /**
-     * determines if CFAssign has potential to short circuit and handle accordingly
-     *
-     * @param cfAssign
-     * @param endAssign
-     * @return
-     */
-    private static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign, VariableTable variableTable) {
-        if (cfAssign.expr != null && hasPotentialToSC(cfAssign.expr)) {
-            final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()), variableTable);
-            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeFalseExpr()), variableTable);
-            cfBlockAssignTrue.setNext(endAssign);
-            cfBlockAssignFalse.setNext(endAssign);
-            return shortCircuit(cfAssign.expr, cfBlockAssignTrue, cfBlockAssignFalse, variableTable);
-        } else {
-            final CFNode cfBlockAssign = new CFBlock(cfAssign, variableTable);
-            cfBlockAssign.setNext(endAssign);
-            return cfBlockAssign;
-        }
-    }
-
-    /**
-     * searches through arguments of method, if argument has potential to short circuit, then
-     *      set up short circuited method calls (recursively) for false argument and true argument
-     *      return short circuit based on the argument
-     * otherwise
-     *      return CFNode of methodCall
-     *
-     * this runs in n^2 time where n is number of arguments
-     *
-     * Also note that the compiled code will only take a path of up to length n.
-     * O(n^2) space is required so O(n^2) time to build is required
-     *
-     * @param cfMethodCall
-     * @param end
-     * @return
-     */
-    private static Pair<CFNode,CFNode> destructMethodCall(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
-        for (int i = 0; i < cfMethodCall.arguments.size(); i++) {
-            Expr arg = cfMethodCall.arguments.get(i).getKey();
-            if (arg != null && hasPotentialToSC(arg)) {
-                final List<Pair<Expr,StringLit>> iTrueArgs = new ArrayList<>(cfMethodCall.arguments);
-                iTrueArgs.set(i, new Pair<>(Expr.makeTrueExpr(), null));
-                final List<Pair<Expr,StringLit>> iFalseArgs = new ArrayList<>(cfMethodCall.arguments);
-                iFalseArgs.set(i, new Pair<>(Expr.makeFalseExpr(), null));
-                final CFNode iTrueMethodCall = destructMethodCall(new CFMethodCall(cfMethodCall.methodName, iTrueArgs), end, variableTable);
-                final CFNode iFalseMethodCall = destructMethodCall(new CFMethodCall(cfMethodCall.methodName, iFalseArgs), end, variableTable);
-                return shortCircuit(arg, iTrueMethodCall, iFalseMethodCall, variableTable);
-            }
-        }
-        final CFNode finalMethodCall = new CFBlock(cfMethodCall, variableTable);
-        finalMethodCall.setNext(end);
-        return finalMethodCall;
-    }
-
-    private static Pair<CFNode,CFNode> destructExpr(Expr expr, Temp temp, VariableTable locals) {
+    private static Pair<CFNode,CFNode> destructExprAssignTemp(Expr expr, Temp temp, VariableTable locals) {
         switch (expr.exprType) {
             case Expr.LEN:
                 CFBlock cfBlockLen = CFTempAssign.makeLen(temp, expr.id);
                 return new Pair(cfBlockLen, cfBlockLen);
             case Expr.LIT:
-                throw new RuntimeException("Literals don't need to be destructed?");
+                CFBlock cfBlockLit = CFTempAssign.makeLit(temp, expr.lit);
+                return new Pair(cfBlockLit, cfBlockLit);
             case Expr.MINUS:
                 Temp tempMinusOperand = new Temp();
-                Pair<CFNode, CFNode> minusOperandCFG = destructExpr(expr.expr, tempMinusOperand, locals);
+                Pair<CFNode, CFNode> minusOperandCFG = destructExprAssignTemp(expr.expr, tempMinusOperand, locals);
                 CFBlock cfBlockMinus = new CFBlock(CFTempAssign.makeMinus(temp, tempMinusOperand), locals);
                 minusOperandCFG.getValue().setNext(cfBlockMinus);
                 return new Pair(minusOperandCFG.getKey(), cfBlockMinus);
             case Expr.LOC:
-                // TODO
+                final Temp tempLocExpr = new Temp();
+                if (expr.loc.expr != null) {
+                    final Pair<CFNode, CFNode> locExprCFG = destructExprAssignTemp(expr.loc.expr, tempLocExpr, locals);
+                    CFBlock cfBlockTempAssign = new CFBlock(CFTempAssign.makeLoc(temp, expr.loc.id, tempLocExpr), locals);
+                    locExprCFG.getValue().setNext(cfBlockTempAssign);
+                    return new Pair<>(locExprCFG.getKey(),cfBlockTempAssign);
+                } else {
+                    CFBlock cfBlockTempAssign = new CFBlock(CFTempAssign.makeLoc(temp, expr.loc.id), locals);
+                    return new Pair<>(cfBlockTempAssign, cfBlockTempAssign);
+                }
             case Expr.METHOD_CALL:
                 Pair<CFNode, CFNode> methodCallCFG = destructMethodCall(expr.methodCall, locals);
-                CFBlock cfBlockStoreRax = new CFBlock(CFTempAssign.storeRax(temp), locals);
-                methodCallCFG.getValue().setNext(cfBlockStoreRax);
-                return new Pair(methodCallCFG.getKey(),cfBlockStoreRax);
+                CFBlock cfBlockLoadRax = new CFBlock(CFTempAssign.makeLoadRax(temp), locals);
+                methodCallCFG.getValue().setNext(cfBlockLoadRax);
+                return new Pair(methodCallCFG.getKey(), cfBlockLoadRax);
             case Expr.NOT:
-
+                Temp tempNotOperand = new Temp();
+                Pair<CFNode, CFNode> notOperandCFG = destructExprAssignTemp(expr.expr, tempNotOperand, locals);
+                CFBlock cfBlockNot = new CFBlock(CFTempAssign.makeNot(temp, tempNotOperand), locals);
+                notOperandCFG.getValue().setNext(cfBlockNot);
+                return new Pair(notOperandCFG.getKey(), cfBlockNot);
             case Expr.BIN_OP:
-        }
-    }
+                Temp left = new Temp();
+                Temp right = new Temp();
+                Pair<CFNode, CFNode> leftCFG = destructExprAssignTemp(expr.expr, left, locals);
+                Pair<CFNode, CFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, locals);
 
-    /**
-     * @param expr
-     * @param ifTrue
-     * @param ifFalse
-     * @return CFNode representing conditional evaluation of the expr
-     */
-    private static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
-        switch (expr.exprType) {
-            case Expr.LEN:
-            case Expr.MINUS:
-                throw new RuntimeException("Incorrect semantic checking, tried to shortCircuit a non-boolean");
-            case Expr.LOC:
-            case Expr.METHOD_CALL:
-            case Expr.LIT: // assume bool
-                return new CFConditional(expr, ifTrue, ifFalse, variableTable);
-            case Expr.NOT:
-                return shortCircuit(expr.expr, ifFalse, ifTrue, variableTable);
-            case Expr.BIN_OP:
+                // for shortcircuiting
+                CFBlock assignTrue = new CFBlock(CFTempAssign.assignTrue(temp), locals);
+                CFBlock assignFalse = new CFBlock(CFTempAssign.assignFalse(temp), locals);
+                CFNode end = new CFNop();
+                assignTrue.setNext(end);
+                assignFalse.setNext(end);
+
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
-                        CFNode rightAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
-                        CFNode leftAnd = shortCircuit(expr.expr, rightAnd, ifFalse, variableTable);
-                        return leftAnd;
+                        CFNode rightAnd = new CFConditional(right, assignTrue, assignFalse, locals);
+                        CFNode leftAnd = new CFConditional(left, rightCFG.getKey(), assignFalse, locals);
+                        rightCFG.getValue().setNext(rightAnd);
+                        leftCFG.getValue().setNext(leftAnd);
+                        return new Pair(leftCFG.getKey(), end);
                     case BinOp.OR:
-                        CFNode rightOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
-                        CFNode leftOr = shortCircuit(expr.expr, ifTrue, rightOr, variableTable);
-                        return leftOr;
+                        CFNode rightOr = new CFConditional(right, assignTrue, assignFalse, locals);
+                        CFNode leftOr = new CFConditional(left, assignTrue, rightCFG.getKey(), locals);
+                        rightCFG.getValue().setNext(rightOr);
+                        leftCFG.getValue().setNext(leftOr);
+                        return new Pair(leftCFG.getKey(), end);
                     case BinOp.EQ:
-                        // if either left or right side of EQ may short circuit, we must expand CFG
-                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse, variableTable);
-                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue, variableTable);
-                            CFNode leftEq = shortCircuit(expr.expr, scIfRightEvaluatesTrue, scIfRightEvaluatesFalse, variableTable);
-                            return leftEq;
-                        } else {
-                            return new CFConditional(expr, ifTrue, ifFalse, variableTable);
-                        }
                     case BinOp.NEQ:
-                        // if either left or right side of EQ may short circuit, we must expand CFG
-                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse, variableTable);
-                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue, variableTable);
-                            CFNode leftNeq = shortCircuit(expr.expr, scIfRightEvaluatesFalse, scIfRightEvaluatesTrue, variableTable);
-                            return leftNeq;
-                        } else {
-                            return new CFConditional(expr, ifTrue, ifFalse, variableTable);
-                        }
                     case BinOp.GEQ:
                     case BinOp.LEQ:
                     case BinOp.GT:
                     case BinOp.LT:
-                        // for these comparisons, both arguments of the binOp can and should be evaluated
-                        return new CFConditional(expr, ifTrue, ifFalse, variableTable);
                     case BinOp.MINUS:
                     case BinOp.MOD:
                     case BinOp.MUL:
                     case BinOp.PLUS:
                     case BinOp.DIV:
-                        // shouldn't ever get here if semantic checks done correctly
-                        throw new RuntimeException("Incorrect semantic checking, tried to shortCircuit a non-boolean");
+                        leftCFG.getValue().setNext(rightCFG.getKey());
+                        CFBlock assignBinOp = new CFBlock(CFTempAssign.assignBinOp(temp, left, expr.binOp, right), locals);
+                        rightCFG.getValue().setNext(assignBinOp);
+                        return new Pair<>(leftCFG.getKey(), assignBinOp);
                     default:
                         throw new RuntimeException("Unknown BinOp: " + expr.binOp.binOp);
 
                 }
-            default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
         }
     }
 
-    /**
-     * @param expr
-     * @return true if expr or child of expr has potential to short circuit (NOT, AND, OR, EQ, NEQ)
-     */
-    private static boolean hasPotentialToSC(Expr expr) {
-        return expr.exprType == Expr.NOT ||
-                (expr.exprType == Expr.BIN_OP && Set.of(BinOp.AND, BinOp.OR, BinOp.EQ, BinOp.NEQ).contains(expr.binOp));
+    private static Pair<CFNode,CFNode> destructMethodCall(MethodCall methodCall, VariableTable locals) {
+        List<Pair<Temp, StringLit>> argTemps = new ArrayList<>();
+        CFNode methodCallStart = new CFNop();
+        CFNode prev = methodCallStart;
+        for (Pair<Expr,StringLit> arg: methodCall.arguments) {
+            if (arg.getKey() != null) {
+                // expr
+                Temp argTemp = new Temp();
+                Pair<CFNode, CFNode> argPrep = destructExprAssignTemp(arg.getKey(), argTemp, locals);
+                prev.setNext(argPrep.getKey());
+                prev = argPrep.getValue();
+                argTemps.add(new Pair(argTemp, null));
+            } else {
+                argTemps.add(new Pair(null, arg.getValue()));
+            }
+
+        }
+        CFBlock cfBlockMethodCall = new CFBlock(new CFMethodCall(methodCall.methodName, argTemps), locals);
+        prev.setNext(cfBlockMethodCall);
+        return new Pair(methodCallStart, cfBlockMethodCall);
     }
+
 }
