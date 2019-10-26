@@ -16,9 +16,9 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     public final Id methodName;
     // every pair will contain one null item, purpose is to preserve order of arguments
-    public final List<Triad<Temp, Id, StringLit>> arguments;
+    public final List<Pair<Expr, StringLit>> arguments;
 
-    CFMethodCall(Id id, List<Triad<Temp, Id, StringLit>> arguments) {
+    CFMethodCall(Id id, List<Pair<Expr, StringLit>> arguments) {
         methodName = id;
         this.arguments = List.copyOf(arguments);
     }

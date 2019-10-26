@@ -58,7 +58,7 @@ public class MethodCFGFactory {
                     break;
                 case Statement.METHOD_CALL:
                     final CFNode endMethodCall = new CFNop();
-                    final CFNode cfBlockMethodCall = makeMethodCFG(new CFMethodCall(statement), endMethodCall, block.localTable);
+                    final CFNode cfBlockMethodCall = makeMethodCFG(new CFMethodCall(statement.methodCall.methodName, statement.methodCall.arguments), endMethodCall, block.localTable);
                     previousCFNode.setNext(cfBlockMethodCall);
                     previousCFNode = endMethodCall;
                     break;
