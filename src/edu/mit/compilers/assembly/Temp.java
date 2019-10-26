@@ -1,19 +1,13 @@
 package edu.mit.compilers.assembly;
 
-public class Temp {
-    private static int idCounter = 0;
+import edu.mit.compilers.util.UIDObject;
 
-    private final int id;
+public class Temp extends UIDObject {
+
     private final String name;
 
     Temp() {
-        id = idCounter;
-        idCounter++;
-        name = "t"+id;
-    }
-
-    public int getId() {
-        return id;
+        name = "t"+getUID();
     }
 
     public String getName() {
@@ -21,13 +15,8 @@ public class Temp {
     }
 
     @Override
-    public int hashCode() {
-        return id;
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        return obj instanceof Temp && this.id == ((Temp) obj).id;
+        return obj instanceof Temp && super.equals(obj);
     }
 
     @Override

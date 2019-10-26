@@ -11,7 +11,6 @@ import edu.mit.compilers.visitor.MergeBasicBlocksAndRemoveNops;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MethodCFGFactory {
 
@@ -23,11 +22,11 @@ public class MethodCFGFactory {
      */
     public static void makeAndSetMethodCFGs(ProgramDescriptor programDescriptor) {
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
-            methodDescriptor.setMethodCFG(makeMethodCFG(methodDescriptor.getMethodBlock()));
+            methodDescriptor.setMethodCFG(makeBlockCFG(methodDescriptor.getMethodBlock()));
         }
     }
 
-    private static CFNode makeMethodCFG(Block block) {
+    private static CFNode makeBlockCFG(Block block) {
         CFNode contLoop = new CFNop(); // dummy node
         CFNode endBlock = new CFNop();
         CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock);
@@ -58,7 +57,7 @@ public class MethodCFGFactory {
                     break;
                 case Statement.METHOD_CALL:
                     final CFNode endMethodCall = new CFNop();
-                    final CFNode cfBlockMethodCall = makeMethodCFG(new CFMethodCall(statement.methodCall.methodName, statement.methodCall.arguments), endMethodCall, block.localTable);
+                    final CFNode cfBlockMethodCall = makeMethodCallCFG(new CFMethodCall(statement.methodCall.methodName, statement.methodCall.arguments), endMethodCall, block.localTable);
                     previousCFNode.setNext(cfBlockMethodCall);
                     previousCFNode = endMethodCall;
                     break;
@@ -156,7 +155,7 @@ public class MethodCFGFactory {
      * @param end
      * @return
      */
-    private static CFNode makeMethodCFG(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
+    private static CFNode makeMethodCallCFG(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
         for (int i = 0; i < cfMethodCall.arguments.size(); i++) {
             Expr arg = cfMethodCall.arguments.get(i).getKey();
             if (arg != null && hasPotentialToSC(arg)) {
@@ -164,8 +163,8 @@ public class MethodCFGFactory {
                 iTrueArgs.set(i, new Pair<>(Expr.makeTrueExpr(), null));
                 final List<Pair<Expr,StringLit>> iFalseArgs = new ArrayList<>(cfMethodCall.arguments);
                 iFalseArgs.set(i, new Pair<>(Expr.makeFalseExpr(), null));
-                final CFNode iTrueMethodCall = makeMethodCFG(new CFMethodCall(cfMethodCall.methodName, iTrueArgs), end, variableTable);
-                final CFNode iFalseMethodCall = makeMethodCFG(new CFMethodCall(cfMethodCall.methodName, iFalseArgs), end, variableTable);
+                final CFNode iTrueMethodCall = makeMethodCallCFG(new CFMethodCall(cfMethodCall.methodName, iTrueArgs), end, variableTable);
+                final CFNode iFalseMethodCall = makeMethodCallCFG(new CFMethodCall(cfMethodCall.methodName, iFalseArgs), end, variableTable);
                 return shortCircuit(arg, iTrueMethodCall, iFalseMethodCall, variableTable);
             }
         }
