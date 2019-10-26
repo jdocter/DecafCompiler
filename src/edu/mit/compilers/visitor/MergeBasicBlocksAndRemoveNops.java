@@ -16,7 +16,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
     private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
-            visited.add(node);
+             visited.add(node);
             for (CFNode neighbor : node.dfsTraverse()) {
                 neighbor.accept(this);
             }
