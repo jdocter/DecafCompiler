@@ -5,6 +5,7 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class CFReturn extends UIDObject implements CFNode {
         return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "]";
     }
 
+    private final List<CFStatement> statements = new ArrayList<CFStatement>();
     private CFNode next;
     boolean isEnd; // end of function
     private final Expr returnExpr;

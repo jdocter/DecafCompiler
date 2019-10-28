@@ -5,6 +5,7 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ public class CFConditional extends UIDObject implements CFNode {
         return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
+    private final List<CFStatement> statements = new ArrayList<CFStatement>();
     private final Expr boolExpr;
     private CFNode ifTrue;
     private CFNode ifFalse;
