@@ -1,9 +1,11 @@
 package edu.mit.compilers.inter;
 
 
-public class FieldDescriptor implements VariableDescriptor {
+import edu.mit.compilers.util.UIDObject;
+
+public class FieldDescriptor extends UIDObject implements VariableDescriptor {
     public final TypeDescriptor type;
-    public int memoryOffset;
+
     FieldDescriptor(TypeDescriptor type) {
         this.type = type;
     }
@@ -12,5 +14,11 @@ public class FieldDescriptor implements VariableDescriptor {
     public TypeDescriptor getTypeDescriptor() {
         return type;
     }
+
+    @Override
+    public boolean isGlobal() {
+        return true;
+    }
+
 
 }

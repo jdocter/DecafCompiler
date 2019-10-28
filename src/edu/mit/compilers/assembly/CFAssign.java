@@ -1,10 +1,8 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.*;
-import edu.mit.compilers.parser.Expr;
+
 import edu.mit.compilers.parser.Id;
-import edu.mit.compilers.parser.Loc;
-import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.ArrayList;

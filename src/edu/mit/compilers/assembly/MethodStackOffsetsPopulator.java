@@ -51,7 +51,7 @@ public class MethodStackOffsetsPopulator {
 
     private void populate(Block block) {
         for (LocalDescriptor localDescriptor: block.localTable.values()) {
-            offsetCount++;
+            offsetCount += localDescriptor.getTypeDescriptor().getMemoryLength();
             localDescriptor.setStackOffset(offsetCount);
         }
         for (Statement statement: block.statements) {

@@ -59,10 +59,11 @@ public class CFBlock extends UIDObject implements CFNode {
 
     @Override
     public List<String> toAssembly() {
-        // TODO Auto-generated method stub
-
-        // Visitor?
-        return List.of();
+        List<String> assembly = new ArrayList<>();
+        for (CFStatement statement: statements) {
+            assembly.addAll(statement.toAssembly(variableTable));
+        }
+        return assembly;
     }
 
     @Override
