@@ -1,36 +1,131 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.BinOp;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.parser.MethodCall;
-import edu.mit.compilers.parser.StringLit;
+import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TempifySubExpressions implements CFVisitor {
 
+    Set<CFNode> visited = new HashSet<>();
+
     @Override
     public void visit(CFBlock cfBlock) {
-        List<CFStatement> newStatements = new ArrayList<>();
+        if (!visited.contains(cfBlock)) {
+            CFNode startNode = new CFNop();
+            CFNode prevNode = startNode;
+            for (Statement statement: cfBlock.getStatements()) {
+                if (statement.statementType == Statement.LOC_ASSIGN) {
+                    Pair<CFNode, CFNode> la = destructStatementLocAssign(statement, cfBlock.getVariableTable());
+                    prevNode.setNext(la.getKey());
+                    prevNode = la.getValue();
+                } else if (statement.statementType == Statement.METHOD_CALL) {
+                    Pair<CFNode, CFNode> mc = destructMethodCall(statement.methodCall, cfBlock.getVariableTable());
+                    prevNode.setNext(mc.getKey());
+                    prevNode = mc.getValue();
+                } else {
+                    throw new RuntimeException("impossible to reach...");
+                }
+            }
+            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops();
+            prevNode.accept(mergeBasicBlocksAndRemoveNops);
+            cfBlock.setMiniCFG(startNode);
+            visited.add(cfBlock);
+            for (CFNode neighbor : cfBlock.dfsTraverse()) {
+                neighbor.accept(this);
+            }
+        }
     }
 
     @Override
     public void visit(CFConditional cfConditional) {
+        if (!visited.contains(cfConditional)) {
+            Temp cond = new Temp();
+            Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfConditional.getBoolExpr(), cond, cfConditional.getVariableTable());
+            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops();
+            ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
+            cfConditional.replaceExpr(cond);
+            cfConditional.setMiniCFG(ct.getKey());
 
+            visited.add(cfConditional);
+            for (CFNode neighbor : cfConditional.dfsTraverse()) {
+                neighbor.accept(this);
+            }
+        }
     }
 
     @Override
     public void visit(CFNop cfNop) {
-
+        if (!visited.contains(cfNop)) {
+            visited.add(cfNop);
+            for (CFNode neighbor : cfNop.dfsTraverse()) {
+                neighbor.accept(this);
+            }
+        }
     }
 
     @Override
     public void visit(CFReturn cfReturn) {
+        if (!visited.contains(cfReturn)) {
+            Temp cond = new Temp();
+            if (cfReturn.getReturnExpr() != null) {
+                Temp t = new Temp();
+                Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfReturn.getReturnExpr(), t, cfReturn.getVariableTable());
+                MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops();
+                ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
+                cfReturn.replaceExpr(cond);
+                cfReturn.setMiniCFG(ct.getKey());
+            }
 
+
+            visited.add(cfReturn);
+            for (CFNode neighbor : cfReturn.dfsTraverse()) {
+                neighbor.accept(this);
+            }
+        }
+    }
+
+
+
+    private static Pair<CFNode, CFNode> destructStatementLocAssign(Statement statement, VariableTable locals) {
+        if (statement.statementType != Statement.LOC_ASSIGN) throw new RuntimeException("Expected statement of type LOC_ASSIGN");
+
+        final Temp tempLocExpr = new Temp();
+        final Pair<CFNode, CFNode> locExprCFG = statement.loc.expr != null ?
+                destructExprAssignTemp(statement.loc.expr, tempLocExpr, locals) : null;
+        final Temp tempAssignExpr = new Temp();
+        Pair<CFNode, CFNode> assignExprCFG = statement.assignExpr.expr != null ?
+                destructExprAssignTemp(statement.assignExpr.expr, tempAssignExpr, locals) : null;
+        final CFNode cfBlockAssign;
+        if (statement.loc.expr != null && statement.assignExpr.expr != null) {
+            // a[b] += c
+            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
+            locExprCFG.getValue().setNext(assignExprCFG.getKey());
+            assignExprCFG.getValue().setNext(cfBlockAssign);
+            return new Pair<CFNode, CFNode>(locExprCFG.getKey(),cfBlockAssign);
+        } else if (statement.loc.expr == null && statement.assignExpr.expr == null){
+            // a++
+            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, null),
+                    locals);
+            return new Pair<CFNode, CFNode>(cfBlockAssign,cfBlockAssign);
+        } else if (statement.loc.expr != null && statement.assignExpr.expr == null) {
+            // a[b] ++
+            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, null), locals);
+            locExprCFG.getValue().setNext(cfBlockAssign);
+            return new Pair<CFNode, CFNode>(assignExprCFG.getKey(),cfBlockAssign);
+        } else if (statement.loc.expr == null && statement.assignExpr.expr != null) {
+            // a += b
+            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
+            assignExprCFG.getValue().setNext(cfBlockAssign);
+            return new Pair<CFNode, CFNode>(assignExprCFG.getKey(),cfBlockAssign);
+        } else {
+            throw new RuntimeException("destructStatemensLocAssign: Impossible to reach...");
+        }
     }
 
     private static Pair<CFNode,CFNode> destructExprAssignTemp(Expr expr, Temp temp, VariableTable locals) {

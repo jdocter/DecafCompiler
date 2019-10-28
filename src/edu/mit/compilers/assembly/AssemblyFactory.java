@@ -2,7 +2,6 @@ package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.ProgramDescriptor;
-import edu.mit.compilers.visitor.MethodAssemblyCollector;
 
 import java.util.List;
 

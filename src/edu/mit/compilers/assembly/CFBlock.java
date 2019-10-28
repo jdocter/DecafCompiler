@@ -6,23 +6,43 @@ import java.util.List;
 import java.util.Set;
 
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
 
 public class CFBlock extends UIDObject implements CFNode {
 
+    private CFNode miniCFG;
     // Should all be either CFAssign or CFMethodCall
-    private final List<CFStatement> statements = new ArrayList<CFStatement>();
+    private final List<Statement> statements = new ArrayList<>();
+    private final List<CFStatement> cfStatements = new ArrayList<>();
+    private final boolean isOuter;
     CFNode next;
 
     boolean isEnd; // end of function
     private Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
 
-    public CFBlock(CFStatement cfStatement, VariableTable variableTable) {
-        this.statements.add(cfStatement);
+    public CFBlock(Statement statement, VariableTable variableTable) {
+        if (!(statement.statementType == Statement.LOC_ASSIGN || statement.statementType == Statement.METHOD_CALL)) {
+            throw new RuntimeException("Expected Loc assign or Method call");
+        }
+        this.statements.add(statement);
         this.variableTable = variableTable;
+        isOuter = true;
+    }
+
+    public CFBlock(CFStatement statement, VariableTable variableTable) {
+        this.cfStatements.add(statement);
+        this.variableTable = variableTable;
+        isOuter = false;
+    }
+
+    public void setMiniCFG(CFNode miniCFG) {
+        if (!isOuter) throw new RuntimeException("outer");
+        this.statements.clear();
+        this.miniCFG = miniCFG;
     }
 
     @Override
@@ -88,8 +108,18 @@ public class CFBlock extends UIDObject implements CFNode {
         }
     }
 
+    public List<CFStatement> getCfStatements() {
+        if (isOuter) throw new RuntimeException("outer");
+        return cfStatements;
+    }
+
+    public List<Statement> getStatements() {
+        if (!isOuter) throw new RuntimeException("inner");
+        return statements;
+    }
+
     public void prependAllStatements(CFBlock block) {
-        List<CFStatement> thisCopy = new ArrayList<>(this.statements);
+        List<Statement> thisCopy = new ArrayList<>(this.statements);
         this.statements.clear();
         this.statements.addAll(block.statements);
         this.statements.addAll(thisCopy);

@@ -6,11 +6,6 @@ import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.MergeBasicBlocksAndRemoveNops;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MethodCFGFactory {
 
@@ -50,16 +45,10 @@ public class MethodCFGFactory {
         for (Statement statement : block.statements) {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
-                    final CFNode endAssign = new CFNop();
-                    final CFNode cfBlockAssign = makeAssignCFG(new CFAssign(statement), endAssign, block.localTable);
-                    previousCFNode.setNext(cfBlockAssign);
-                    previousCFNode = endAssign;
-                    break;
                 case Statement.METHOD_CALL:
-                    final CFNode endMethodCall = new CFNop();
-                    final CFNode cfBlockMethodCall = makeMethodCallCFG(new CFMethodCall(statement.methodCall.methodName, statement.methodCall.arguments), endMethodCall, block.localTable);
-                    previousCFNode.setNext(cfBlockMethodCall);
-                    previousCFNode = endMethodCall;
+                    final CFNode cfBlock = new CFBlock(statement, block.localTable);
+                    previousCFNode.setNext(cfBlock);
+                    previousCFNode = cfBlock;
                     break;
                 case Statement.IF:
                     final CFNode endIf = new CFNop();
@@ -76,8 +65,8 @@ public class MethodCFGFactory {
                     break;
                 case Statement.FOR:
                     final CFNode endFor = new CFNop();
-                    final CFNode initAssignment = new CFBlock(new CFAssign(statement.initAssignment),block.localTable);
-                    final CFNode contFor = new CFBlock(new CFAssign(statement.updateAssignment), block.localTable);
+                    final CFNode initAssignment = new CFBlock(statement.initAssignment, block.localTable);
+                    final CFNode contFor = new CFBlock(statement.updateAssignment, block.localTable);
                     final CFNode cfForBlock = makeBlockCFG(statement.block, contFor, contFor, endFor);
                     final CFNode startFor = shortCircuit(statement.exitExpr, cfForBlock, endFor, block.localTable);
                     previousCFNode.setNext(initAssignment);
@@ -94,14 +83,7 @@ public class MethodCFGFactory {
                     previousCFNode = endWhile;
                     break;
                 case Statement.RETURN:
-                    final CFNode cfReturn;
-                    if(statement.expr != null && hasPotentialToSC(statement.expr)) {
-                        final CFNode cfReturnTrue = new CFReturn(Expr.makeTrueExpr(), block.localTable);
-                        final CFNode cfReturnFalse = new CFReturn(Expr.makeFalseExpr(), block.localTable);
-                        cfReturn = shortCircuit(statement.expr, cfReturnTrue, cfReturnFalse, block.localTable);
-                    } else {
-                      cfReturn = new CFReturn(statement.expr, block.localTable);
-                    }
+                    final CFNode cfReturn = new CFReturn(statement.expr, block.localTable);
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
                 case Statement.BREAK:
@@ -118,60 +100,6 @@ public class MethodCFGFactory {
         return startBlock;
     }
 
-    /**
-     * determines if CFAssign has potential to short circuit and handle accordingly
-     *
-     * @param cfAssign
-     * @param endAssign
-     * @return
-     */
-    private static CFNode makeAssignCFG(CFAssign cfAssign, CFNode endAssign, VariableTable variableTable) {
-        if (cfAssign.expr != null && hasPotentialToSC(cfAssign.expr)) {
-            final CFNode cfBlockAssignTrue = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeTrueExpr()), variableTable);
-            final CFNode cfBlockAssignFalse = new CFBlock(new CFAssign(cfAssign.loc, cfAssign.assignOp, Expr.makeFalseExpr()), variableTable);
-            cfBlockAssignTrue.setNext(endAssign);
-            cfBlockAssignFalse.setNext(endAssign);
-            return shortCircuit(cfAssign.expr, cfBlockAssignTrue, cfBlockAssignFalse, variableTable);
-        } else {
-            final CFNode cfBlockAssign = new CFBlock(cfAssign, variableTable);
-            cfBlockAssign.setNext(endAssign);
-            return cfBlockAssign;
-        }
-    }
-
-    /**
-     * searches through arguments of method, if argument has potential to short circuit, then
-     *      set up short circuited method calls (recursively) for false argument and true argument
-     *      return short circuit based on the argument
-     * otherwise
-     *      return CFNode of methodCall
-     *
-     * this runs in n^2 time where n is number of arguments
-     *
-     * Also note that the compiled code will only take a path of up to length n.
-     * O(n^2) space is required so O(n^2) time to build is required
-     *
-     * @param cfMethodCall
-     * @param end
-     * @return
-     */
-    private static CFNode makeMethodCallCFG(CFMethodCall cfMethodCall, CFNode end, VariableTable variableTable) {
-        for (int i = 0; i < cfMethodCall.arguments.size(); i++) {
-            Expr arg = cfMethodCall.arguments.get(i).getKey();
-            if (arg != null && hasPotentialToSC(arg)) {
-                final List<Pair<Expr,StringLit>> iTrueArgs = new ArrayList<>(cfMethodCall.arguments);
-                iTrueArgs.set(i, new Pair<>(Expr.makeTrueExpr(), null));
-                final List<Pair<Expr,StringLit>> iFalseArgs = new ArrayList<>(cfMethodCall.arguments);
-                iFalseArgs.set(i, new Pair<>(Expr.makeFalseExpr(), null));
-                final CFNode iTrueMethodCall = makeMethodCallCFG(new CFMethodCall(cfMethodCall.methodName, iTrueArgs), end, variableTable);
-                final CFNode iFalseMethodCall = makeMethodCallCFG(new CFMethodCall(cfMethodCall.methodName, iFalseArgs), end, variableTable);
-                return shortCircuit(arg, iTrueMethodCall, iFalseMethodCall, variableTable);
-            }
-        }
-        final CFNode finalMethodCall = new CFBlock(cfMethodCall, variableTable);
-        finalMethodCall.setNext(end);
-        return finalMethodCall;
-    }
 
     /**
      * @param expr
@@ -201,25 +129,7 @@ public class MethodCFGFactory {
                         CFNode leftOr = shortCircuit(expr.expr, ifTrue, rightOr, variableTable);
                         return leftOr;
                     case BinOp.EQ:
-                        // if either left or right side of EQ may short circuit, we must expand CFG
-                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse, variableTable);
-                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue, variableTable);
-                            CFNode leftEq = shortCircuit(expr.expr, scIfRightEvaluatesTrue, scIfRightEvaluatesFalse, variableTable);
-                            return leftEq;
-                        } else {
-                            return new CFConditional(expr, ifTrue, ifFalse, variableTable);
-                        }
                     case BinOp.NEQ:
-                        // if either left or right side of EQ may short circuit, we must expand CFG
-                        if (hasPotentialToSC(expr.expr) || hasPotentialToSC(expr.binOpExpr)) {
-                            CFNode scIfRightEvaluatesTrue = shortCircuit(expr.binOpExpr, ifTrue, ifFalse, variableTable);
-                            CFNode scIfRightEvaluatesFalse = shortCircuit(expr.binOpExpr, ifFalse, ifTrue, variableTable);
-                            CFNode leftNeq = shortCircuit(expr.expr, scIfRightEvaluatesFalse, scIfRightEvaluatesTrue, variableTable);
-                            return leftNeq;
-                        } else {
-                            return new CFConditional(expr, ifTrue, ifFalse, variableTable);
-                        }
                     case BinOp.GEQ:
                     case BinOp.LEQ:
                     case BinOp.GT:

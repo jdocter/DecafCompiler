@@ -20,13 +20,35 @@ public class CFReturn extends UIDObject implements CFNode {
     private final List<CFStatement> statements = new ArrayList<CFStatement>();
     private CFNode next;
     boolean isEnd; // end of function
-    private final Expr returnExpr;
+    private Expr returnExpr;
+    private Temp returnTemp;
     private final Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
+    private boolean isVoid;
+    private CFNode miniCFG;
+
 
     public CFReturn(Expr returnExpr, VariableTable variableTable) {
         this.returnExpr = returnExpr;
         this.variableTable = variableTable;
+        isVoid = returnExpr == null ? true : false;
+    }
+
+    public Expr getReturnExpr() {
+        return returnExpr;
+    }
+
+    public void replaceExpr(Temp temp) {
+        this.returnExpr = null;
+        this.returnTemp = temp;
+    }
+
+    public void setMiniCFG(CFNode miniCFG) {
+        this.miniCFG = miniCFG;
+    }
+
+    public CFNode getMiniCFG() {
+        return miniCFG;
     }
 
     @Override

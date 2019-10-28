@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.assembly;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.mit.compilers.assembly.*;
+import edu.mit.compilers.visitor.CFVisitor;
 
 
 public class MergeBasicBlocksAndRemoveNops implements CFVisitor {

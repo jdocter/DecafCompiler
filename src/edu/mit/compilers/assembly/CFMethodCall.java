@@ -16,16 +16,15 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     public final Id methodName;
     // every pair will contain one null item, purpose is to preserve order of arguments
-    public final List<Pair<Expr, StringLit>> arguments;
+    public final List<Pair<Temp,StringLit>> arguments;
 
-    CFMethodCall(Id id, List<Pair<Expr, StringLit>> arguments) {
+    CFMethodCall(Id id, List<Pair<Temp,StringLit>> arguments) {
         methodName = id;
-        this.arguments = List.copyOf(arguments);
+        this.arguments = arguments;
     }
 
     @Override
     public List<String> toAssembly(VariableTable variableTable) {
-
         // push stack according to size of arguments
         return null;
     }

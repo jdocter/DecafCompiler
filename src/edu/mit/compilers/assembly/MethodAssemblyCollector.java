@@ -1,6 +1,7 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.assembly.*;
+import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
