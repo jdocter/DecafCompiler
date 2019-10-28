@@ -17,15 +17,15 @@ public class MethodCFGFactory {
      */
     public static void makeAndSetMethodCFGs(ProgramDescriptor programDescriptor) {
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
-            methodDescriptor.setMethodCFG(makeBlockCFG(methodDescriptor.getMethodBlock()));
+            methodDescriptor.setMethodCFG(makeBlockCFG(methodDescriptor.getMethodBlock(), methodDescriptor.isVoid()));
         }
     }
 
-    private static CFNode makeBlockCFG(Block block) {
+    private static CFNode makeBlockCFG(Block block, boolean shouldReturnVoid) {
         CFNode contLoop = new CFNop(); // dummy node
         CFNode endBlock = new CFNop();
-        CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock);
-        MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops();
+        CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock, shouldReturnVoid);
+        MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(true, shouldReturnVoid);
         methodCFG.accept(mergeBasicBlocksAndRemoveNops);
         return methodCFG;
     }
@@ -39,7 +39,7 @@ public class MethodCFGFactory {
      * @param breakLoop the CFNode that control should flow towards to break out of a loop
      * @return the start CFNode of the CFG that represents block
      */
-    private static CFNode makeBlockCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop) {
+    private static CFNode makeBlockCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop, boolean shouldReturnVoid) {
         final CFNode startBlock = new CFNop();
         CFNode previousCFNode = startBlock;
         for (Statement statement : block.statements) {
@@ -52,12 +52,12 @@ public class MethodCFGFactory {
                     break;
                 case Statement.IF:
                     final CFNode endIf = new CFNop();
-                    final CFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop);
+                    final CFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop, shouldReturnVoid);
                     final CFNode startIf;
                     if (statement.elseBlock == null) {
                         startIf = shortCircuit(statement.expr, cfIfBlock, endIf, block.localTable);
                     } else {
-                        final CFNode cfElseBlock = makeBlockCFG(statement.elseBlock, endIf, contLoop, breakLoop);
+                        final CFNode cfElseBlock = makeBlockCFG(statement.elseBlock, endIf, contLoop, breakLoop, shouldReturnVoid);
                         startIf = shortCircuit(statement.expr, cfIfBlock, cfElseBlock, block.localTable);
                     }
                     previousCFNode.setNext(startIf);
@@ -67,7 +67,7 @@ public class MethodCFGFactory {
                     final CFNode endFor = new CFNop();
                     final CFNode initAssignment = new CFBlock(statement.initAssignment, block.localTable);
                     final CFNode contFor = new CFBlock(statement.updateAssignment, block.localTable);
-                    final CFNode cfForBlock = makeBlockCFG(statement.block, contFor, contFor, endFor);
+                    final CFNode cfForBlock = makeBlockCFG(statement.block, contFor, contFor, endFor, shouldReturnVoid);
                     final CFNode startFor = shortCircuit(statement.exitExpr, cfForBlock, endFor, block.localTable);
                     previousCFNode.setNext(initAssignment);
                     initAssignment.setNext(startFor);
@@ -77,13 +77,13 @@ public class MethodCFGFactory {
                 case Statement.WHILE:
                     final CFNode endWhile = new CFNop();
                     final CFNode contWhile = new CFNop();
-                    final CFNode cfWhileBlock = makeBlockCFG(statement.block, contWhile, contWhile, endWhile);
+                    final CFNode cfWhileBlock = makeBlockCFG(statement.block, contWhile, contWhile, endWhile, shouldReturnVoid);
                     contWhile.setNext(shortCircuit(statement.expr, cfWhileBlock, endWhile, block.localTable));
                     previousCFNode.setNext(contWhile);
                     previousCFNode = endWhile;
                     break;
                 case Statement.RETURN:
-                    final CFNode cfReturn = new CFReturn(statement.expr, block.localTable);
+                    final CFNode cfReturn = new CFReturn(statement.expr, block.localTable, shouldReturnVoid);
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
                 case Statement.BREAK:

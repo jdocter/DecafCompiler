@@ -15,6 +15,18 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
     Set<CFNode> visited = new HashSet<>();
 
     CFBlock lastSeenCFBlock;
+    private boolean shouldReturnVoid;
+    private boolean replaceLastNopWithReturn;
+
+    public MergeBasicBlocksAndRemoveNops(boolean replaceLastNopWithReturn) {
+        this.replaceLastNopWithReturn = replaceLastNopWithReturn;
+        this.shouldReturnVoid = false;
+    }
+
+    public MergeBasicBlocksAndRemoveNops(boolean replaceLastNopWithReturn, boolean shouldReturnVoid) {
+        this.replaceLastNopWithReturn = replaceLastNopWithReturn;
+        this.shouldReturnVoid = shouldReturnVoid;
+    }
 
     private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
@@ -81,7 +93,11 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
-            cfNop.setNext(new CFReturn(null, null));
+            if (replaceLastNopWithReturn) {
+                cfNop.setNext(new CFReturn(null, null, shouldReturnVoid));
+            } else {
+                return;
+            }
         }
 
         peepholeRemove(cfNop);
