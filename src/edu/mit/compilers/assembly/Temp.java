@@ -4,7 +4,10 @@ import edu.mit.compilers.util.UIDObject;
 
 public class Temp extends UIDObject {
 
+    public static final int TEMP_SIZE = 8;
+
     private final String name;
+    private long offset;
 
     Temp() {
         name = "t"+getUID();
@@ -12,6 +15,14 @@ public class Temp extends UIDObject {
 
     public String getName() {
         return name;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    public long getOffset() {
+        return this.offset;
     }
 
     @Override

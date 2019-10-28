@@ -7,9 +7,10 @@ import java.util.Set;
 
 import edu.mit.compilers.assembly.*;
 import edu.mit.compilers.visitor.CFVisitor;
+import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
-public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
+public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
 
     Set<CFNode> visited = new HashSet<>();
 

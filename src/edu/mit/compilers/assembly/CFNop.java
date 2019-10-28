@@ -1,6 +1,7 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -79,5 +80,10 @@ public class CFNop extends UIDObject implements CFNode {
     @Override
     public VariableTable getVariableTable() {
         return null;
+    }
+
+    @Override
+    public List<Pair<Temp, List<Temp>>> getTemps() {
+        return List.of();
     }
 }

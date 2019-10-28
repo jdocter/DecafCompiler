@@ -2,6 +2,10 @@ import printf;
 // This should produce a runtime error
 int a;
 int foo ( ) {
+    if (a == 1) {
+       return 1;
+       } else {
+       }
 }
 void main ( ) {
   printf ( "expecting an error next:\n" );

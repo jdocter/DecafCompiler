@@ -5,6 +5,7 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Loc;
 import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.ArrayList;
@@ -82,5 +83,14 @@ public class CFAssign extends UIDObject implements CFStatement {
             return "" + arrayOrLoc + offsetStr + assignOp;
         }
         return "" + arrayOrLoc + offsetStr + " " + assignOp + " " + expr;
+    }
+
+    @Override
+    public Pair<Temp, List<Temp>> getTemps() {
+        if (arrayOffset == null) {
+            return new Pair(null, List.of(expr));
+        } else {
+            return new Pair(null, List.of(expr, arrayOffset));
+        }
     }
 }

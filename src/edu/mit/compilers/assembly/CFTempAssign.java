@@ -7,6 +7,7 @@ import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Lit;
 import edu.mit.compilers.parser.Loc;
 import edu.mit.compilers.parser.MethodCall;
+import edu.mit.compilers.util.Pair;
 
 import java.util.List;
 
@@ -138,6 +139,23 @@ public class CFTempAssign implements CFStatement {
             case LIT: return dest + " = " + lit;
             case TRUE: return dest + " = true";
             case FALSE: return dest + " = false";
+            default: throw new RuntimeException("Temp has no type: impossible to reach...");
+        }
+    }
+
+    @Override
+    public Pair<Temp, List<Temp>> getTemps() {
+        switch (type) {
+            case LEN: return new Pair(dest, List.of());
+            case MINUS: return new Pair(dest, List.of(leftOrSingleTemp));
+            case NOT: return new Pair(dest, List.of(leftOrSingleTemp));
+            case LOC: return arrayOffset == null ?  new Pair(dest, List.of()) :
+                new Pair(dest, List.of(arrayOffset));
+            case METHOD_CALL: return new Pair(dest, List.of());
+            case BIN_OP: return new Pair(dest, List.of(leftOrSingleTemp, right));
+            case LIT: return new Pair(dest, List.of());
+            case TRUE: return new Pair(dest, List.of());
+            case FALSE: return new Pair(dest, List.of());
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
     }
