@@ -60,11 +60,16 @@ public class CFBlock extends UIDObject implements CFNode {
 
     @Override
     public List<String> toAssembly() {
-        List<String> assembly = new ArrayList<>();
-        for (CFStatement statement: statements) {
-            assembly.addAll(statement.toAssembly(variableTable));
+        if (isOuter) {
+            return new MethodAssemblyCollector(miniCFG).getInstructions();
         }
-        return assembly;
+        else {
+            List<String> assembly = new ArrayList<>();
+            for (CFStatement cfStatement : cfStatements) {
+                assembly.addAll(cfStatement.toAssembly(variableTable));
+            }
+            return assembly;
+        }
     }
 
     @Override
@@ -139,10 +144,19 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     public void prependAllStatements(CFBlock block) {
-        List<Statement> thisCopy = new ArrayList<>(this.statements);
-        this.statements.clear();
-        this.statements.addAll(block.statements);
-        this.statements.addAll(thisCopy);
+        if (isOuter) {
+            if (!block.isOuter) throw new RuntimeException("Expected outer block but got inner");
+            List<Statement> thisCopy = new ArrayList<>(this.statements);
+            this.statements.clear();
+            this.statements.addAll(block.statements);
+            this.statements.addAll(thisCopy);
+        } else {
+            if (block.isOuter) throw new RuntimeException("Expected inner block but got outer");
+            List<CFStatement> thisCopy = new ArrayList<>(this.cfStatements);
+            this.cfStatements.clear();
+            this.cfStatements.addAll(block.cfStatements);
+            this.cfStatements.addAll(thisCopy);
+        }
     }
 
     public boolean isSameScope(CFBlock other) {
