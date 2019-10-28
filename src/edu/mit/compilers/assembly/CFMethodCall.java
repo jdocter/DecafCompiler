@@ -32,4 +32,9 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     @Override public String toString() {
         return "" + methodName + arguments;
     }
+
+    @Override
+    public Pair<Temp, List<Temp>> getTemps() {
+        throw new RuntimeException("Not implemented -- We planned on implementing method calls using CFTempAssigns");
+    }
 }

@@ -31,13 +31,18 @@ public class AssemblyFactory {
     private static List<String> methodAssemblyGen(MethodDescriptor methodDescriptor) {
         // populate stack offset and get count (in methodDescriptor.block)
         long variablesCount = new MethodStackOffsetsPopulator(methodDescriptor).populate();
-        // possibly get largest temp depth?
+
+        CFNode methodCFG = methodDescriptor.getMethodCFG();
+
+        TempOffsetAssigner tempOffsetAssigner = new TempOffsetAssigner(variablesCount);
+        methodCFG.accept(tempOffsetAssigner);
         // LABEL
         // allocate space rsp
+        long tempsAndVariablesCount = tempOffsetAssigner.maxTempOffset;
         // move params 1-6 from registers onto stack!!!! important
         // if more params, move params 7... onto stack, access from rbp
         // assemblyGen for CFMethodStart
-        List<String> instructions = new MethodAssemblyCollector(methodDescriptor.getMethodCFG()).getInstructions();
+        List<String> instructions = new MethodAssemblyCollector(methodCFG).getInstructions();
         return null;
     }
 

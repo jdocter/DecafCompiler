@@ -7,6 +7,7 @@ import java.util.Set;
 
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -117,6 +118,24 @@ public class CFBlock extends UIDObject implements CFNode {
     public List<Statement> getStatements() {
         if (!isOuter) throw new RuntimeException("inner");
         return statements;
+    }
+
+    /**
+     * List< Pair<TempsUpdated, TempsUsed> >
+     * @return
+     */
+    @Override
+    public List<Pair<Temp, List<Temp>>> getTemps() {
+        if (isOuter) {
+            TempCollector collector = new TempCollector();
+            miniCFG.accept(collector);
+            return collector.temps;
+        }
+        List<Pair<Temp, List<Temp>>> temps = new ArrayList<>();
+        for (CFStatement statement : this.cfStatements) {
+            temps.add(statement.getTemps());
+        }
+        return temps;
     }
 
     public void prependAllStatements(CFBlock block) {

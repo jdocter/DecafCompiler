@@ -5,6 +5,9 @@ import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.parser.*;
 
 public class MethodStackOffsetsPopulator {
+    /**
+     * Basically extends ASTVisitor
+     */
 
 
     private final MethodDescriptor methodDescriptor;

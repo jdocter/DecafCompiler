@@ -1,7 +1,9 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -14,7 +16,11 @@ public class CFReturn extends UIDObject implements CFNode {
 
 
     @Override public String toString() {
-        return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "]";
+        if (returnExpr != null) {
+            return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "] + Assembly = " + this.toAssembly();
+        } else {
+            return "UID " + UID + " CFReturn [returnTemp=" + returnTemp + "] + Assembly = " + this.toAssembly();
+        }
     }
 
     private final List<CFStatement> statements = new ArrayList<CFStatement>();
@@ -39,11 +45,13 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     public void replaceExpr(Temp temp) {
+        if (isVoid) throw new UnsupportedOperationException("Tried to give temp to void return");
         this.returnExpr = null;
         this.returnTemp = temp;
     }
 
     public void setMiniCFG(CFNode miniCFG) {
+        if (isVoid) throw new UnsupportedOperationException("Tried to give miniCFG to void return");
         this.miniCFG = miniCFG;
     }
 
@@ -101,5 +109,13 @@ public class CFReturn extends UIDObject implements CFNode {
     @Override
     public void accept(CFVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public List<Pair<Temp, List<Temp>>> getTemps() {
+        if (isVoid) return List.of();
+        TempCollector collector = new TempCollector();
+        miniCFG.accept(collector);
+        return collector.temps;
     }
 }

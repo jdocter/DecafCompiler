@@ -3,6 +3,7 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -166,5 +167,22 @@ public class CFConditional extends UIDObject implements CFNode {
 
     public CFNode getIfFalse() {
         return ifFalse;
+    }
+
+    @Override
+    public List<Pair<Temp, List<Temp>>> getTemps() {
+        if (isOuter) {
+            TempCollector collector = new TempCollector();
+            miniCFG.accept(collector);
+            return collector.temps;
+        }
+        switch (type) {
+            case SINGLE_TEMP:
+                return List.of(new Pair<Temp, List<Temp>>(null, List.of(boolTemp)));
+            case CMP:
+                return List.of(new Pair<Temp, List<Temp>>(null, List.of(left, right)));
+            default:
+                throw new RuntimeException("Unrecognized CFConditional type: " + type);
+        }
     }
 }

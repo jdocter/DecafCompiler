@@ -4,9 +4,12 @@ import edu.mit.compilers.util.UIDObject;
 
 public class Temp extends UIDObject {
 
+    public static final int TEMP_SIZE = 8;
+
     private final String name;
     private long stackOffset;
     private boolean offsetDeclared = false;
+    private long offset;
 
     Temp() {
         name = "t"+getUID();
@@ -14,6 +17,16 @@ public class Temp extends UIDObject {
 
     public String getName() {
         return name;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+        offsetDeclared = true;
+    }
+
+    public long getOffset() {
+        if (!offsetDeclared) throw new RuntimeException("stack offset must be set before it can be accessed");
+        return this.offset;
     }
 
     @Override
@@ -26,13 +39,4 @@ public class Temp extends UIDObject {
         return name;
     }
 
-    public void setStackOffset(long stackOffset) {
-        this.stackOffset = stackOffset;
-        this.offsetDeclared = true;
-    }
-
-    public long getStackOffset() {
-        if (!offsetDeclared) throw new RuntimeException("stack offset must be set before it can be accessed");
-        return stackOffset;
-    }
 }

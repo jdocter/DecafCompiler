@@ -16,7 +16,9 @@ import edu.mit.compilers.assembly.CFNode;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
+ * import edu.mit.compilers.grammar.*;
  */
+import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 
 class Main {
@@ -92,8 +94,8 @@ class Main {
              List<SemanticException> semanticExceptions = new ArrayList<>();
 
              SemanticChecker[] visitors = {
-                     new CheckIdDeclared(p, table),
-                     new UniqueGlobalIds(p, table),
+                     new CheckIdDeclared(table),
+                     new UniqueGlobalIds(table),
                      new VoidMainNoArgs(table),
                      new BreakAndContinueInAnyLoop(),
                      new CheckTypes(table),

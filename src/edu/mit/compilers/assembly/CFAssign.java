@@ -3,6 +3,9 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.*;
 
 import edu.mit.compilers.parser.Id;
+import edu.mit.compilers.parser.Loc;
+import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     public List<String> toAssembly(VariableTable variableTable) {
         final List<String> assembly = new ArrayList<>();
         if (expr != null) {
-            assembly.add("movq -" + expr.getStackOffset()+"(%rbp), %rdx");
+            assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
         }
 
 
@@ -51,7 +54,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "l(%rip)";
             } else {
-                assembly.add("movq -" +arrayOffset.getStackOffset()+"(%rbp), %rax"); // val of temp into rax
+                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
                 assembly.add("leaq " + arrayOrLoc.getName() + "(%rip), %rax"); // address of base of global array
                 dest = "(%rcx,%rax)";
@@ -80,5 +83,14 @@ public class CFAssign extends UIDObject implements CFStatement {
             return "" + arrayOrLoc + offsetStr + assignOp;
         }
         return "" + arrayOrLoc + offsetStr + " " + assignOp + " " + expr;
+    }
+
+    @Override
+    public Pair<Temp, List<Temp>> getTemps() {
+        if (arrayOffset == null) {
+            return new Pair(null, List.of(expr));
+        } else {
+            return new Pair(null, List.of(expr, arrayOffset));
+        }
     }
 }
