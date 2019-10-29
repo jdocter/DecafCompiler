@@ -3,12 +3,16 @@ package edu.mit.compilers.assembly;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
-    List<String> toAssembly();
+    List<String> toAssembly(ImportTable importTable);
+    String getAssemblyLabel();
+    String getEndOfMiniCFGLabel();
 
     /*
      * Invariant:
@@ -36,4 +40,8 @@ public interface CFNode {
 
     void accept(CFVisitor v);
 
+    /**
+     * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
+     */
+    List<Pair<Temp, List<Temp>>> getTemps();
 }

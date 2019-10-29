@@ -12,7 +12,7 @@ public class TypeDescriptor {
     public static final int BOOL_ARRAY = Type.BOOL + 2;
     public static final int STRING = 10;
 
-    private long length;
+    private long length = 1;
     public final int type;
 
     @Override public String toString() {
@@ -30,6 +30,45 @@ public class TypeDescriptor {
             default:
                 throw new RuntimeException("Unsupported type: " + type);
         }
+    }
+
+    public long getLength() {
+        return length;
+    }
+
+    /**
+     * For now 8 bytes for everything
+     * @return number of bytes required to store this type in memory
+     */
+    public long getMemoryLength() {
+        switch (type) {
+            case INT: return 8;
+            case INT_ARRAY: return 8 * length;
+            case BOOL: return 8;
+            case BOOL_ARRAY: return 8 * length;
+            default: throw new RuntimeException("Unimplmented");
+        }
+    }
+
+    /**
+     *
+     * @return number of bytes required to
+     */
+    public long elementSize() {
+        switch (type) {
+            case INT:
+            case INT_ARRAY:
+                return 8;
+            case BOOL:
+            case BOOL_ARRAY:
+                return 8; // for now
+            default:
+                throw new RuntimeException("Unimplmented");
+        }
+    }
+
+    public boolean isArray() {
+        return type == INT_ARRAY || type == BOOL_ARRAY;
     }
 
     public TypeDescriptor(int type) {

@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.assembly;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,13 +6,29 @@ import java.util.List;
 import java.util.Set;
 
 import edu.mit.compilers.assembly.*;
+import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.visitor.CFVisitor;
+import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
-public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
+public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
 
     Set<CFNode> visited = new HashSet<>();
 
     CFBlock lastSeenCFBlock;
+    private MethodDescriptor methodDescriptor;
+    private CFNode enclosingCFNode; // if it's the MiniCFVisitor
+
+    public MergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
+        // CFVisitor
+        this.enclosingCFNode = enclosingCFNode;
+    }
+
+    public MergeBasicBlocksAndRemoveNops(MethodDescriptor methodDescriptor) {
+        // MiniCFVisitor
+        this.enclosingCFNode = null;
+        this.methodDescriptor = methodDescriptor;
+    }
 
     private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
@@ -35,7 +51,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         Set<CFNode> parents = toRemove.parents();
         if (parents.isEmpty()) return false;
 
-        System.out.println("removing " + toRemove.getUID());
+        // System.out.println("removing " + toRemove.getUID());
         CFNode next = toRemove.getNext();
         for (CFNode parent : parents) {
             parent.replacePointers(toRemove, next);
@@ -79,7 +95,13 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
-            cfNop.setNext(new CFReturn(null, null));
+            if (enclosingCFNode == null) {
+                // ending Nops should be replaced with returns in the large CFG
+                cfNop.setNext(new CFReturn(null, null, methodDescriptor));
+            } else {
+                // ending Nops should be replaced with jmps in the mini CFG
+                cfNop.setNext(new CFEndOfMiniCFG(enclosingCFNode));
+            }
         }
 
         peepholeRemove(cfNop);

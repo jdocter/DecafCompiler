@@ -28,4 +28,16 @@ public enum Reg {
     public String toString() {
         return reg;
     }
+
+    public static Reg methodParam(int i) {
+        switch (i) {
+            case 1: return Reg.RDI;
+            case 2: return Reg.RSI;
+            case 3: return Reg.RDX;
+            case 4: return Reg.RCX;
+            case 5: return Reg.R8;
+            case 6: return Reg.R9;
+            default: throw new RuntimeException("Parameter " + i + " is not passed by register");
+        }
+    }
 }

@@ -12,11 +12,14 @@ import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.MethodCFGFactory;
+import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.CFNode;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
+ * import edu.mit.compilers.grammar.*;
  */
+import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 
 class Main {
@@ -92,8 +95,8 @@ class Main {
              List<SemanticException> semanticExceptions = new ArrayList<>();
 
              SemanticChecker[] visitors = {
-                     new CheckIdDeclared(p, table),
-                     new UniqueGlobalIds(p, table),
+                     new CheckIdDeclared(table),
+                     new UniqueGlobalIds(table),
                      new VoidMainNoArgs(table),
                      new BreakAndContinueInAnyLoop(),
                      new CheckTypes(table),
@@ -106,7 +109,7 @@ class Main {
              }
              if (!semanticExceptions.isEmpty()) {
                  for (SemanticException e : semanticExceptions) {
-                     System.out.println(e.getMessage());
+                     outputStream.println(e.getMessage());
                  }
                  System.exit(1);
              }
@@ -144,43 +147,18 @@ class Main {
                }
                if (!semanticExceptions.isEmpty()) {
                    for (SemanticException e : semanticExceptions) {
-                       System.out.println(e.getMessage());
+                       outputStream.println(e.getMessage());
                    }
                    System.exit(1);
                }
 
                MethodCFGFactory.makeAndSetMethodCFGs(table);
                for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
-                   System.out.println("CFG for " + methodDescriptor.getMethodName());
-                   System.out.println("----------");
-                   dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>());
-                   System.out.println("----------");
+                   outputStream.println("CFG for " + methodDescriptor.getMethodName());
+                   outputStream.println("----------");
+                   dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
+                   outputStream.println("----------");
                }
-//               for (MethodDeclaration methodDeclaration : p.methodDeclarations) {
-//                   CFNode cfg = MethodCFGFactory.makeMethodCFG(methodDeclaration.mBlock);
-                   // I think logic that I commented out should go in MethodCFGFactory, but if
-                   // we think otherwise I can change it back :)
-//
-//                   CFVisitor[] cfVisitors = {
-//                           new MergeBasicBlocksAndRemoveNops(),
-//                   };
-//
-//                   for (CFVisitor cfVisitor : cfVisitors) {
-//
-//                       if (CLI.debug) {
-//                           System.out.println("CFG before visitor " + cfVisitor + " for " + methodDeclaration.methodName.getName());
-//                           System.out.println("D---------");
-//                           dfsPrint(cfg, new HashSet<Integer>());
-//                           System.out.println("D---------");
-//                       }
-//                       cfg.accept(cfVisitor);
-//                   }
-//
-//                   System.out.println("CFG for " + methodDeclaration.methodName.getName());
-//                   System.out.println("----------");
-//                   dfsPrint(cfg, new HashSet<Integer>());
-//                   System.out.println("----------");
-//               }
            } catch (DecafParseException e) {
                e.printStackTrace();
                System.exit(1);
@@ -189,21 +167,68 @@ class Main {
                e.printStackTrace();
                System.exit(1);
            }
+      } else if (CLI.target == Action.ASSEMBLY) {
+        DecafScanner scanner =
+            new DecafScanner(new DataInputStream(inputStream));
+        Parser myParser = new Parser(scanner);
+        try {
+            Program p = myParser.parse();
+
+            ProgramDescriptor table = new ProgramDescriptor(p);
+
+            List<SemanticException> semanticExceptions = new ArrayList<>();
+
+            SemanticChecker[] semanticCheckers = {
+                    new CheckIdDeclared(table),
+                    new UniqueGlobalIds(table),
+                    new VoidMainNoArgs(table),
+                    new BreakAndContinueInAnyLoop(),
+                    new CheckTypes(table),
+                    new IntLiteralInRange(),
+            };
+
+            for (SemanticChecker checker : semanticCheckers) {
+                p.accept(checker);
+                semanticExceptions.addAll(checker.getSemanticExceptions());
+            }
+            if (!semanticExceptions.isEmpty()) {
+                for (SemanticException e : semanticExceptions) {
+                    outputStream.println(e.getMessage());
+                }
+                System.exit(1);
+            }
+
+            MethodCFGFactory.makeAndSetMethodCFGs(table);
+
+            List<String> assembly = AssemblyFactory.programAssemblyGen(table);
+
+            for (String line : assembly) {
+                outputStream.println(line);
+            }
+        } catch (DecafParseException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (SemanticException e) {
+            // exception while building symbol tables
+            e.printStackTrace();
+            System.exit(1);
+        }
       }
     } catch(Exception e) {
       // print the error:
         e.printStackTrace();
       System.err.println(CLI.infile+" "+e);
+      System.exit(1);
     }
   }
 
-    private static void dfsPrint(CFNode cfg, Set<Integer> visited) {
+    private static void dfsPrint(CFNode cfg, Set<Integer> visited, PrintStream outputStream) {
         int cfgID = cfg.getUID();
         if (!visited.contains(cfgID)) {
             visited.add(cfgID);
-            System.out.println(cfg.toString());
+            outputStream.println(cfg.toString());
             for (CFNode neighbor : cfg.dfsTraverse()) {
-                dfsPrint(neighbor, visited);
+                dfsPrint(neighbor, visited, outputStream);
             }
         }
     }

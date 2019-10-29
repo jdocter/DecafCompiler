@@ -88,4 +88,8 @@ public class MethodDescriptor {
     public String getMethodName() {
         return methodName;
     }
+
+    public LocalTable getLocalTable() {
+        return localTable;
+    }
 }

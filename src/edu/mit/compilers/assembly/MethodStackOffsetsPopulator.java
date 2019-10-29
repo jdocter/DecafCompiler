@@ -5,6 +5,9 @@ import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.parser.*;
 
 public class MethodStackOffsetsPopulator {
+    /**
+     * Basically extends ASTVisitor
+     */
 
 
     private final MethodDescriptor methodDescriptor;
@@ -51,7 +54,7 @@ public class MethodStackOffsetsPopulator {
 
     private void populate(Block block) {
         for (LocalDescriptor localDescriptor: block.localTable.values()) {
-            offsetCount++;
+            offsetCount += localDescriptor.getTypeDescriptor().getMemoryLength();
             localDescriptor.setStackOffset(offsetCount);
         }
         for (Statement statement: block.statements) {

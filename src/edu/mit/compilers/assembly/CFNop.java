@@ -1,9 +1,12 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,8 +22,20 @@ public class CFNop extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
-    public List<String> toAssembly() {
-        return null;
+    public List<String> toAssembly(ImportTable importTable) {
+        List<String> assembly = new ArrayList<>();
+
+        List<String> body = new ArrayList<>();
+        if (!isEnd) {
+            body.add("jmp " + next.getAssemblyLabel());
+        } else {
+            // should have been end of MiniCFG
+            throw new UnsupportedOperationException("CFNop should have been constructed as a CFEndOfMiniCFG");
+        }
+
+        assembly.add(getAssemblyLabel() + ":");
+        assembly.addAll(AssemblyFactory.indent(body));
+        return assembly;
     }
 
     @Override
@@ -79,5 +94,20 @@ public class CFNop extends UIDObject implements CFNode {
     @Override
     public VariableTable getVariableTable() {
         return null;
+    }
+
+    @Override
+    public List<Pair<Temp, List<Temp>>> getTemps() {
+        return List.of();
+    }
+
+    @Override
+    public String getAssemblyLabel() {
+        return "_nop_" + UID;
+    }
+
+    @Override
+    public String getEndOfMiniCFGLabel() {
+        throw new UnsupportedOperationException("Nops don't have Mini CFGs");
     }
 }

@@ -1,6 +1,9 @@
 package edu.mit.compilers.inter;
 
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.visitor.StringLitCollector;
+
+import java.util.List;
 
 /**
  * Symbol Table for the whole program.
@@ -17,11 +20,13 @@ public class ProgramDescriptor {
     public FieldTable fieldTable;
     public MethodTable methodTable;
     public ImportTable importTable;
+    public List<StringLit> stringLits;
 
     public ProgramDescriptor(Program p) throws SemanticException {
         fieldTable = new FieldTable(p.fieldDeclarations);
         methodTable = new MethodTable(p.methodDeclarations, fieldTable);
         importTable = new ImportTable(p.importDeclarations);
+        stringLits = new StringLitCollector(p).getStringLits();
     }
 
     public void typeCheck(Program p) throws SemanticException {

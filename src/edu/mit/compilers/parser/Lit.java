@@ -26,6 +26,15 @@ public class Lit extends Node {
         mBool = bool;
     }
 
+    public String toAssembly() {
+        switch (litType) {
+            case BOOL: return mBool ? "$1" : "$0";
+            case INT: return "$" + mIntLit.toString();
+            case CHAR: return "$" + (int) mChar;
+            default: throw new RuntimeException("Lit.toAssembly: impossible to reach");
+        }
+    }
+
     @Override public String toString() {
         switch (litType) {
             case BOOL:

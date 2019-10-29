@@ -18,7 +18,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type))); // TODO
+                this.put(field.getName(), new FieldDescriptor(field.getName(), new TypeDescriptor(fieldDeclaration.type))); // TODO
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
@@ -28,7 +28,7 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new FieldDescriptor(new TypeDescriptor(fieldDeclaration.type, size.posInteger()))); // TODO
+                this.put(field.getName(), new FieldDescriptor(field.getName(), new TypeDescriptor(fieldDeclaration.type, size.posInteger()))); // TODO
             }
         }
     }

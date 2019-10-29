@@ -1,6 +1,8 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.assembly.*;
+import edu.mit.compilers.inter.ImportTable;
+import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,8 +16,11 @@ public class MethodAssemblyCollector implements CFVisitor {
     private final List<String> instructions = new ArrayList<>();
     private final CFNode cfMethodStart;
 
-    public MethodAssemblyCollector(CFNode cfMethodStart) {
+    private ImportTable importTable;
+
+    public MethodAssemblyCollector(CFNode cfMethodStart, ImportTable importTable) {
         this.cfMethodStart = cfMethodStart;
+        this.importTable = importTable;
         cfMethodStart.accept(this);
     }
 
@@ -28,7 +33,7 @@ public class MethodAssemblyCollector implements CFVisitor {
     public void visit(CFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        instructions.addAll(cfBlock.toAssembly());
+        instructions.addAll(cfBlock.toAssembly(importTable));
         for (CFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
@@ -38,7 +43,7 @@ public class MethodAssemblyCollector implements CFVisitor {
     public void visit(CFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        instructions.addAll(cfConditional.toAssembly());
+        instructions.addAll(cfConditional.toAssembly(importTable));
         for (CFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
@@ -57,6 +62,6 @@ public class MethodAssemblyCollector implements CFVisitor {
     public void visit(CFReturn cfReturn) {
         if (visited.contains(cfReturn)) return;
         else visited.add(cfReturn);
-        instructions.addAll(cfReturn.toAssembly());
+        instructions.addAll(cfReturn.toAssembly(importTable));
     }
 }
