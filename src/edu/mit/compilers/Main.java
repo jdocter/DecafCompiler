@@ -156,7 +156,7 @@ class Main {
                for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
                    outputStream.println("CFG for " + methodDescriptor.getMethodName());
                    outputStream.println("----------");
-                   dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
+                   MethodCFGFactory.dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
                    outputStream.println("----------");
                }
            } catch (DecafParseException e) {
@@ -221,15 +221,4 @@ class Main {
       System.exit(1);
     }
   }
-
-    private static void dfsPrint(CFNode cfg, Set<Integer> visited, PrintStream outputStream) {
-        int cfgID = cfg.getUID();
-        if (!visited.contains(cfgID)) {
-            visited.add(cfgID);
-            outputStream.println(cfg.toString());
-            for (CFNode neighbor : cfg.dfsTraverse()) {
-                dfsPrint(neighbor, visited, outputStream);
-            }
-        }
-    }
 }

@@ -102,6 +102,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
                 // ending Nops should be replaced with jmps in the mini CFG
                 cfNop.setNext(new CFEndOfMiniCFG(enclosingCFNode));
             }
+            return;
         }
 
         peepholeRemove(cfNop);

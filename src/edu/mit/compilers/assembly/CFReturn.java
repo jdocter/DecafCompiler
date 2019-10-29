@@ -11,6 +11,8 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,11 +22,13 @@ public class CFReturn extends UIDObject implements CFNode {
 
 
     @Override public String toString() {
-        if (returnExpr != null) {
-            return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "]";
-        } else {
-            return "UID " + UID + " CFReturn [returnTemp=" + returnTemp + "]";
+        if (isVoid) {
+            return "UID " + UID + " CFReturn";
         }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+        return "\nMiniCFG: " + baos.toString() + "\n" +
+        "UID " + UID + " CFReturn [miniCFG=" + miniCFG.getUID() + ", returnTemp=" + returnTemp + "]";
     }
 
     private final List<CFStatement> statements = new ArrayList<CFStatement>();
@@ -79,7 +83,7 @@ public class CFReturn extends UIDObject implements CFNode {
                 body.add("call printf");
                 body.add("");
                 body.add("movq $2, %rax"); // return code 2
-            } else {    
+            } else {
                 // return
                 body.add("# return void");
                 body.add("movq $0, %rax");

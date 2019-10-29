@@ -24,4 +24,9 @@ public class CFEndOfMiniCFG extends CFNop {
         return assembly;
     }
 
+    @Override
+    public String toString() {
+        return "UID " + UID + " CFEndOfMiniCFG [next=" + enclosingNode.getUID() + "]";
+    }
+
 }

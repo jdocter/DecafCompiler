@@ -1,9 +1,13 @@
 package edu.mit.compilers.assembly;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import edu.mit.compilers.Main;
 
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -36,6 +40,8 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     public CFBlock(CFStatement statement, VariableTable variableTable) {
+        // super();
+        // System.err.println("Should be making a new inner CFBLock " + UID);
         this.cfStatements.add(statement);
         this.variableTable = variableTable;
         isOuter = false;
@@ -109,8 +115,15 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override public String toString() {
-        if (isEnd) return "UID " + UID + " CFBlock [" + statements + "], Scope = " + variableTable.getUID();
-        return "UID " + UID + " CFBlock [" + statements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        if (isOuter) {
+            // System.err.println("Thinks " + UID + " isOuter");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+            return "\nMiniCFG: " + baos.toString() + "\n" +
+            "UID " + UID + " CFBlock [ miniCFG=" + miniCFG.getUID() + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        }
+        if (isEnd) return "UID " + UID + " CFBlock [" + cfStatements + "], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [" + cfStatements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     @Override

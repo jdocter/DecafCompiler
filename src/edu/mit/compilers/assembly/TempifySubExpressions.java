@@ -18,6 +18,7 @@ public class TempifySubExpressions implements CFVisitor {
     public void visit(CFBlock cfBlock) {
         if (!visited.contains(cfBlock)) {
             CFNode startNode = new CFNop();
+            CFNode endNode = new CFNop();
             CFNode prevNode = startNode;
             for (Statement statement: cfBlock.getStatements()) {
                 if (statement.statementType == Statement.LOC_ASSIGN) {
@@ -32,8 +33,9 @@ public class TempifySubExpressions implements CFVisitor {
                     throw new RuntimeException("impossible to reach...");
                 }
             }
+            prevNode.setNext(endNode);
             MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfBlock);
-            prevNode.accept(mergeBasicBlocksAndRemoveNops);
+            startNode.accept(mergeBasicBlocksAndRemoveNops);
             cfBlock.setMiniCFG(startNode);
             visited.add(cfBlock);
             for (CFNode neighbor : cfBlock.dfsTraverse()) {

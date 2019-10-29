@@ -1,5 +1,6 @@
 package edu.mit.compilers.assembly;
 
+import java.io.PrintStream;
 import java.util.Set;
 
 import edu.mit.compilers.inter.MethodDescriptor;
@@ -27,6 +28,8 @@ public class MethodCFGFactory {
         CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock, methodDescriptor);
         MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(methodDescriptor);
         methodCFG.accept(mergeBasicBlocksAndRemoveNops);
+        TempifySubExpressions tempifySubExpressions = new TempifySubExpressions();
+        methodCFG.accept(tempifySubExpressions);
         return methodCFG;
     }
 
@@ -159,5 +162,16 @@ public class MethodCFGFactory {
     private static boolean hasPotentialToSC(Expr expr) {
         return expr.exprType == Expr.NOT ||
                 (expr.exprType == Expr.BIN_OP && Set.of(BinOp.AND, BinOp.OR, BinOp.EQ, BinOp.NEQ).contains(expr.binOp));
+    }
+
+    public static void dfsPrint(CFNode cfg, Set<Integer> visited, PrintStream outputStream) {
+        int cfgID = cfg.getUID();
+        if (!visited.contains(cfgID)) {
+            visited.add(cfgID);
+            outputStream.println(cfg.toString());
+            for (CFNode neighbor : cfg.dfsTraverse()) {
+                dfsPrint(neighbor, visited, outputStream);
+            }
+        }
     }
 }

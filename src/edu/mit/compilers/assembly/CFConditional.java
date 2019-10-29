@@ -8,6 +8,8 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +17,12 @@ import java.util.Set;
 
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
+        if (isOuter) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+            return "\nMiniCFG: " + baos.toString() + "\n" +
+            "UID " + UID + " CFConditional [ miniCFG=" + miniCFG.getUID() + ", boolTemp=" + boolTemp + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
+        }
         return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
