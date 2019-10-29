@@ -35,6 +35,13 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
         int stackArgs = arguments.size() - 6;
 
+        // this has to be done before pushing args onto stack
+        // maintain 16-byte alignment -- assuming 16 aligned before call
+        if (stackArgs > 0 && stackArgs % 2 != 0) {
+            stackArgs++;
+            body.add("push %rax # dummy argument used to maintain 16-byte alignment");
+        }
+
         for (int p = arguments.size(); p > 0; p--) {
 
             Pair<Temp, StringLit> param = arguments.get(p - 1);
@@ -54,12 +61,6 @@ public class CFMethodCall extends UIDObject implements CFStatement {
                     body.add("push %rax");
                 }
             }
-        }
-
-        // maintain 16-byte alignment -- assuming 16 aligned before call
-        if (stackArgs > 0 && stackArgs % 2 != 0) {
-            stackArgs++;
-            body.add("push %rax # dummy argument used to maintain 16-byte alignment");
         }
 
         String callTarget;
