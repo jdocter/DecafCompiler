@@ -139,7 +139,7 @@ public class CFTempAssign implements CFStatement {
                         break;
                     case BinOp.DIV:
                         body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
-                        body.add("movq $0, %radx"); // TODO maybe not necessary?
+                        body.add("movq $0, %rax"); // TODO maybe not necessary?
                         body.add("idivq -"+right.getOffset() + "(%rbp), %rax");
                         body.add("movq %rax, -"+dest.getOffset()+"(%rbp)");
                         break;
