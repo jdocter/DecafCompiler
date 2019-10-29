@@ -2,9 +2,14 @@ package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
+<<<<<<< HEAD
 import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
+||||||| merged common ancestors
+import edu.mit.compilers.parser.Expr;
+=======
+>>>>>>> 59c2ceb1ce97a899a653b4ad9d9dafc412033a2b
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -15,18 +20,25 @@ import java.util.Set;
 
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
-        return "UID " + UID + " CFConditional [boolExpr=" + boolExpr + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFConditional [boolExpr=" + condition + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
+<<<<<<< HEAD
     private CFNode miniCFG;
     private final List<CFStatement> cfStatements = new ArrayList<CFStatement>();
     private final boolean isOuter;
     private Expr boolExpr;
+||||||| merged common ancestors
+    private final Expr boolExpr;
+=======
+    private final Temp condition;
+>>>>>>> 59c2ceb1ce97a899a653b4ad9d9dafc412033a2b
     private CFNode ifTrue;
     private CFNode ifFalse;
     private Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
 
+<<<<<<< HEAD
     public static final int SINGLE_TEMP = 0;
     public static final int CMP = 1;
     private int type;
@@ -39,6 +51,13 @@ public class CFConditional extends UIDObject implements CFNode {
 
     public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
         this.boolExpr = expr;
+||||||| merged common ancestors
+    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
+        this.boolExpr = expr;
+=======
+    public CFConditional(Temp temp, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
+        this.condition = temp;
+>>>>>>> 59c2ceb1ce97a899a653b4ad9d9dafc412033a2b
         this.ifTrue= ifTrue;
         ifTrue.addParent(this);
 

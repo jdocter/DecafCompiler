@@ -8,7 +8,6 @@ import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.util.Triad;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.ArrayList;
@@ -26,7 +25,14 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     }
 
     @Override
+<<<<<<< HEAD
     public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
+||||||| merged common ancestors
+    public List<String> toAssembly(VariableTable variableTable) {
+
+=======
+    public List<String> toAssembly(VariableTable variableTable) {
+>>>>>>> 59c2ceb1ce97a899a653b4ad9d9dafc412033a2b
         // push stack according to size of arguments
         List<String> assembly = new ArrayList<>();
 
