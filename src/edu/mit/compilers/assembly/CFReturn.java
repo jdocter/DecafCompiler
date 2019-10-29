@@ -1,6 +1,9 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.LocalDescriptor;
 import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.inter.TypeDescriptor;
+import edu.mit.compilers.inter.VariableDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -31,13 +34,15 @@ public class CFReturn extends UIDObject implements CFNode {
     private final Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
     private boolean isVoid;
+    private boolean shouldReturnVoid;
     private CFNode miniCFG;
 
 
-    public CFReturn(Expr returnExpr, VariableTable variableTable) {
+    public CFReturn(Expr returnExpr, VariableTable variableTable, boolean shouldReturnVoid) {
         this.returnExpr = returnExpr;
         this.variableTable = variableTable;
         isVoid = returnExpr == null ? true : false;
+        this.shouldReturnVoid = shouldReturnVoid;
     }
 
     public Expr getReturnExpr() {
@@ -61,7 +66,30 @@ public class CFReturn extends UIDObject implements CFNode {
 
     @Override
     public List<String> toAssembly() {
-        return null;
+        final List<String> assembly = new ArrayList<>();
+
+        List<String> label = List.of("_return_" + UID + ":");
+
+        List<String> body = new ArrayList<>(); // TODO
+        if (isVoid) {
+            if (!shouldReturnVoid) {
+                // generate runtime error
+                body.add("# returning void in a function supposed to return a value");
+                body.add("")
+            } else {
+                // return
+            }
+        } else {
+            if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
+            // calculate expr and return it
+            assembly.addAll(List.of(
+                    "# calculating expr "
+                    ));
+        }
+
+        assembly.addAll(label);
+        assembly.addAll(indent(body)); // TODO
+        return assembly;
     }
 
     @Override
