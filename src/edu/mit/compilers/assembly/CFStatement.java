@@ -2,12 +2,13 @@ package edu.mit.compilers.assembly;
 
 import java.util.List;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.Pair;
 
 public interface CFStatement {
-    List<String> toAssembly(VariableTable variableTable);
+    List<String> toAssembly(VariableTable variableTable, ImportTable importTable);
 
     int getUID();
 

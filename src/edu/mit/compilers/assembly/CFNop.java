@@ -1,5 +1,6 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
@@ -21,7 +22,7 @@ public class CFNop extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
-    public List<String> toAssembly() {
+    public List<String> toAssembly(ImportTable importTable) {
         List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();

@@ -1,5 +1,6 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
@@ -25,11 +26,14 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable) {
+    public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
         // push stack according to size of arguments
         List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();
+
+        int stackArgs = arguments.size() - 6;
+
         for (int p = arguments.size(); p >= 0; p--) {
 
             Pair<Temp, StringLit> param = arguments.get(p - 1);
@@ -50,15 +54,20 @@ public class CFMethodCall extends UIDObject implements CFStatement {
             }
         }
 
+        // maintain 16-byte alignment -- assuming 16 aligned before call
+        if (stackArgs % 2 != 0) {
+            stackArgs++;
+            body.add("push %rax # dummy argument used to maintain 16-byte alignment");
+        }
+
         String callTarget;
-        if (methodName.getName().equals("main") || isImport(methodName)) {
+        if (methodName.getName().equals("main") || importTable.containsKey(methodName.getName())) {
             callTarget = methodName.getName();
         } else {
             callTarget = "_method_" + methodName.getName();
         }
         body.add("call " + callTarget);
 
-        int stackArgs = arguments.size() - 6;
         if (stackArgs > 0) {
             body.add("addq $" + stackArgs * 8 + ", %rsp");
         }

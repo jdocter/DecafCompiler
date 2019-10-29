@@ -3,6 +3,8 @@ package edu.mit.compilers.assembly;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.mit.compilers.inter.ImportTable;
+
 public class CFEndOfMiniCFG extends CFNop {
     private CFNode enclosingNode;
 
@@ -11,7 +13,7 @@ public class CFEndOfMiniCFG extends CFNop {
     }
 
     @Override
-    public List<String> toAssembly() {
+    public List<String> toAssembly(ImportTable importTable) {
         List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();

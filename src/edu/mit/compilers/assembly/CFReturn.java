@@ -1,5 +1,6 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.LocalDescriptor;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.TypeDescriptor;
@@ -20,9 +21,9 @@ public class CFReturn extends UIDObject implements CFNode {
 
     @Override public String toString() {
         if (returnExpr != null) {
-            return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "] + Assembly = " + this.toAssembly();
+            return "UID " + UID + " CFReturn [returnExpr=" + returnExpr + "]";
         } else {
-            return "UID " + UID + " CFReturn [returnTemp=" + returnTemp + "] + Assembly = " + this.toAssembly();
+            return "UID " + UID + " CFReturn [returnTemp=" + returnTemp + "]";
         }
     }
 
@@ -65,7 +66,7 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly() {
+    public List<String> toAssembly(ImportTable importTable) {
         final List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();
@@ -87,7 +88,7 @@ public class CFReturn extends UIDObject implements CFNode {
             if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
             // calculate expr and return it
             body.add("# calculating return Expr");
-            body.addAll(new MethodAssemblyCollector(miniCFG).getInstructions());
+            body.addAll(new MethodAssemblyCollector(miniCFG, importTable).getInstructions());
             body.add(getEndOfMiniCFGLabel() + ":");
             body.add("");
             body.add("movq -" + returnTemp.getOffset() + "(%rbp), %rax");

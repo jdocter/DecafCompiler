@@ -1,6 +1,7 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.FieldDescriptor;
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.LocalDescriptor;
 import edu.mit.compilers.inter.TypeDescriptor;
 import edu.mit.compilers.inter.VariableDescriptor;
@@ -42,7 +43,7 @@ public class CFTempAssign implements CFStatement {
     public Lit lit;
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable) {
+    public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
         final List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();
