@@ -51,7 +51,7 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor argType = variableTable.getDescriptor(id.getName()).getTypeDescriptor();
 
                 if (argType.isArray()) {
-                    body.add("mov $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
@@ -67,21 +67,69 @@ public class CFTempAssign implements CFStatement {
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
                 break;
             case ARRAY_LOC:
-                // TODO
-                break;
-            case SINGLE_LOC:
-                // TODO
-                break;
-            case METHOD_CALL:
+                VariableDescriptor arrayDescriptor = variableTable.getDescriptor(id.getName());
+                TypeDescriptor arrayTypeDescriptor = arrayDescriptor.getTypeDescriptor();
+                String arrayLoc;
+                if (arrayDescriptor.isGlobal()) {
+                    assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                    assembly.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
+                    assembly.add("leaq " + id.getName() + "(%rip), %rax"); // address of base of global array
+                    arrayLoc = "(%rcx,%rax)";
+
+                } else {
+                    LocalDescriptor localDescriptor = (LocalDescriptor) arrayDescriptor;
+                    arrayLoc = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
+                }
+
+                body.add("movq " + arrayLoc + ", %rax");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
 
                 break;
+            case SINGLE_LOC:
+                VariableDescriptor varDescriptor = variableTable.getDescriptor(id.getName());
+                TypeDescriptor varTypeDescriptor = varDescriptor.getTypeDescriptor();
+                String varLoc;
+                if (varDescriptor.isGlobal()) {
+                    varLoc = "_global_" + ((FieldDescriptor) varDescriptor).getName() + "(%rip)";
+                } else {
+                    varLoc = "-"+ ((LocalDescriptor) varDescriptor).getStackOffset()+"(%rbp)";
+                }
+
+                body.add("movq " + varLoc + ", %rax");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+
+                break;
+            case METHOD_CALL:
+                // TODO, overlap with CFMethodCall...
+                break;
             case BIN_OP:
+                switch (binOp.binOp) {
+                    case BinOp.AND:
+                    case BinOp.OR:
+                        throw new RuntimeException("Didn't expect binOp of type " + binOp.binOp);
+                    case BinOp.EQ:
+                    case BinOp.NEQ:
+                    case BinOp.GEQ:
+                    case BinOp.LEQ:
+                    case BinOp.GT:
+                    case BinOp.LT:
+
+                    case BinOp.MINUS:
+                    case BinOp.MOD:
+                    case BinOp.MUL:
+                    case BinOp.PLUS:
+                    case BinOp.DIV:
+                }
                 break;
             case LIT:
+                // TODO runtime checks
+                body.add("movq " + lit.toAssembly() + " -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 break;
             case TRUE:
+                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 break;
             case FALSE:
+                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }

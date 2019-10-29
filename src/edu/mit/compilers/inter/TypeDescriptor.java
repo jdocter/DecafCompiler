@@ -37,15 +37,15 @@ public class TypeDescriptor {
     }
 
     /**
-     *
+     * For now 8 bytes for everything
      * @return number of bytes required to store this type in memory
      */
     public long getMemoryLength() {
         switch (type) {
             case INT: return 8;
             case INT_ARRAY: return 8 * length;
-            case BOOL: return 1;
-            case BOOL_ARRAY: return length;
+            case BOOL: return 8;
+            case BOOL_ARRAY: return 8 * length;
             default: throw new RuntimeException("Unimplmented");
         }
     }
@@ -61,7 +61,7 @@ public class TypeDescriptor {
                 return 8;
             case BOOL:
             case BOOL_ARRAY:
-                return 1;
+                return 8; // for now
             default:
                 throw new RuntimeException("Unimplmented");
         }

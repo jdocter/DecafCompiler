@@ -52,7 +52,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         String dest;
         if (variableDescriptor.isGlobal()) {
             if (arrayOffset == null) {
-                dest = "_global_" + ((FieldDescriptor)variableDescriptor).getName();
+                dest = "_global_" + ((FieldDescriptor)variableDescriptor).getName() + "(%rip)";
             } else {
                 assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
@@ -64,9 +64,11 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
             } else {
+                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
             }
         }
+
         switch (assignOp) {
             case ASSIGN: assembly.add("movq %rdx, " + dest); break;
             case MEQ: assembly.add("subq %rdx, " + dest); break;

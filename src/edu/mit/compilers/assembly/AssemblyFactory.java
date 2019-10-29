@@ -65,7 +65,7 @@ public class AssemblyFactory {
 
         // something about main function
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
-            assembly.add("\n");
+            assembly.add("");
             assembly.addAll(methodAssemblyGen(methodDescriptor));
         }
         return assembly;

@@ -78,7 +78,7 @@ public class CFReturn extends UIDObject implements CFNode {
                 body.add("call printf");
                 body.add("");
                 body.add("movq $2, %rax"); // return code 2
-            } else {
+            } else {    
                 // return
                 body.add("# return void");
                 body.add("movq $0, %rax");

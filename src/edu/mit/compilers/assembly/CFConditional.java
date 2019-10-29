@@ -126,7 +126,7 @@ public class CFConditional extends UIDObject implements CFNode {
 
             switch (type) {
                 case SINGLE_TEMP:
-                    body.add("cmp $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
+                    body.add("cmpq $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
                     body.add("jne " + ifFalse.getAssemblyLabel() + " # ifFalse");
                     body.add("jmp " + ifTrue.getAssemblyLabel() + " # ifTrue");
                     break;
