@@ -82,6 +82,10 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     @Override
     public Pair<Temp, List<Temp>> getTemps() {
-        throw new RuntimeException("Not implemented -- We planned on implementing method calls using CFTempAssigns");
+        List<Temp> allTempsNeeded = new ArrayList<>();
+        for (Pair<Temp, StringLit> arg : arguments) {
+            if (arg.getKey() != null) allTempsNeeded.add(arg.getKey());
+        }
+        return new Pair<Temp, List<Temp>>(null, allTempsNeeded);
     }
 }
