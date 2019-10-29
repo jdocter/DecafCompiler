@@ -228,7 +228,7 @@ class Main {
             visited.add(cfgID);
             outputStream.println(cfg.toString());
             for (CFNode neighbor : cfg.dfsTraverse()) {
-                dfsPrint(neighbor, visited);
+                dfsPrint(neighbor, visited, outputStream);
             }
         }
     }
