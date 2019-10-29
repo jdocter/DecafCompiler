@@ -53,6 +53,7 @@ public class MethodAssemblyCollector implements CFVisitor {
     public void visit(CFNop cfNop) {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
+        instructions.addAll(cfNop.toAssembly(importTable));
         for (CFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
