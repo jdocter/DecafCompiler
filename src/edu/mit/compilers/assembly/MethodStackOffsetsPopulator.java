@@ -3,6 +3,7 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.LocalDescriptor;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.inter.LocalTable;
 
 public class MethodStackOffsetsPopulator {
     /**
@@ -28,6 +29,7 @@ public class MethodStackOffsetsPopulator {
      *         where a shadowed variable is considered unique
      */
     long populate() {
+        populate(methodDescriptor.getLocalTable());
         populate(methodDescriptor.getMethodBlock());
         return offsetCount;
     }
@@ -53,12 +55,17 @@ public class MethodStackOffsetsPopulator {
     }
 
     private void populate(Block block) {
-        for (LocalDescriptor localDescriptor: block.localTable.values()) {
-            offsetCount += localDescriptor.getTypeDescriptor().getMemoryLength();
-            localDescriptor.setStackOffset(offsetCount);
-        }
+        populate(block.localTable);
         for (Statement statement: block.statements) {
             populate(statement);
         }
     }
+
+    private void populate(LocalTable localTable) {
+        for (LocalDescriptor localDescriptor: localTable.values()) {
+            offsetCount += localDescriptor.getTypeDescriptor().getMemoryLength();
+            localDescriptor.setStackOffset(offsetCount);
+        }
+    }
+
 }

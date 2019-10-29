@@ -75,14 +75,13 @@ public class TempifySubExpressions implements CFVisitor {
     @Override
     public void visit(CFReturn cfReturn) {
         if (!visited.contains(cfReturn)) {
-            Temp cond = new Temp();
             if (cfReturn.getReturnExpr() != null) {
                 Temp t = new Temp();
                 Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfReturn.getReturnExpr(), t, cfReturn.getVariableTable());
                 ct.getValue().setNext(new CFNop()); // want to be able to replace with a CFEndOfMiniCFG
                 MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfReturn);
                 ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
-                cfReturn.replaceExpr(cond);
+                cfReturn.replaceExpr(t);
                 cfReturn.setMiniCFG(ct.getKey());
             }
 

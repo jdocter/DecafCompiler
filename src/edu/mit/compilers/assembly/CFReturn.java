@@ -157,8 +157,11 @@ public class CFReturn extends UIDObject implements CFNode {
     public List<Pair<Temp, List<Temp>>> getTemps() {
         if (isVoid) return List.of();
         TempCollector collector = new TempCollector();
+        List<Pair<Temp, List<Temp>>> temps = new ArrayList();
         miniCFG.accept(collector);
-        return collector.temps;
+        temps.addAll(collector.temps);
+        temps.add(new Pair(returnTemp, List.of()));
+        return temps;
     }
 
     @Override
