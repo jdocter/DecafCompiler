@@ -86,11 +86,11 @@ public class CFBlock extends UIDObject implements CFNode {
             List<String> assembly = new ArrayList<>();
 
             assembly.add(getAssemblyLabel() + ":");
-            List<String> body = new ArrayList<>();
             for (CFStatement cfStatement : cfStatements) {
-                body.addAll(cfStatement.toAssembly(variableTable, importTable));
+                assembly.addAll(cfStatement.toAssembly(variableTable, importTable));
             }
 
+            List<String> body = new ArrayList<>();
             if (!isEnd) {
                 body.add("jmp " + next.getAssemblyLabel());
             } else {
