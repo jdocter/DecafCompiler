@@ -46,7 +46,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
         }
 
-
+        // TODO this may need fixing
         VariableDescriptor variableDescriptor = variableTable.getDescriptor(arrayOrLoc.getName());
         TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
         String dest;

@@ -4,10 +4,12 @@ package edu.mit.compilers.inter;
 import edu.mit.compilers.util.UIDObject;
 
 public class FieldDescriptor extends UIDObject implements VariableDescriptor {
-    public final TypeDescriptor type;
+    private final TypeDescriptor type;
+    private final String name;
 
-    FieldDescriptor(TypeDescriptor type) {
+    FieldDescriptor(String name, TypeDescriptor type) {
         this.type = type;
+        this.name = name;
     }
 
     @Override
@@ -20,5 +22,7 @@ public class FieldDescriptor extends UIDObject implements VariableDescriptor {
         return true;
     }
 
-
+    public String getName() {
+        return name;
+    }
 }
