@@ -48,21 +48,23 @@ function test-runner {
   declare -r EXPECTED_OUTPUT_FILE="$(dirname $(dirname $DCF_FILE))/output/$(basename $DCF_FILE).out"
 
   # temporary files to hold intermediate results
-  declare -r TEMP_ASM=$(mktemp --tmpdir="$TMPDIR" --suffix='.s')
-  declare -r TEMP_BIN=$(mktemp --tmpdir="$TMPDIR")
-  declare -r TEMP_OUT=$(mktemp --tmpdir="$TMPDIR" --suffix='.out')
+  mkdir -p "$TMPDIR/$(basename $DCF_FILE)"
+
+  declare -r TEMP_ASM="$TMPDIR/$(basename $DCF_FILE)/main.s"
+  declare -r TEMP_BIN="$TMPDIR/$(basename $DCF_FILE)/main.bin"
+  declare -r TEMP_OUT="$TMPDIR/$(basename $DCF_FILE)/main.out"
 
   # compile to asm
-  if dcf-to-asm "$DCF_FILE" "$TEMP_ASM" &> /dev/null; then
+  dcf-to-asm "$DCF_FILE" "$TEMP_ASM" &> /dev/null
+  if [[ $? -eq 0 ]]; then
     # compile to executable
-    if asm-to-exec "$TEMP_ASM" "$TEMP_BIN" &> /dev/null; then
+    asm-to-exec "$TEMP_ASM" "$TEMP_BIN" &> /dev/null
+    if [[ $? -eq 0 ]]; then
 
       # execute binary, save output and exit code
       "$TEMP_BIN" > "$TEMP_OUT" 2> /dev/null
-      declare -r CODE=$?
-
-      if [[ $CODE -eq 0 ]]; then
-        if diff "$EXPECTED_OUTPUT_FILE" "$TEMP_OUT" &> /dev/null; then
+      if [[ $? -eq 0 ]]; then
+        if diff "$EXPECTED_OUTPUT_FILE" "$TEMP_OUT" &> /dev/null ; then
           return 0  # everything is well
         else
           return 2  # output mismatch probably
@@ -73,6 +75,8 @@ function test-runner {
 
     else
       red "assembly of '$(clean $DCF_FILE)' could not be assembled"
+      red "your assembly looked like"
+      cat "$TEMP_ASM" >&2
     fi
   else
     red "failed to compile '$(clean $DCF_FILE)' to assembly"
@@ -93,6 +97,7 @@ function test-should-pass {
        echo 'TESTCASE-PASS';;
     1) red "threw a runtime error -- '$(clean $DCF_FILE)'";;
     2) red "output doesn't match -- '$(clean $DCF_FILE)";;
+    3) red "compiler threw an error -- '$(clean $DCF_FILE)'";;
   esac
 }
 
@@ -105,9 +110,10 @@ function test-should-fail {
   declare -r CODE=$?
 
   case $CODE in
-    0) red "failed to throw a runtime error -- '$(clean $DCF_FILE)'";;
+    3) red "your compiler threw an error -- '$(clean $DCF_FILE)'";;
     1) green "successfully threw a runtime error -- '$(clean $DCF_FILE)'";
        echo 'TESTCASE-PASS';;
+    *) red "failed to throw a runtime error -- '$(clean $DCF_FILE)'";;
   esac
 }
 
@@ -116,7 +122,7 @@ function par {
 }
 
 # directory to hold all temporary values
-declare -r TMPDIR="$ROOT/.dcf-tmp/"
+declare -r TMPDIR="$ROOT/.dcf-tmp"
 
 # functions and globals to use in functions
 export TMPDIR
@@ -138,14 +144,18 @@ build  # calls build.sh
 # kind of making a naive assumption that --max-procs 4 will not cause OOM
 declare -r COUNT_PASS_NO_ERROR=$(
   get-input-files-no-error |
-    par 'test-should-pass {}' |
+    while read f; do
+      test-should-pass "$f"
+    done |
     grep 'TESTCASE-PASS' |
     wc -l
 )
 # number of tests that are supposed to throw an error and passed
 declare -r COUNT_PASS_ERROR=$(
   get-input-files-error |
-    par 'test-should-fail {}' |
+    while read f; do
+      test-should-fail "$f"
+    done |
     grep 'TESTCASE-PASS' |
     wc -l
 )
