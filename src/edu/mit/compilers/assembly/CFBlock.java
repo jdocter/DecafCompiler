@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.Pair;
@@ -59,13 +60,13 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<String> toAssembly() {
+    public List<String> toAssembly(ImportTable importTable) {
         // Trying not to share code between isOuter and !isOuter
         if (isOuter) {
             List<String> assembly = new ArrayList<>();
 
             assembly.add(getAssemblyLabel() + ":");
-            assembly.addAll(new MethodAssemblyCollector(miniCFG).getInstructions());
+            assembly.addAll(new MethodAssemblyCollector(miniCFG, importTable).getInstructions());
             assembly.add(getEndOfMiniCFGLabel() + ":");
 
             List<String> body = new ArrayList<>();
@@ -83,7 +84,7 @@ public class CFBlock extends UIDObject implements CFNode {
             assembly.add(getAssemblyLabel() + ":");
             List<String> body = new ArrayList<>();
             for (CFStatement cfStatement : cfStatements) {
-                body.addAll(cfStatement.toAssembly(variableTable));
+                body.addAll(cfStatement.toAssembly(variableTable, importTable));
             }
 
             if (!isEnd) {

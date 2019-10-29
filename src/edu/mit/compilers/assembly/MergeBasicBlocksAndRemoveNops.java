@@ -51,7 +51,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
         Set<CFNode> parents = toRemove.parents();
         if (parents.isEmpty()) return false;
 
-        System.out.println("removing " + toRemove.getUID());
+        // System.out.println("removing " + toRemove.getUID());
         CFNode next = toRemove.getNext();
         for (CFNode parent : parents) {
             parent.replacePointers(toRemove, next);

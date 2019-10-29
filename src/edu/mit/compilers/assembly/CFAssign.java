@@ -40,7 +40,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable) {
+    public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
         final List<String> assembly = new ArrayList<>();
         if (expr != null) {
             assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");

@@ -63,15 +63,16 @@ public class AssemblyFactory {
             assembly.add("");
         }
 
+        ImportTable importTable = programDescriptor.importTable;
         // something about main function
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
             assembly.add("");
-            assembly.addAll(methodAssemblyGen(methodDescriptor));
+            assembly.addAll(methodAssemblyGen(methodDescriptor, importTable));
         }
         return assembly;
     }
 
-    private static List<String> methodAssemblyGen(MethodDescriptor methodDescriptor) {
+    private static List<String> methodAssemblyGen(MethodDescriptor methodDescriptor, ImportTable importTable) {
         List<String> assembly = new ArrayList<>();
         // populate stack offset and get count (in methodDescriptor.block)
         long totalLocalBytes = new MethodStackOffsetsPopulator(methodDescriptor).populate();
@@ -116,7 +117,7 @@ public class AssemblyFactory {
         assembly.addAll(AssemblyFactory.indent(prologue));
 
         // assemblyGen for CFMethodStart
-        List<String> methodBodyAssembly = new MethodAssemblyCollector(methodCFG).getInstructions();
+        List<String> methodBodyAssembly = new MethodAssemblyCollector(methodCFG, importTable).getInstructions();
         assembly.addAll(methodBodyAssembly);
 
         return assembly;

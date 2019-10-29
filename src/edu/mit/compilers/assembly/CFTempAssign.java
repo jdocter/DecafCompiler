@@ -1,16 +1,12 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.FieldDescriptor;
+import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.LocalDescriptor;
 import edu.mit.compilers.inter.TypeDescriptor;
 import edu.mit.compilers.inter.VariableDescriptor;
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.BinOp;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.parser.Id;
-import edu.mit.compilers.parser.Lit;
-import edu.mit.compilers.parser.Loc;
-import edu.mit.compilers.parser.MethodCall;
+import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
@@ -42,14 +38,15 @@ public class CFTempAssign implements CFStatement {
     public Lit lit;
 
     @Override
-    public List<String> toAssembly(VariableTable variableTable) {
+    public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
+
         List<String> body = new ArrayList<>();
         switch (type) {
             case LEN:
                 TypeDescriptor argType = variableTable.getDescriptor(id.getName()).getTypeDescriptor();
 
                 if (argType.isArray()) {
-                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + ")");
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
@@ -98,7 +95,9 @@ public class CFTempAssign implements CFStatement {
 
                 break;
             case METHOD_CALL:
-                // TODO, overlap with CFMethodCall...
+                body.add("");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+                body.add("");
                 break;
             case BIN_OP:
                 body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
@@ -151,15 +150,15 @@ public class CFTempAssign implements CFStatement {
                 body.add("movq " + lit.toAssembly() + " -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 break;
             case TRUE:
-                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # true -> " + dest);
                 break;
             case FALSE:
-                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # false -> " + dest);
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
 
-        return body;
+        return AssemblyFactory.indent(body);
     }
 
     @Override
