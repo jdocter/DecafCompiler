@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.Main;
-
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Statement;
