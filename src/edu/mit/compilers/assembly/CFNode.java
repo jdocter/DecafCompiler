@@ -10,6 +10,8 @@ import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
     List<String> toAssembly();
+    String getAssemblyLabel();
+    String getEndOfMiniCFGLabel();
 
     /*
      * Invariant:

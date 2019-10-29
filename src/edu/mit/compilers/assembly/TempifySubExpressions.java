@@ -32,7 +32,7 @@ public class TempifySubExpressions implements CFVisitor {
                     throw new RuntimeException("impossible to reach...");
                 }
             }
-            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(false);
+            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfBlock);
             prevNode.accept(mergeBasicBlocksAndRemoveNops);
             cfBlock.setMiniCFG(startNode);
             visited.add(cfBlock);
@@ -47,7 +47,7 @@ public class TempifySubExpressions implements CFVisitor {
         if (!visited.contains(cfConditional)) {
             Temp cond = new Temp();
             Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfConditional.getBoolExpr(), cond, cfConditional.getVariableTable());
-            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(false);
+            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfConditional);
             ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
             cfConditional.replaceExpr(cond);
             cfConditional.setMiniCFG(ct.getKey());
@@ -76,7 +76,7 @@ public class TempifySubExpressions implements CFVisitor {
             if (cfReturn.getReturnExpr() != null) {
                 Temp t = new Temp();
                 Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfReturn.getReturnExpr(), t, cfReturn.getVariableTable());
-                MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(false);
+                MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfReturn);
                 ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
                 cfReturn.replaceExpr(cond);
                 cfReturn.setMiniCFG(ct.getKey());

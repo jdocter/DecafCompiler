@@ -60,14 +60,39 @@ public class CFBlock extends UIDObject implements CFNode {
 
     @Override
     public List<String> toAssembly() {
+        // Trying not to share code between isOuter and !isOuter
         if (isOuter) {
-            return new MethodAssemblyCollector(miniCFG).getInstructions();
-        }
-        else {
             List<String> assembly = new ArrayList<>();
-            for (CFStatement cfStatement : cfStatements) {
-                assembly.addAll(cfStatement.toAssembly(variableTable));
+
+            assembly.add(getAssemblyLabel() + ":");
+            assembly.addAll(new MethodAssemblyCollector(miniCFG).getInstructions());
+            assembly.add(getEndOfMiniCFGLabel() + ":");
+
+            List<String> body = new ArrayList<>();
+            if (!isEnd) {
+                body.add("jmp " + next.getAssemblyLabel());
+            } else {
+                throw new RuntimeException("Didn't expect a CFBlock to end the CFG");
             }
+
+            assembly.addAll(AssemblyFactory.indent(body));
+            return assembly;
+        } else {
+            List<String> assembly = new ArrayList<>();
+
+            assembly.add(getAssemblyLabel() + ":");
+            List<String> body = new ArrayList<>();
+            for (CFStatement cfStatement : cfStatements) {
+                body.addAll(cfStatement.toAssembly(variableTable));
+            }
+
+            if (!isEnd) {
+                body.add("jmp " + next.getAssemblyLabel());
+            } else {
+                throw new RuntimeException("Didn't expect a CFBlock to end the CFG");
+            }
+
+            assembly.addAll(AssemblyFactory.indent(body));
             return assembly;
         }
     }
@@ -161,5 +186,16 @@ public class CFBlock extends UIDObject implements CFNode {
 
     public boolean isSameScope(CFBlock other) {
         return !(variableTable == null) && !(other.variableTable == null) && variableTable == other.variableTable;
+    }
+
+    @Override
+    public String getAssemblyLabel() {
+        return "_block_" + UID;
+    }
+
+    @Override
+    public String getEndOfMiniCFGLabel() {
+        if (isOuter) return "_end_of_block_" + UID;
+        throw new UnsupportedOperationException("Inner Blocks don't have mini CFGs");
     }
 }

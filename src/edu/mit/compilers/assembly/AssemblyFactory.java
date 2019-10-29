@@ -8,8 +8,17 @@ import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AssemblyFactory {
+
+    public static String INDENTATION = "\t";
+
+    public static List<String> indent(List<String> body) {
+        return body.stream()
+                .map((String line) -> {return INDENTATION + line;})
+                .collect(Collectors.toList());
+    }
 
     /**
      *
@@ -17,6 +26,7 @@ public class AssemblyFactory {
      * @return
      */
     public static List<String> programAssemblyGen(ProgramDescriptor programDescriptor) {
+
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
             if (methodDescriptor.getMethodCFG() == null) {
                 throw new RuntimeException("Method CFGs must be created before converting to assembly");
@@ -29,7 +39,9 @@ public class AssemblyFactory {
             // _string_name:
             //      .string "name"
             //      .align 16
-            assembly.addAll(List.of("_string_"+stringLit+":", "\t.string \"" + stringLit +"\"", "\t.align 16"));
+            assembly.addAll(List.of("_string_"+stringLit+":",
+				    INDENTATION + ".string \"" + stringLit +"\"",
+				    INDENTATION + ".align 16"));
         }
 
         // global fields
@@ -37,6 +49,18 @@ public class AssemblyFactory {
             // .comm _global_fieldname, bytes, alignment
             assembly.addAll(List.of(".comm _global_"+fieldDescriptor.getName() +", "
                     + fieldDescriptor.getTypeDescriptor().getMemoryLength() + ", 16"));
+        }
+
+        // runtime exception strings
+        for (MethodDescriptor methodDescriptor : programDescriptor.methodTable.values()) {
+            String methodName = methodDescriptor.getMethodName();
+            assembly.add("_sp_field_runtime_error_2_" + methodName + ":");
+            assembly.add(INDENTATION
+                    + ".string \"*** RUNTIME ERROR ***: No return value from non-void method \\\""
+                    + methodName
+                    + "\\\"\"");
+            assembly.add(INDENTATION + ".align 16");
+            assembly.add("");
         }
 
         // something about main function
@@ -59,7 +83,7 @@ public class AssemblyFactory {
 
         // LABEL
         if (methodDescriptor.getMethodName().equals("main")) {
-            assembly.add("\t.globl main");
+            assembly.add(INDENTATION + ".globl main");
             assembly.add("main:");
         } else {
             assembly.add("_method_" + methodDescriptor.getMethodName()+":");
@@ -83,20 +107,19 @@ public class AssemblyFactory {
                 prologue.add("movq "+Reg.methodParam(p+1)+ ", -" + paramOffset + "(%rbp)");
             } else {
                 // if more params, move params 7... onto stack, access from rbp
-                long argOffset = (p+1)*8 + 8;
+                long argOffset = (p - 6)*8 + 8; // param 7 found at 16(%rbp)
                 prologue.add("movq "+ argOffset+"(%rbp), %rax");
                 prologue.add("movq %rax, -" + paramOffset + "(%rbp)");
             }
         }
         // indent prologue and add to assembly
+        assembly.addAll(AssemblyFactory.indent(prologue));
 
         // assemblyGen for CFMethodStart
         List<String> methodBodyAssembly = new MethodAssemblyCollector(methodCFG).getInstructions();
         assembly.addAll(methodBodyAssembly);
 
-        // do we need leave? ret?
-
-        return null;
+        return assembly;
     }
 
 }

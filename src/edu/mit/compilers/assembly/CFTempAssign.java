@@ -1,5 +1,9 @@
 package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.inter.FieldDescriptor;
+import edu.mit.compilers.inter.LocalDescriptor;
+import edu.mit.compilers.inter.TypeDescriptor;
+import edu.mit.compilers.inter.VariableDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
@@ -9,6 +13,7 @@ import edu.mit.compilers.parser.Loc;
 import edu.mit.compilers.parser.MethodCall;
 import edu.mit.compilers.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CFTempAssign implements CFStatement {
@@ -17,7 +22,8 @@ public class CFTempAssign implements CFStatement {
     public static final int LEN = 0;
     public static final int MINUS = 1;
     public static final int NOT = 2;
-    public static final int LOC = 3;
+    public static final int ARRAY_LOC = 3;
+    public static final int SINGLE_LOC = 9;
     public static final int METHOD_CALL = 4;
     public static final int BIN_OP = 5;
     public static final int LIT = 6;
@@ -37,7 +43,78 @@ public class CFTempAssign implements CFStatement {
 
     @Override
     public List<String> toAssembly(VariableTable variableTable) {
-        return null;
+        final List<String> assembly = new ArrayList<>();
+
+        List<String> body = new ArrayList<>();
+        switch (type) {
+            case LEN:
+                TypeDescriptor argType = variableTable.getDescriptor(id.getName()).getTypeDescriptor();
+
+                if (argType.isArray()) {
+                    body.add("mov $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                } else {
+                    throw new RuntimeException("Failed semantic checks");
+                }
+                break;
+            case MINUS:
+                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + dest + " = -" + leftOrSingleTemp);
+                body.add("negq %rax");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+                break;
+            case NOT:
+                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + dest + " = !" + leftOrSingleTemp);
+                body.add("xorq $1, %rax");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+                break;
+            case ARRAY_LOC:
+                // TODO
+                break;
+            case SINGLE_LOC:
+                // TODO
+                break;
+            case METHOD_CALL:
+
+                break;
+            case BIN_OP:
+                break;
+            case LIT:
+                break;
+            case TRUE:
+                break;
+            case FALSE:
+                break;
+            default: throw new RuntimeException("Temp has no type: impossible to reach...");
+        }
+
+        if (expr != null) {
+            assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
+        }
+
+        // TODO this may need fixing
+        VariableDescriptor variableDescriptor = variableTable.getDescriptor(arrayOrLoc.getName());
+        TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
+        String dest;
+        if (variableDescriptor.isGlobal()) {
+            if (arrayOffset == null) {
+                dest = "l(%rip)";
+            } else {
+                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
+                assembly.add("leaq " + arrayOrLoc.getName() + "(%rip), %rax"); // address of base of global array
+                dest = "(%rcx,%rax)";
+            }
+        } else {
+            LocalDescriptor localDescriptor = (LocalDescriptor) variableDescriptor;
+            if (arrayOffset == null) {
+                dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
+            } else {
+                dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
+            }
+        }
+
+        assembly.addAll(AssemblyFactory.indent(body));
+
+        return assembly;
     }
 
     @Override
@@ -71,7 +148,7 @@ public class CFTempAssign implements CFStatement {
 
     public static CFStatement makeLoc(Temp temp, Id id2, Temp tempLocExpr) {
         CFTempAssign result = new CFTempAssign();
-        result.type = LOC;
+        result.type = ARRAY_LOC;
         result.dest = temp;
         result.arrayName = id2;
         result.arrayOffset = tempLocExpr;
@@ -80,7 +157,7 @@ public class CFTempAssign implements CFStatement {
 
     public static CFStatement makeLoc(Temp temp, Id id2) {
         CFTempAssign result = new CFTempAssign();
-        result.type = LOC;
+        result.type = SINGLE_LOC;
         result.dest = temp;
         result.id = id2;
         return result;

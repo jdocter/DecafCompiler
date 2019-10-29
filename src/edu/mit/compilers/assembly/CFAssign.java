@@ -52,11 +52,11 @@ public class CFAssign extends UIDObject implements CFStatement {
         String dest;
         if (variableDescriptor.isGlobal()) {
             if (arrayOffset == null) {
-                dest = "l(%rip)";
+                dest = "_global_" + ((FieldDescriptor)variableDescriptor).getName();
             } else {
                 assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                assembly.add("leaq " + arrayOrLoc.getName() + "(%rip), %rax"); // address of base of global array
+                assembly.add("leaq _global_" + arrayOrLoc.getName() + ", %rax"); // address of base of global array
                 dest = "(%rcx,%rax)";
             }
         } else {
@@ -68,12 +68,13 @@ public class CFAssign extends UIDObject implements CFStatement {
             }
         }
         switch (assignOp) {
-            case ASSIGN: assembly.add("movq %rax, " + dest); break;
-            case MEQ: assembly.add("subq %rax, " + dest); break;
-            case PEQ: assembly.add("addq %rax, " + dest); break;
+            case ASSIGN: assembly.add("movq %rdx, " + dest); break;
+            case MEQ: assembly.add("subq %rdx, " + dest); break;
+            case PEQ: assembly.add("addq %rdx, " + dest); break;
             case INC: assembly.add("incq " + dest); break;
             case DEC: assembly.add("decq " + dest); break;
         }
+
         return assembly;
     }
 

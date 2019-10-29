@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.mit.compilers.assembly.*;
+import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
@@ -15,17 +16,18 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
     Set<CFNode> visited = new HashSet<>();
 
     CFBlock lastSeenCFBlock;
-    private boolean shouldReturnVoid;
-    private boolean replaceLastNopWithReturn;
+    private MethodDescriptor methodDescriptor;
+    private CFNode enclosingCFNode; // if it's the MiniCFVisitor
 
-    public MergeBasicBlocksAndRemoveNops(boolean replaceLastNopWithReturn) {
-        this.replaceLastNopWithReturn = replaceLastNopWithReturn;
-        this.shouldReturnVoid = false;
+    public MergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
+        // CFVisitor
+        this.enclosingCFNode = enclosingCFNode;
     }
 
-    public MergeBasicBlocksAndRemoveNops(boolean replaceLastNopWithReturn, boolean shouldReturnVoid) {
-        this.replaceLastNopWithReturn = replaceLastNopWithReturn;
-        this.shouldReturnVoid = shouldReturnVoid;
+    public MergeBasicBlocksAndRemoveNops(MethodDescriptor methodDescriptor) {
+        // MiniCFVisitor
+        this.enclosingCFNode = null;
+        this.methodDescriptor = methodDescriptor;
     }
 
     private void visitNeighbors(CFNode node) {
@@ -93,10 +95,12 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor, MiniCFVisitor {
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
-            if (replaceLastNopWithReturn) {
-                cfNop.setNext(new CFReturn(null, null, shouldReturnVoid));
+            if (enclosingCFNode == null) {
+                // ending Nops should be replaced with returns in the large CFG
+                cfNop.setNext(new CFReturn(null, null, methodDescriptor));
             } else {
-                return;
+                // ending Nops should be replaced with jmps in the mini CFG
+                cfNop.setNext(new CFEndOfMiniCFG(enclosingCFNode));
             }
         }
 

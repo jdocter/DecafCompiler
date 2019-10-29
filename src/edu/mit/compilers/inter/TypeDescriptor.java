@@ -32,6 +32,10 @@ public class TypeDescriptor {
         }
     }
 
+    public long getLength() {
+        return length;
+    }
+
     /**
      *
      * @return number of bytes required to store this type in memory

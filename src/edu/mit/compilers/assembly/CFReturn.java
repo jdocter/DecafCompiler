@@ -34,15 +34,15 @@ public class CFReturn extends UIDObject implements CFNode {
     private final Set<CFNode> parents = new HashSet<CFNode>();
     private final VariableTable variableTable;
     private boolean isVoid;
-    private boolean shouldReturnVoid;
+    private MethodDescriptor methodDescriptor;
     private CFNode miniCFG;
 
 
-    public CFReturn(Expr returnExpr, VariableTable variableTable, boolean shouldReturnVoid) {
+    public CFReturn(Expr returnExpr, VariableTable variableTable, MethodDescriptor methodDescriptor) {
         this.returnExpr = returnExpr;
         this.variableTable = variableTable;
         isVoid = returnExpr == null ? true : false;
-        this.shouldReturnVoid = shouldReturnVoid;
+        this.methodDescriptor = methodDescriptor;
     }
 
     public Expr getReturnExpr() {
@@ -68,27 +68,36 @@ public class CFReturn extends UIDObject implements CFNode {
     public List<String> toAssembly() {
         final List<String> assembly = new ArrayList<>();
 
-        List<String> label = List.of("_return_" + UID + ":");
-
-        List<String> body = new ArrayList<>(); // TODO
+        List<String> body = new ArrayList<>();
+        boolean shouldReturnVoid = methodDescriptor.isVoid();
         if (isVoid) {
             if (!shouldReturnVoid) {
                 // generate runtime error
                 body.add("# returning void in a function supposed to return a value");
-                body.add("")
+                body.add("leaq _special_field_runtime_error_2_" + methodDescriptor.getMethodName() + "(%rip), %rdi");
+                body.add("call printf");
+                body.add("");
+                body.add("movq $2, %rax"); // return code 2
             } else {
                 // return
+                body.add("# return void");
+                body.add("movq $0, %rax");
             }
         } else {
             if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
             // calculate expr and return it
-            assembly.addAll(List.of(
-                    "# calculating expr "
-                    ));
+            body.add("# calculating return Expr");
+            body.addAll(new MethodAssemblyCollector(miniCFG).getInstructions());
+            body.add(getEndOfMiniCFGLabel() + ":");
+            body.add("");
+            body.add("movq -" + returnTemp.getOffset() + "(%rbp), %rax");
         }
+        body.add("");
+        body.add("leave");
+        body.add("ret");
 
-        assembly.addAll(label);
-        assembly.addAll(indent(body)); // TODO
+        assembly.add(getAssemblyLabel() + ":");
+        assembly.addAll(AssemblyFactory.indent(body));
         return assembly;
     }
 
@@ -145,5 +154,15 @@ public class CFReturn extends UIDObject implements CFNode {
         TempCollector collector = new TempCollector();
         miniCFG.accept(collector);
         return collector.temps;
+    }
+
+    @Override
+    public String getAssemblyLabel() {
+        return "_return_" + UID;
+    }
+
+    @Override
+    public String getEndOfMiniCFGLabel() {
+        return "_end_of_return_" + UID;
     }
 }
