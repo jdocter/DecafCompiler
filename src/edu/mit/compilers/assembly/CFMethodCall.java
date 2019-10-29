@@ -31,6 +31,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         List<String> assembly = new ArrayList<>();
 
         List<String> body = new ArrayList<>();
+        body.add("# " + this.toString());
 
         int stackArgs = arguments.size() - 6;
 

@@ -46,18 +46,18 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor argType = variableTable.getDescriptor(id.getName()).getTypeDescriptor();
 
                 if (argType.isArray()) {
-                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + ")");
+                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # " + this.toString());
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
                 break;
             case MINUS:
-                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + dest + " = -" + leftOrSingleTemp);
+                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + this.toString());
                 body.add("negq %rax");
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
                 break;
             case NOT:
-                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + dest + " = !" + leftOrSingleTemp);
+                body.add("movq -" + leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + this.toString());
                 body.add("xorq $1, %rax");
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
                 break;
@@ -66,7 +66,7 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor arrayTypeDescriptor = arrayDescriptor.getTypeDescriptor();
                 String arrayLoc;
                 if (arrayDescriptor.isGlobal()) {
-                    body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                    body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax # " + this.toString()); // val of temp into rax
                     body.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
                     body.add("leaq " + id.getName() + "(%rip), %rax"); // address of base of global array
                     arrayLoc = "(%rcx,%rax)";
@@ -76,31 +76,31 @@ public class CFTempAssign implements CFStatement {
                     arrayLoc = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
                 }
 
-                body.add("movq " + arrayLoc + ", %rax");
+                body.add("movq " + arrayLoc + ", %rax # " + this.toString());
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
 
                 break;
             case SINGLE_LOC:
                 VariableDescriptor varDescriptor = variableTable.getDescriptor(id.getName());
                 TypeDescriptor varTypeDescriptor = varDescriptor.getTypeDescriptor();
-                String varLoc;
+                String varAccessLoc;
                 if (varDescriptor.isGlobal()) {
-                    varLoc = "leaq _global_" + ((FieldDescriptor) varDescriptor).getName() + "(%rip)";
+                    varAccessLoc = "leaq _global_" + ((FieldDescriptor) varDescriptor).getName() + "(%rip)";
                 } else {
-                    varLoc = "movq -"+ ((LocalDescriptor) varDescriptor).getStackOffset()+"(%rbp)";
+                    varAccessLoc = "movq -"+ ((LocalDescriptor) varDescriptor).getStackOffset()+"(%rbp)";
                 }
 
-                body.add(varLoc + ", %rax");
+                body.add(varAccessLoc + ", %rax # " + this.toString());
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
 
                 break;
             case METHOD_CALL:
                 body.add("");
-                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp) # " + this.toString());
                 body.add("");
                 break;
             case BIN_OP:
-                body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax # " + this.toString());
                 body.add("cmpq -" + right.getOffset() + "(%rbp), %rax");
                 switch (binOp.binOp) {
                     case BinOp.AND:
@@ -147,13 +147,13 @@ public class CFTempAssign implements CFStatement {
                 break;
             case LIT:
                 // TODO runtime checks
-                body.add("movq " + lit.toAssembly() + " -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                body.add("movq " + lit.toAssembly() + ", -" + dest.getOffset() + "(%rbp) # " + this.toString());
                 break;
             case TRUE:
-                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # true -> " + dest);
+                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # " + this.toString());
                 break;
             case FALSE:
-                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # false -> " + dest);
+                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # " + this.toString());
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }

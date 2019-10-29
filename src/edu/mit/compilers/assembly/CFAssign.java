@@ -41,9 +41,9 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override
     public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
-        final List<String> assembly = new ArrayList<>();
+        final List<String> body = new ArrayList<>();
         if (expr != null) {
-            assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
+            body.add("movq -" + expr.getOffset()+"(%rbp), %rdx # " + this.toString());
         }
 
         // TODO this may need fixing
@@ -54,9 +54,9 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "_global_" + ((FieldDescriptor)variableDescriptor).getName() + "(%rip)";
             } else {
-                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
-                assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                assembly.add("leaq _global_" + arrayOrLoc.getName() + ", %rax"); // address of base of global array
+                body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                body.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
+                body.add("leaq _global_" + arrayOrLoc.getName() + ", %rax"); // address of base of global array
                 dest = "(%rcx,%rax)";
             }
         } else {
@@ -64,20 +64,20 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
             } else {
-                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
             }
         }
 
         switch (assignOp) {
-            case ASSIGN: assembly.add("movq %rdx, " + dest); break;
-            case MEQ: assembly.add("subq %rdx, " + dest); break;
-            case PEQ: assembly.add("addq %rdx, " + dest); break;
-            case INC: assembly.add("incq " + dest); break;
-            case DEC: assembly.add("decq " + dest); break;
+            case ASSIGN: body.add("movq %rdx, " + dest); break;
+            case MEQ: body.add("subq %rdx, " + dest); break;
+            case PEQ: body.add("addq %rdx, " + dest); break;
+            case INC: body.add("incq " + dest); break;
+            case DEC: body.add("decq " + dest); break;
         }
 
-        return assembly;
+        return AssemblyFactory.indent(body);
     }
 
     @Override public String toString() {
