@@ -43,13 +43,14 @@ public class CFMethodCall extends UIDObject implements CFStatement {
                 if (param.getKey() != null) {
                     body.add("movq -" + param.getKey().getOffset() + "(%rbp), " + target);
                 } else {
-                    body.add("movq " + param.getValue().getLabel() + "(%rip), " + target);
+                    body.add("leaq " + param.getValue().getLabel() + "(%rip), " + target);
                 }
             } else {
                 if (param.getKey() != null) {
                     body.add("push -" + param.getKey().getOffset() + "(%rbp)");
                 } else {
-                    body.add("push " + param.getValue().getLabel() + "(%rip)");
+                    body.add("leaq " + param.getValue().getLabel() + "(%rip), %rax");
+                    body.add("push %rax");
                 }
             }
         }
