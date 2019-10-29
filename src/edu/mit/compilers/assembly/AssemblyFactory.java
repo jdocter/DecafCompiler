@@ -39,8 +39,8 @@ public class AssemblyFactory {
             // _string_name:
             //      .string "name"
             //      .align 16
-            assembly.addAll(List.of("_string_"+stringLit+":",
-				    INDENTATION + ".string \"" + stringLit +"\"",
+            assembly.addAll(List.of(stringLit.getLabel()+":",
+				    INDENTATION + ".string " + stringLit,
 				    INDENTATION + ".align 16"));
         }
 

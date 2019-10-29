@@ -34,7 +34,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
         int stackArgs = arguments.size() - 6;
 
-        for (int p = arguments.size(); p >= 0; p--) {
+        for (int p = arguments.size(); p > 0; p--) {
 
             Pair<Temp, StringLit> param = arguments.get(p - 1);
             // push arguments in reverse order
@@ -43,19 +43,19 @@ public class CFMethodCall extends UIDObject implements CFStatement {
                 if (param.getKey() != null) {
                     body.add("movq -" + param.getKey().getOffset() + "(%rbp), " + target);
                 } else {
-                    body.add("movq _string_" + param.getValue() + "(%rip), " + target);
+                    body.add("movq " + param.getValue().getLabel() + "(%rip), " + target);
                 }
             } else {
                 if (param.getKey() != null) {
                     body.add("push -" + param.getKey().getOffset() + "(%rbp)");
                 } else {
-                    body.add("push _string_" + param.getValue() + "(%rip)");
+                    body.add("push " + param.getValue().getLabel() + "(%rip)");
                 }
             }
         }
 
         // maintain 16-byte alignment -- assuming 16 aligned before call
-        if (stackArgs % 2 != 0) {
+        if (stackArgs > 0 && stackArgs % 2 != 0) {
             stackArgs++;
             body.add("push %rax # dummy argument used to maintain 16-byte alignment");
         }

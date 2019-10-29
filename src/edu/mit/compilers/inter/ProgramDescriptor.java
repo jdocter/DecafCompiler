@@ -27,6 +27,9 @@ public class ProgramDescriptor {
         methodTable = new MethodTable(p.methodDeclarations, fieldTable);
         importTable = new ImportTable(p.importDeclarations);
         stringLits = new StringLitCollector(p).getStringLits();
+        for (int i = 0; i < stringLits.size(); i++) {
+            stringLits.get(i).setLabel("_string_" + i);
+        }
     }
 
     public void typeCheck(Program p) throws SemanticException {

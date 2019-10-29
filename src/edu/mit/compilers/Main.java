@@ -22,7 +22,7 @@ import edu.mit.compilers.assembly.CFNode;
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 
-class Main {
+public class Main {
   public static void main(String[] args) {
     try {
       CLI.parse(args, new String[0]);

@@ -34,7 +34,7 @@ public class TempOffsetAssigner implements CFVisitor {
         long blockTempOffset = tempOffsetStart;
         for (Pair<Temp, List<Temp>> temps : node.getTemps()) {
             Temp dest = temps.getKey();
-            if (!tempsSeen.contains(dest)) {
+            if (dest != null && !tempsSeen.contains(dest)) {
                 tempsSeen.add(dest);
                 long newOffset = blockTempOffset + Temp.TEMP_SIZE;
                 dest.setOffset(newOffset);
