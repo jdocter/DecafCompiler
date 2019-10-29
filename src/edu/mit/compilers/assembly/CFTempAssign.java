@@ -43,8 +43,6 @@ public class CFTempAssign implements CFStatement {
 
     @Override
     public List<String> toAssembly(VariableTable variableTable) {
-        final List<String> assembly = new ArrayList<>();
-
         List<String> body = new ArrayList<>();
         switch (type) {
             case LEN:
@@ -71,9 +69,9 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor arrayTypeDescriptor = arrayDescriptor.getTypeDescriptor();
                 String arrayLoc;
                 if (arrayDescriptor.isGlobal()) {
-                    assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
-                    assembly.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                    assembly.add("leaq " + id.getName() + "(%rip), %rax"); // address of base of global array
+                    body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                    body.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
+                    body.add("leaq " + id.getName() + "(%rip), %rax"); // address of base of global array
                     arrayLoc = "(%rcx,%rax)";
 
                 } else {
@@ -103,22 +101,49 @@ public class CFTempAssign implements CFStatement {
                 // TODO, overlap with CFMethodCall...
                 break;
             case BIN_OP:
+                body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                body.add("cmpq -" + right.getOffset() + "(%rbp), %rax");
                 switch (binOp.binOp) {
                     case BinOp.AND:
                     case BinOp.OR:
-                        throw new RuntimeException("Didn't expect binOp of type " + binOp.binOp);
+                        throw new UnsupportedOperationException("Expected to short circuit AND/OR binops, not cmp them");
                     case BinOp.EQ:
                     case BinOp.NEQ:
                     case BinOp.GEQ:
                     case BinOp.LEQ:
                     case BinOp.GT:
                     case BinOp.LT:
-
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("cmpq -" + right.getOffset() + "(%rbp), %rax");
+                        body.add(getBinopCommand() + " -" + dest.getOffset() + "(%rbp)");
+                        break;
                     case BinOp.MINUS:
-                    case BinOp.MOD:
-                    case BinOp.MUL:
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("subq -"+right.getOffset() + "(%rbp), %rax");
+                        body.add("movq %rax, -"+dest.getOffset()+"(%rbp)");
+                        break;
                     case BinOp.PLUS:
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("addq -"+right.getOffset() + "(%rbp), %rax");
+                        body.add("movq %rax, -"+dest.getOffset()+"(%rbp)");
+                        break;
+                    case BinOp.MOD:
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("movq $0, %radx"); // TODO maybe not necessary?
+                        body.add("idivq -"+right.getOffset() + "(%rbp), %rax");
+                        body.add("movq %rdx, -"+dest.getOffset()+"(%rbp)");
+                        break;
+                    case BinOp.MUL:
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("imulq -"+right.getOffset() + "(%rbp), %rax");
+                        body.add("movq %rax, -"+dest.getOffset()+"(%rbp)"); // TODO overflow?
+                        break;
                     case BinOp.DIV:
+                        body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
+                        body.add("movq $0, %radx"); // TODO maybe not necessary?
+                        body.add("idivq -"+right.getOffset() + "(%rbp), %rax");
+                        body.add("movq %rax, -"+dest.getOffset()+"(%rbp)");
+                        break;
                 }
                 break;
             case LIT:
@@ -134,35 +159,7 @@ public class CFTempAssign implements CFStatement {
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
 
-        if (expr != null) {
-            assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
-        }
-
-        // TODO this may need fixing
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(arrayOrLoc.getName());
-        TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
-        String dest;
-        if (variableDescriptor.isGlobal()) {
-            if (arrayOffset == null) {
-                dest = "l(%rip)";
-            } else {
-                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
-                assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                assembly.add("leaq " + arrayOrLoc.getName() + "(%rip), %rax"); // address of base of global array
-                dest = "(%rcx,%rax)";
-            }
-        } else {
-            LocalDescriptor localDescriptor = (LocalDescriptor) variableDescriptor;
-            if (arrayOffset == null) {
-                dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
-            } else {
-                dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
-            }
-        }
-
-        assembly.addAll(AssemblyFactory.indent(body));
-
-        return assembly;
+        return body;
     }
 
     @Override
@@ -257,8 +254,6 @@ public class CFTempAssign implements CFStatement {
             case LEN: return dest + " = len(" + id + ")";
             case MINUS: return dest + " = -"+ leftOrSingleTemp;
             case NOT: return dest + " = !" + leftOrSingleTemp;
-            case LOC: return arrayOffset == null ? dest + " = " + id :
-                    dest + " = " + arrayName + "[" + arrayOffset +"]";
             case METHOD_CALL: return dest + " = load %rax";
             case BIN_OP: return dest + " = " + leftOrSingleTemp + " " + binOp + " " + right;
             case LIT: return dest + " = " + lit;
@@ -274,14 +269,34 @@ public class CFTempAssign implements CFStatement {
             case LEN: return new Pair(dest, List.of());
             case MINUS: return new Pair(dest, List.of(leftOrSingleTemp));
             case NOT: return new Pair(dest, List.of(leftOrSingleTemp));
-            case LOC: return arrayOffset == null ?  new Pair(dest, List.of()) :
-                new Pair(dest, List.of(arrayOffset));
             case METHOD_CALL: return new Pair(dest, List.of());
             case BIN_OP: return new Pair(dest, List.of(leftOrSingleTemp, right));
             case LIT: return new Pair(dest, List.of());
             case TRUE: return new Pair(dest, List.of());
             case FALSE: return new Pair(dest, List.of());
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
+        }
+    }
+
+    private String getBinopCommand() {
+        switch (binOp.binOp) {
+            case BinOp.AND:
+            case BinOp.OR:
+                throw new UnsupportedOperationException("Expected to short circuit AND/OR binops, not cmp them");
+            case BinOp.PLUS:
+            case BinOp.MINUS:
+            case BinOp.MUL:
+            case BinOp.DIV:
+            case BinOp.MOD:
+                throw new RuntimeException("Bad semantic checks");
+            case BinOp.EQ: return "sete";
+            case BinOp.NEQ: return "setne";
+            case BinOp.LT: return "setl";
+            case BinOp.GT: return "setg";
+            case BinOp.LEQ: return "setle";
+            case BinOp.GEQ: return "setge";
+            default:
+                throw new RuntimeException("Unrecognized binOp: " + binOp.binOp);
         }
     }
 }
