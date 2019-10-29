@@ -258,6 +258,8 @@ public class CFTempAssign implements CFStatement {
             case LIT: return dest + " = " + lit;
             case TRUE: return dest + " = true";
             case FALSE: return dest + " = false";
+            case SINGLE_LOC: return dest + " = " + id;
+            case ARRAY_LOC: return dest + " = " + arrayName + "[" + arrayOffset + "]";
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
     }
@@ -273,6 +275,8 @@ public class CFTempAssign implements CFStatement {
             case LIT: return new Pair(dest, List.of());
             case TRUE: return new Pair(dest, List.of());
             case FALSE: return new Pair(dest, List.of());
+            case SINGLE_LOC: return new Pair(dest, List.of());
+            case ARRAY_LOC: return new Pair(dest, List.of(arrayOffset));
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
     }
