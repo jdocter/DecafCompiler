@@ -52,7 +52,7 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor argType = variableTable.getDescriptor(id.getName()).getTypeDescriptor();
 
                 if (argType.isArray()) {
-                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                    body.add("movq $" + argType.getLength() + ", -" + dest.getOffset() + "(%rbp) # len(" + dest + ")");
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
@@ -101,7 +101,9 @@ public class CFTempAssign implements CFStatement {
 
                 break;
             case METHOD_CALL:
-                // TODO, overlap with CFMethodCall...
+                body.add("");
+                body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
+                body.add("");
                 break;
             case BIN_OP:
                 switch (binOp.binOp) {
@@ -127,42 +129,15 @@ public class CFTempAssign implements CFStatement {
                 body.add("movq " + lit.toAssembly() + " -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
                 break;
             case TRUE:
-                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                body.add("movq $1, -" + dest.getOffset() + "(%rbp) # true -> " + dest);
                 break;
             case FALSE:
-                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # len(" + dest + "");
+                body.add("movq $0, -" + dest.getOffset() + "(%rbp) # false -> " + dest);
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
 
-        if (expr != null) {
-            assembly.add("movq -" + expr.getOffset()+"(%rbp), %rdx");
-        }
-
-        // TODO this may need fixing
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(arrayOrLoc.getName());
-        TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
-        String dest;
-        if (variableDescriptor.isGlobal()) {
-            if (arrayOffset == null) {
-                dest = "l(%rip)";
-            } else {
-                assembly.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
-                assembly.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                assembly.add("leaq " + arrayOrLoc.getName() + "(%rip), %rax"); // address of base of global array
-                dest = "(%rcx,%rax)";
-            }
-        } else {
-            LocalDescriptor localDescriptor = (LocalDescriptor) variableDescriptor;
-            if (arrayOffset == null) {
-                dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
-            } else {
-                dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
-            }
-        }
-
         assembly.addAll(AssemblyFactory.indent(body));
-
         return assembly;
     }
 
