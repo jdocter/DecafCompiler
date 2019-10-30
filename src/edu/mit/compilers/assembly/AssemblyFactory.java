@@ -52,7 +52,7 @@ public class AssemblyFactory {
                 "call printf",
                 "",
                 "movq $1, "+GLOBAL_EXIT_CODE + "(%rip)",
-                "movq $1, $rax",
+                "movq $1, %rax",
                 "leave",
                 "ret",
                 ""
