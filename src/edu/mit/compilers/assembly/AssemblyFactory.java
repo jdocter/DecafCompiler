@@ -93,13 +93,13 @@ public class AssemblyFactory {
         // runtime exception strings
         assembly.add("_sp_field_runtime_error_1:");
         assembly.add(INDENTATION
-                + ".string \"*** RUNTIME ERROR ***: Array index out of bounds\"");
+                + ".string \"*** RUNTIME ERROR ***: Array index out of bounds\n\"");
         assembly.add(INDENTATION + ".align 16");
         assembly.add("");
 
         assembly.add("_sp_field_runtime_error_2:");
         assembly.add(INDENTATION
-                + ".string \"*** RUNTIME ERROR ***: Control fell off of a non-void method\"");
+                + ".string \"*** RUNTIME ERROR ***: Control fell off of a non-void method\n\"");
         assembly.add(INDENTATION + ".align 16");
         assembly.add("");
 

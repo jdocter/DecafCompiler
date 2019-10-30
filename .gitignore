@@ -8,6 +8,7 @@ autogen/*
 classes/*
 dist/*
 bin/*
+playground/*
 
 # -------
 # Emacs

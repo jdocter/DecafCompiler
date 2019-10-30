@@ -1,0 +1,116 @@
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+cfconditional outer
+CFG for main
+----------
+UID 8 CFNop [next=11]
+
+MiniCFG: UID 44 CFNop [next=55]
+UID 55 CFBlock [[t47 = 0, sum = t47, t52 = 0, j = t52], next=56], Scope = 2
+UID 56 CFEndOfMiniCFG [next=11]
+
+UID 11 CFBlock [ miniCFG=44, next=15], Scope = 2
+
+MiniCFG: UID 61 CFBlock [[t58 = j], next=66], Scope = 2
+UID 66 CFBlock [[t58 = j, t59 = 10, t57 = t58 < t59], next=68], Scope = 2
+UID 68 CFEndOfMiniCFG [next=15]
+
+UID 15 CFConditional [ miniCFG=61, boolTemp=t57, ifTrue=14, ifFalse=19], Scope = 2
+
+MiniCFG: UID 69 CFNop [next=76]
+UID 76 CFBlock [[t72 = j, sum += t72], next=77], Scope = 3
+UID 77 CFEndOfMiniCFG [next=14]
+
+UID 14 CFBlock [ miniCFG=69, next=12], Scope = 3
+
+MiniCFG: UID 78 CFNop [next=83]
+UID 83 CFBlock [[j++], next=84], Scope = 2
+UID 84 CFEndOfMiniCFG [next=12]
+
+UID 12 CFBlock [ miniCFG=78, next=15], Scope = 2
+
+MiniCFG: UID 89 CFBlock [[t86 = sum], next=94], Scope = 2
+UID 94 CFBlock [[t86 = sum, t87 = 45, t85 = t86 != t87], next=96], Scope = 2
+UID 96 CFEndOfMiniCFG [next=19]
+
+UID 19 CFConditional [ miniCFG=89, boolTemp=t85, ifTrue=18, ifFalse=22], Scope = 2
+
+MiniCFG: UID 97 CFNop [next=101]
+UID 101 CFBlock [[printf["ERROR: for loop is bad (1)\n"]], next=102], Scope = 4
+UID 102 CFEndOfMiniCFG [next=18]
+
+UID 18 CFBlock [ miniCFG=97, next=22], Scope = 4
+
+MiniCFG: UID 103 CFNop [next=114]
+UID 114 CFBlock [[t106 = 11, i = t106, t111 = 10, j = t111], next=115], Scope = 2
+UID 115 CFEndOfMiniCFG [next=22]
+
+UID 22 CFBlock [ miniCFG=103, next=26], Scope = 2
+
+MiniCFG: UID 120 CFBlock [[t117 = j], next=125], Scope = 2
+UID 125 CFBlock [[t117 = j, t118 = 0, t116 = t117 < t118], next=127], Scope = 2
+UID 127 CFEndOfMiniCFG [next=26]
+
+UID 26 CFConditional [ miniCFG=120, boolTemp=t116, ifTrue=25, ifFalse=31], Scope = 2
+
+MiniCFG: UID 128 CFNop [next=134]
+UID 134 CFBlock [[t131 = 1, i += t131], next=135], Scope = 5
+UID 135 CFEndOfMiniCFG [next=25]
+
+UID 25 CFBlock [ miniCFG=128, next=23], Scope = 5
+
+MiniCFG: UID 136 CFNop [next=142]
+UID 142 CFBlock [[t139 = 1, j += t139], next=143], Scope = 2
+UID 143 CFEndOfMiniCFG [next=23]
+
+UID 23 CFBlock [ miniCFG=136, next=26], Scope = 2
+
+MiniCFG: UID 148 CFBlock [[t145 = i], next=153], Scope = 2
+UID 153 CFBlock [[t145 = i, t146 = 11, t144 = t145 != t146], next=155], Scope = 2
+UID 155 CFEndOfMiniCFG [next=31]
+
+UID 31 CFConditional [ miniCFG=148, boolTemp=t144, ifTrue=30, ifFalse=36], Scope = 2
+
+MiniCFG: UID 156 CFNop [next=166]
+UID 166 CFBlock [[printf["ERROR: for loop is bad (2)\n"], t162 = i, printf["%d\n", t162]], next=167], Scope = 6
+UID 167 CFEndOfMiniCFG [next=30]
+
+UID 30 CFBlock [ miniCFG=156, next=36], Scope = 6
+
+MiniCFG: UID 171 CFBlock [[t169 = 1], next=176], Scope = 2
+UID 176 CFBlock [[t169 = 1, t170 = 2, t168 = t169 > t170], next=178], Scope = 2
+UID 178 CFEndOfMiniCFG [next=36]
+
+UID 36 CFConditional [ miniCFG=171, boolTemp=t168, ifTrue=34, ifFalse=41], Scope = 2
+
+MiniCFG: UID 179 CFNop [next=183]
+UID 183 CFBlock [[printf["ERROR: true branch is bad (2)\n"]], next=184], Scope = 7
+UID 184 CFEndOfMiniCFG [next=34]
+
+UID 34 CFBlock [ miniCFG=179, next=41], Scope = 7
+
+MiniCFG: UID 188 CFBlock [[t186 = 1], next=193], Scope = 2
+UID 193 CFBlock [[t186 = 1, t187 = 2, t185 = t186 < t187], next=195], Scope = 2
+UID 195 CFEndOfMiniCFG [next=41]
+
+UID 41 CFConditional [ miniCFG=188, boolTemp=t185, ifTrue=42, ifFalse=40], Scope = 2
+
+MiniCFG: UID 196 CFNop [next=200]
+UID 200 CFBlock [[printf["control flow OK if no previous output\n"]], next=201], Scope = 2
+UID 201 CFEndOfMiniCFG [next=42]
+
+UID 42 CFBlock [ miniCFG=196, next=43], Scope = 2
+UID 43 CFReturn
+
+MiniCFG: UID 202 CFNop [next=206]
+UID 206 CFBlock [[printf["ERROR: else branch is bad (2)\n"]], next=207], Scope = 10
+UID 207 CFEndOfMiniCFG [next=40]
+
+UID 40 CFBlock [ miniCFG=202, next=42], Scope = 10
+----------
