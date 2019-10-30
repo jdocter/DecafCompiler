@@ -68,7 +68,7 @@ public class CFTempAssign implements CFStatement {
                 if (arrayDescriptor.isGlobal()) {
                     body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax # " + this.toString()); // val of temp into rax
                     body.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                    body.add("leaq " + arrayName.getName() + "(%rip), %rax"); // address of base of global array
+                    body.add("leaq " + ((FieldDescriptor) arrayDescriptor).getGlobalLabel() + "(%rip), %rax"); // address of base of global array
                     arrayLoc = "(%rcx,%rax)";
 
                 } else {
