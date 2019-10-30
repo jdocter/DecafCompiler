@@ -46,7 +46,7 @@ public class AssemblyFactory {
 
         // METHOD_EXIT_1
         assembly.add(METHOD_EXIT_1+":");
-        assembly.add("movq $1, "+GLOBAL_EXIT_CODE);
+        assembly.add("movq $1, "+GLOBAL_EXIT_CODE + "(%rip)");
         assembly.add("movq $1, $rax");
         assembly.add(INDENTATION + "leave");
         assembly.add(INDENTATION + "ret");
@@ -55,7 +55,7 @@ public class AssemblyFactory {
         // METHOD_EXIT_2
 
         assembly.add(METHOD_EXIT_2+":");
-        assembly.add("movq $2, "+GLOBAL_EXIT_CODE);
+        assembly.add("movq $2, "+GLOBAL_EXIT_CODE + "(%rip)");
         assembly.add("movq $2, $rax");
         assembly.add(INDENTATION + "leave");
         assembly.add(INDENTATION + "ret");
