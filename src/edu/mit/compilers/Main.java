@@ -214,6 +214,8 @@ public class Main {
             System.exit(1);
         }
       }
+
+      outputStream.close();
     } catch(Exception e) {
       // print the error:
         e.printStackTrace();
