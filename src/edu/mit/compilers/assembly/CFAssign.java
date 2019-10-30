@@ -90,10 +90,12 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override
     public Pair<Temp, List<Temp>> getTemps() {
-        if (arrayOffset == null) {
-            return new Pair(null, List.of(expr));
-        } else {
-            return new Pair(null, List.of(expr, arrayOffset));
-        }
+        List<Temp> right = new ArrayList();
+        if (arrayOffset != null) {
+            right.add(arrayOffset);
+        } else if (expr != null) {
+            right.add(expr);
+        } 
+        return new Pair(null,right);
     }
 }
