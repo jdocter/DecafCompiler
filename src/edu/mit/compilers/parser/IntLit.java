@@ -23,7 +23,7 @@ public class IntLit extends Node {
 
     public String posString() {
         if (hexLit != null) {
-            return hexLit.hex;
+            return hexLit.toString();
         } else {
             return decLit.dec;
         }
@@ -43,7 +43,7 @@ public class IntLit extends Node {
 
     public String negString() {
         if (hexLit != null) {
-            return "-" + hexLit.hex;
+            return "-" + hexLit.toString();
         } else {
             return "-" + decLit.dec;
         }

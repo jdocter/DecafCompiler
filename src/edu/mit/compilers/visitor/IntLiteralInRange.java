@@ -124,7 +124,7 @@ public class IntLiteralInRange implements SemanticChecker {
             IntLit intLit = arrayDeclaration.getValue();
             intLit.accept(this);
             // String equals is easier than catching another parse exception
-            if (intLit.posString().equals("0")) {
+            if (List.of("0", "0x0").contains(intLit.posString())) {
                 // Rule 4
                 Id id = arrayDeclaration.getKey();
                 semanticExceptions.add(new SemanticException(id.getLineNumber(),
