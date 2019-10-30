@@ -74,7 +74,9 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         if (stackArgs > 0) {
             body.add("addq $" + stackArgs * 8 + ", %rsp");
         }
-        // TODO check exit statuses
+
+        body.add("cmpq $0, " + AssemblyFactory.GLOBAL_EXIT_CODE);
+        body.add("jne " + AssemblyFactory.METHOD_EXIT + " # premature exit if the call resulted in runtime exception");
 
         assembly.addAll(AssemblyFactory.indent(body));
         return assembly;

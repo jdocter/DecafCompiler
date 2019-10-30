@@ -82,7 +82,11 @@ public class CFReturn extends UIDObject implements CFNode {
                 body.add("leaq _sp_field_runtime_error_2_" + methodDescriptor.getMethodName() + "(%rip), %rdi");
                 body.add("call printf");
                 body.add("");
-                body.add("movq $2, %rax"); // return code 2
+                body.add("jmp " + AssemblyFactory.METHOD_EXIT_2); // return code 2
+
+                assembly.add(getAssemblyLabel() + ":");
+                assembly.addAll(AssemblyFactory.indent(body));
+                return assembly;
             } else {
                 // return
                 body.add("# return void");
