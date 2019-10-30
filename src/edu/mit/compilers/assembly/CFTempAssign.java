@@ -65,8 +65,8 @@ public class CFTempAssign implements CFStatement {
                 VariableDescriptor arrayDescriptor = variableTable.getDescriptor(arrayName.getName());
                 TypeDescriptor arrayTypeDescriptor = arrayDescriptor.getTypeDescriptor();
                 String arrayLoc;
+                body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax # " + this.toString()); // val of temp into rax
                 if (arrayDescriptor.isGlobal()) {
-                    body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax # " + this.toString()); // val of temp into rax
                     body.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
                     body.add("leaq " + ((FieldDescriptor) arrayDescriptor).getGlobalLabel() + "(%rip), %rax"); // address of base of global array
                     arrayLoc = "(%rcx,%rax)";
@@ -75,7 +75,6 @@ public class CFTempAssign implements CFStatement {
                     LocalDescriptor localDescriptor = (LocalDescriptor) arrayDescriptor;
                     arrayLoc = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
                 }
-
                 body.add("movq " + arrayLoc + ", %rax # " + this.toString());
                 body.add("movq %rax, -" + dest.getOffset() + "(%rbp)");
 
