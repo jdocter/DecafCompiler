@@ -46,21 +46,32 @@ public class AssemblyFactory {
 
         // METHOD_EXIT_1
         assembly.add(METHOD_EXIT_1+":");
-        assembly.add("movq $1, "+GLOBAL_EXIT_CODE + "(%rip)");
-        assembly.add("movq $1, $rax");
-        assembly.add(INDENTATION + "leave");
-        assembly.add(INDENTATION + "ret");
-        assembly.add("");
+        assembly.addAll(indent(List.of(
+                "# arraybounds check fail",
+                "leaq _sp_field_runtime_error_1(%rip), %rdi",
+                "call printf",
+                "",
+                "movq $1, "+GLOBAL_EXIT_CODE + "(%rip)",
+                "movq $1, $rax",
+                "leave",
+                "ret",
+                ""
+                )));
 
         // METHOD_EXIT_2
 
         assembly.add(METHOD_EXIT_2+":");
-        assembly.add("movq $2, "+GLOBAL_EXIT_CODE + "(%rip)");
-        assembly.add("movq $2, $rax");
-        assembly.add(INDENTATION + "leave");
-        assembly.add(INDENTATION + "ret");
-        assembly.add("");
-
+        assembly.addAll(indent(List.of(
+                "# returning void in a function supposed to return a value",
+                "leaq _sp_field_runtime_error_2(%rip), %rdi",
+                "call printf",
+                "",
+                "movq $2, "+GLOBAL_EXIT_CODE + "(%rip)",
+                "movq $2, $rax",
+                "leave",
+                "ret",
+                ""
+                )));
 
         // string literals
         for (StringLit stringLit: programDescriptor.stringLits) {
@@ -80,16 +91,17 @@ public class AssemblyFactory {
         }
 
         // runtime exception strings
-        for (MethodDescriptor methodDescriptor : programDescriptor.methodTable.values()) {
-            String methodName = methodDescriptor.getMethodName();
-            assembly.add("_sp_field_runtime_error_2_" + methodName + ":");
-            assembly.add(INDENTATION
-                    + ".string \"*** RUNTIME ERROR ***: No return value from non-void method \\\""
-                    + methodName
-                    + "\\\"\"");
-            assembly.add(INDENTATION + ".align 16");
-            assembly.add("");
-        }
+        assembly.add("_sp_field_runtime_error_1:");
+        assembly.add(INDENTATION
+                + ".string \"*** RUNTIME ERROR ***: Array index out of bounds");
+        assembly.add(INDENTATION + ".align 16");
+        assembly.add("");
+
+        assembly.add("_sp_field_runtime_error_2:");
+        assembly.add(INDENTATION
+                + ".string \"*** RUNTIME ERROR ***: Control fell off of a non-void method");
+        assembly.add(INDENTATION + ".align 16");
+        assembly.add("");
 
         ImportTable importTable = programDescriptor.importTable;
         // something about main function
