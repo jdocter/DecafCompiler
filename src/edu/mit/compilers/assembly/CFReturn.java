@@ -79,7 +79,7 @@ public class CFReturn extends UIDObject implements CFNode {
             if (!shouldReturnVoid) {
                 // generate runtime error
                 body.add("# returning void in a function supposed to return a value");
-                body.add("leaq _special_field_runtime_error_2_" + methodDescriptor.getMethodName() + "(%rip), %rdi");
+                body.add("leaq _sp_field_runtime_error_2_" + methodDescriptor.getMethodName() + "(%rip), %rdi");
                 body.add("call printf");
                 body.add("");
                 body.add("movq $2, %rax"); // return code 2
