@@ -51,7 +51,13 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = ((FieldDescriptor)variableDescriptor).getGlobalLabel() + "(%rip)";
             } else {
-                // TODO Array out of bounds check
+                // array out of bounds
+                body.add("cmpq $" + typeDescriptor.getLength() +", %rax");
+                body.add("jle "+ AssemblyFactory.METHOD_EXIT_1);
+                body.add("cmpq $0, %rax");
+                body.add("jg " + AssemblyFactory.METHOD_EXIT_1);
+
+                // get dest
                 body.add("movq -" + arrayOffset.getOffset() +"(%rbp), %rax"); // val of temp into rax
                 body.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
                 body.add("leaq " + ((FieldDescriptor)variableDescriptor).getGlobalLabel() + ", %rax"); // address of base of global array
@@ -62,7 +68,13 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
             } else {
-                // TODO Array out of bounds check
+                // array out of bounds
+                body.add("cmpq $" + typeDescriptor.getLength() +", %rax");
+                body.add("jle "+ AssemblyFactory.METHOD_EXIT_1);
+                body.add("cmpq $0, %rax");
+                body.add("jg " + AssemblyFactory.METHOD_EXIT_1);
+
+                // get dest
                 body.add("movq -" + arrayOffset.getOffset() +"(%rbp), %rax"); // val of temp into rax
                 dest = "-" + localDescriptor.getStackOffset() +"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
             }

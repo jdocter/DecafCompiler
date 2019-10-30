@@ -66,10 +66,11 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor arrayTypeDescriptor = arrayDescriptor.getTypeDescriptor();
                 String arrayLoc;
                 body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax # " + this.toString()); // val of temp into rax
+                // array out of bounds
                 body.add("cmpq $" + arrayTypeDescriptor.getLength() +", %rax");
-                body.add("jle "+ AssemblyFactory.METHOD_EXIT_2);
+                body.add("jle "+ AssemblyFactory.METHOD_EXIT_1);
                 body.add("cmpq $0, %rax");
-                body.add("jg " + AssemblyFactory.METHOD_EXIT_2);
+                body.add("jg " + AssemblyFactory.METHOD_EXIT_1);
                 if (arrayDescriptor.isGlobal()) {
                     body.add("leaq 0(,%rax," + arrayTypeDescriptor.elementSize() + "), %rcx"); // temp * element size
                     body.add("leaq " + ((FieldDescriptor) arrayDescriptor).getGlobalLabel() + "(%rip), %rax"); // address of base of global array
