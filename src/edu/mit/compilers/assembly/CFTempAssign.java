@@ -85,7 +85,7 @@ public class CFTempAssign implements CFStatement {
                 TypeDescriptor varTypeDescriptor = varDescriptor.getTypeDescriptor();
                 String varAccessLoc;
                 if (varDescriptor.isGlobal()) {
-                    varAccessLoc = "leaq " + ((FieldDescriptor) varDescriptor).getGlobalLabel() + "(%rip)";
+                    varAccessLoc = "movq " + ((FieldDescriptor) varDescriptor).getGlobalLabel() + "(%rip)";
                 } else {
                     varAccessLoc = "movq -"+ ((LocalDescriptor) varDescriptor).getStackOffset()+"(%rbp)";
                 }
