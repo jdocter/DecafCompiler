@@ -119,7 +119,7 @@ public class CFConditional extends UIDObject implements CFNode {
 
             List<String> body = new ArrayList<>();
             if (this.type == SINGLE_TEMP) {
-                body.add("cmp $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
+                body.add("cmpq $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
                 body.add("jne " + ifFalse.getAssemblyLabel() + " # ifFalse");
                 body.add("jmp " + ifTrue.getAssemblyLabel() + " # ifTrue");
             } else {

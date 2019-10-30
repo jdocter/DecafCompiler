@@ -97,8 +97,14 @@ public class AssemblyFactory {
         long totalMethodBytes = tempOffsetAssigner.maxTempOffset;
         long methodOffset = (long) Math.ceil(totalMethodBytes/16.0) * 16;
 
-        // move parameters
         prologue.add("enter $("+methodOffset+"), $0");
+
+        // initialize all locals to 0
+        for (int b = 8; b <= totalMethodBytes; b+= 8) {
+            prologue.add("movq $0, -" +b +"(%rbp)");
+        }
+
+        // move parameters
         LocalTable localTable = methodDescriptor.getLocalTable();
         for (int p = 0; p < methodDescriptor.getParams().size(); p++) {
             String paramName = methodDescriptor.getParams().get(p).getValue().getName();
