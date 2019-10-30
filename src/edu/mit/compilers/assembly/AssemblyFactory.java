@@ -108,7 +108,7 @@ public class AssemblyFactory {
                 prologue.add("movq "+Reg.methodParam(p+1)+ ", -" + paramOffset + "(%rbp)");
             } else {
                 // if more params, move params 7... onto stack, access from rbp
-                long argOffset = (p - 6)*8 + 8; // param 7 found at 16(%rbp)
+                long argOffset = (p - 6)*8 + 16; // param 7 found at 16(%rbp)
                 prologue.add("movq "+ argOffset+"(%rbp), %rax");
                 prologue.add("movq %rax, -" + paramOffset + "(%rbp)");
             }
