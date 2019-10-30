@@ -1,10 +1,7 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.*;
-import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.StringLit;
-import edu.mit.compilers.parser.Type;
-import edu.mit.compilers.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +10,10 @@ import java.util.stream.Collectors;
 public class AssemblyFactory {
 
     public static String INDENTATION = "\t";
+    public static String GLOBAL_BOOL_EXIT_1 = "_global_exit_with_error_code_1";
+    public static String GLOBAL_BOOL_EXIT_2 = "_global_exit_with_error_code_2";
+    public static String METHOD_EXIT_1 ="_method_return_with_exit_code_1";
+    public static String METHOD_EXIT_2 ="_method_return_with_exit_code_2";
 
     public static List<String> indent(List<String> body) {
         return body.stream()
@@ -33,6 +34,15 @@ public class AssemblyFactory {
             }
         }
         List<String> assembly = new ArrayList<>();
+
+        // flag for exit with error code 1
+        assembly.add(".comm " + GLOBAL_BOOL_EXIT_1 + ", 8, 16");
+        // flag for exit with error code 2
+        assembly.add(".comm " + GLOBAL_BOOL_EXIT_2 + ", 8, 16");
+
+        // TODO method for METHOD_EXIT_1, set flag, leave, ret
+        // TODO method for METHOD_EXIT_2, set flag, leave, ret
+
 
         // string literals
         for (StringLit stringLit: programDescriptor.stringLits) {
@@ -108,7 +118,7 @@ public class AssemblyFactory {
         LocalTable localTable = methodDescriptor.getLocalTable();
         for (int p = 0; p < methodDescriptor.getParams().size(); p++) {
             String paramName = methodDescriptor.getParams().get(p).getValue().getName();
-            long paramOffset = localTable.get(paramName).getStackOffset();
+            long paramOffset = localTable.get(paramName).getStackOffset(); // no array parameters
             if (p < 6) {
                 // move params 1-6 from registers onto stack
                 prologue.add("movq "+Reg.methodParam(p+1)+ ", -" + paramOffset + "(%rbp)");

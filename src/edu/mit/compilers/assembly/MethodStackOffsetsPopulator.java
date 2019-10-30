@@ -1,9 +1,9 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.inter.LocalDescriptor;
+import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.inter.LocalTable;
 
 public class MethodStackOffsetsPopulator {
     /**

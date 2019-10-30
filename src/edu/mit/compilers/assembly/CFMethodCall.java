@@ -74,6 +74,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         if (stackArgs > 0) {
             body.add("addq $" + stackArgs * 8 + ", %rsp");
         }
+        // TODO check exit statuses
 
         assembly.addAll(AssemblyFactory.indent(body));
         return assembly;

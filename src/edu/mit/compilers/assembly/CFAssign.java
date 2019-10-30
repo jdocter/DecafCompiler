@@ -3,8 +3,6 @@ package edu.mit.compilers.assembly;
 import edu.mit.compilers.inter.*;
 
 import edu.mit.compilers.parser.Id;
-import edu.mit.compilers.parser.Loc;
-import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
@@ -46,7 +44,6 @@ public class CFAssign extends UIDObject implements CFStatement {
             body.add("movq -" + expr.getOffset()+"(%rbp), %rdx # " + this.toString());
         }
 
-        // TODO this may need fixing
         VariableDescriptor variableDescriptor = variableTable.getDescriptor(arrayOrLoc.getName());
         TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
         String dest;
@@ -54,7 +51,8 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = ((FieldDescriptor)variableDescriptor).getGlobalLabel() + "(%rip)";
             } else {
-                body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
+                // TODO Array out of bounds check
+                body.add("movq -" + arrayOffset.getOffset() +"(%rbp), %rax"); // val of temp into rax
                 body.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
                 body.add("leaq " + ((FieldDescriptor)variableDescriptor).getGlobalLabel() + ", %rax"); // address of base of global array
                 dest = "(%rcx,%rax)";
@@ -64,8 +62,9 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (arrayOffset == null) {
                 dest = "-"+ localDescriptor.getStackOffset()+"(%rbp)";
             } else {
-                body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
-                dest = "-"+localDescriptor.getStackOffset()+"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
+                // TODO Array out of bounds check
+                body.add("movq -" + arrayOffset.getOffset() +"(%rbp), %rax"); // val of temp into rax
+                dest = "-" + localDescriptor.getStackOffset() +"(%rbp,%rax,"+localDescriptor.getTypeDescriptor().elementSize()+")";
             }
         }
 
