@@ -11,7 +11,7 @@ void main ( ) {
 	    i = 4;
 	    printf("Iter");
 	}
-	printf("%d", i);
+	printf("%d\n", i);
     } else {
 	printf("fail");
     }
