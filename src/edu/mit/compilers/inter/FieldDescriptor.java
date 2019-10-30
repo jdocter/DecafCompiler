@@ -25,4 +25,8 @@ public class FieldDescriptor extends UIDObject implements VariableDescriptor {
     public String getName() {
         return name;
     }
+
+    public String getGlobalLabel() {
+        return "_global_" + name;
+    }
 }

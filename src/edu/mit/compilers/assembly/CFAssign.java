@@ -52,11 +52,11 @@ public class CFAssign extends UIDObject implements CFStatement {
         String dest;
         if (variableDescriptor.isGlobal()) {
             if (arrayOffset == null) {
-                dest = "_global_" + ((FieldDescriptor)variableDescriptor).getName() + "(%rip)";
+                dest = ((FieldDescriptor)variableDescriptor).getGlobalLabel() + "(%rip)";
             } else {
                 body.add("movq -" +arrayOffset.getOffset()+"(%rbp), %rax"); // val of temp into rax
                 body.add("leaq 0(,%rax," + typeDescriptor.elementSize() + "), %rcx"); // temp * element size
-                body.add("leaq _global_" + arrayOrLoc.getName() + ", %rax"); // address of base of global array
+                body.add("leaq " + ((FieldDescriptor)variableDescriptor).getGlobalLabel() + ", %rax"); // address of base of global array
                 dest = "(%rcx,%rax)";
             }
         } else {

@@ -47,7 +47,7 @@ public class AssemblyFactory {
         // global fields
         for (FieldDescriptor fieldDescriptor: programDescriptor.fieldTable.values()) {
             // .comm _global_fieldname, bytes, alignment
-            assembly.addAll(List.of(".comm _global_"+fieldDescriptor.getName() +", "
+            assembly.addAll(List.of(".comm " + fieldDescriptor.getGlobalLabel() +", "
                     + fieldDescriptor.getTypeDescriptor().getMemoryLength() + ", 16"));
         }
 
