@@ -100,6 +100,7 @@ public class CFTempAssign implements CFStatement {
                 body.add("");
                 break;
             case BIN_OP:
+                body.add("# "+this.toString());
                 switch (binOp.binOp) {
                     case BinOp.AND:
                     case BinOp.OR:
@@ -112,7 +113,9 @@ public class CFTempAssign implements CFStatement {
                     case BinOp.LT:
                         body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
                         body.add("cmpq -" + right.getOffset() + "(%rbp), %rax");
-                        body.add(getBinopCommand() + " -" + dest.getOffset() + "(%rbp)");
+                        body.add(getBinopCommand() + " %cl");
+                        body.add("movzbq %cl, %rcx");
+                        body.add("movq %rcx, -" + dest.getOffset() + "(%rbp)");
                         break;
                     case BinOp.MINUS:
                         body.add("movq -"+leftOrSingleTemp.getOffset() + "(%rbp), %rax");
