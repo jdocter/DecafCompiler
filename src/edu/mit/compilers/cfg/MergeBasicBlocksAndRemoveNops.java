@@ -1,28 +1,30 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
 import java.util.HashSet;
 import java.util.Set;
-import edu.mit.compilers.visitor.MiniCFVisitor;
+
+import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.visitor.CFVisitor;
 
 
-public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
+public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     /**
-     * Similar to MergeBasicBlocksAndRemoveNops
+     * Similar to InnerMergeBasicBlocksAndRemoveNops
      */
 
-    Set<InnerCFNode> visited = new HashSet<>();
+    Set<CFNode> visited = new HashSet<>();
 
-    InnerCFBlock lastSeenCFBlock;
-    private CFNode enclosingCFNode;
+    CFBlock lastSeenCFBlock;
+    private MethodDescriptor methodDescriptor;
 
-    public InnerMergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
-        this.enclosingCFNode = enclosingCFNode;
+    public MergeBasicBlocksAndRemoveNops(MethodDescriptor methodDescriptor) {
+        this.methodDescriptor = methodDescriptor;
     }
 
-    private void visitNeighbors(InnerCFNode node) {
+    private void visitNeighbors(CFNode node) {
         if (!visited.contains(node)) {
              visited.add(node);
-            for (InnerCFNode neighbor : node.dfsTraverse()) {
+            for (CFNode neighbor : node.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
@@ -36,13 +38,13 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
      * @param toRemove
      * @return true if success
      */
-    private static boolean peepholeRemove(InnerCFNode toRemove) {
-        Set<InnerCFNode> parents = toRemove.parents();
+    private static boolean peepholeRemove(CFNode toRemove) {
+        Set<CFNode> parents = toRemove.parents();
         if (parents.isEmpty()) return false;
 
         // System.out.println("removing " + toRemove.getUID());
-        InnerCFNode next = toRemove.getNext();
-        for (InnerCFNode parent : parents) {
+        CFNode next = toRemove.getNext();
+        for (CFNode parent : parents) {
             parent.replacePointers(toRemove, next);
         }
         // Don't care about parents for toRemove because it's removed from the graph
@@ -51,11 +53,11 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     }
 
     @Override
-    public void visit(InnerCFBlock cfBlock) {
+    public void visit(CFBlock cfBlock) {
         if (!visited.contains(cfBlock)) {
             visited.add(cfBlock);
 
-            Set<InnerCFNode> cfBlockParents = cfBlock.parents();
+            Set<CFNode> cfBlockParents = cfBlock.parents();
             // Any execution of parent implies execution of cfBlock
             if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
                 // any execution of cfBlock implies execution of parent
@@ -74,24 +76,29 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     }
 
     @Override
-    public void visit(InnerCFConditional cfConditional) {
+    public void visit(CFConditional cfConditional) {
         visitNeighbors(cfConditional);
     }
 
     @Override
-    public void visit(InnerCFNop cfNop) {
+    public void visit(CFNop cfNop) {
         if (visited.contains(cfNop)) return;
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
-            // ending Nops should be replaced with jmps in the mini CFG
-            cfNop.setNext(new InnerCFEndOfMiniCFG(enclosingCFNode));
+            // ending Nops should be replaced with returns in the large CFG
+            cfNop.setNext(new CFReturn(null, null, methodDescriptor));
             peepholeRemove(cfNop);
             return;
         }
 
         peepholeRemove(cfNop);
         cfNop.getNext().accept(this);
+    }
+
+    @Override
+    public void visit(CFReturn cfReturn) {
+        visitNeighbors(cfReturn);
     }
 
 }

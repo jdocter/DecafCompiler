@@ -1,4 +1,4 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.*;
 import edu.mit.compilers.inter.ImportTable;

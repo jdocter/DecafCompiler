@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.semantics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,7 @@ import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.parser.Type;
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.SemanticChecker;
 
 
 public class IntLiteralInRange implements SemanticChecker {

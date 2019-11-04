@@ -11,9 +11,9 @@ import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
-import edu.mit.compilers.assembly.MethodCFGFactory;
 import edu.mit.compilers.assembly.AssemblyFactory;
-import edu.mit.compilers.assembly.CFNode;
+import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.MethodCFGFactory;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
@@ -21,6 +21,12 @@ import edu.mit.compilers.assembly.CFNode;
  */
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
+import edu.mit.compilers.semantics.CheckIdDeclared;
+import edu.mit.compilers.semantics.CheckTypes;
+import edu.mit.compilers.semantics.IntLiteralInRange;
+import edu.mit.compilers.semantics.UniqueGlobalIds;
+import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
   public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -7,6 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.assembly.TempCollector;
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Statement;

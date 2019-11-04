@@ -1,8 +1,9 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg.innercfg;
 
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.util.Pair;

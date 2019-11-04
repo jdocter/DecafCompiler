@@ -1,8 +1,10 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg.innercfg;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.inter.ImportTable;
 
 public class InnerCFEndOfMiniCFG extends InnerCFNop {

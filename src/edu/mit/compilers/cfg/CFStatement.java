@@ -1,4 +1,4 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
 import java.util.List;
 

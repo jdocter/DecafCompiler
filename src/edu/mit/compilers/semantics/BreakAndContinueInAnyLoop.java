@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.semantics;
 
 import edu.mit.compilers.parser.AssignExpr;
 import edu.mit.compilers.parser.BinOp;
@@ -18,6 +18,8 @@ import edu.mit.compilers.parser.Program;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.parser.Type;
+import edu.mit.compilers.visitor.ASTVisitor;
+import edu.mit.compilers.visitor.SemanticChecker;
 
 import java.util.ArrayList;
 import java.util.List;

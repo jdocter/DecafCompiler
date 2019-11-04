@@ -1,10 +1,11 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.semantics;
 
 import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.inter.SemanticException;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.SemanticChecker;
 
 import java.util.ArrayList;
 import java.util.List;
