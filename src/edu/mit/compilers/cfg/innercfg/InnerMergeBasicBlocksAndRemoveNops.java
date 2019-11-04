@@ -17,6 +17,8 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     InnerCFBlock lastSeenCFBlock;
     private CFNode enclosingCFNode;
 
+    private InnerCFNode firstNodeOfCFG;
+
     public InnerMergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
         this.enclosingCFNode = enclosingCFNode;
     }
@@ -31,16 +33,10 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     }
 
     /**
-     * True if successful, false if failure
-     *
-     * Failure means the node to remove was the head of the CFG.
-     *
      * @param toRemove
-     * @return true if success
      */
-    private static boolean peepholeRemove(InnerCFNode toRemove) {
+    private void peepholeRemove(InnerCFNode toRemove) {
         Set<InnerCFNode> parents = toRemove.parents();
-        if (parents.isEmpty()) return false;
 
         // System.out.println("removing " + toRemove.getUID());
         InnerCFNode next = toRemove.getNext();
@@ -49,11 +45,12 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
         }
         // Don't care about parents for toRemove because it's removed from the graph
         next.removeParent(toRemove);
-        return true;
+        if (getFirstNodeOfCFG() == toRemove) setFirstNodeOfCFG(next);
     }
 
     @Override
     public void visit(InnerCFBlock cfBlock) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfBlock);
         if (!visited.contains(cfBlock)) {
             visited.add(cfBlock);
 
@@ -77,23 +74,34 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
 
     @Override
     public void visit(InnerCFConditional cfConditional) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfConditional);
         visitNeighbors(cfConditional);
     }
 
     @Override
     public void visit(InnerCFNop cfNop) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfNop);
         if (visited.contains(cfNop)) return;
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
             // ending Nops should be replaced with jmps in the mini CFG
-            cfNop.setNext(new InnerCFEndOfMiniCFG(enclosingCFNode));
+            InnerCFNode replacement = new InnerCFEndOfMiniCFG(enclosingCFNode);
+            cfNop.setNext(replacement);
             peepholeRemove(cfNop);
             return;
         }
 
         peepholeRemove(cfNop);
         cfNop.getNext().accept(this);
+    }
+
+    public InnerCFNode getFirstNodeOfCFG() {
+        return firstNodeOfCFG;
+    }
+
+    public void setFirstNodeOfCFG(InnerCFNode firstNodeOfCFG) {
+        this.firstNodeOfCFG = firstNodeOfCFG;
     }
 
 }
