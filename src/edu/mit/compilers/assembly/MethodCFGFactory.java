@@ -1,6 +1,7 @@
 package edu.mit.compilers.assembly;
 
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.Set;
 
 import edu.mit.compilers.inter.MethodDescriptor;
@@ -170,6 +171,17 @@ public class MethodCFGFactory {
             visited.add(cfgID);
             outputStream.println(cfg.toString());
             for (CFNode neighbor : cfg.dfsTraverse()) {
+                dfsPrint(neighbor, visited, outputStream);
+            }
+        }
+    }
+
+    public static void dfsPrint(InnerCFNode miniCFG, HashSet<Integer> visited, PrintStream outputStream) {
+        int cfgID = miniCFG.getUID();
+        if (!visited.contains(cfgID)) {
+            visited.add(cfgID);
+            outputStream.println(miniCFG.toString());
+            for (InnerCFNode neighbor : miniCFG.dfsTraverse()) {
                 dfsPrint(neighbor, visited, outputStream);
             }
         }

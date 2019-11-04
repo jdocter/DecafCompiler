@@ -11,37 +11,32 @@ import edu.mit.compilers.visitor.MiniCFVisitor;
 
 public class TempCollector implements MiniCFVisitor {
 
-    Set<CFNode> visited = new HashSet<>();
+    Set<InnerCFNode> visited = new HashSet<>();
     public List<Pair<Temp, List<Temp>>> temps = new ArrayList<>();
 
-    private void visitNode(CFNode node) {
+    private void visitNode(InnerCFNode node) {
         if (!visited.contains(node)) {
             visited.add(node);
             temps.addAll(node.getTemps());
-            for (CFNode neighbor : node.dfsTraverse()) {
+            for (InnerCFNode neighbor : node.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
     }
 
     @Override
-    public void visit(CFBlock cfBlock) {
+    public void visit(InnerCFBlock cfBlock) {
         visitNode(cfBlock);
     }
 
     @Override
-    public void visit(CFConditional cfConditional) {
+    public void visit(InnerCFConditional cfConditional) {
         visitNode(cfConditional);
     }
 
     @Override
-    public void visit(CFNop cfNop) {
+    public void visit(InnerCFNop cfNop) {
         visitNode(cfNop);
-    }
-
-    @Override
-    public void visit(CFReturn cfReturn) {
-        visitNode(cfReturn);
     }
 
 }

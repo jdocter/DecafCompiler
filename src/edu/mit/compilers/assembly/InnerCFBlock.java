@@ -13,41 +13,34 @@ import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
+import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
-public class CFBlock extends UIDObject implements CFNode {
+public class InnerCFBlock extends UIDObject implements InnerCFNode {
 
-    private InnerCFNode miniCFG;
-    // Should all be either CFAssign or CFMethodCall
-    private final List<Statement> statements = new ArrayList<>();
-    CFNode next;
+    private final List<CFStatement> cfStatements = new ArrayList<>();
+    InnerCFNode next;
 
     boolean isEnd; // end of function
-    private Set<CFNode> parents = new HashSet<CFNode>();
+    private Set<InnerCFNode> parents = new HashSet<InnerCFNode>();
     private final VariableTable variableTable;
 
-    public CFBlock(Statement statement, VariableTable variableTable) {
-        if (!(statement.statementType == Statement.LOC_ASSIGN || statement.statementType == Statement.METHOD_CALL)) {
-            throw new RuntimeException("Expected Loc assign or Method call");
-        }
-        this.statements.add(statement);
+    public InnerCFBlock(CFStatement statement, VariableTable variableTable) {
+        // super();
+        // System.err.println("Should be making a new inner CFBLock " + UID);
+        this.cfStatements.add(statement);
         this.variableTable = variableTable;
     }
 
-    public void setMiniCFG(InnerCFNode miniCFG) {
-        this.statements.clear();
-        this.miniCFG = miniCFG;
-    }
-
     @Override
-    public void setNext(CFNode next) {
+    public void setNext(InnerCFNode next) {
         isEnd = false;
         this.next = next;
         next.addParent(this);
     }
 
     @Override
-    public CFNode getNext() {
+    public InnerCFNode getNext() {
         return next;
     }
 
@@ -56,8 +49,9 @@ public class CFBlock extends UIDObject implements CFNode {
         List<String> assembly = new ArrayList<>();
 
         assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(new InnerMethodAssemblyCollector(miniCFG, importTable).getInstructions());
-        assembly.add(getEndOfMiniCFGLabel() + ":");
+        for (CFStatement cfStatement : cfStatements) {
+            assembly.addAll(cfStatement.toAssembly(variableTable, importTable));
+        }
 
         List<String> body = new ArrayList<>();
         if (!isEnd) {
@@ -71,36 +65,33 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public Set<CFNode> parents() {
+    public Set<InnerCFNode> parents() {
         return this.parents;
     }
 
     @Override
-    public void addParent(CFNode parent) {
+    public void addParent(InnerCFNode parent) {
         this.parents.add(parent);
     }
 
     @Override public String toString() {
-        // System.err.println("Thinks " + UID + " isOuter");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
-        return "\nMiniCFG: " + baos.toString() + "\n" +
-        "UID " + UID + " CFBlock [ miniCFG=" + miniCFG.getUID() + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        if (isEnd) return "UID " + UID + " CFBlock [" + cfStatements + "], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [" + cfStatements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     @Override
-    public List<CFNode> dfsTraverse() {
+    public List<InnerCFNode> dfsTraverse() {
         if (isEnd) return List.of();
         return List.of(next);
     }
 
     @Override
-    public void accept(CFVisitor v) {
+    public void accept(MiniCFVisitor v) {
         v.visit(this);
     }
 
     @Override
-    public void removeParent(CFNode parent) {
+    public void removeParent(InnerCFNode parent) {
         this.parents.remove(parent);
     }
 
@@ -110,14 +101,14 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public void replacePointers(CFNode original, CFNode replacement) {
+    public void replacePointers(InnerCFNode original, InnerCFNode replacement) {
         if (this.next == original) {
             this.setNext(replacement);
         }
     }
 
-    protected List<Statement> getStatements() {
-        return statements;
+    public List<CFStatement> getCfStatements() {
+        return cfStatements;
     }
 
     /**
@@ -126,19 +117,21 @@ public class CFBlock extends UIDObject implements CFNode {
      */
     @Override
     public List<Pair<Temp, List<Temp>>> getTemps() {
-        TempCollector collector = new TempCollector();
-        miniCFG.accept(collector);
-        return collector.temps;
+        List<Pair<Temp, List<Temp>>> temps = new ArrayList<>();
+        for (CFStatement statement : this.cfStatements) {
+            temps.add(statement.getTemps());
+        }
+        return temps;
     }
 
-    public void prependAllStatements(CFBlock block) {
-        List<Statement> thisCopy = new ArrayList<>(this.statements);
-        this.statements.clear();
-        this.statements.addAll(block.statements);
-        this.statements.addAll(thisCopy);
+    public void prependAllStatements(InnerCFBlock block) {
+        List<CFStatement> thisCopy = new ArrayList<>(this.cfStatements);
+        this.cfStatements.clear();
+        this.cfStatements.addAll(block.cfStatements);
+        this.cfStatements.addAll(thisCopy);
     }
 
-    public boolean isSameScope(CFBlock other) {
+    public boolean isSameScope(InnerCFBlock other) {
         return !(variableTable == null) && !(other.variableTable == null) && variableTable == other.variableTable;
     }
 
@@ -149,6 +142,6 @@ public class CFBlock extends UIDObject implements CFNode {
 
     @Override
     public String getEndOfMiniCFGLabel() {
-        return "_end_of_block_" + UID;
+        throw new UnsupportedOperationException("Inner Blocks don't have mini CFGs");
     }
 }

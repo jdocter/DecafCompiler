@@ -5,10 +5,10 @@ import java.util.List;
 
 import edu.mit.compilers.inter.ImportTable;
 
-public class CFEndOfMiniCFG extends CFNop {
+public class InnerCFEndOfMiniCFG extends InnerCFNop {
     private CFNode enclosingNode;
 
-    public CFEndOfMiniCFG(CFNode enclosingNode) {
+    public InnerCFEndOfMiniCFG(CFNode enclosingNode) {
         this.enclosingNode = enclosingNode;
     }
 
