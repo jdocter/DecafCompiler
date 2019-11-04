@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.semantics;
 
 import edu.mit.compilers.inter.MethodDescriptor;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import edu.mit.compilers.parser.Program;
 import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.parser.Type;
+import edu.mit.compilers.visitor.SemanticChecker;
 
 
 public class VoidMainNoArgs implements SemanticChecker {

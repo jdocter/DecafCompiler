@@ -1,5 +1,6 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
+import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.inter.FieldDescriptor;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.LocalDescriptor;

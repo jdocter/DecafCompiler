@@ -5,6 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.Temp;
+import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
+import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 

@@ -5,6 +5,12 @@ import java.util.Set;
 
 import java.util.List;
 
+import edu.mit.compilers.cfg.CFBlock;
+import edu.mit.compilers.cfg.CFConditional;
+import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.CFNop;
+import edu.mit.compilers.cfg.CFReturn;
+import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 

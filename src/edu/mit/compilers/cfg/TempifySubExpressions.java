@@ -1,5 +1,10 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
+import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
+import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCFNop;
+import edu.mit.compilers.cfg.innercfg.InnerMergeBasicBlocksAndRemoveNops;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;

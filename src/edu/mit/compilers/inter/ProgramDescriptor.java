@@ -1,7 +1,7 @@
 package edu.mit.compilers.inter;
 
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.visitor.StringLitCollector;
+import edu.mit.compilers.semantics.StringLitCollector;
 
 import java.util.List;
 

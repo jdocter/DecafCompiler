@@ -4,7 +4,7 @@ package edu.mit.compilers.inter;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mit.compilers.assembly.CFNode;
+import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 

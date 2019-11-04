@@ -1,4 +1,4 @@
-package edu.mit.compilers.visitor;
+package edu.mit.compilers.semantics;
 
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;

@@ -1,9 +1,10 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.ProgramDescriptor;
 import edu.mit.compilers.inter.VariableTable;

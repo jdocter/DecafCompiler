@@ -1,5 +1,6 @@
-package edu.mit.compilers.assembly;
+package edu.mit.compilers.cfg;
 
+import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.inter.*;
 
 import edu.mit.compilers.parser.Id;

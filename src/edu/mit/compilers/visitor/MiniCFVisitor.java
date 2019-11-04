@@ -1,8 +1,8 @@
 package edu.mit.compilers.visitor;
 
-import edu.mit.compilers.assembly.InnerCFBlock;
-import edu.mit.compilers.assembly.InnerCFConditional;
-import edu.mit.compilers.assembly.InnerCFNop;
+import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
+import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
+import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 
 public interface MiniCFVisitor {
     /**
