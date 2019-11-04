@@ -1,22 +1,19 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.inter.ImportTable;
-import edu.mit.compilers.inter.LocalDescriptor;
-import edu.mit.compilers.inter.MethodDescriptor;
-import edu.mit.compilers.inter.TypeDescriptor;
-import edu.mit.compilers.inter.VariableDescriptor;
-import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.util.UIDObject;
-import edu.mit.compilers.visitor.CFVisitor;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import edu.mit.compilers.inter.ImportTable;
+import edu.mit.compilers.inter.MethodDescriptor;
+import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.util.UIDObject;
+import edu.mit.compilers.visitor.CFVisitor;
 
 public class CFReturn extends UIDObject implements CFNode {
 
@@ -31,7 +28,6 @@ public class CFReturn extends UIDObject implements CFNode {
         "UID " + UID + " CFReturn [miniCFG=" + miniCFG.getUID() + ", returnTemp=" + returnTemp + "]";
     }
 
-    private final List<CFStatement> statements = new ArrayList<CFStatement>();
     private CFNode next;
     boolean isEnd; // end of function
     private Expr returnExpr;
@@ -40,7 +36,7 @@ public class CFReturn extends UIDObject implements CFNode {
     private final VariableTable variableTable;
     private boolean isVoid;
     private MethodDescriptor methodDescriptor;
-    private CFNode miniCFG;
+    private InnerCFNode miniCFG;
 
 
     public CFReturn(Expr returnExpr, VariableTable variableTable, MethodDescriptor methodDescriptor) {
@@ -60,12 +56,12 @@ public class CFReturn extends UIDObject implements CFNode {
         this.returnTemp = temp;
     }
 
-    public void setMiniCFG(CFNode miniCFG) {
+    public void setMiniCFG(InnerCFNode miniCFG) {
         if (isVoid) throw new UnsupportedOperationException("Tried to give miniCFG to void return");
         this.miniCFG = miniCFG;
     }
 
-    public CFNode getMiniCFG() {
+    public InnerCFNode getMiniCFG() {
         return miniCFG;
     }
 
@@ -93,7 +89,7 @@ public class CFReturn extends UIDObject implements CFNode {
             if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
             // calculate expr and return it
             body.add("# calculating return Expr");
-            body.addAll(new MethodAssemblyCollector(miniCFG, importTable).getInstructions());
+            body.addAll(new InnerMethodAssemblyCollector(miniCFG, importTable).getInstructions());
             body.add(getEndOfMiniCFGLabel() + ":");
             body.add("");
             body.add("movq -" + returnTemp.getOffset() + "(%rbp), %rax");
@@ -158,10 +154,10 @@ public class CFReturn extends UIDObject implements CFNode {
     public List<Pair<Temp, List<Temp>>> getTemps() {
         if (isVoid) return List.of();
         TempCollector collector = new TempCollector();
-        List<Pair<Temp, List<Temp>>> temps = new ArrayList();
+        List<Pair<Temp, List<Temp>>> temps = new ArrayList<Pair<Temp, List<Temp>>>();
         miniCFG.accept(collector);
         temps.addAll(collector.temps);
-        temps.add(new Pair(returnTemp, List.of()));
+        temps.add(new Pair<Temp, List<Temp>>(returnTemp, List.of()));
         return temps;
     }
 

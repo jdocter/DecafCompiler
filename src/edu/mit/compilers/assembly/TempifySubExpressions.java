@@ -17,16 +17,16 @@ public class TempifySubExpressions implements CFVisitor {
     @Override
     public void visit(CFBlock cfBlock) {
         if (!visited.contains(cfBlock)) {
-            CFNode startNode = new CFNop();
-            CFNode endNode = new CFNop();
-            CFNode prevNode = startNode;
+            InnerCFNode startNode = new InnerCFNop();
+            InnerCFNode endNode = new InnerCFNop();
+            InnerCFNode prevNode = startNode;
             for (Statement statement: cfBlock.getStatements()) {
                 if (statement.statementType == Statement.LOC_ASSIGN) {
-                    Pair<CFNode, CFNode> la = destructStatementLocAssign(statement, cfBlock.getVariableTable());
+                    Pair<InnerCFNode, InnerCFNode> la = destructStatementLocAssign(statement, cfBlock.getVariableTable());
                     prevNode.setNext(la.getKey());
                     prevNode = la.getValue();
                 } else if (statement.statementType == Statement.METHOD_CALL) {
-                    Pair<CFNode, CFNode> mc = destructMethodCall(statement.methodCall, cfBlock.getVariableTable());
+                    Pair<InnerCFNode, InnerCFNode> mc = destructMethodCall(statement.methodCall, cfBlock.getVariableTable());
                     prevNode.setNext(mc.getKey());
                     prevNode = mc.getValue();
                 } else {
@@ -34,7 +34,7 @@ public class TempifySubExpressions implements CFVisitor {
                 }
             }
             prevNode.setNext(endNode);
-            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfBlock);
+            InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfBlock);
             startNode.accept(mergeBasicBlocksAndRemoveNops);
             cfBlock.setMiniCFG(startNode);
             visited.add(cfBlock);
@@ -48,9 +48,9 @@ public class TempifySubExpressions implements CFVisitor {
     public void visit(CFConditional cfConditional) {
         if (!visited.contains(cfConditional)) {
             Temp cond = new Temp();
-            Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfConditional.getBoolExpr(), cond, cfConditional.getVariableTable());
-            ct.getValue().setNext(new CFNop()); // want to be able to replace with a CFEndOfMiniCFG
-            MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfConditional);
+            Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(cfConditional.getBoolExpr(), cond, cfConditional.getVariableTable());
+            ct.getValue().setNext(new InnerCFNop()); // want to be able to replace with a CFEndOfMiniCFG
+            InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfConditional);
             ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
             cfConditional.replaceExpr(cond);
             cfConditional.setMiniCFG(ct.getKey());
@@ -77,9 +77,9 @@ public class TempifySubExpressions implements CFVisitor {
         if (!visited.contains(cfReturn)) {
             if (cfReturn.getReturnExpr() != null) {
                 Temp t = new Temp();
-                Pair<CFNode, CFNode> ct = destructExprAssignTemp(cfReturn.getReturnExpr(), t, cfReturn.getVariableTable());
-                ct.getValue().setNext(new CFNop()); // want to be able to replace with a CFEndOfMiniCFG
-                MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(cfReturn);
+                Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(cfReturn.getReturnExpr(), t, cfReturn.getVariableTable());
+                ct.getValue().setNext(new InnerCFNop()); // want to be able to replace with a CFEndOfMiniCFG
+                InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfReturn);
                 ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
                 cfReturn.replaceExpr(t);
                 cfReturn.setMiniCFG(ct.getKey());
@@ -95,104 +95,104 @@ public class TempifySubExpressions implements CFVisitor {
 
 
 
-    private static Pair<CFNode, CFNode> destructStatementLocAssign(Statement statement, VariableTable locals) {
+    private static Pair<InnerCFNode, InnerCFNode> destructStatementLocAssign(Statement statement, VariableTable locals) {
         if (statement.statementType != Statement.LOC_ASSIGN) throw new RuntimeException("Expected statement of type LOC_ASSIGN");
 
         final Temp tempLocExpr = new Temp();
-        final Pair<CFNode, CFNode> locExprCFG = statement.loc.expr != null ?
+        final Pair<InnerCFNode, InnerCFNode> locExprCFG = statement.loc.expr != null ?
                 destructExprAssignTemp(statement.loc.expr, tempLocExpr, locals) : null;
         final Temp tempAssignExpr = new Temp();
-        Pair<CFNode, CFNode> assignExprCFG = statement.assignExpr.expr != null ?
+        Pair<InnerCFNode, InnerCFNode> assignExprCFG = statement.assignExpr.expr != null ?
                 destructExprAssignTemp(statement.assignExpr.expr, tempAssignExpr, locals) : null;
-        final CFNode cfBlockAssign;
+        final InnerCFNode cfBlockAssign;
         if (statement.loc.expr != null && statement.assignExpr.expr != null) {
             // a[b] += c
-            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
+            cfBlockAssign = new InnerCFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
             locExprCFG.getValue().setNext(assignExprCFG.getKey());
             assignExprCFG.getValue().setNext(cfBlockAssign);
-            return new Pair<CFNode, CFNode>(locExprCFG.getKey(),cfBlockAssign);
+            return new Pair<InnerCFNode, InnerCFNode>(locExprCFG.getKey(),cfBlockAssign);
         } else if (statement.loc.expr == null && statement.assignExpr.expr == null){
             // a++
-            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, null),
+            cfBlockAssign = new InnerCFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, null),
                     locals);
-            return new Pair<CFNode, CFNode>(cfBlockAssign,cfBlockAssign);
+            return new Pair<InnerCFNode, InnerCFNode>(cfBlockAssign,cfBlockAssign);
         } else if (statement.loc.expr != null && statement.assignExpr.expr == null) {
             // a[b] ++
-            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, null), locals);
+            cfBlockAssign = new InnerCFBlock(new CFAssign(statement.loc.id, tempLocExpr, statement.assignExpr.assignExprOp, null), locals);
             locExprCFG.getValue().setNext(cfBlockAssign);
-            return new Pair<CFNode, CFNode>(assignExprCFG.getKey(),cfBlockAssign);
+            return new Pair<InnerCFNode, InnerCFNode>(assignExprCFG.getKey(),cfBlockAssign);
         } else if (statement.loc.expr == null && statement.assignExpr.expr != null) {
             // a += b
-            cfBlockAssign = new CFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
+            cfBlockAssign = new InnerCFBlock(new CFAssign(statement.loc.id, null, statement.assignExpr.assignExprOp, tempAssignExpr), locals);
             assignExprCFG.getValue().setNext(cfBlockAssign);
-            return new Pair<CFNode, CFNode>(assignExprCFG.getKey(),cfBlockAssign);
+            return new Pair<InnerCFNode, InnerCFNode>(assignExprCFG.getKey(),cfBlockAssign);
         } else {
             throw new RuntimeException("destructStatemensLocAssign: Impossible to reach...");
         }
     }
 
-    private static Pair<CFNode,CFNode> destructExprAssignTemp(Expr expr, Temp temp, VariableTable locals) {
+    private static Pair<InnerCFNode,InnerCFNode> destructExprAssignTemp(Expr expr, Temp temp, VariableTable locals) {
         switch (expr.exprType) {
             case Expr.LEN:
-                CFBlock cfBlockLen = new CFBlock(CFTempAssign.makeLen(temp, expr.id), locals);
-                return new Pair<CFNode, CFNode>(cfBlockLen, cfBlockLen);
+                InnerCFBlock cfBlockLen = new InnerCFBlock(CFTempAssign.makeLen(temp, expr.id), locals);
+                return new Pair<InnerCFNode, InnerCFNode>(cfBlockLen, cfBlockLen);
             case Expr.LIT:
-                CFBlock cfBlockLit = new CFBlock(CFTempAssign.makeLit(temp, expr.lit), locals);
-                return new Pair<CFNode, CFNode>(cfBlockLit, cfBlockLit);
+                InnerCFBlock cfBlockLit = new InnerCFBlock(CFTempAssign.makeLit(temp, expr.lit), locals);
+                return new Pair<InnerCFNode, InnerCFNode>(cfBlockLit, cfBlockLit);
             case Expr.MINUS:
                 Temp tempMinusOperand = new Temp();
-                Pair<CFNode, CFNode> minusOperandCFG = destructExprAssignTemp(expr.expr, tempMinusOperand, locals);
-                CFBlock cfBlockMinus = new CFBlock(CFTempAssign.makeMinus(temp, tempMinusOperand), locals);
+                Pair<InnerCFNode, InnerCFNode> minusOperandCFG = destructExprAssignTemp(expr.expr, tempMinusOperand, locals);
+                InnerCFBlock cfBlockMinus = new InnerCFBlock(CFTempAssign.makeMinus(temp, tempMinusOperand), locals);
                 minusOperandCFG.getValue().setNext(cfBlockMinus);
-                return new Pair<CFNode, CFNode>(minusOperandCFG.getKey(), cfBlockMinus);
+                return new Pair<InnerCFNode, InnerCFNode>(minusOperandCFG.getKey(), cfBlockMinus);
             case Expr.LOC:
                 final Temp tempLocExpr = new Temp();
                 if (expr.loc.expr != null) {
-                    final Pair<CFNode, CFNode> locExprCFG = destructExprAssignTemp(expr.loc.expr, tempLocExpr, locals);
-                    CFBlock cfBlockTempAssign = new CFBlock(CFTempAssign.makeLoc(temp, expr.loc.id, tempLocExpr), locals);
+                    final Pair<InnerCFNode, InnerCFNode> locExprCFG = destructExprAssignTemp(expr.loc.expr, tempLocExpr, locals);
+                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFTempAssign.makeLoc(temp, expr.loc.id, tempLocExpr), locals);
                     locExprCFG.getValue().setNext(cfBlockTempAssign);
                     return new Pair<>(locExprCFG.getKey(),cfBlockTempAssign);
                 } else {
-                    CFBlock cfBlockTempAssign = new CFBlock(CFTempAssign.makeLoc(temp, expr.loc.id), locals);
+                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFTempAssign.makeLoc(temp, expr.loc.id), locals);
                     return new Pair<>(cfBlockTempAssign, cfBlockTempAssign);
                 }
             case Expr.METHOD_CALL:
-                Pair<CFNode, CFNode> methodCallCFG = destructMethodCall(expr.methodCall, locals);
-                CFBlock cfBlockLoadRax = new CFBlock(CFTempAssign.makeLoadRax(temp), locals);
+                Pair<InnerCFNode, InnerCFNode> methodCallCFG = destructMethodCall(expr.methodCall, locals);
+                InnerCFBlock cfBlockLoadRax = new InnerCFBlock(CFTempAssign.makeLoadRax(temp), locals);
                 methodCallCFG.getValue().setNext(cfBlockLoadRax);
-                return new Pair<CFNode, CFNode>(methodCallCFG.getKey(), cfBlockLoadRax);
+                return new Pair<InnerCFNode, InnerCFNode>(methodCallCFG.getKey(), cfBlockLoadRax);
             case Expr.NOT:
                 Temp tempNotOperand = new Temp();
-                Pair<CFNode, CFNode> notOperandCFG = destructExprAssignTemp(expr.expr, tempNotOperand, locals);
-                CFBlock cfBlockNot = new CFBlock(CFTempAssign.makeNot(temp, tempNotOperand), locals);
+                Pair<InnerCFNode, InnerCFNode> notOperandCFG = destructExprAssignTemp(expr.expr, tempNotOperand, locals);
+                InnerCFBlock cfBlockNot = new InnerCFBlock(CFTempAssign.makeNot(temp, tempNotOperand), locals);
                 notOperandCFG.getValue().setNext(cfBlockNot);
-                return new Pair<CFNode, CFNode>(notOperandCFG.getKey(), cfBlockNot);
+                return new Pair<InnerCFNode, InnerCFNode>(notOperandCFG.getKey(), cfBlockNot);
             case Expr.BIN_OP:
                 Temp left = new Temp();
                 Temp right = new Temp();
-                Pair<CFNode, CFNode> leftCFG = destructExprAssignTemp(expr.expr, left, locals);
-                Pair<CFNode, CFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, locals);
+                Pair<InnerCFNode, InnerCFNode> leftCFG = destructExprAssignTemp(expr.expr, left, locals);
+                Pair<InnerCFNode, InnerCFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, locals);
 
                 // for shortcircuiting
-                CFBlock assignTrue = new CFBlock(CFTempAssign.assignTrue(temp), locals);
-                CFBlock assignFalse = new CFBlock(CFTempAssign.assignFalse(temp), locals);
-                CFNode end = new CFNop();
+                InnerCFBlock assignTrue = new InnerCFBlock(CFTempAssign.assignTrue(temp), locals);
+                InnerCFBlock assignFalse = new InnerCFBlock(CFTempAssign.assignFalse(temp), locals);
+                InnerCFNode end = new InnerCFNop();
                 assignTrue.setNext(end);
                 assignFalse.setNext(end);
 
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
-                        CFNode rightAnd = new CFConditional(right, assignTrue, assignFalse, locals);
-                        CFNode leftAnd = new CFConditional(left, rightCFG.getKey(), assignFalse, locals);
+                        InnerCFNode rightAnd = new InnerCFConditional(right, assignTrue, assignFalse, locals);
+                        InnerCFNode leftAnd = new InnerCFConditional(left, rightCFG.getKey(), assignFalse, locals);
                         rightCFG.getValue().setNext(rightAnd);
                         leftCFG.getValue().setNext(leftAnd);
-                        return new Pair<CFNode, CFNode>(leftCFG.getKey(), end);
+                        return new Pair<InnerCFNode, InnerCFNode>(leftCFG.getKey(), end);
                     case BinOp.OR:
-                        CFNode rightOr = new CFConditional(right, assignTrue, assignFalse, locals);
-                        CFNode leftOr = new CFConditional(left, assignTrue, rightCFG.getKey(), locals);
+                        InnerCFNode rightOr = new InnerCFConditional(right, assignTrue, assignFalse, locals);
+                        InnerCFNode leftOr = new InnerCFConditional(left, assignTrue, rightCFG.getKey(), locals);
                         rightCFG.getValue().setNext(rightOr);
                         leftCFG.getValue().setNext(leftOr);
-                        return new Pair<CFNode, CFNode>(leftCFG.getKey(), end);
+                        return new Pair<InnerCFNode, InnerCFNode>(leftCFG.getKey(), end);
                     case BinOp.EQ:
                     case BinOp.NEQ:
                     case BinOp.GEQ:
@@ -205,7 +205,7 @@ public class TempifySubExpressions implements CFVisitor {
                     case BinOp.PLUS:
                     case BinOp.DIV:
                         leftCFG.getValue().setNext(rightCFG.getKey());
-                        CFBlock assignBinOp = new CFBlock(CFTempAssign.assignBinOp(temp, left, expr.binOp, right), locals);
+                        InnerCFBlock assignBinOp = new InnerCFBlock(CFTempAssign.assignBinOp(temp, left, expr.binOp, right), locals);
                         rightCFG.getValue().setNext(assignBinOp);
                         return new Pair<>(leftCFG.getKey(), assignBinOp);
                     default:
@@ -217,15 +217,15 @@ public class TempifySubExpressions implements CFVisitor {
         }
     }
 
-    private static Pair<CFNode,CFNode> destructMethodCall(MethodCall methodCall, VariableTable locals) {
+    private static Pair<InnerCFNode,InnerCFNode> destructMethodCall(MethodCall methodCall, VariableTable locals) {
         List<Pair<Temp, StringLit>> argTemps = new ArrayList<>();
-        CFNode methodCallStart = new CFNop();
-        CFNode prev = methodCallStart;
+        InnerCFNode methodCallStart = new InnerCFNop();
+        InnerCFNode prev = methodCallStart;
         for (Pair<Expr,StringLit> arg: methodCall.arguments) {
             if (arg.getKey() != null) {
                 // expr
                 Temp argTemp = new Temp();
-                Pair<CFNode, CFNode> argPrep = destructExprAssignTemp(arg.getKey(), argTemp, locals);
+                Pair<InnerCFNode, InnerCFNode> argPrep = destructExprAssignTemp(arg.getKey(), argTemp, locals);
                 prev.setNext(argPrep.getKey());
                 prev = argPrep.getValue();
                 argTemps.add(new Pair<Temp, StringLit>(argTemp, null));
@@ -234,9 +234,9 @@ public class TempifySubExpressions implements CFVisitor {
             }
 
         }
-        CFBlock cfBlockMethodCall = new CFBlock(new CFMethodCall(methodCall.methodName, argTemps), locals);
+        InnerCFBlock cfBlockMethodCall = new InnerCFBlock(new CFMethodCall(methodCall.methodName, argTemps), locals);
         prev.setNext(cfBlockMethodCall);
-        return new Pair<CFNode, CFNode>(methodCallStart, cfBlockMethodCall);
+        return new Pair<InnerCFNode, InnerCFNode>(methodCallStart, cfBlockMethodCall);
     }
 
 }
