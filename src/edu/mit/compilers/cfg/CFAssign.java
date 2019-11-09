@@ -29,8 +29,10 @@ public class CFAssign extends UIDObject implements CFStatement {
     public static final int FALSE = 8;
 
 
-    public Id dstArrayOrLoc;
+
+    public AssemblyVariable dstArrayOrLoc;
     public AssemblyVariable dstArrayOffset;
+
     public String assignOp;
 
     public AssemblyVariable srcLeftOrSingle;
@@ -55,12 +57,9 @@ public class CFAssign extends UIDObject implements CFStatement {
         this.srcLeftOrSingle = assignExpr;
         this.type = SIMPLE;
     }
+    private CFAssign() {};
 
-    public CFAssign () {
-
-    }
-
-    public static CFAssign makeSimple(Id dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr) {
+    public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr) {
         CFAssign result = new CFAssign();
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -71,7 +70,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
 
-    public static CFAssign makeMinus(Id dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand) {
+    public static CFAssign makeMinus(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand) {
         CFAssign result = new CFAssign();
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -80,7 +79,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLen(Id dstArrayOrLoc, AssemblyVariable arrayOffset, Id id) {
+    public static CFAssign makeLen(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id id) {
         CFAssign result = new CFAssign();
         result.type = LEN;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -89,7 +88,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLit(Id dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit) {
+    public static CFAssign makeLit(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit) {
         CFAssign result = new CFAssign();
         result.type = LIT;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -98,7 +97,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeArrayLocAssign(Id dstArrayOrLoc, AssemblyVariable arrayOffset, Id srcArray, AssemblyVariable srcArrayOffset) {
+    public static CFAssign makeArrayLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id srcArray, AssemblyVariable srcArrayOffset) {
         CFAssign result = new CFAssign();
         result.type = ARRAY_LOC;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -108,7 +107,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLocAssign(Id dstArrayOrLoc, AssemblyVariable arrayOffset, Id src) {
+    public static CFAssign makeLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id src) {
         CFAssign result = new CFAssign();
         result.type = SIMPLE;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -118,7 +117,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLoadRax(Id dstArrayOrLoc, AssemblyVariable arrayOffset) {
+    public static CFAssign makeLoadRax(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
         CFAssign result = new CFAssign();
         result.type = METHOD_CALL;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -127,7 +126,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeNot(Id dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand) {
+    public static CFAssign makeNot(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand) {
         CFAssign result = new CFAssign();
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -136,7 +135,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignTrue(Id dstArrayOrLoc, AssemblyVariable arrayOffset) {
+    public static CFAssign assignTrue(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
         CFAssign result = new CFAssign();
         result.type = TRUE;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -144,7 +143,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignFalse(Id dstArrayOrLoc, AssemblyVariable arrayOffset) {
+    public static CFAssign assignFalse(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
         CFAssign result = new CFAssign();
         result.type = FALSE;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -152,7 +151,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignBinOp(Id dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right) {
+    public static CFAssign assignBinOp(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right) {
         CFAssign result = new CFAssign();
         result.type = BIN_OP;
         result.dstArrayOrLoc = dstArrayOrLoc;
@@ -421,4 +420,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         }
     }
 
+    public boolean isTempAssignment() {
+        return dstArrayOrLoc instanceof Temp;
+    }
 }
