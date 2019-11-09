@@ -260,26 +260,26 @@ public class CFAssign extends UIDObject implements CFStatement {
 
                 break;
             case SIMPLE:
-                assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
-                        "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), rax" :
-                        "movq -" + srcId.getStackOffset(variableTable) + "(%rbp), %rax");
-
                 switch (assignOp) { // TODO rax srcTemp?
                     case MEQ:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), rax" :
-                                "movq -" + srcId.getStackOffset(variableTable) + "(%rbp), %rax");
+                                "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("subq %rax, " + dst);
                         return;
                     case PEQ:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), rax" :
-                                "movq -" + srcId.getStackOffset(variableTable) + "(%rbp), %rax");
+                                "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("addq %rax, " + dst);
                         return;
                     case INC: assembly.add("incq " + dst); return;
                     case DEC: assembly.add("decq " + dst); return;
-                    case ASSIGN: assembly.add("movq " + dst); return;
+                    case ASSIGN: 
+                        assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
+                                "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), rax" :
+                                "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq %rax, " + dst); return;
                 }
                 break;
             case METHOD_CALL:
