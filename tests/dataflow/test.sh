@@ -5,7 +5,7 @@
 
 source "$(git rev-parse --show-toplevel)/tests/source.sh"
 
-if ! gcc -v 2>&1 | grep -q '^Target: x86_64-linux-gnu'; then
+if ! gcc -v 2>&1 | grep -Pq '^Target: x86_64\S+linux-gnu'; then
   red 'ERROR: architecture is not x86_64-linux-gnu'
   exit 1
 fi
