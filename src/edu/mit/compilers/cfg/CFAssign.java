@@ -190,7 +190,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (dstArrayOffset == null) {
                 dst = "-"+ dstArrayOrLoc.getStackOffset(variableTable)+"(%rbp)";
             } else {
-                assembly.add("movq -" + dstArrayOffset.getStackOffset(variableTable) +"(%rbp), %rdx"); // val of temp into rax
+                assembly.add("movq -" + dstArrayOffset.getStackOffset(variableTable) +"(%rbp), %rdx"); // val of temp into rdx
 
                 // array out of bounds
                 assembly.add("cmpq $" + dstArrayOrLoc.getArrayLength(variableTable) +", %rdx");
@@ -241,7 +241,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                 break;
             case ARRAY_LOC:
                 String arrayLoc;
-                assembly.add("movq -" +srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + this.toString()); // val of temp into rdx
+                assembly.add("movq -" +srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + this.toString()); // val of temp into rax
                 // array out of bounds
                 assembly.add("cmpq $" + srcArray.getArrayLength(variableTable) +", %rax");
                 assembly.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
@@ -319,7 +319,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("cqto"); // sign extend
                         assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
-                        assembly.add("movq %rdx, " + dst);
+                        assembly.add("movq %rax, " + dst);
                         break;
                     case BinOp.MUL:
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
