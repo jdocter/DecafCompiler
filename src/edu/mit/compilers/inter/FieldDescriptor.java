@@ -22,6 +22,11 @@ public class FieldDescriptor extends UIDObject implements VariableDescriptor {
         return true;
     }
 
+    @Override
+    public long getStackOffset() {
+        throw new RuntimeException("Global fields don't have stack offsets");
+    }
+
     public String getName() {
         return name;
     }

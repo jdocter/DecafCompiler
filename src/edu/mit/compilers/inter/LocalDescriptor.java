@@ -17,6 +17,7 @@ public class LocalDescriptor extends UIDObject implements VariableDescriptor {
         this.offsetDeclared = true;
     }
 
+    @Override
     public long getStackOffset() {
         if (!offsetDeclared) throw new RuntimeException("stack offset must be set before it can be accessed");
         return stackOffset;

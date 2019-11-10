@@ -54,7 +54,7 @@ public class TypeDescriptor {
      *
      * @return number of bytes required to
      */
-    public long elementSize() {
+    public int elementSize() {
         switch (type) {
             case INT:
             case INT_ARRAY:
