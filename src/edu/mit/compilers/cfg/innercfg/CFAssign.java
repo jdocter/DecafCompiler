@@ -400,7 +400,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             case LIT: return dst + " = " + srcLit;
             case TRUE: return dst + " = true";
             case FALSE: return dst + " = false";
-            case SIMPLE: return dst + " = " + srcId;
+            case SIMPLE: return dst + " = " + srcLeftOrSingle;
             case ARRAY_LOC: return dst + " = " + srcArray + "[" + srcArrayOffset + "]";
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
