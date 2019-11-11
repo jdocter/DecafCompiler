@@ -33,7 +33,7 @@ public class Id extends Node {
     }
 
     @Override public String toString() {
-        return id;
+        return id + "_s" + declarationScope;
     }
 
     @Override

@@ -366,11 +366,13 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Set<Expr> generatedExprs(Set<Expr> exprs) {
         // TODO
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
         // TODO
+        throw new RuntimeException("not implemented");
     }
 
     @Override public String toString() {

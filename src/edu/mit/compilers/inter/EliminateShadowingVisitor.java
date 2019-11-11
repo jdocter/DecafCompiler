@@ -10,7 +10,7 @@ public class EliminateShadowingVisitor implements ASTVisitor {
 
     private final Stack<LocalTable> localTableStack = new Stack<>();
 
-    EliminateShadowingVisitor(ProgramDescriptor programDescriptor) {
+    public EliminateShadowingVisitor(ProgramDescriptor programDescriptor) {
         for (MethodDescriptor methodDescriptor: programDescriptor.methodTable.values()) {
             methodDescriptor.getMethodBlock().accept(this);
         }

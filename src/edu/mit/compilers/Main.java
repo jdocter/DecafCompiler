@@ -158,6 +158,9 @@ public class Main {
                    System.exit(1);
                }
 
+               // set Declaration Scopes on all Id's
+               new EliminateShadowingVisitor(table);
+
                MethodCFGFactory.makeAndSetMethodCFGs(table);
                for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
                    outputStream.println("CFG for " + methodDescriptor.getMethodName());

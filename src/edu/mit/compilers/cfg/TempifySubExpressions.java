@@ -196,14 +196,14 @@ public class TempifySubExpressions implements CFVisitor {
 
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
-                        InnerCFNode rightAnd = new InnerCFConditional(right, assignTrue, assignFalse, locals, expr);
-                        InnerCFNode leftAnd = new InnerCFConditional(left, rightCFG.getKey(), assignFalse, locals, expr.expr);
+                        InnerCFNode rightAnd = new InnerCFConditional(right, assignTrue, assignFalse, locals);
+                        InnerCFNode leftAnd = new InnerCFConditional(left, rightCFG.getKey(), assignFalse, locals);
                         rightCFG.getValue().setNext(rightAnd);
                         leftCFG.getValue().setNext(leftAnd);
                         return new Pair<InnerCFNode, InnerCFNode>(leftCFG.getKey(), end);
                     case BinOp.OR:
-                        InnerCFNode rightOr = new InnerCFConditional(right, assignTrue, assignFalse, locals, expr);
-                        InnerCFNode leftOr = new InnerCFConditional(left, assignTrue, rightCFG.getKey(), locals, expr);
+                        InnerCFNode rightOr = new InnerCFConditional(right, assignTrue, assignFalse, locals);
+                        InnerCFNode leftOr = new InnerCFConditional(left, assignTrue, rightCFG.getKey(), locals);
                         rightCFG.getValue().setNext(rightOr);
                         leftCFG.getValue().setNext(leftOr);
                         return new Pair<InnerCFNode, InnerCFNode>(leftCFG.getKey(), end);
