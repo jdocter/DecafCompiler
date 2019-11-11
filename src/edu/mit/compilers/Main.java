@@ -209,6 +209,9 @@ public class Main {
 
             MethodCFGFactory.makeAndSetMethodCFGs(table);
 
+            // set Declaration Scopes on all Id's
+            new EliminateShadowingVisitor(table);
+
             List<String> assembly = AssemblyFactory.programAssemblyGen(table);
 
             for (String line : assembly) {

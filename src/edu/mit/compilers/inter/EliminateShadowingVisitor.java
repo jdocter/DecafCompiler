@@ -99,7 +99,7 @@ public class EliminateShadowingVisitor implements ASTVisitor {
 
     @Override
     public void visit(AssignExpr assignExpr) {
-        if (assignExpr.assignExprOp != null) assignExpr.accept(this);
+        if (assignExpr.expr != null) assignExpr.expr.accept(this);
     }
 
     @Override
