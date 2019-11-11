@@ -28,4 +28,11 @@ public class Loc extends Node {
             return "" + id;
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Loc)) return false;
+        Loc that = (Loc) obj;
+        return expr == null && that.expr == null && this.id.equals(that.id);
+    }
 }

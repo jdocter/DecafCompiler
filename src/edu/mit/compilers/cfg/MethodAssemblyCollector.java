@@ -13,7 +13,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MethodAssemblyCollector implements CFVisitor, MiniCFVisitor {
+public class MethodAssemblyCollector implements CFVisitor {
+    /**
+     * To be called AFTER TempifySubExpressions
+     */
 
     private final Set<CFNode> visited = new HashSet<>();
 
@@ -68,23 +71,5 @@ public class MethodAssemblyCollector implements CFVisitor, MiniCFVisitor {
         if (visited.contains(cfReturn)) return;
         else visited.add(cfReturn);
         instructions.addAll(cfReturn.toAssembly(importTable));
-    }
-
-    @Override
-    public void visit(InnerCFBlock cfBlock) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void visit(InnerCFConditional cfConditional) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void visit(InnerCFNop cfNop) {
-        // TODO Auto-generated method stub
-
     }
 }

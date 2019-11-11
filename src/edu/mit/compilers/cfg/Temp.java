@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg;
 
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.UIDObject;
 
 public class Temp extends UIDObject implements AssemblyVariable {

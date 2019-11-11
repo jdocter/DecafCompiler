@@ -6,6 +6,7 @@ import java.util.Set;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
@@ -44,4 +45,6 @@ public interface InnerCFNode {
      * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
      */
     List<Pair<Temp, List<Temp>>> getTemps();
+
+    Set<Expr> getSubExpressions();
 }

@@ -51,4 +51,21 @@ public class Lit extends Node {
     public void accept(ASTVisitor v) {
         v.visit(this);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Lit)) return false;
+        Lit that = (Lit) obj;
+        switch (litType) {
+            case BOOL:
+                return mBool == that.mBool;
+            case CHAR:
+                return mChar == that.mChar;
+            case INT:
+                return mIntLit.toString().equals(that.mIntLit);
+            default:
+                throw new RuntimeException("Unknown Lit type: " + litType);
+        }
+
+    }
 }

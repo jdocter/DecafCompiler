@@ -1,21 +1,17 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
-import edu.mit.compilers.cfg.CFStatement;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.Statement;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
-import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
@@ -125,6 +121,16 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
             temps.add(statement.getTemps());
         }
         return temps;
+    }
+
+    @Override
+    public Set<Expr> getSubExpressions() {
+        Set<Expr> exprs = new HashSet<>();
+        for (CFStatement cfStatement : cfStatements) {
+            Expr rhs = cfStatement.getRHS();
+            if (rhs != null) exprs.add(rhs);
+        }
+        return exprs;
     }
 
     public void prependAllStatements(InnerCFBlock block) {

@@ -3,7 +3,7 @@ package edu.mit.compilers.util;
 
 public class UIDObject {
 
-    public static int currentID = 0;
+    public static int currentID = 1;
     public final int UID;
 
     public UIDObject() {

@@ -8,7 +8,9 @@ import edu.mit.compilers.visitor.CFVisitor;
 
 
 public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
+
     /**
+     * To be called BEFORE TempifySubExpressions
      * Similar to InnerMergeBasicBlocksAndRemoveNops
      */
 

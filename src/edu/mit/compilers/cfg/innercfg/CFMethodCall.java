@@ -1,20 +1,23 @@
-package edu.mit.compilers.cfg;
+package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.cfg.Temp;
+import edu.mit.compilers.cfg.Variable;
+import edu.mit.compilers.inter.FieldTable;
 import edu.mit.compilers.inter.ImportTable;
-import edu.mit.compilers.inter.MethodTable;
+import edu.mit.compilers.inter.LocalTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Id;
-import edu.mit.compilers.parser.Statement;
 import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.util.Triad;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CFMethodCall extends UIDObject implements CFStatement {
 
@@ -22,9 +25,12 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     // every pair will contain one null item, purpose is to preserve order of arguments
     public final List<Pair<Temp,StringLit>> arguments;
 
-    CFMethodCall(Id id, List<Pair<Temp,StringLit>> arguments) {
+    public final VariableTable variableTable;
+
+    public CFMethodCall(Id id, List<Pair<Temp,StringLit>> arguments, VariableTable variableTable) {
         methodName = id;
         this.arguments = arguments;
+        this.variableTable = variableTable;
     }
 
     @Override
@@ -84,6 +90,25 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         return assembly;
     }
 
+    @Override
+    public Set<Expr> generatedExprs(Set<Expr> exprs) {
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> exprs) {
+        Set<Expr> killed = new HashSet<>(exprs);
+        for (Expr expr: exprs) {
+            for (Id id: expr.getIds()) {
+                if (id.getDeclarationScope() == VariableTable.GLOBAL_SCOPE_UID) {
+                    killed.remove(expr);
+                    break;
+                }
+            }
+        }
+        return killed;
+    }
+
     @Override public String toString() {
         return "" + methodName + arguments;
     }
@@ -95,5 +120,10 @@ public class CFMethodCall extends UIDObject implements CFStatement {
             if (arg.getKey() != null) allTempsNeeded.add(arg.getKey());
         }
         return new Pair<Temp, List<Temp>>(null, allTempsNeeded);
+    }
+
+    @Override
+    public Expr getRHS() {
+        return null; // not tracking Method Call exprs bc they don't need to be eliminated
     }
 }

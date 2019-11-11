@@ -3,6 +3,7 @@ package edu.mit.compilers.cfg;
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -146,6 +147,14 @@ public class CFConditional extends UIDObject implements CFNode {
         TempCollector collector = new TempCollector();
         miniCFG.accept(collector);
         return collector.temps;
+    }
+
+
+    @Override
+    public Set<Expr> getSubExpressions() {
+        InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
+        this.miniCFG.accept(collector);
+        return collector.subExpressions;
     }
 
     @Override

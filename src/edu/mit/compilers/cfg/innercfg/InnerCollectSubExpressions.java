@@ -1,43 +1,26 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import edu.mit.compilers.assembly.*;
-import edu.mit.compilers.inter.ImportTable;
-import edu.mit.compilers.visitor.CFVisitor;
+import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class InnerMethodAssemblyCollector implements MiniCFVisitor {
+public class InnerCollectSubExpressions implements MiniCFVisitor {
     /**
      * To be called AFTER TempifySubExpressions
      */
 
-    private final Set<InnerCFNode> visited = new HashSet<>();
+    Set<InnerCFNode> visited = new HashSet<>();
 
-    private final List<String> instructions = new ArrayList<>();
-    private final InnerCFNode cfMethodStart;
-
-    private ImportTable importTable;
-
-    public InnerMethodAssemblyCollector(InnerCFNode cfMethodStart, ImportTable importTable) {
-        this.cfMethodStart = cfMethodStart;
-        this.importTable = importTable;
-        cfMethodStart.accept(this);
-    }
-
-    public List<String> getInstructions() {
-        return instructions;
-    }
-
+    public Set<Expr> subExpressions = new HashSet<>();
 
     @Override
     public void visit(InnerCFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        instructions.addAll(cfBlock.toAssembly(importTable));
+        subExpressions.addAll(cfBlock.getSubExpressions());
         for (InnerCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
@@ -47,7 +30,7 @@ public class InnerMethodAssemblyCollector implements MiniCFVisitor {
     public void visit(InnerCFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        instructions.addAll(cfConditional.toAssembly(importTable));
+        subExpressions.addAll(cfConditional.getSubExpressions());
         for (InnerCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
@@ -57,7 +40,7 @@ public class InnerMethodAssemblyCollector implements MiniCFVisitor {
     public void visit(InnerCFNop cfNop) {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
-        instructions.addAll(cfNop.toAssembly(importTable));
+        subExpressions.addAll(cfNop.getSubExpressions());
         for (InnerCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }

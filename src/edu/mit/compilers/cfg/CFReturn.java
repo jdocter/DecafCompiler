@@ -10,6 +10,7 @@ import java.util.Set;
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodDescriptor;
@@ -163,6 +164,13 @@ public class CFReturn extends UIDObject implements CFNode {
         temps.addAll(collector.temps);
         temps.add(new Pair<Temp, List<Temp>>(returnTemp, List.of()));
         return temps;
+    }
+
+    @Override
+    public Set<Expr> getSubExpressions() {
+        InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
+        this.miniCFG.accept(collector);
+        return collector.subExpressions;
     }
 
     @Override

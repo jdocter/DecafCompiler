@@ -67,4 +67,14 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
     public int getUID() {
         return UID;
     }
+
+    @Override
+    public FieldTable getFieldTable() {
+        return parentTable.getFieldTable();
+    }
+
+    @Override
+    public int getDeclarationScope(String id) {
+        return (this.containsKey(id)) ? this.getUID() : parentTable.getDeclarationScope(id);
+    }
 }
