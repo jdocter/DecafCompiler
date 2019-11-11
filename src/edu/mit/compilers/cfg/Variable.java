@@ -8,44 +8,48 @@ import edu.mit.compilers.parser.Id;
 
 public class Variable implements AssemblyVariable {
 
-    private String id;
-    public Variable(Id id) {this.id = id.getName();}
+    private Id id;
+    public Variable(Id id) {this.id = id;}
+
+    public String toString() {
+        return id.toString();
+    }
 
     @Override
     public String getGlobalLabel(VariableTable variableTable) {
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id);
+        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id.getName());
         return ((FieldDescriptor) variableDescriptor).getGlobalLabel();
     }
 
     @Override
     public long getArrayLength(VariableTable variableTable) {
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id);
+        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id.getName());
         TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
         return typeDescriptor.getLength();
     }
 
     @Override
     public int getElementSize(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).getTypeDescriptor().elementSize();
+        return variableTable.getDescriptor(id.getName()).getTypeDescriptor().elementSize();
     }
 
     @Override
     public long getStackOffset(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).getStackOffset();
+        return variableTable.getDescriptor(id.getName()).getStackOffset();
     }
 
     @Override
     public boolean isGlobal(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).isGlobal();
+        return variableTable.getDescriptor(id.getName()).isGlobal();
     }
 
     @Override
     public String getName() {
-        return id;
+        return id.getName();
     }
 
     @Override
     public boolean isArray(VariableTable variableTable) {
-        return  variableTable.getDescriptor(id).getTypeDescriptor().isArray();
+        return  variableTable.getDescriptor(id.getName()).getTypeDescriptor().isArray();
     }
 }
