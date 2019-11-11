@@ -30,6 +30,8 @@ public class MethodCFGFactory {
         CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock, methodDescriptor);
         MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(methodDescriptor);
         methodCFG.accept(mergeBasicBlocksAndRemoveNops);
+
+        methodCFG = mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(); // replace with new first node of CFG
         TempifySubExpressions tempifySubExpressions = new TempifySubExpressions();
         methodCFG.accept(tempifySubExpressions);
         return methodCFG;
@@ -177,7 +179,7 @@ public class MethodCFGFactory {
         }
     }
 
-    public static void dfsPrint(InnerCFNode miniCFG, HashSet<Integer> visited, PrintStream outputStream) {
+    public static void dfsPrint(InnerCFNode miniCFG, Set<Integer> visited, PrintStream outputStream) {
         int cfgID = miniCFG.getUID();
         if (!visited.contains(cfgID)) {
             visited.add(cfgID);

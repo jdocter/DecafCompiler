@@ -1,13 +1,7 @@
 package edu.mit.compilers.cfg;
 
-import edu.mit.compilers.assembly.*;
-import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
-import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
-import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.visitor.CFVisitor;
-import edu.mit.compilers.visitor.MiniCFVisitor;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,12 +15,10 @@ public class MethodAssemblyCollector implements CFVisitor {
     private final Set<CFNode> visited = new HashSet<>();
 
     private final List<String> instructions = new ArrayList<>();
-    private final CFNode cfMethodStart;
 
     private ImportTable importTable;
 
     public MethodAssemblyCollector(CFNode cfMethodStart, ImportTable importTable) {
-        this.cfMethodStart = cfMethodStart;
         this.importTable = importTable;
         cfMethodStart.accept(this);
     }

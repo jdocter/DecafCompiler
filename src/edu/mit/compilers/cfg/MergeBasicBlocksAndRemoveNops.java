@@ -19,6 +19,8 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     CFBlock lastSeenCFBlock;
     private MethodDescriptor methodDescriptor;
 
+    private CFNode firstNodeOfCFG;
+
     public MergeBasicBlocksAndRemoveNops(MethodDescriptor methodDescriptor) {
         this.methodDescriptor = methodDescriptor;
     }
@@ -33,16 +35,10 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     }
 
     /**
-     * True if successful, false if failure
-     *
-     * Failure means the node to remove was the head of the CFG.
-     *
      * @param toRemove
-     * @return true if success
      */
-    private static boolean peepholeRemove(CFNode toRemove) {
+    private void peepholeRemove(CFNode toRemove) {
         Set<CFNode> parents = toRemove.parents();
-        if (parents.isEmpty()) return false;
 
         // System.out.println("removing " + toRemove.getUID());
         CFNode next = toRemove.getNext();
@@ -51,11 +47,12 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         }
         // Don't care about parents for toRemove because it's removed from the graph
         next.removeParent(toRemove);
-        return true;
+        if (getFirstNodeOfCFG() == toRemove) setFirstNodeOfCFG(next);
     }
 
     @Override
     public void visit(CFBlock cfBlock) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfBlock);
         if (!visited.contains(cfBlock)) {
             visited.add(cfBlock);
 
@@ -79,17 +76,20 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
     @Override
     public void visit(CFConditional cfConditional) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfConditional);
         visitNeighbors(cfConditional);
     }
 
     @Override
     public void visit(CFNop cfNop) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfNop);
         if (visited.contains(cfNop)) return;
 
         visited.add(cfNop);
         if (cfNop.isEnd()) {
             // ending Nops should be replaced with returns in the large CFG
-            cfNop.setNext(new CFReturn(null, null, methodDescriptor));
+            CFNode replacement = new CFReturn(null, null, methodDescriptor);
+            cfNop.setNext(replacement);
             peepholeRemove(cfNop);
             return;
         }
@@ -100,7 +100,16 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
 
     @Override
     public void visit(CFReturn cfReturn) {
+        if (getFirstNodeOfCFG() == null) setFirstNodeOfCFG(cfReturn);
         visitNeighbors(cfReturn);
+    }
+
+    public CFNode getFirstNodeOfCFG() {
+        return firstNodeOfCFG;
+    }
+
+    public void setFirstNodeOfCFG(CFNode firstNodeOfCFG) {
+        this.firstNodeOfCFG = firstNodeOfCFG;
     }
 
 }
