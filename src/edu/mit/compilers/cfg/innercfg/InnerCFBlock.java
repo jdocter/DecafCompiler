@@ -141,7 +141,7 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
             generated.addAll(cfStatement.generatedExprs());
             generated.removeAll(cfStatement.killedExprs(allExprs));
         }
-        return null;
+        return generated;
     }
 
     @Override

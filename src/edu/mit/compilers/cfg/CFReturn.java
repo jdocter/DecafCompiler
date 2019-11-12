@@ -174,6 +174,38 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+
+        LinkedList<InnerCFNode> ts = getTS();
+        Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
+        for (InnerCFNode node : ts) {
+            if (parents.isEmpty()) {
+                gens.put(node, node.generatedExprs(allExprs));
+                break;
+            }
+
+            // GEN = Intersect(parents) - KILL + thisGen
+            Set<InnerCFNode> parents = node.parents();
+            Set<Expr> thisGen = new HashSet<>(gens.get(parents.iterator().next())); // initialize with copy of one parent
+            for (InnerCFNode parent : parents) {
+                thisGen.retainAll(gens.get(parent));
+            }
+            thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
+            thisGen.addAll(node.generatedExprs(allExprs));
+            gens.put(node, thisGen);
+        }
+
+        return gens.get(ts.getLast());
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        Set<Expr> killed = new HashSet<>();
+
+        return killed;
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_return_" + UID;
     }
