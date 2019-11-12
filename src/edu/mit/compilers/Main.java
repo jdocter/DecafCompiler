@@ -2,25 +2,22 @@ package edu.mit.compilers;
 
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import antlr.Token;
-import edu.mit.compilers.cfg.CommonSubExpressionEliminator;
+import edu.mit.compilers.cfg.GlobalAvailableSubExpressionsAnalyzer;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
-import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.MethodCFGFactory;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
  * import edu.mit.compilers.grammar.*;
  */
-import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
 import edu.mit.compilers.semantics.CheckIdDeclared;
@@ -218,7 +215,7 @@ public class Main {
 
             if (CLI.opts[0]) { // CSE
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                    new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                    new GlobalAvailableSubExpressionsAnalyzer(methodDescriptor.getMethodCFG());
                     // copy propagate?
                     // dead code?
                 }

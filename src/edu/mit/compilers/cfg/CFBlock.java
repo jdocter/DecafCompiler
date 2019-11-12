@@ -2,16 +2,16 @@ package edu.mit.compilers.cfg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
+import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
@@ -137,11 +137,54 @@ public class CFBlock extends UIDObject implements CFNode {
         return collector.temps;
     }
 
+    private Set<Expr> subExpressionsCached;
     @Override
     public Set<Expr> getSubExpressions() {
+        if (subExpressionsCached != null) return subExpressionsCached;
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
         this.miniCFG.accept(collector);
-        return collector.subExpressions;
+        subExpressionsCached = collector.subExpressions;
+        return subExpressionsCached;
+    }
+
+    private LinkedList<InnerCFNode> miniCFGTSCached;
+    private LinkedList<InnerCFNode> getTS() {
+        if (miniCFGTSCached != null) return miniCFGTSCached;
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        miniCFGTSCached = ts;
+        return ts;
+    }
+
+    @Override
+    public Set<Expr> generatedExprs() {
+        LinkedList<InnerCFNode> ts = getTS();
+        Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
+        for (InnerCFNode node : ts) {
+            if (parents.isEmpty()) {
+                gens.put(node, node.generatedExprs());
+                break;
+            }
+
+            // GEN = Intersect(parents) - KILL + thisGen
+            Set<InnerCFNode> parents = node.parents();
+            Set<Expr> thisGen = new HashSet<>(gens.get(parents.iterator().next())); // initialize with copy of one parent
+            for (InnerCFNode parent : parents) {
+                thisGen.retainAll(gens.get(parent));
+            }
+            thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
+            thisGen.addAll(node.generatedExprs());
+            gens.put(node, thisGen);
+        }
+
+        return gens.get(ts.getLast());
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        LinkedList<InnerCFNode> ts = getTS();
+        return ts.stream()
+                .flatMap(node -> node.killedExprs(allExprs).stream())
+                .collect(Collectors.toSet());
     }
 
     public void prependAllStatements(CFBlock block) {

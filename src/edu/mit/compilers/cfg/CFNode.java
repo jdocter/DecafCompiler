@@ -46,4 +46,6 @@ public interface CFNode {
     List<Pair<Temp, List<Temp>>> getTemps();
 
     Set<Expr> getSubExpressions();
+    Set<Expr> generatedExprs();
+    Set<Expr> killedExprs(Set<Expr> allExprs);
 }
