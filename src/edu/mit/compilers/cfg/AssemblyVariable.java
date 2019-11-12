@@ -24,4 +24,6 @@ public interface AssemblyVariable {
     long getArrayLength(VariableTable variableTable);
 
     int getElementSize(VariableTable variableTable);
+
+    boolean isTemporary();
 }

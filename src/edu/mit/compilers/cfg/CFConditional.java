@@ -5,9 +5,9 @@ import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
+import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
@@ -15,10 +15,8 @@ import edu.mit.compilers.visitor.CFVisitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
@@ -156,6 +154,47 @@ public class CFConditional extends UIDObject implements CFNode {
         this.miniCFG.accept(collector);
         return collector.subExpressions;
     }
+
+    private LinkedList<InnerCFNode> miniCFGTSCached;
+    private LinkedList<InnerCFNode> getTS() {
+        if (miniCFGTSCached != null) return miniCFGTSCached;
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        miniCFGTSCached = ts;
+        return ts;
+    }
+
+    @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        LinkedList<InnerCFNode> ts = getTS();
+        Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
+        for (InnerCFNode node : ts) {
+            if (parents.isEmpty()) {
+                gens.put(node, node.generatedExprs(allExprs));
+                break;
+            }
+
+            // GEN = Intersect(parents) - KILL + thisGen
+            Set<InnerCFNode> parents = node.parents();
+            Set<Expr> thisGen = new HashSet<>(gens.get(parents.iterator().next())); // initialize with copy of one parent
+            for (InnerCFNode parent : parents) {
+                thisGen.retainAll(gens.get(parent));
+            }
+            thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
+            thisGen.addAll(node.generatedExprs(allExprs));
+            gens.put(node, thisGen);
+        }
+
+        return gens.get(ts.getLast());
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        LinkedList<InnerCFNode> ts = getTS();
+        return ts.stream()
+                .flatMap(node -> node.killedExprs(allExprs).stream())
+                .collect(Collectors.toSet());
+    }
+
 
     @Override
     public String getAssemblyLabel() {

@@ -71,4 +71,9 @@ public class Temp extends UIDObject implements AssemblyVariable {
     public boolean isArray(VariableTable variableTable) {
         return false;
     }
+
+    @Override
+    public boolean isTemporary() {
+        return true;
+    }
 }

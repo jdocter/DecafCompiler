@@ -13,9 +13,7 @@ import edu.mit.compilers.parser.Lit;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CFAssign extends UIDObject implements CFStatement {
 
@@ -364,14 +362,23 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Set<Expr> generatedExprs(Set<Expr> exprs) {
-        // TODO
-        throw new RuntimeException("not implemented");
+    public Set<Expr> generatedExprs() {
+        if (assignOp != ASSIGN) return new HashSet<>();
+        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()
+                && canonicalExpr.getIds().contains(dstArrayOrLoc)) return new HashSet<>();
+        return Set.of(canonicalExpr);
     }
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
-        // TODO
+        Set<Expr> killed = new HashSet<>(exprs);
+        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
+            for (Expr subExpr : exprs) {
+                if (subExpr.getIds().contains(dstArrayOrLoc)) {
+                    killed.add(subExpr);
+                }
+            }
+        }
         throw new RuntimeException("not implemented");
     }
 
@@ -444,7 +451,4 @@ public class CFAssign extends UIDObject implements CFStatement {
         }
     }
 
-    public boolean isTempAssignment() {
-        return dstArrayOrLoc instanceof Temp;
-    }
 }

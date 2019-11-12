@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class TopologicalSort implements MiniCFVisitor {
+public class TopologicalSort {
 
     public LinkedList<InnerCFNode> ts = new LinkedList<>();
     private Set<InnerCFNode> visited = new HashSet<>();
     private Set<InnerCFNode> visiting = new HashSet<>();
 
     public TopologicalSort(InnerCFNode start) {
-        start.accept(this);
+        doTS(start);
     }
 
     public LinkedList<InnerCFNode> getTopologicalSort() {
@@ -27,25 +27,10 @@ public class TopologicalSort implements MiniCFVisitor {
 
         visiting.add(cfNode);
         for (InnerCFNode neighbor : cfNode.dfsTraverse()) {
-            neighbor.accept(this);
+            doTS(neighbor);
         }
         visiting.remove(cfNode);
         visited.add(cfNode);
         ts.addFirst(cfNode);
-    }
-
-    @Override
-    public void visit(InnerCFBlock cfBlock) {
-        doTS(cfBlock);
-    }
-
-    @Override
-    public void visit(InnerCFConditional cfConditional) {
-        doTS(cfConditional);
-    }
-
-    @Override
-    public void visit(InnerCFNop cfNop) {
-        doTS(cfNop);
     }
 }

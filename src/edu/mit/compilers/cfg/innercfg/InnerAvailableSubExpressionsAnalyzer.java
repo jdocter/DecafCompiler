@@ -2,7 +2,6 @@ package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.cfg.*;
 import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;

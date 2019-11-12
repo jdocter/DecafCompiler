@@ -52,4 +52,9 @@ public class Variable implements AssemblyVariable {
     public boolean isArray(VariableTable variableTable) {
         return  variableTable.getDescriptor(id.getName()).getTypeDescriptor().isArray();
     }
+
+    @Override
+    public boolean isTemporary() {
+        return false;
+    }
 }

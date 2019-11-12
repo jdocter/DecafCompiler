@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
@@ -156,12 +155,12 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public Set<Expr> generatedExprs() {
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
         LinkedList<InnerCFNode> ts = getTS();
         Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
         for (InnerCFNode node : ts) {
             if (parents.isEmpty()) {
-                gens.put(node, node.generatedExprs());
+                gens.put(node, node.generatedExprs(allExprs));
                 break;
             }
 
@@ -172,7 +171,7 @@ public class CFBlock extends UIDObject implements CFNode {
                 thisGen.retainAll(gens.get(parent));
             }
             thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
-            thisGen.addAll(node.generatedExprs());
+            thisGen.addAll(node.generatedExprs(allExprs));
             gens.put(node, thisGen);
         }
 

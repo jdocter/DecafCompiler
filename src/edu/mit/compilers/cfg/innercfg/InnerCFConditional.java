@@ -163,6 +163,14 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     }
 
     @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        return Set.of();
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) { return  Set.of(); }
+
+    @Override
     public String getAssemblyLabel() {
         return "_conditional_" + UID;
     }

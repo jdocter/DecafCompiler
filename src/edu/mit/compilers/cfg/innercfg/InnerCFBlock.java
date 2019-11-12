@@ -133,6 +133,27 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
         return exprs;
     }
 
+
+    @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        Set<Expr> generated = new HashSet<>();
+        for (CFStatement cfStatement: cfStatements) {
+            generated.addAll(cfStatement.generatedExprs());
+            generated.removeAll(cfStatement.killedExprs(allExprs));
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        Set<Expr> killed = new HashSet<>();
+        for (CFStatement cfStatement: cfStatements) {
+            killed.addAll(cfStatement.killedExprs(allExprs));
+            killed.removeAll(cfStatement.generatedExprs());
+        }
+        return killed;
+    }
+
     public void prependAllStatements(InnerCFBlock block) {
         List<CFStatement> thisCopy = new ArrayList<>(this.cfStatements);
         this.cfStatements.clear();

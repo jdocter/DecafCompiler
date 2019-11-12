@@ -13,7 +13,7 @@ import edu.mit.compilers.util.Pair;
 public interface CFStatement {
     List<String> toAssembly(VariableTable variableTable, ImportTable importTable);
 
-    Set<Expr> generatedExprs(Set<Expr> exprs);
+    Set<Expr> generatedExprs();
     Set<Expr> killedExprs(Set<Expr> exprs);
 
     int getUID();
