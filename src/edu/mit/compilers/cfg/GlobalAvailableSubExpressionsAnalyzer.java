@@ -37,30 +37,32 @@ public class GlobalAvailableSubExpressionsAnalyzer implements CFVisitor {
         System.err.println("Done calculating gen and kill");
 
         // fixed point algorithm
-        changed = new HashSet<>(gen.keySet())
+        changed = new HashSet<>(gen.keySet());
         for (CFNode node: gen.keySet()) {
           out.put(node, subExpressions);
         }
-        changed = changed.removeAll(Set.of(methodCFG));
+        changed.removeAll(Set.of(methodCFG));
         runFixedPointAlgorithm();
     }
 
     private void runFixedPointAlgorithm() {
         // TODO
         while (!changed.isEmpty()) {
-          CFNode currentNode; \\TODO figure out a way to pick an item out of the changed set.
+          CFNode currentNode; //TODO figure out a way to pick an item out of the changed set.
           changed = changed.remove(currentNode);
-          in.put(currentNode, new HashSet<>(subExpressions)); \\TODO subExpressions is not available here
+          in.put(currentNode, new HashSet<>(subExpressions)); //TODO subExpressions is not available here
           for (CFNode pred: currentNode.parents()) {
             in.get(currentNode).retainAll(out.get(pred));
           }
 
-          oldOut = out.get(currentNode)
+          Set<Expr> oldOut = out.get(currentNode);
           out.put(currentNode, new HashSet<>(gen.get(currentNode)));
-          out.get(currentNode).addAll((new HashSet<>(in.get(currentNode))).removeAll(kill.get(currentNode)));
+          Set<Expr> inCopy = new HashSet<>(in.get(currentNode));
+          inCopy.removeAll(kill.get(currentNode));
+          out.get(currentNode).addAll(inCopy);
 
           if (!oldOut.equals(out.get(currentNode))) {
-            changed.addAll(currentNode.successors()); \\ TODO replace successors with something that actually does something
+            changed.addAll(currentNode.successors()); // TODO replace successors with something that actually does something
           }
         }
 
