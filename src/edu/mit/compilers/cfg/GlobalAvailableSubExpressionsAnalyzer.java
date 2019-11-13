@@ -18,6 +18,8 @@ public class GlobalAvailableSubExpressionsAnalyzer implements CFVisitor {
     Map<CFNode, Set<Expr>> gen = new HashMap<>();
     Map<CFNode, Set<Expr>> kill = new HashMap<>();
 
+    Set<CFNode> changed;
+
     public GlobalAvailableSubExpressionsAnalyzer(CFNode methodCFG) {
         CollectSubExpressions collector = new CollectSubExpressions();
         methodCFG.accept(collector);
@@ -35,12 +37,34 @@ public class GlobalAvailableSubExpressionsAnalyzer implements CFVisitor {
         System.err.println("Done calculating gen and kill");
 
         // fixed point algorithm
+        changed = new HashSet<>(gen.keySet())
+        for (CFNode node: gen.keySet()) {
+          out.put(node, subExpressions);
+        }
+        changed = changed.removeAll(Set.of(methodCFG));
         runFixedPointAlgorithm();
     }
 
     private void runFixedPointAlgorithm() {
         // TODO
-        throw new RuntimeException("not implemented");
+        while (!changed.isEmpty()) {
+          CFNode currentNode; \\TODO figure out a way to pick an item out of the changed set.
+          changed = changed.remove(currentNode);
+          in.put(currentNode, new HashSet<>(subExpressions)); \\TODO subExpressions is not available here
+          for (CFNode pred: currentNode.parents()) {
+            in.get(currentNode).retainAll(out.get(pred));
+          }
+
+          oldOut = out.get(currentNode)
+          out.put(currentNode, new HashSet<>(gen.get(currentNode)));
+          out.get(currentNode).addAll((new HashSet<>(in.get(currentNode))).removeAll(kill.get(currentNode)));
+
+          if (!oldOut.equals(out.get(currentNode))) {
+            changed.addAll(currentNode.successors()); \\ TODO replace successors with something that actually does something
+          }
+        }
+
+
     }
 
     private void calculateAndVisitNeighbors(CFNode cfNode) {
