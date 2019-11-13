@@ -173,6 +173,14 @@ public class CFReturn extends UIDObject implements CFNode {
         return collector.subExpressions;
     }
 
+    private LinkedList<InnerCFNode> miniCFGTSCached;
+    private LinkedList<InnerCFNode> getTS() {
+        if (miniCFGTSCached != null) return miniCFGTSCached;
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        miniCFGTSCached = ts;
+        return ts;
+    }
+
     @Override
     public Set<Expr> generatedExprs(Set<Expr> allExprs) {
 
