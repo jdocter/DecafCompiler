@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 #
 # Run tests, assuming the following:
-# 1. you are running this script from `tests/optimizer/`
-# 2. all executables to be tested are compiled and in `bin/`
+# 1. all executables to be tested are compiled and in `bin/`
 #   - implies you already ran `dcf-to-asm.sh` and/or `asm-to-bin.sh`
-# 3. executables output data to files under `output/`
-# 4. if the actual output is written to `output/foo.txt`, then the expected
+# 2. executables output data to files under `output/`
+# 3. if the actual output is written to `output/foo.txt`, then the expected
 #    output is `expected/foo.txt`
 #
 # USAGE
