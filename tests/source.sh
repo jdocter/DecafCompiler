@@ -16,9 +16,13 @@ function remove-ext {
   sed -E 's/\.[^\.]+$//' <<< "$1"
 }
 
+function pretty {
+  echo "$(basename "$(dirname "$1")")/$(basename "$1")"
+}
+
 declare -r ROOT=$(git rev-parse --show-toplevel)
 declare -r BUILDER="$ROOT/build.sh"
 declare -r RUNNER="$ROOT/run.sh"
 
-export -f green red build remove-ext
+export -f green red build remove-ext pretty
 export ROOT BUILDER RUNNER
