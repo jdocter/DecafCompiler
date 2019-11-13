@@ -17,7 +17,7 @@ source "$(git rev-parse --show-toplevel)/tests/source.sh"
 function check {
   declare -r EXEC="$1"
 
-  if "$EXEC" &> /dev/null; then
+  if ( cd "$ROOT/tests/optimizer/" && "$EXEC" &> /dev/null ); then
     declare -r HEAD="$ROOT/tests/optimizer"
     declare -r TAIL="$(basename "$EXEC").pgm"
 

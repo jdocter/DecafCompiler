@@ -9,7 +9,7 @@ source "$(git rev-parse --show-toplevel)/tests/source.sh"
 # compile $1 -> $2, where $1 is .s and $2 is exec
 function compile {
   # `gcc -no-pie -L lib/ -l6035 -lpthread "$1" -o "$2"` DOES NOT work; haven't look into why
-  time gcc -no-pie "$1" -o "$2" -L lib/ -l6035 -lpthread
+  time gcc -no-pie "$1" -o "$2" -L "$ROOT/tests/optimizer/lib/" -l6035 -lpthread
   green "Done compiling '$(pretty "$1")' -> '$(pretty "$2")'"
 }
 
