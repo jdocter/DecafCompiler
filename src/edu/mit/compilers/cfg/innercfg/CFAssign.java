@@ -379,7 +379,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                 }
             }
         }
-        throw new RuntimeException("not implemented");
+        return killed;
     }
 
     @Override public String toString() {
