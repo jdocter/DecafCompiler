@@ -2,16 +2,14 @@ package edu.mit.compilers.cfg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
+import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.VariableTable;
@@ -28,9 +26,9 @@ public class CFReturn extends UIDObject implements CFNode {
             return "UID " + UID + " CFReturn";
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+        MethodCFGFactory.dfsPrint(miniCFGStart, new HashSet<Integer>(), new PrintStream(baos));
         return "\nMiniCFG: " + baos.toString() + "\n" +
-        "UID " + UID + " CFReturn [miniCFG=" + miniCFG.getUID() + ", returnTemp=" + returnTemp + "]";
+        "UID " + UID + " CFReturn [miniCFG=" + miniCFGStart.getUID() + ", returnTemp=" + returnTemp + "]";
     }
 
     private CFNode next;
@@ -41,8 +39,8 @@ public class CFReturn extends UIDObject implements CFNode {
     private final VariableTable variableTable;
     private boolean isVoid;
     private MethodDescriptor methodDescriptor;
-    private InnerCFNode miniCFG;
-
+    private InnerCFNode miniCFGStart;
+    private InnerCFNode miniCFGEnd;
 
     public CFReturn(Expr returnExpr, VariableTable variableTable, MethodDescriptor methodDescriptor) {
         this.returnExpr = returnExpr;
@@ -61,13 +59,18 @@ public class CFReturn extends UIDObject implements CFNode {
         this.returnTemp = temp;
     }
 
-    public void setMiniCFG(InnerCFNode miniCFG) {
+    public void setMiniCFG(InnerCFNode miniCFGStart, InnerCFNode miniCFGEnd) {
         if (isVoid) throw new UnsupportedOperationException("Tried to give miniCFG to void return");
-        this.miniCFG = miniCFG;
+        this.miniCFGStart = miniCFGStart;
+        this.miniCFGEnd = miniCFGEnd;
     }
 
-    public InnerCFNode getMiniCFG() {
-        return miniCFG;
+    public InnerCFNode getMiniCFGEnd() {
+        return miniCFGEnd;
+    }
+
+    public InnerCFNode getMiniCFGStart() {
+        return miniCFGStart;
     }
 
     @Override
@@ -94,7 +97,7 @@ public class CFReturn extends UIDObject implements CFNode {
             if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
             // calculate expr and return it
             body.add("# calculating return Expr");
-            body.addAll(new InnerMethodAssemblyCollector(miniCFG, importTable).getInstructions());
+            body.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
             body.add(getEndOfMiniCFGLabel() + ":");
             body.add("");
             body.add("movq -" + returnTemp.getOffset() + "(%rbp), %rax");
@@ -160,7 +163,7 @@ public class CFReturn extends UIDObject implements CFNode {
         if (isVoid) return List.of();
         TempCollector collector = new TempCollector();
         List<Pair<Temp, List<Temp>>> temps = new ArrayList<Pair<Temp, List<Temp>>>();
-        miniCFG.accept(collector);
+        miniCFGStart.accept(collector);
         temps.addAll(collector.temps);
         temps.add(new Pair<Temp, List<Temp>>(returnTemp, List.of()));
         return temps;
@@ -169,14 +172,14 @@ public class CFReturn extends UIDObject implements CFNode {
     @Override
     public Set<Expr> getSubExpressions() {
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
-        this.miniCFG.accept(collector);
+        this.miniCFGStart.accept(collector);
         return collector.subExpressions;
     }
 
     private LinkedList<InnerCFNode> miniCFGTSCached;
     private LinkedList<InnerCFNode> getTS() {
         if (miniCFGTSCached != null) return miniCFGTSCached;
-        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
         miniCFGTSCached = ts;
         return ts;
     }

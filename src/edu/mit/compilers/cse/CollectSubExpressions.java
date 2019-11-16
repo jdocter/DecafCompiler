@@ -1,5 +1,6 @@
-package edu.mit.compilers.cfg;
+package edu.mit.compilers.cse;
 
+import edu.mit.compilers.cfg.*;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 

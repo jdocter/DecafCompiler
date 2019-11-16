@@ -11,9 +11,23 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 
 public interface CFStatement {
+    /**
+     * Generates functional assembly code representing CFStatement
+     * @param variableTable
+     * @param importTable
+     * @return
+     */
     List<String> toAssembly(VariableTable variableTable, ImportTable importTable);
 
+    /**
+     * @return list of expressions that are available at the end of this CFStatement
+     */
     Set<Expr> generatedExprs();
+
+    /**
+     * @param exprs list of all expressions that could potentially be killed
+     * @return subset of exprs that are killed by this CFStatement
+     */
     Set<Expr> killedExprs(Set<Expr> exprs);
 
     int getUID();
@@ -24,4 +38,6 @@ public interface CFStatement {
     Pair<Temp, List<Temp>> getTemps();
 
     Expr getRHS();
+
+
 }

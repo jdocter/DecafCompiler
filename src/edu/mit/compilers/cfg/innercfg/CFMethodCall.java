@@ -92,7 +92,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     @Override
     public Set<Expr> generatedExprs() {
-        return new HashSet<>();
+        return Set.of();
     }
 
     @Override

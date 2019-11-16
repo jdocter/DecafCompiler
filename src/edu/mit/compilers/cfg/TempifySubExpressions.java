@@ -38,8 +38,9 @@ public class TempifySubExpressions implements CFVisitor {
             InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfBlock);
             startNode.accept(mergeBasicBlocksAndRemoveNops);
 
-            startNode = mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(); // replace with new first node of CFG
-            cfBlock.setMiniCFG(startNode);
+            // replace with new first node of CFG
+            cfBlock.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(),
+                    mergeBasicBlocksAndRemoveNops.getLastNodeOfCFG());
             visited.add(cfBlock);
             for (CFNode neighbor : cfBlock.dfsTraverse()) {
                 neighbor.accept(this);
@@ -57,7 +58,8 @@ public class TempifySubExpressions implements CFVisitor {
             InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfConditional);
             ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
             cfConditional.replaceExpr(cond);
-            cfConditional.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG());
+            cfConditional.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(),
+                    mergeBasicBlocksAndRemoveNops.getLastNodeOfCFG());
 
             visited.add(cfConditional);
             for (CFNode neighbor : cfConditional.dfsTraverse()) {
@@ -87,7 +89,8 @@ public class TempifySubExpressions implements CFVisitor {
                 InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfReturn);
                 ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
                 cfReturn.replaceExpr(t);
-                cfReturn.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG());
+                cfReturn.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(),
+                        mergeBasicBlocksAndRemoveNops.getLastNodeOfCFG());
             }
 
 

@@ -2,6 +2,7 @@ package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.cfg.AssemblyVariable;
+import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.cfg.Variable;
 import edu.mit.compilers.inter.*;
@@ -31,11 +32,14 @@ public class CFAssign extends UIDObject implements CFStatement {
     public static final int TRUE = 7;
     public static final int FALSE = 8;
 
+    // Destination variables
     public AssemblyVariable dstArrayOrLoc;
     public AssemblyVariable dstArrayOffset;
 
+    // assignment type
     public String assignOp;
 
+    // Source Variables and Literals
     public AssemblyVariable srcLeftOrSingle;
     public BinOp srcBinOp;
     public AssemblyVariable srcRight;
@@ -44,7 +48,11 @@ public class CFAssign extends UIDObject implements CFStatement {
     public AssemblyVariable srcArrayOffset;
     public Lit srcLit;
 
+    // Expression that destination will hold
     public Expr canonicalExpr;
+
+    // Optional additional destination for expression, to be used for Common Subexpression Elimination
+    public SharedTemp dstOptionalCSE;
 
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
@@ -352,6 +360,15 @@ public class CFAssign extends UIDObject implements CFStatement {
         }
     }
 
+    /**
+     * Add another destination variable for the RHS of this assign such
+     * that toAssembly includes code for storing the RHS value in dst
+     * @param dst SharedTemp that the RHS should also be stored in
+     */
+    public void additionalDestination(SharedTemp dst) {
+        dstOptionalCSE = dst;
+    }
+
     @Override
     public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
         assembly.clear();
@@ -382,11 +399,13 @@ public class CFAssign extends UIDObject implements CFStatement {
         return killed;
     }
 
+    @Override
+    public Expr getRHS() {
+        return this.canonicalExpr;
+    }
+
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-//        if (srcExpr == null) {
-//            return "" + dstArrayOrLoc + offsetStr + assignOp;
-//        }
         String dst =  "" + dstArrayOrLoc + offsetStr;
 
         switch (assignOp) {
@@ -422,11 +441,6 @@ public class CFAssign extends UIDObject implements CFStatement {
         if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
         if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
         return new Pair(left,right);
-    }
-
-    @Override
-    public Expr getRHS() {
-        return this.canonicalExpr;
     }
 
     private String getBinopCommand() {

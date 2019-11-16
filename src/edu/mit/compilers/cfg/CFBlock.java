@@ -22,7 +22,8 @@ import edu.mit.compilers.visitor.CFVisitor;
 
 public class CFBlock extends UIDObject implements CFNode {
 
-    private InnerCFNode miniCFG;
+    private InnerCFNode miniCFGStart;
+    private InnerCFNode miniCFGEnd;
     // Should all be either CFAssign or CFMethodCall
     private final List<Statement> statements = new ArrayList<>();
     CFNode next;
@@ -39,9 +40,14 @@ public class CFBlock extends UIDObject implements CFNode {
         this.variableTable = variableTable;
     }
 
-    public void setMiniCFG(InnerCFNode miniCFG) {
+    public void setMiniCFG(InnerCFNode miniCFGStart, InnerCFNode miniCFGEnd) {
         this.statements.clear();
-        this.miniCFG = miniCFG;
+        this.miniCFGStart = miniCFGStart;
+        this.miniCFGEnd = miniCFGEnd;
+    }
+
+    public InnerCFNode getMiniCFGEnd() {
+        return miniCFGEnd;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class CFBlock extends UIDObject implements CFNode {
         List<String> assembly = new ArrayList<>();
 
         assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(new InnerMethodAssemblyCollector(miniCFG, importTable).getInstructions());
+        assembly.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
         assembly.add(getEndOfMiniCFGLabel() + ":");
 
         List<String> body = new ArrayList<>();
@@ -88,9 +94,9 @@ public class CFBlock extends UIDObject implements CFNode {
     @Override public String toString() {
         // System.err.println("Thinks " + UID + " isOuter");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+        MethodCFGFactory.dfsPrint(miniCFGStart, new HashSet<Integer>(), new PrintStream(baos));
         return "\nMiniCFG: " + baos.toString() + "\n" +
-        "UID " + UID + " CFBlock [ miniCFG=" + miniCFG.getUID() + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        "UID " + UID + " CFBlock [ miniCFG=" + miniCFGStart.getUID() + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
     }
 
     @Override
@@ -132,7 +138,7 @@ public class CFBlock extends UIDObject implements CFNode {
     @Override
     public List<Pair<Temp, List<Temp>>> getTemps() {
         TempCollector collector = new TempCollector();
-        miniCFG.accept(collector);
+        miniCFGStart.accept(collector);
         return collector.temps;
     }
 
@@ -141,7 +147,7 @@ public class CFBlock extends UIDObject implements CFNode {
     public Set<Expr> getSubExpressions() {
         if (subExpressionsCached != null) return subExpressionsCached;
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
-        this.miniCFG.accept(collector);
+        this.miniCFGStart.accept(collector);
         subExpressionsCached = collector.subExpressions;
         return subExpressionsCached;
     }
@@ -149,7 +155,7 @@ public class CFBlock extends UIDObject implements CFNode {
     private LinkedList<InnerCFNode> miniCFGTSCached;
     private LinkedList<InnerCFNode> getTS() {
         if (miniCFGTSCached != null) return miniCFGTSCached;
-        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
         miniCFGTSCached = ts;
         return ts;
     }

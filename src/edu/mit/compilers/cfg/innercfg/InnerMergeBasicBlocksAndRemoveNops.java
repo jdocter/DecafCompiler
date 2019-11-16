@@ -18,6 +18,7 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     private CFNode enclosingCFNode;
 
     private InnerCFNode firstNodeOfCFG;
+    private InnerCFNode lastNodeOfCFG;
 
     public InnerMergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
         this.enclosingCFNode = enclosingCFNode;
@@ -87,6 +88,7 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
         if (cfNop.isEnd()) {
             // ending Nops should be replaced with jmps in the mini CFG
             InnerCFNode replacement = new InnerCFEndOfMiniCFG(enclosingCFNode);
+            lastNodeOfCFG = replacement;
             cfNop.setNext(replacement);
             peepholeRemove(cfNop);
             return;
@@ -99,6 +101,8 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     public InnerCFNode getFirstNodeOfCFG() {
         return firstNodeOfCFG;
     }
+
+    public InnerCFNode getLastNodeOfCFG() { return lastNodeOfCFG; }
 
     public void setFirstNodeOfCFG(InnerCFNode firstNodeOfCFG) {
         this.firstNodeOfCFG = firstNodeOfCFG;

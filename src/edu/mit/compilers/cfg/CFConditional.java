@@ -21,12 +21,13 @@ import java.util.stream.Collectors;
 public class CFConditional extends UIDObject implements CFNode {
     @Override public String toString() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MethodCFGFactory.dfsPrint(miniCFG, new HashSet<Integer>(), new PrintStream(baos));
+        MethodCFGFactory.dfsPrint(miniCFGStart, new HashSet<Integer>(), new PrintStream(baos));
         return "\nMiniCFG: " + baos.toString() + "\n" +
-        "UID " + UID + " CFConditional [ miniCFG=" + miniCFG.getUID() + ", boolTemp=" + boolTemp + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
+        "UID " + UID + " CFConditional [ miniCFG=" + miniCFGStart.getUID() + ", boolTemp=" + boolTemp + ", ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
 
-    private InnerCFNode miniCFG;
+    private InnerCFNode miniCFGStart;
+    private InnerCFNode miniCFGEnd;
     private Expr boolExpr;
     private CFNode ifTrue;
     private CFNode ifFalse;
@@ -49,8 +50,14 @@ public class CFConditional extends UIDObject implements CFNode {
         return boolExpr;
     }
 
-    public void setMiniCFG(InnerCFNode miniCFG) {
-        this.miniCFG = miniCFG;
+    public void setMiniCFG(InnerCFNode miniCFGStart, InnerCFNode miniCFGEnd) {
+
+        this.miniCFGStart = miniCFGStart;
+        this.miniCFGEnd = miniCFGEnd;
+    }
+
+    public InnerCFNode getMiniCFGEnd() {
+        return miniCFGEnd;
     }
 
     public void replaceExpr(Temp temp) {
@@ -63,7 +70,7 @@ public class CFConditional extends UIDObject implements CFNode {
         List<String> assembly = new ArrayList<>();
 
         assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(new InnerMethodAssemblyCollector(miniCFG, importTable).getInstructions());
+        assembly.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
         assembly.add(getEndOfMiniCFGLabel() + ":");
 
         List<String> body = new ArrayList<>();
@@ -143,7 +150,7 @@ public class CFConditional extends UIDObject implements CFNode {
     @Override
     public List<Pair<Temp, List<Temp>>> getTemps() {
         TempCollector collector = new TempCollector();
-        miniCFG.accept(collector);
+        miniCFGStart.accept(collector);
         return collector.temps;
     }
 
@@ -151,14 +158,14 @@ public class CFConditional extends UIDObject implements CFNode {
     @Override
     public Set<Expr> getSubExpressions() {
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
-        this.miniCFG.accept(collector);
+        this.miniCFGStart.accept(collector);
         return collector.subExpressions;
     }
 
     private LinkedList<InnerCFNode> miniCFGTSCached;
     private LinkedList<InnerCFNode> getTS() {
         if (miniCFGTSCached != null) return miniCFGTSCached;
-        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFG).getTopologicalSort();
+        LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
         miniCFGTSCached = ts;
         return ts;
     }

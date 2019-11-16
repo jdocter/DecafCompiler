@@ -1,5 +1,7 @@
-package edu.mit.compilers.cfg;
+package edu.mit.compilers.cse;
 
+import edu.mit.compilers.cfg.*;
+import edu.mit.compilers.cse.CollectSubExpressions;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -69,7 +71,7 @@ public class GlobalAvailableSubExpressionsAnalyzer implements CFVisitor {
         if (!visited.contains(cfNode)) {
             visited.add(cfNode);
 
-            gen.put(cfNode, cfNode.generatedExprs());
+            gen.put(cfNode, cfNode.generatedExprs(subExpressions));
             kill.put(cfNode, cfNode.killedExprs(subExpressions));
             in.put(cfNode, subExpressions);
             out.put(cfNode, subExpressions);

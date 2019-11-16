@@ -1,7 +1,6 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.cfg.CFNode;
-import edu.mit.compilers.cfg.MethodAssemblyCollector;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.parser.StringLit;
 
