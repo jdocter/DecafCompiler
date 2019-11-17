@@ -237,6 +237,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             case LEN:
                 if (srcId.isArray(variableTable)) {
                     assembly.add("movq $" + srcId.getArrayLength(variableTable) + ", " + dst + " # " + this.toString());
+                    additionalDestinationToAssembly(variableTable, "$" + srcId.getArrayLength(variableTable));
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
@@ -245,11 +246,13 @@ public class CFAssign extends UIDObject implements CFStatement {
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + this.toString());
                 assembly.add("negq %rax");
                 assembly.add("movq %rax, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rax");
                 break;
             case NOT:
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + this.toString());
                 assembly.add("xorq $1, %rax");
                 assembly.add("movq %rax, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rax");
                 break;
             case ARRAY_LOC:
                 String arrayLoc;
@@ -269,6 +272,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                 }
                 assembly.add("movq " + arrayLoc + ", %rsi # " + this.toString()); // is this ok?
                 assembly.add("movq %rsi, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rsi");
 
                 break;
             case SIMPLE:
@@ -278,12 +282,14 @@ public class CFAssign extends UIDObject implements CFStatement {
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("subq %rax, " + dst);
+                        // can't have additional destination?
                         return;
                     case PEQ:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("addq %rax, " + dst);
+                        // can't have additional destination?
                         return;
                     case INC: assembly.add("incq " + dst); return;
                     case DEC: assembly.add("decq " + dst); return;
@@ -291,12 +297,15 @@ public class CFAssign extends UIDObject implements CFStatement {
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("movq %rax, " + dst); return;
+                        assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
+                        return;
                 }
                 break;
             case METHOD_CALL:
                 assembly.add("");
                 assembly.add("movq %rax, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "%rax");
                 assembly.add("");
                 break;
             case BIN_OP:
@@ -316,47 +325,62 @@ public class CFAssign extends UIDObject implements CFStatement {
                         assembly.add(getBinopCommand() + " %al");
                         assembly.add("movzbq %al, %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MINUS:
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("subq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.PLUS:
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("addq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MOD:
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("cqto"); // sign extend
                         assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
                         assembly.add("movq %rdx, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rdx");
                         break;
                     case BinOp.MUL:
                         assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("imulq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("movq %rax, " + dst); // TODO overflow?
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.DIV:
                         assembly.add("movq -"+srcLeftOrSingle.getStackOffset(variableTable)+ "(%rbp), %rax");
                         assembly.add("cqto"); // sign extend
                         assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                 }
                 break;
             case LIT:
                 // TODO runtime checks
                 assembly.add("movq " + srcLit.toAssembly() + ", " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, srcLit.toAssembly());
                 break;
             case TRUE:
                 assembly.add("movq $1, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "$1"); // seems unnecessary?
                 break;
             case FALSE:
                 assembly.add("movq $0, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "$0"); // seems unnecessary?
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
+        }
+    }
+
+    private void additionalDestinationToAssembly(VariableTable variableTable, String src) {
+        if (dstOptionalCSE != null) {
+            assembly.add("movq " + src + ", -" + dstOptionalCSE.getStackOffset(variableTable) + "(%rbp)");
         }
     }
 
