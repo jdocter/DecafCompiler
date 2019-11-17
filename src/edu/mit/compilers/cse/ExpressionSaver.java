@@ -6,15 +6,16 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
-import java.util.Collections;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
- * Traverse backwards till reaching all ancestors that compute the expr
- * Insert CFAssign where necessary
+ * Alters CFG representation such that the value in *expr* is available
+ *      at the CFNode *start* in the variable *sharedTemp*
+ * Traverses backwards from *start* until reach first appearance of *expr*
+ *      in all paths and inserts additional assembly destinations
+ * Assumes that *expr* is available from all parent paths at *start*
  */
 public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
-
 
     private final CFNode start;
     private final Expr expr;
@@ -32,17 +33,23 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
     @Override
     public void visit(CFBlock cfBlock) {
-        cfBlock.getMiniCFGEnd().accept(this);
-        for (CFNode cfNode: cfBlock.parents()) {
-            cfNode.accept(this);
+        if (cfBlock.getSubExpressions().contains(expr)) {
+            cfBlock.getMiniCFGEnd().accept(this);
+        } else {
+            for (CFNode cfNode : cfBlock.parents()) {
+                cfNode.accept(this);
+            }
         }
     }
 
     @Override
     public void visit(CFConditional cfConditional) {
-        cfConditional.getMiniCFGEnd().accept(this);
-        for (CFNode cfNode: cfConditional.parents()) {
-            cfNode.accept(this);
+        if (cfConditional.getSubExpressions().contains(expr)) {
+            cfConditional.getMiniCFGEnd().accept(this);
+        } else {
+            for (CFNode cfNode : cfConditional.parents()) {
+                cfNode.accept(this);
+            }
         }
     }
 
@@ -56,9 +63,12 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
     @Override
     public void visit(CFReturn cfReturn) {
-        cfReturn.getMiniCFGEnd().accept(this);
-        for (CFNode cfNode: cfReturn.parents()) {
-            cfNode.accept(this);
+        if (cfReturn.getSubExpressions().contains(expr)) {
+            cfReturn.getMiniCFGEnd().accept(this);
+        } else {
+            for (CFNode cfNode : cfReturn.parents()) {
+                cfNode.accept(this);
+            }
         }
     }
 
