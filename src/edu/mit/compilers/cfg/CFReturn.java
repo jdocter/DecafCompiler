@@ -7,6 +7,7 @@ import java.util.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
@@ -66,10 +67,12 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     public InnerCFNode getMiniCFGEnd() {
+        if (isVoid) return new InnerCFNop();
         return miniCFGEnd;
     }
 
     public InnerCFNode getMiniCFGStart() {
+        if (isVoid) return new InnerCFNop();
         return miniCFGStart;
     }
 
