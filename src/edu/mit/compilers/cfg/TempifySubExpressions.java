@@ -53,7 +53,7 @@ public class TempifySubExpressions implements CFVisitor {
         if (!visited.contains(cfConditional)) {
             Expr toTempify = cfConditional.getBoolExpr();
             Temp cond = new Temp();
-            Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, cond,  cfConditional.getVariableTable());
+            Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, cond, null, cfConditional.getVariableTable());
             ct.getValue().setNext(new InnerCFNop()); // want to be able to replace with a CFEndOfMiniCFG
             InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfConditional);
             ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
