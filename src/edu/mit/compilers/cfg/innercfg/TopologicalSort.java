@@ -5,6 +5,7 @@ import edu.mit.compilers.visitor.MiniCFVisitor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TopologicalSort {
 
@@ -14,6 +15,7 @@ public class TopologicalSort {
 
     public TopologicalSort(InnerCFNode start) {
         doTS(start);
+        // System.err.println("TS: " + ts.stream().map(InnerCFNode::getUID).collect(Collectors.toList()));
     }
 
     public LinkedList<InnerCFNode> getTopologicalSort() {

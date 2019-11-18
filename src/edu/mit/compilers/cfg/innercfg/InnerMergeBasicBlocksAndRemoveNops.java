@@ -104,7 +104,7 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
 
     public InnerCFNode getLastNodeOfCFG() { return lastNodeOfCFG; }
 
-    public void setFirstNodeOfCFG(InnerCFNode firstNodeOfCFG) {
+    private void setFirstNodeOfCFG(InnerCFNode firstNodeOfCFG) {
         this.firstNodeOfCFG = firstNodeOfCFG;
     }
 

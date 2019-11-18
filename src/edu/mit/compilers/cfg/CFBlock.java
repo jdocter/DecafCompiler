@@ -165,22 +165,25 @@ public class CFBlock extends UIDObject implements CFNode {
         LinkedList<InnerCFNode> ts = getTS();
         Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
         for (InnerCFNode node : ts) {
-            if (parents.isEmpty()) {
+            Set<InnerCFNode> innerParents = node.parents();
+            if (innerParents.isEmpty()) {
                 gens.put(node, node.generatedExprs(allExprs));
-                break;
+                // System.err.println("NO PARENT : " + node.generatedExprs(allExprs));
+                continue;
             }
 
             // GEN = Intersect(parents) - KILL + thisGen
-            Set<InnerCFNode> parents = node.parents();
-            Set<Expr> thisGen = new HashSet<>(gens.get(parents.iterator().next())); // initialize with copy of one parent
-            for (InnerCFNode parent : parents) {
+            Set<Expr> thisGen = new HashSet<>(gens.get(innerParents.iterator().next())); // initialize with copy of one parent
+            for (InnerCFNode parent : innerParents) {
                 thisGen.retainAll(gens.get(parent));
             }
-            thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
+            thisGen.removeAll(node.killedExprs(allExprs));
             thisGen.addAll(node.generatedExprs(allExprs));
             gens.put(node, thisGen);
+            // System.err.println("DONE FOR INNER ID: " + node.getUID());
         }
 
+        // System.err.println("LAST : " + gens.get(ts.getLast()));
         return gens.get(ts.getLast());
     }
 

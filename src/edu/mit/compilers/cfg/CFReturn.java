@@ -171,6 +171,8 @@ public class CFReturn extends UIDObject implements CFNode {
 
     @Override
     public Set<Expr> getSubExpressions() {
+        if (isVoid) return Set.of();
+
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
         this.miniCFGStart.accept(collector);
         return collector.subExpressions;
@@ -179,6 +181,9 @@ public class CFReturn extends UIDObject implements CFNode {
     private LinkedList<InnerCFNode> miniCFGTSCached;
     public LinkedList<InnerCFNode> getTS() {
         if (miniCFGTSCached != null) return miniCFGTSCached;
+        if (isVoid) {
+            return new LinkedList<InnerCFNode>();
+        }
         LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
         miniCFGTSCached = ts;
         return ts;
@@ -186,19 +191,20 @@ public class CFReturn extends UIDObject implements CFNode {
 
     @Override
     public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        if (isVoid) return Set.of();
 
         LinkedList<InnerCFNode> ts = getTS();
         Map<InnerCFNode, Set<Expr>> gens = new HashMap<>();
         for (InnerCFNode node : ts) {
-            if (parents.isEmpty()) {
+            Set<InnerCFNode> innerParents = node.parents();
+            if (innerParents.isEmpty()) {
                 gens.put(node, node.generatedExprs(allExprs));
-                break;
+                continue;
             }
 
             // GEN = Intersect(parents) - KILL + thisGen
-            Set<InnerCFNode> parents = node.parents();
-            Set<Expr> thisGen = new HashSet<>(gens.get(parents.iterator().next())); // initialize with copy of one parent
-            for (InnerCFNode parent : parents) {
+            Set<Expr> thisGen = new HashSet<>(gens.get(innerParents.iterator().next())); // initialize with copy of one parent
+            for (InnerCFNode parent : innerParents) {
                 thisGen.retainAll(gens.get(parent));
             }
             thisGen.removeAll(node.killedExprs(this.getSubExpressions()));

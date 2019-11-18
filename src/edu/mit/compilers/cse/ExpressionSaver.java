@@ -95,7 +95,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
         while (listIterator.hasPrevious()) {
             CFStatement cfStatement = listIterator.previous();
-            if (cfStatement.generatedExpr().isPresent() && cfStatement.generatedExpr().get() == expr) {
+            if (cfStatement.generatedExpr().isPresent() && cfStatement.generatedExpr().get().equals(expr)) {
                 // must be CFAssign
                 CFAssign cfAssign = ((CFAssign) cfStatement);
 

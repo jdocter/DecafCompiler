@@ -222,9 +222,9 @@ public class CFAssign extends UIDObject implements CFStatement {
     private void srcToAssembly(VariableTable variableTable, String dst) {
         if (srcOptionalCSE != null) {
             if (!assignOp.equals(ASSIGN)) throw new RuntimeException("CSE error");
-            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax");
+            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # %rax = " + srcOptionalCSE.toString());
+            assembly.add("movq %rax, " + dst);
             return;
-            // no need to save destination ??
         }
 
         switch (assignOp) { // TODO rax srcTemp?
@@ -302,7 +302,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                         return;
                     case INC: assembly.add("incq " + dst); return;
                     case DEC: assembly.add("decq " + dst); return;
-                    case ASSIGN: 
+                    case ASSIGN:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
@@ -430,8 +430,8 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Optional<Expr> generatedExpr() {
         if (assignOp != ASSIGN) return Optional.empty();
-        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()
-                && canonicalExpr.getIds().contains(dstArrayOrLoc)) return Optional.empty();
+        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
+                && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
         return Optional.of(canonicalExpr);
     }
 
@@ -440,7 +440,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         Set<Expr> killed = new HashSet<>(exprs);
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
             for (Expr subExpr : exprs) {
-                if (subExpr.getIds().contains(dstArrayOrLoc)) {
+                if (subExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) {
                     killed.add(subExpr);
                 }
             }
@@ -455,7 +455,11 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-        String dst =  "" + dstArrayOrLoc + offsetStr;
+        String dst =  "" + dstArrayOrLoc + offsetStr + " {canonical: " + canonicalExpr + "}";
+
+        if (srcOptionalCSE != null) {
+            return dst + " = " + srcOptionalCSE;
+        }
 
         switch (assignOp) {
             case MEQ:
@@ -484,12 +488,12 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Pair<Temp, List<Temp>> getTemps() {
         Temp left = dstArrayOrLoc instanceof Temp ? (Temp) dstArrayOrLoc : null;
-        List<Temp> right = new ArrayList();
+        List<Temp> right = new ArrayList<Temp>();
         if (dstArrayOffset != null && dstArrayOffset instanceof Temp) right.add((Temp) dstArrayOffset);
         if (srcLeftOrSingle != null && srcLeftOrSingle instanceof Temp) right.add((Temp) srcLeftOrSingle);
         if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
         if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
-        return new Pair(left,right);
+        return new Pair<Temp, List<Temp>>(left,right);
     }
 
     private String getBinopCommand() {

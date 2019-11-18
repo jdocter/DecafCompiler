@@ -11,8 +11,13 @@ public class Variable implements AssemblyVariable {
     private Id id;
     public Variable(Id id) {this.id = id;}
 
+    @Override
     public String toString() {
         return id.toString();
+    }
+
+    public Id getId() {
+        return id;
     }
 
     @Override
