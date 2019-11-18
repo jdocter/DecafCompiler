@@ -94,7 +94,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
-        Set<Expr> killed = new HashSet<>(exprs);
+        Set<Expr> killed = new HashSet<>();
         for (Expr expr: exprs) {
             for (Id id: expr.getIds()) {
                 if (id.getDeclarationScope() == VariableTable.GLOBAL_SCOPE_UID) {

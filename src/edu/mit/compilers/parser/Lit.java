@@ -52,20 +52,42 @@ public class Lit extends Node {
         v.visit(this);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Lit)) return false;
-        Lit that = (Lit) obj;
-        switch (litType) {
-            case BOOL:
-                return mBool == that.mBool;
-            case CHAR:
-                return mChar == that.mChar;
-            case INT:
-                return mIntLit.toString().equals(that.mIntLit);
-            default:
-                throw new RuntimeException("Unknown Lit type: " + litType);
+    @Override public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + litType;
+        result = prime * result + (mBool ? 1231 : 1237);
+        result = prime * result + mChar;
+        result = prime * result + ((mIntLit == null) ? 0 : mIntLit.hashCode());
+        return result;
+    }
+    @Override public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
-
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Lit)) {
+            return false;
+        }
+        Lit other = (Lit) obj;
+        if (litType != other.litType) {
+            return false;
+        }
+        if (mBool != other.mBool) {
+            return false;
+        }
+        if (mChar != other.mChar) {
+            return false;
+        }
+        if (mIntLit == null) {
+            if (other.mIntLit != null) {
+                return false;
+            }
+        } else if (!mIntLit.equals(other.mIntLit)) {
+            return false;
+        }
+        return true;
     }
 }

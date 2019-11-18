@@ -437,7 +437,7 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
-        Set<Expr> killed = new HashSet<>(exprs);
+        Set<Expr> killed = new HashSet<>();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
             for (Expr subExpr : exprs) {
                 if (subExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) {
@@ -445,6 +445,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                 }
             }
         }
+        // System.err.println("KILLED FOR " + this + " : " + killed);
         return killed;
     }
 
