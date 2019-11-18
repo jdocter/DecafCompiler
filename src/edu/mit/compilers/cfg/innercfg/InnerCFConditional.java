@@ -28,11 +28,11 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
 
     private int type;
 
-    private Temp boolTemp;
+    private AssemblyVariable boolTemp;
 
-    private Temp left;
+    private AssemblyVariable left;
     private BinOp binOp;
-    private Temp right;
+    private AssemblyVariable right;
 
     public InnerCFConditional(AssemblyVariable temp, InnerCFNode ifTrue, InnerCFNode ifFalse, VariableTable variableTable) {
         this.boolTemp = temp;
@@ -54,7 +54,7 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
 
         assembly.add(getAssemblyLabel() + ":");
         List<String> body = new ArrayList<>();
-        body.add("cmpq $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
+        body.add("cmpq $1, -" + boolTemp.getStackOffset(variableTable) + "(%rbp) # true = " + boolTemp);
         body.add("jne " + ifFalse.getAssemblyLabel() + " # ifFalse");
         body.add("jmp " + ifTrue.getAssemblyLabel() + " # ifTrue");
 
@@ -152,7 +152,11 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
 
     @Override
     public List<Pair<Temp, List<Temp>>> getTemps() {
-        return List.of(new Pair<Temp, List<Temp>>(null, List.of(boolTemp)));
+        if (boolTemp.isTemporary()) {
+          return List.of(new Pair<Temp, List<Temp>>(null, List.of((Temp) boolTemp)));
+        } else {
+          return List.of(new Pair<Temp, List<Temp>>(null, List.of()));
+        }
     }
 
     @Override

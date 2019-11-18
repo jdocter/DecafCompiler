@@ -309,6 +309,12 @@ public class CFAssign extends UIDObject implements CFStatement {
                 assembly.add("");
                 break;
             case BIN_OP:
+                final String srcLeftString = srcLeftOrSingle.isGlobal(variableTable) ? 
+                            srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip)":
+                            "-" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp)";
+                final String srcRightString = srcRight.isGlobal(variableTable) ? 
+                            srcRight.getGlobalLabel(variableTable) + "(%rip)":
+                            "-" + srcRight.getStackOffset(variableTable) + "(%rbp)";
                 assembly.add("# "+this.toString());
                 switch (srcBinOp.binOp) {
                     case BinOp.AND:
@@ -320,42 +326,42 @@ public class CFAssign extends UIDObject implements CFStatement {
                     case BinOp.LEQ:
                     case BinOp.GT:
                     case BinOp.LT:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("cmpq -" + srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("cmpq " + srcRightString + ", %rax");
                         assembly.add(getBinopCommand() + " %al");
                         assembly.add("movzbq %al, %rax");
                         assembly.add("movq %rax, " + dst);
                         additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MINUS:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("subq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("subq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst);
                         additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.PLUS:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("addq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("addq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst);
                         additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MOD:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
                         assembly.add("cqto"); // sign extend
-                        assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
+                        assembly.add("idivq "+srcRightString);
                         assembly.add("movq %rdx, " + dst);
                         additionalDestinationToAssembly(variableTable, "%rdx");
                         break;
                     case BinOp.MUL:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("imulq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("imulq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst); // TODO overflow?
                         additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.DIV:
-                        assembly.add("movq -"+srcLeftOrSingle.getStackOffset(variableTable)+ "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
                         assembly.add("cqto"); // sign extend
-                        assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
+                        assembly.add("idivq " + srcRightString);
                         assembly.add("movq %rax, " + dst);
                         additionalDestinationToAssembly(variableTable, "%rax");
                         break;

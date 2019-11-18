@@ -119,18 +119,19 @@ public class TempifySubExpressions implements CFVisitor {
         Expr locExpr = statement.loc.expr;
         final Temp tempLocExpr = new Temp();
         final Pair<InnerCFNode, InnerCFNode> locExprCFG = locExpr != null ?
-                destructExprAssignTemp(locExpr, tempLocExpr, locals) : null;
+                destructExprAssignTemp(locExpr, tempLocExpr, null, locals) : null;
 
         Expr assignExpr = statement.assignExpr.expr;
         final Variable locId = new Variable(statement.loc.id);
 
         // handle "=" operations because not as many intermediate temps
         if (statement.assignExpr.assignExprOp.equals(AssignExpr.ASSIGN)) {
-            Pair<InnerCFNode, InnerCFNode> statementCFG = destructExprAssignTemp(assignExpr, locId, tempLocExpr, locals);
             if (statement.loc.expr != null) {
+                Pair<InnerCFNode, InnerCFNode> statementCFG = destructExprAssignTemp(assignExpr, locId, tempLocExpr, locals);
                 locExprCFG.getValue().setNext(statementCFG.getKey());
                 return new Pair(locExprCFG.getKey(), statementCFG.getValue());
             } else {
+                Pair<InnerCFNode, InnerCFNode> statementCFG = destructExprAssignTemp(assignExpr, locId, null, locals);
                 return statementCFG;
             }
         }

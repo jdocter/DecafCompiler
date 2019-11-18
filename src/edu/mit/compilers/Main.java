@@ -18,6 +18,7 @@ import edu.mit.compilers.cfg.MethodCFGFactory;
  * `ant` won't work on the second try.
  * import edu.mit.compilers.grammar.*;
  */
+import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
 import edu.mit.compilers.semantics.CheckIdDeclared;
