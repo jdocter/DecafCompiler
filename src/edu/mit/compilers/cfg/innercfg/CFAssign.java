@@ -222,7 +222,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     private void srcToAssembly(VariableTable variableTable, String dst) {
         if (srcOptionalCSE != null) {
             if (!assignOp.equals(ASSIGN)) throw new RuntimeException("CSE error");
-            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # %rax = " + srcOptionalCSE.toString());
+            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + this.toString());
             assembly.add("movq %rax, " + dst);
             return;
         }
