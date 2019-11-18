@@ -53,6 +53,8 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     // Optional additional destination for expression, to be used for Common Subexpression Elimination
     public SharedTemp dstOptionalCSE;
+    // Optional additional source for expression, to be used for Common Subexpression Elimination
+    public SharedTemp srcOptionalCSE;
 
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
@@ -218,6 +220,13 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     private void srcToAssembly(VariableTable variableTable, String dst) {
+        if (srcOptionalCSE != null) {
+            if (!assignOp.equals(ASSIGN)) throw new RuntimeException("CSE error");
+            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax");
+            return;
+            // no need to save destination ??
+        }
+
         switch (assignOp) { // TODO rax srcTemp?
             case MEQ:
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax");
@@ -309,10 +318,10 @@ public class CFAssign extends UIDObject implements CFStatement {
                 assembly.add("");
                 break;
             case BIN_OP:
-                final String srcLeftString = srcLeftOrSingle.isGlobal(variableTable) ? 
+                final String srcLeftString = srcLeftOrSingle.isGlobal(variableTable) ?
                             srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip)":
                             "-" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp)";
-                final String srcRightString = srcRight.isGlobal(variableTable) ? 
+                final String srcRightString = srcRight.isGlobal(variableTable) ?
                             srcRight.getGlobalLabel(variableTable) + "(%rip)":
                             "-" + srcRight.getStackOffset(variableTable) + "(%rbp)";
                 assembly.add("# "+this.toString());
@@ -399,6 +408,16 @@ public class CFAssign extends UIDObject implements CFStatement {
         dstOptionalCSE = dst;
     }
 
+    /**
+     * Add an alternative source variable for the RHS of this assign such
+     * that toAssembly includes code for retrieving the RHS value from src
+     * instead of calculating it again.
+     * @param src SharedTemp that the RHS should be retried from
+     */
+    public void alternativeSource(SharedTemp src) {
+        srcOptionalCSE = src;
+    }
+
     @Override
     public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
         assembly.clear();
@@ -409,11 +428,11 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Set<Expr> generatedExprs() {
-        if (assignOp != ASSIGN) return new HashSet<>();
+    public Optional<Expr> generatedExpr() {
+        if (assignOp != ASSIGN) return Optional.empty();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()
-                && canonicalExpr.getIds().contains(dstArrayOrLoc)) return new HashSet<>();
-        return Set.of(canonicalExpr);
+                && canonicalExpr.getIds().contains(dstArrayOrLoc)) return Optional.empty();
+        return Optional.of(canonicalExpr);
     }
 
     @Override

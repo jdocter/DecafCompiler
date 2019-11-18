@@ -163,7 +163,7 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     private LinkedList<InnerCFNode> miniCFGTSCached;
-    private LinkedList<InnerCFNode> getTS() {
+    public LinkedList<InnerCFNode> getTS() {
         if (miniCFGTSCached != null) return miniCFGTSCached;
         LinkedList<InnerCFNode> ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
         miniCFGTSCached = ts;

@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import edu.mit.compilers.cfg.Temp;
@@ -20,9 +21,9 @@ public interface CFStatement {
     List<String> toAssembly(VariableTable variableTable, ImportTable importTable);
 
     /**
-     * @return list of expressions that are available at the end of this CFStatement
+     * @return expression that is available at the end of this CFStatement
      */
-    Set<Expr> generatedExprs();
+    Optional<Expr> generatedExpr();
 
     /**
      * @param exprs list of all expressions that could potentially be killed

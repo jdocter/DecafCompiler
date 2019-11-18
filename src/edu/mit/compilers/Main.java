@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import antlr.Token;
+import edu.mit.compilers.cse.CommonSubExpressionEliminator;
 import edu.mit.compilers.cse.GlobalAvailableSubExpressionsAnalyzer;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
@@ -216,7 +217,7 @@ public class Main {
 
             if (CLI.opts[0]) { // CSE
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                    new GlobalAvailableSubExpressionsAnalyzer(methodDescriptor.getMethodCFG());
+                    new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
                     // copy propagate?
                     // dead code?
                 }

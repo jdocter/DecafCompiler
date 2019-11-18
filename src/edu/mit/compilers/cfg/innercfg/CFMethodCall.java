@@ -14,10 +14,7 @@ import edu.mit.compilers.parser.StringLit;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CFMethodCall extends UIDObject implements CFStatement {
 
@@ -91,8 +88,8 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Set<Expr> generatedExprs() {
-        return Set.of();
+    public Optional<Expr> generatedExpr() {
+        return Optional.empty();
     }
 
     @Override

@@ -11,7 +11,7 @@ public class SharedTemp extends UIDObject implements AssemblyVariable {
         private boolean offsetDeclared = false;
         private long offset;
 
-        SharedTemp() {
+        public SharedTemp() {
             name = "t"+getUID();
         }
 

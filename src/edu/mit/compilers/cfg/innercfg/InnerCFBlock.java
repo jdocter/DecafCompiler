@@ -1,9 +1,6 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.cfg.Temp;
@@ -138,7 +135,10 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     public Set<Expr> generatedExprs(Set<Expr> allExprs) {
         Set<Expr> generated = new HashSet<>();
         for (CFStatement cfStatement: cfStatements) {
-            generated.addAll(cfStatement.generatedExprs());
+            Optional<Expr> statementGen = cfStatement.generatedExpr();
+            if (statementGen.isPresent()) {
+                generated.add(statementGen.get());
+            }
             generated.removeAll(cfStatement.killedExprs(allExprs));
         }
         return generated;
@@ -149,7 +149,10 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
         Set<Expr> killed = new HashSet<>();
         for (CFStatement cfStatement: cfStatements) {
             killed.addAll(cfStatement.killedExprs(allExprs));
-            killed.removeAll(cfStatement.generatedExprs());
+            Optional<Expr> statementGen = cfStatement.generatedExpr();
+            if (statementGen.isPresent()) {
+                killed.remove(statementGen.get());
+            }
         }
         return killed;
     }
