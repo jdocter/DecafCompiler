@@ -44,4 +44,9 @@ public interface CFNode {
      * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
      */
     List<Pair<Temp, List<Temp>>> getTemps();
+
+    Set<Expr> getSubExpressions();
+
+    Set<Expr> generatedExprs(Set<Expr> allExprs);
+    Set<Expr> killedExprs(Set<Expr> allExprs);
 }

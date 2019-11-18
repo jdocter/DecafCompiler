@@ -1,8 +1,10 @@
 package edu.mit.compilers.cfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
@@ -100,6 +102,21 @@ public class CFNop extends UIDObject implements CFNode {
     @Override
     public List<Pair<Temp, List<Temp>>> getTemps() {
         return List.of();
+    }
+
+    @Override
+    public Set<Expr> getSubExpressions() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        return Set.of();
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        return Set.of();
     }
 
     @Override

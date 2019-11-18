@@ -11,11 +11,12 @@ import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.CFNop;
 import edu.mit.compilers.cfg.CFReturn;
 import edu.mit.compilers.cfg.Temp;
+import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 
 
-public class TempOffsetAssigner implements CFVisitor {
+public class TempOffsetAssigner {
     /**
      * Assigns every temp a different offset for now.
      *
@@ -24,12 +25,19 @@ public class TempOffsetAssigner implements CFVisitor {
 
     public long tempOffsetStart;
     public long maxTempOffset;
+    private CFNode methodCFGStart;
 
     private final Set<CFNode> visited = new HashSet<>();
 
-    public TempOffsetAssigner(long maxMethodStackOffset) {
+    public TempOffsetAssigner(MethodDescriptor methodDescriptor, long maxMethodStackOffset) {
         tempOffsetStart = maxMethodStackOffset;
         maxTempOffset = tempOffsetStart;
+        this.methodCFGStart = methodDescriptor.getMethodCFG();
+    }
+
+    public long populate() {
+        visitNode(methodCFGStart);
+        return maxTempOffset;
     }
 
     private void visitNode(CFNode node) {
@@ -54,28 +62,7 @@ public class TempOffsetAssigner implements CFVisitor {
         }
 
         for (CFNode child: node.dfsTraverse()) {
-            child.accept(this);
+            visitNode(child);
         }
     }
-
-    @Override
-    public void visit(CFBlock cfBlock) {
-        visitNode(cfBlock);
-    }
-
-    @Override
-    public void visit(CFConditional cfConditional) {
-        visitNode(cfConditional);
-    }
-
-    @Override
-    public void visit(CFNop cfNop) {
-        visitNode(cfNop);
-    }
-
-    @Override
-    public void visit(CFReturn cfReturn) {
-        visitNode(cfReturn);
-    }
-
 }

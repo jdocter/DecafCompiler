@@ -1,5 +1,6 @@
-package edu.mit.compilers.cfg;
+package edu.mit.compilers.assembly;
 
+import edu.mit.compilers.cfg.*;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.visitor.CFVisitor;
 import java.util.ArrayList;
@@ -8,6 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 public class MethodAssemblyCollector implements CFVisitor {
+    /**
+     * To be called AFTER TempifySubExpressions
+     */
 
     private final Set<CFNode> visited = new HashSet<>();
 

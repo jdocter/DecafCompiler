@@ -45,6 +45,19 @@ public class FieldTable extends HashMap<String, FieldDescriptor> implements Vari
 
     @Override
     public int getUID() {
-        return 0; // should only be one field table, depth 0
+        return GLOBAL_SCOPE_UID; // should only be one field table, depth 0
+    }
+
+    @Override
+    public FieldTable getFieldTable() {
+        return this;
+    }
+
+    @Override
+    public int getDeclarationScope(String id) {
+        if (this.containsKey(id)) {
+           return this.getUID();
+        }
+        throw new RuntimeException("bad semantic checking: ID " + id + " does not exist");
     }
 }

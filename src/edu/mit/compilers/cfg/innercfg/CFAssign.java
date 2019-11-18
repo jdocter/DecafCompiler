@@ -1,16 +1,20 @@
-package edu.mit.compilers.cfg;
+package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.AssemblyVariable;
+import edu.mit.compilers.cfg.SharedTemp;
+import edu.mit.compilers.cfg.Temp;
+import edu.mit.compilers.cfg.Variable;
 import edu.mit.compilers.inter.*;
 
 import edu.mit.compilers.parser.BinOp;
+import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Lit;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CFAssign extends UIDObject implements CFStatement {
 
@@ -28,20 +32,29 @@ public class CFAssign extends UIDObject implements CFStatement {
     public static final int TRUE = 7;
     public static final int FALSE = 8;
 
-
-
+    // Destination variables
     public AssemblyVariable dstArrayOrLoc;
     public AssemblyVariable dstArrayOffset;
 
+    // assignment type
     public String assignOp;
 
+    // Source Variables and Literals
     public AssemblyVariable srcLeftOrSingle;
     public BinOp srcBinOp;
     public AssemblyVariable srcRight;
-    public Id srcId;
-    public Id srcArray;
+    public Variable srcId;
+    public Variable srcArray;
     public AssemblyVariable srcArrayOffset;
     public Lit srcLit;
+
+    // Expression that destination will hold
+    public Expr canonicalExpr;
+
+    // Optional additional destination for expression, to be used for Common Subexpression Elimination
+    public SharedTemp dstOptionalCSE;
+    // Optional additional source for expression, to be used for Common Subexpression Elimination
+    public SharedTemp srcOptionalCSE;
 
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
@@ -49,18 +62,10 @@ public class CFAssign extends UIDObject implements CFStatement {
     public static final String INC = "++";
     public static final String DEC = "--";
 
+    private CFAssign(Expr canonicalExpr) {this.canonicalExpr = canonicalExpr;};
 
-    public CFAssign(Id id, Temp tempLocExpr, String assignExprOp, AssemblyVariable assignExpr) {
-        this.dstArrayOrLoc = id;
-        this.dstArrayOffset = tempLocExpr;
-        this.assignOp = assignExprOp;
-        this.srcLeftOrSingle = assignExpr;
-        this.type = SIMPLE;
-    }
-    private CFAssign() {};
-
-    public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
         result.assignOp = assignExprOp;
@@ -70,8 +75,8 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
 
-    public static CFAssign makeMinus(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeMinus(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -80,8 +85,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLen(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id id) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeLen(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable id, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = LEN;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -90,8 +95,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLit(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeLit(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = LIT;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -100,8 +105,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeArrayLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id srcArray, AssemblyVariable srcArrayOffset) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeArrayLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable srcArray, AssemblyVariable srcArrayOffset, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = ARRAY_LOC;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -111,8 +116,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Id src) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable src, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = SIMPLE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -121,8 +126,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLoadRax(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeLoadRax(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = METHOD_CALL;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -131,8 +136,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeNot(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand) {
-        CFAssign result = new CFAssign();
+    public static CFAssign makeNot(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -141,8 +146,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignTrue(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
-        CFAssign result = new CFAssign();
+    public static CFAssign assignTrue(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = TRUE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -150,8 +155,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignFalse(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset) {
-        CFAssign result = new CFAssign();
+    public static CFAssign assignFalse(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = FALSE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -159,8 +164,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignBinOp(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right) {
-        CFAssign result = new CFAssign();
+    public static CFAssign assignBinOp(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right, Expr canonicalExpr) {
+        CFAssign result = new CFAssign(canonicalExpr);
         result.type = BIN_OP;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -215,6 +220,13 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     private void srcToAssembly(VariableTable variableTable, String dst) {
+        if (srcOptionalCSE != null) {
+            if (!assignOp.equals(ASSIGN)) throw new RuntimeException("CSE error");
+            assembly.add("movq -" + srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + this.toString());
+            assembly.add("movq %rax, " + dst);
+            return;
+        }
+
         switch (assignOp) { // TODO rax srcTemp?
             case MEQ:
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax");
@@ -234,6 +246,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             case LEN:
                 if (srcId.isArray(variableTable)) {
                     assembly.add("movq $" + srcId.getArrayLength(variableTable) + ", " + dst + " # " + this.toString());
+                    additionalDestinationToAssembly(variableTable, "$" + srcId.getArrayLength(variableTable));
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
@@ -242,11 +255,13 @@ public class CFAssign extends UIDObject implements CFStatement {
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + this.toString());
                 assembly.add("negq %rax");
                 assembly.add("movq %rax, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rax");
                 break;
             case NOT:
                 assembly.add("movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + this.toString());
                 assembly.add("xorq $1, %rax");
                 assembly.add("movq %rax, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rax");
                 break;
             case ARRAY_LOC:
                 String arrayLoc;
@@ -266,6 +281,7 @@ public class CFAssign extends UIDObject implements CFStatement {
                 }
                 assembly.add("movq " + arrayLoc + ", %rsi # " + this.toString()); // is this ok?
                 assembly.add("movq %rsi, " + dst);
+                additionalDestinationToAssembly(variableTable, "%rsi");
 
                 break;
             case SIMPLE:
@@ -275,28 +291,39 @@ public class CFAssign extends UIDObject implements CFStatement {
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("subq %rax, " + dst);
+                        // can't have additional destination?
                         return;
                     case PEQ:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
                         assembly.add("addq %rax, " + dst);
+                        // can't have additional destination?
                         return;
                     case INC: assembly.add("incq " + dst); return;
                     case DEC: assembly.add("decq " + dst); return;
-                    case ASSIGN: 
+                    case ASSIGN:
                         assembly.add(srcLeftOrSingle.isGlobal(variableTable) ?
                                 "movq " + srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
                                 "movq -" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("movq %rax, " + dst); return;
+                        assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
+                        return;
                 }
                 break;
             case METHOD_CALL:
                 assembly.add("");
                 assembly.add("movq %rax, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "%rax");
                 assembly.add("");
                 break;
             case BIN_OP:
+                final String srcLeftString = srcLeftOrSingle.isGlobal(variableTable) ?
+                            srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip)":
+                            "-" + srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp)";
+                final String srcRightString = srcRight.isGlobal(variableTable) ?
+                            srcRight.getGlobalLabel(variableTable) + "(%rip)":
+                            "-" + srcRight.getStackOffset(variableTable) + "(%rbp)";
                 assembly.add("# "+this.toString());
                 switch (srcBinOp.binOp) {
                     case BinOp.AND:
@@ -308,53 +335,87 @@ public class CFAssign extends UIDObject implements CFStatement {
                     case BinOp.LEQ:
                     case BinOp.GT:
                     case BinOp.LT:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("cmpq -" + srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("cmpq " + srcRightString + ", %rax");
                         assembly.add(getBinopCommand() + " %al");
                         assembly.add("movzbq %al, %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MINUS:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("subq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("subq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.PLUS:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("addq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("addq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.MOD:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
                         assembly.add("cqto"); // sign extend
-                        assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
+                        assembly.add("idivq "+srcRightString);
                         assembly.add("movq %rdx, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rdx");
                         break;
                     case BinOp.MUL:
-                        assembly.add("movq -"+ srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
-                        assembly.add("imulq -"+srcRight.getStackOffset(variableTable) + "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
+                        assembly.add("imulq " + srcRightString + ", %rax");
                         assembly.add("movq %rax, " + dst); // TODO overflow?
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                     case BinOp.DIV:
-                        assembly.add("movq -"+srcLeftOrSingle.getStackOffset(variableTable)+ "(%rbp), %rax");
+                        assembly.add("movq " + srcLeftString + ", %rax");
                         assembly.add("cqto"); // sign extend
-                        assembly.add("idivq -"+srcRight.getStackOffset(variableTable) + "(%rbp)");
+                        assembly.add("idivq " + srcRightString);
                         assembly.add("movq %rax, " + dst);
+                        additionalDestinationToAssembly(variableTable, "%rax");
                         break;
                 }
                 break;
             case LIT:
                 // TODO runtime checks
                 assembly.add("movq " + srcLit.toAssembly() + ", " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, srcLit.toAssembly());
                 break;
             case TRUE:
                 assembly.add("movq $1, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "$1"); // seems unnecessary?
                 break;
             case FALSE:
                 assembly.add("movq $0, " + dst + " # " + this.toString());
+                additionalDestinationToAssembly(variableTable, "$0"); // seems unnecessary?
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
+    }
+
+    private void additionalDestinationToAssembly(VariableTable variableTable, String src) {
+        if (dstOptionalCSE != null) {
+            assembly.add("movq " + src + ", -" + dstOptionalCSE.getStackOffset(variableTable) + "(%rbp) # " + dstOptionalCSE + " = " + this.canonicalExpr);
+        }
+    }
+
+    /**
+     * Add another destination variable for the RHS of this assign such
+     * that toAssembly includes code for storing the RHS value in dst
+     * @param dst SharedTemp that the RHS should also be stored in
+     */
+    public void additionalDestination(SharedTemp dst) {
+        dstOptionalCSE = dst;
+    }
+
+    /**
+     * Add an alternative source variable for the RHS of this assign such
+     * that toAssembly includes code for retrieving the RHS value from src
+     * instead of calculating it again.
+     * @param src SharedTemp that the RHS should be retried from
+     */
+    public void alternativeSource(SharedTemp src) {
+        srcOptionalCSE = src;
     }
 
     @Override
@@ -366,12 +427,45 @@ public class CFAssign extends UIDObject implements CFStatement {
         return AssemblyFactory.indent(assembly);
     }
 
+    @Override
+    public Optional<Expr> generatedExpr() {
+        if (assignOp != ASSIGN) return Optional.empty();
+        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
+                && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
+        return Optional.of(canonicalExpr);
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> exprs) {
+        Set<Expr> killed = new HashSet<>();
+        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
+            for (Expr subExpr : exprs) {
+                if (subExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) {
+                    killed.add(subExpr);
+                }
+            }
+        }
+        return killed;
+    }
+
+    @Override
+    public Expr getRHS() {
+        return this.canonicalExpr;
+    }
+
+    @Override
+    public Set<SharedTemp> getSharedTemps() {
+        if (dstOptionalCSE != null) return Set.of(dstOptionalCSE);
+        else return Set.of();
+    }
+
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-//        if (srcExpr == null) {
-//            return "" + dstArrayOrLoc + offsetStr + assignOp;
-//        }
-        String dst =  "" + dstArrayOrLoc + offsetStr;
+        String dst =  "" + dstArrayOrLoc + offsetStr + " {canonical: " + canonicalExpr + "}";
+
+        if (srcOptionalCSE != null) {
+            return dst + " = " + srcOptionalCSE;
+        }
 
         switch (assignOp) {
             case MEQ:
@@ -391,7 +485,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             case LIT: return dst + " = " + srcLit;
             case TRUE: return dst + " = true";
             case FALSE: return dst + " = false";
-            case SIMPLE: return dst + " = " + srcId;
+            case SIMPLE: return dst + " = " + srcLeftOrSingle;
             case ARRAY_LOC: return dst + " = " + srcArray + "[" + srcArrayOffset + "]";
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
@@ -400,12 +494,12 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Pair<Temp, List<Temp>> getTemps() {
         Temp left = dstArrayOrLoc instanceof Temp ? (Temp) dstArrayOrLoc : null;
-        List<Temp> right = new ArrayList();
+        List<Temp> right = new ArrayList<Temp>();
         if (dstArrayOffset != null && dstArrayOffset instanceof Temp) right.add((Temp) dstArrayOffset);
         if (srcLeftOrSingle != null && srcLeftOrSingle instanceof Temp) right.add((Temp) srcLeftOrSingle);
         if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
         if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
-        return new Pair(left,right);
+        return new Pair<Temp, List<Temp>>(left,right);
     }
 
     private String getBinopCommand() {
@@ -430,7 +524,4 @@ public class CFAssign extends UIDObject implements CFStatement {
         }
     }
 
-    public boolean isTempAssignment() {
-        return dstArrayOrLoc instanceof Temp;
-    }
 }

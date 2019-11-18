@@ -7,9 +7,11 @@ import edu.mit.compilers.inter.VariableDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.visitor.ASTVisitor;
 
-public class Id extends Node implements AssemblyVariable {
+public class Id extends Node {
     private final String id;
-    public Id(String id) {
+    private int declarationScope;
+
+    Id(String id) {
         this.id = id;
     }
 
@@ -17,22 +19,12 @@ public class Id extends Node implements AssemblyVariable {
         return id;
     }
 
-    @Override
-    public String getGlobalLabel(VariableTable variableTable) {
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id);
-        return ((FieldDescriptor) variableDescriptor).getGlobalLabel();
+    public void setDeclarationScope(int declarationScope) {
+        this.declarationScope = declarationScope;
     }
 
-    @Override
-    public long getArrayLength(VariableTable variableTable) {
-        VariableDescriptor variableDescriptor = variableTable.getDescriptor(id);
-        TypeDescriptor typeDescriptor = variableDescriptor.getTypeDescriptor();
-        return typeDescriptor.getLength();
-    }
-
-    @Override
-    public int getElementSize(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).getTypeDescriptor().elementSize();
+    public int getDeclarationScope() {
+        return this.declarationScope;
     }
 
     @Override
@@ -41,21 +33,16 @@ public class Id extends Node implements AssemblyVariable {
     }
 
     @Override public String toString() {
-        return id;
+        return id + "_s" + declarationScope;
     }
 
     @Override
-    public long getStackOffset(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).getStackOffset();
+    public int hashCode() {
+        return id.hashCode() + declarationScope;
     }
 
     @Override
-    public boolean isGlobal(VariableTable variableTable) {
-        return variableTable.getDescriptor(id).isGlobal();
-    }
-
-    @Override
-    public boolean isArray(VariableTable variableTable) {
-        return  variableTable.getDescriptor(id).getTypeDescriptor().isArray();
+    public boolean equals(Object obj) {
+        return obj instanceof Id && id.equals(((Id) obj).id) && declarationScope == ((Id) obj).declarationScope;
     }
 }

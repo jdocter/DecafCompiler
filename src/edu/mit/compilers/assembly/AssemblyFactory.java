@@ -1,7 +1,6 @@
 package edu.mit.compilers.assembly;
 
 import edu.mit.compilers.cfg.CFNode;
-import edu.mit.compilers.cfg.MethodAssemblyCollector;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.parser.StringLit;
 
@@ -117,12 +116,14 @@ public class AssemblyFactory {
     private static List<String> methodAssemblyGen(MethodDescriptor methodDescriptor, ImportTable importTable) {
         List<String> assembly = new ArrayList<>();
         // populate stack offset and get count (in methodDescriptor.block)
-        long totalLocalBytes = new MethodStackOffsetsPopulator(methodDescriptor).populate();
+        long localVariableOffset = new MethodStackOffsetsPopulator(methodDescriptor).populate();
+
+        // assign stack offset for shared temps and get running stack count
+        long sharedTempOffset = new SharedTempOffsetAssigner(methodDescriptor, localVariableOffset).populate();
 
         // populate temp offsets
-        TempOffsetAssigner tempOffsetAssigner = new TempOffsetAssigner(totalLocalBytes);
-        CFNode methodCFG = methodDescriptor.getMethodCFG();
-        methodCFG.accept(tempOffsetAssigner);
+        long maxTempOffset = new TempOffsetAssigner(methodDescriptor, sharedTempOffset).populate();
+
 
         // LABEL
         if (methodDescriptor.getMethodName().equals("main")) {
@@ -136,7 +137,7 @@ public class AssemblyFactory {
         List<String> prologue = new ArrayList<>();
 
         // allocate space rsp
-        long totalMethodBytes = tempOffsetAssigner.maxTempOffset;
+        long totalMethodBytes = maxTempOffset;
         long methodOffset = (long) Math.ceil(totalMethodBytes/16.0) * 16;
 
         prologue.add("enter $("+methodOffset+"), $0");
@@ -165,7 +166,7 @@ public class AssemblyFactory {
         assembly.addAll(AssemblyFactory.indent(prologue));
 
         // assemblyGen for CFMethodStart
-        List<String> methodBodyAssembly = new MethodAssemblyCollector(methodCFG, importTable).getInstructions();
+        List<String> methodBodyAssembly = new MethodAssemblyCollector(methodDescriptor.getMethodCFG(), importTable).getInstructions();
         assembly.addAll(methodBodyAssembly);
 
         return assembly;

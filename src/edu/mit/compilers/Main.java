@@ -2,17 +2,17 @@ package edu.mit.compilers;
 
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import antlr.Token;
+import edu.mit.compilers.cse.CommonSubExpressionEliminator;
+import edu.mit.compilers.cse.GlobalAvailableSubExpressionsAnalyzer;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
-import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.MethodCFGFactory;
 /*
  * You have to include this line, or else when you ant clean,
@@ -29,9 +29,12 @@ import edu.mit.compilers.semantics.UniqueGlobalIds;
 import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
+
+    public static final String[] optnames = {"cse"};
+
   public static void main(String[] args) {
     try {
-      CLI.parse(args, new String[0]);
+      CLI.parse(args, optnames);
       InputStream inputStream = args.length == 0 ?
           System.in : new java.io.FileInputStream(CLI.infile);
       PrintStream outputStream = CLI.outfile == null ? System.out : new java.io.PrintStream(new java.io.FileOutputStream(CLI.outfile));
@@ -158,6 +161,9 @@ public class Main {
                    System.exit(1);
                }
 
+               // set Declaration Scopes on all Id's
+               new EliminateShadowingVisitor(table);
+
                MethodCFGFactory.makeAndSetMethodCFGs(table);
                for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
                    outputStream.println("CFG for " + methodDescriptor.getMethodName());
@@ -204,7 +210,18 @@ public class Main {
                 System.exit(1);
             }
 
+            // set Declaration Scopes on all Id's
+            new EliminateShadowingVisitor(table);
+
             MethodCFGFactory.makeAndSetMethodCFGs(table);
+
+            if (CLI.opts[0]) { // CSE
+                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                    new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                    // copy propagate?
+                    // dead code?
+                }
+            }
 
             List<String> assembly = AssemblyFactory.programAssemblyGen(table);
 
