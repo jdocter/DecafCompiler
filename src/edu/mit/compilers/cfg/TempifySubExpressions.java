@@ -213,18 +213,24 @@ public class TempifySubExpressions implements CFVisitor {
             case Expr.BIN_OP:
                 AssemblyVariable left;
                 AssemblyVariable right;
+                Pair<InnerCFNode, InnerCFNode> leftCFG;
+                Pair<InnerCFNode, InnerCFNode> rightCFG;
                 if (expr.expr.exprType == Expr.LOC && expr.expr.loc.expr == null) {
                     left = new Variable(expr.expr.loc.id);
+                    InnerCFNop nop = new InnerCFNop();
+                    leftCFG = new Pair(nop, nop);
                 } else {
                     left = new Temp();
+                    leftCFG = destructExprAssignTemp(expr.expr, left, null, locals);
                 }
                 if (expr.binOpExpr.exprType == Expr.LOC && expr.binOpExpr.loc.expr == null) {
                     right = new Variable(expr.binOpExpr.loc.id);
+                    InnerCFNop nop = new InnerCFNop();
+                    rightCFG = new Pair(nop, nop);
                 } else {
                     right = new Temp();
+                    rightCFG = destructExprAssignTemp(expr.binOpExpr, right, null, locals);
                 }
-                Pair<InnerCFNode, InnerCFNode> leftCFG = destructExprAssignTemp(expr.expr, left, null, locals);
-                Pair<InnerCFNode, InnerCFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, null, locals);
 
                 // for shortcircuiting
                 InnerCFBlock assignTrue = new InnerCFBlock(CFAssign.assignTrue(arrayOrLoc, arrayOffset, expr), locals);
