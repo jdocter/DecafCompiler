@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -8,11 +9,8 @@ import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
-import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +34,7 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     private BinOp binOp;
     private Temp right;
 
-    public InnerCFConditional(Temp temp, InnerCFNode ifTrue, InnerCFNode ifFalse, VariableTable variableTable) {
+    public InnerCFConditional(AssemblyVariable temp, InnerCFNode ifTrue, InnerCFNode ifFalse, VariableTable variableTable) {
         this.boolTemp = temp;
         this.left = null;
         this.binOp = null;

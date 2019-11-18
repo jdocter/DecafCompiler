@@ -53,7 +53,7 @@ public class TempifySubExpressions implements CFVisitor {
         if (!visited.contains(cfConditional)) {
             Expr toTempify = cfConditional.getBoolExpr();
             Temp cond = new Temp();
-            Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, cond, cfConditional.getVariableTable());
+            Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, cond,  cfConditional.getVariableTable());
             ct.getValue().setNext(new InnerCFNop()); // want to be able to replace with a CFEndOfMiniCFG
             InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfConditional);
             ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
@@ -84,7 +84,7 @@ public class TempifySubExpressions implements CFVisitor {
             if (cfReturn.getReturnExpr() != null) {
                 Expr toTempify = cfReturn.getReturnExpr();
                 Temp t = new Temp();
-                Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, t, cfReturn.getVariableTable());
+                Pair<InnerCFNode, InnerCFNode> ct = destructExprAssignTemp(toTempify, t, null, cfReturn.getVariableTable());
                 ct.getValue().setNext(new InnerCFNop()); // want to be able to replace with a CFEndOfMiniCFG
                 InnerMergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new InnerMergeBasicBlocksAndRemoveNops(cfReturn);
                 ct.getKey().accept(mergeBasicBlocksAndRemoveNops);
@@ -210,10 +210,20 @@ public class TempifySubExpressions implements CFVisitor {
                 notOperandCFG.getValue().setNext(cfBlockNot);
                 return new Pair<InnerCFNode, InnerCFNode>(notOperandCFG.getKey(), cfBlockNot);
             case Expr.BIN_OP:
-                Temp left = new Temp();
-                Temp right = new Temp();
-                Pair<InnerCFNode, InnerCFNode> leftCFG = destructExprAssignTemp(expr.expr, left, locals);
-                Pair<InnerCFNode, InnerCFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, locals);
+                AssemblyVariable left;
+                AssemblyVariable right;
+                if (expr.expr.exprType == Expr.LOC && expr.expr.loc.expr == null) {
+                    left = new Variable(expr.expr.loc.id);
+                } else {
+                    left = new Temp();
+                }
+                if (expr.binOpExpr.exprType == Expr.LOC && expr.binOpExpr.loc.expr == null) {
+                    right = new Variable(expr.binOpExpr.loc.id);
+                } else {
+                    right = new Temp();
+                }
+                Pair<InnerCFNode, InnerCFNode> leftCFG = destructExprAssignTemp(expr.expr, left, null, locals);
+                Pair<InnerCFNode, InnerCFNode> rightCFG = destructExprAssignTemp(expr.binOpExpr, right, null, locals);
 
                 // for shortcircuiting
                 InnerCFBlock assignTrue = new InnerCFBlock(CFAssign.assignTrue(arrayOrLoc, arrayOffset, expr), locals);
@@ -267,7 +277,7 @@ public class TempifySubExpressions implements CFVisitor {
             if (arg.getKey() != null) {
                 // expr
                 Temp argTemp = new Temp();
-                Pair<InnerCFNode, InnerCFNode> argPrep = destructExprAssignTemp(arg.getKey(), argTemp, locals);
+                Pair<InnerCFNode, InnerCFNode> argPrep = destructExprAssignTemp(arg.getKey(), argTemp, null, locals);
                 prev.setNext(argPrep.getKey());
                 prev = argPrep.getValue();
                 argTemps.add(new Pair<Temp, StringLit>(argTemp, null));
