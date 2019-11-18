@@ -110,6 +110,16 @@ public class CFNop extends UIDObject implements CFNode {
     }
 
     @Override
+    public Set<Expr> generatedExprs(Set<Expr> allExprs) {
+        return Set.of();
+    }
+
+    @Override
+    public Set<Expr> killedExprs(Set<Expr> allExprs) {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_nop_" + UID;
     }
