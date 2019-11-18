@@ -2,6 +2,7 @@ package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.cfg.Variable;
 import edu.mit.compilers.inter.FieldTable;
@@ -122,5 +123,10 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     @Override
     public Expr getRHS() {
         return null; // not tracking Method Call exprs bc they don't need to be eliminated
+    }
+
+    @Override
+    public Set<SharedTemp> getSharedTemps() {
+        return Set.of();
     }
 }

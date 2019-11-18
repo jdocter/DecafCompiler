@@ -32,8 +32,11 @@ public class SharedTemp extends UIDObject implements AssemblyVariable {
 
         @Override
         public int getElementSize(VariableTable variableTable) {
-            return 8;
+            return getElementSize();
         }
+        public int getElementSize() {
+        return 8;
+    }
 
         public void setOffset(long offset) {
             this.offset = offset;

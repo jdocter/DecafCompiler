@@ -50,6 +50,10 @@ public class CFBlock extends UIDObject implements CFNode {
         return miniCFGEnd;
     }
 
+    public InnerCFNode getMiniCFGStart() {
+        return miniCFGStart;
+    }
+
     @Override
     public void setNext(CFNode next) {
         isEnd = false;

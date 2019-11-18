@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodTable;
@@ -40,5 +41,5 @@ public interface CFStatement {
 
     Expr getRHS();
 
-
+    Set<SharedTemp> getSharedTemps();
 }

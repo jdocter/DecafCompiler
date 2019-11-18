@@ -60,6 +60,10 @@ public class CFConditional extends UIDObject implements CFNode {
         return miniCFGEnd;
     }
 
+    public InnerCFNode getMiniCFGStart() {
+        return miniCFGStart;
+    }
+
     public void replaceExpr(Temp temp) {
         this.boolTemp = temp;
         this.boolExpr = null;

@@ -454,6 +454,12 @@ public class CFAssign extends UIDObject implements CFStatement {
         return this.canonicalExpr;
     }
 
+    @Override
+    public Set<SharedTemp> getSharedTemps() {
+        if (dstOptionalCSE != null) return Set.of(dstOptionalCSE);
+        else return Set.of();
+    }
+
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
         String dst =  "" + dstArrayOrLoc + offsetStr + " {canonical: " + canonicalExpr + "}";
