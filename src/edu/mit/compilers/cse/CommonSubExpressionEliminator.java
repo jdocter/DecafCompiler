@@ -77,8 +77,6 @@ public class CommonSubExpressionEliminator implements CFVisitor {
 
         Set<Expr> available = new HashSet<>(analysis.in.get(cfBlock));
 
-        System.err.println("Block " + cfBlock.getUID() + " IN: " + available);
-
         LinkedList<InnerCFNode> ts = cfBlock.getTS();
         for (InnerCFNode node : ts) {
             eliminateExprsInnerCFNode(available, node, cfBlock.parents());

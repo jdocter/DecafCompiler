@@ -445,7 +445,6 @@ public class CFAssign extends UIDObject implements CFStatement {
                 }
             }
         }
-        // System.err.println("KILLED FOR " + this + " : " + killed);
         return killed;
     }
 
