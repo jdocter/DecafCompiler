@@ -16,6 +16,15 @@ void main ( ) {
     a = 1;
   }
   d = ( a + b ) * ( a + b );
+
+
+  for (a = 0; a < b; a++) {
+      e = ( c + b ) * ( c + b );
+      c += 1;
+      if (e == 3) {
+      	 return;
+      }
+  }
   printf ( "%d\n", c );
   printf ( "%d\n", d );
 }

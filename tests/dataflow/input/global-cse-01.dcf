@@ -15,6 +15,14 @@ void main ( ) {
     e = ( a + b ) * ( a + b );
   }
   d = ( a + b ) * ( a + b );
+
+
+  for (a = 0; a < ( c + b ) * ( c + b ); a++) {
+      e = ( c + b ) * ( c + b );
+      c = a;
+      d = ( c + b ) * ( c + b );
+  }
+
   printf ( "%d\n", c );
   printf ( "%d\n", d );
 }
