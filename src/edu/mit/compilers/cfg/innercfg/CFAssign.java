@@ -395,7 +395,7 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     private void additionalDestinationToAssembly(VariableTable variableTable, String src) {
         if (dstOptionalCSE != null) {
-            assembly.add("movq " + src + ", -" + dstOptionalCSE.getStackOffset(variableTable) + "(%rbp)");
+            assembly.add("movq " + src + ", -" + dstOptionalCSE.getStackOffset(variableTable) + "(%rbp) # " + dstOptionalCSE + " = " + this.canonicalExpr);
         }
     }
 
