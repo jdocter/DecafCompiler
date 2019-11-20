@@ -41,26 +41,6 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        assembly.add(getAssemblyLabel() + ":");
-        for (CFStatement cfStatement : cfStatements) {
-            assembly.addAll(cfStatement.toAssembly(variableTable, importTable));
-        }
-
-        List<String> body = new ArrayList<>();
-        if (!isEnd) {
-            body.add("jmp " + next.getAssemblyLabel());
-        } else {
-            throw new RuntimeException("Didn't expect a CFBlock to end the CFG");
-        }
-
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
-    }
-
-    @Override
     public Set<InnerCFNode> parents() {
         return this.parents;
     }
@@ -105,6 +85,10 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
 
     public List<CFStatement> getCfStatements() {
         return cfStatements;
+    }
+
+    public boolean isEnd() {
+        return isEnd;
     }
 
     /**

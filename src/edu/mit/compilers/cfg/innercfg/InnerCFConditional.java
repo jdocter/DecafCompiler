@@ -48,20 +48,6 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
         this.variableTable = variableTable;
     }
 
-    @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        assembly.add(getAssemblyLabel() + ":");
-        List<String> body = new ArrayList<>();
-        body.add("cmpq $1, -" + boolTemp.getStackOffset(variableTable) + "(%rbp) # true = " + boolTemp);
-        body.add("jne " + ifFalse.getAssemblyLabel() + " # ifFalse");
-        body.add("jmp " + ifTrue.getAssemblyLabel() + " # ifTrue");
-
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
-    }
-
     private String getOppositeJumpCommand() {
         switch (binOp.binOp) {
             case BinOp.AND:
@@ -140,6 +126,10 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
             this.ifTrue = replacement;
             this.ifTrue.addParent(this);
         }
+    }
+
+    public AssemblyVariable getBoolTemp() {
+        return boolTemp;
     }
 
     public InnerCFNode getIfTrue() {

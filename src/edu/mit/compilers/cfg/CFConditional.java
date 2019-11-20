@@ -46,6 +46,10 @@ public class CFConditional extends UIDObject implements CFNode {
         this.variableTable = variableTable;
     }
 
+    public Temp getBoolTemp() {
+        return boolTemp;
+    }
+
     public Expr getBoolExpr() {
         return boolExpr;
     }
@@ -67,28 +71,6 @@ public class CFConditional extends UIDObject implements CFNode {
     public void replaceExpr(Temp temp) {
         this.boolTemp = temp;
         this.boolExpr = null;
-    }
-
-    @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
-        assembly.add(getEndOfMiniCFGLabel() + ":");
-
-        List<String> body = new ArrayList<>();
-
-        if (this.boolTemp == null) {
-            throw new UnsupportedOperationException("You must call TempifySubExpressions on a CFConditional before collecting Assembly code!");
-        }
-
-        body.add("cmpq $1, -" + boolTemp.getOffset() + "(%rbp) # true = " + boolTemp);
-        body.add("jne " + ifFalse.getAssemblyLabel() + " # ifFalse");
-        body.add("jmp " + ifTrue.getAssemblyLabel() + " # ifTrue");
-
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
     }
 
     @Override

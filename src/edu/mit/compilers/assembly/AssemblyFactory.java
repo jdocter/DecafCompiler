@@ -1,6 +1,5 @@
 package edu.mit.compilers.assembly;
 
-import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.parser.StringLit;
 
@@ -20,6 +19,9 @@ public class AssemblyFactory {
         return body.stream()
                 .map((String line) -> {return INDENTATION + line;})
                 .collect(Collectors.toList());
+    }
+    public static String indent(String s) {
+        return INDENTATION + s;
     }
 
     /**
@@ -166,7 +168,7 @@ public class AssemblyFactory {
         assembly.addAll(AssemblyFactory.indent(prologue));
 
         // assemblyGen for CFMethodStart
-        List<String> methodBodyAssembly = new MethodAssemblyCollector(methodDescriptor.getMethodCFG(), importTable).getInstructions();
+        List<String> methodBodyAssembly = new MethodAssemblyGenerator(methodDescriptor.getMethodCFG(), importTable).getInstructions();
         assembly.addAll(methodBodyAssembly);
 
         return assembly;

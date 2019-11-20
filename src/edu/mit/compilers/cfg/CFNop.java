@@ -25,23 +25,6 @@ public class CFNop extends UIDObject implements CFNode {
     private Set<CFNode> parents = new HashSet<CFNode>();
 
     @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        List<String> body = new ArrayList<>();
-        if (!isEnd) {
-            body.add("jmp " + next.getAssemblyLabel());
-        } else {
-            // should have been end of MiniCFG
-            throw new UnsupportedOperationException("CFNop should have been constructed as a CFEndOfMiniCFG");
-        }
-
-        assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
-    }
-
-    @Override
     public Set<CFNode> parents() {
         return this.parents;
     }

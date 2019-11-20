@@ -11,15 +11,9 @@ import edu.mit.compilers.inter.MethodTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
+import edu.mit.compilers.visitor.StatementCFVisitor;
 
 public interface CFStatement {
-    /**
-     * Generates functional assembly code representing CFStatement
-     * @param variableTable
-     * @param importTable
-     * @return
-     */
-    List<String> toAssembly(VariableTable variableTable, ImportTable importTable);
 
     /**
      * @return expression that is available at the end of this CFStatement
@@ -42,4 +36,6 @@ public interface CFStatement {
     Expr getRHS();
 
     Set<SharedTemp> getSharedTemps();
+
+    void accept(StatementCFVisitor v);
 }
