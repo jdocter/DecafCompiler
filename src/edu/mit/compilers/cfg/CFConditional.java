@@ -4,7 +4,6 @@ import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
-import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;

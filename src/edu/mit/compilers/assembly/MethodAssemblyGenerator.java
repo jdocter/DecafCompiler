@@ -199,24 +199,19 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         else innerVisited.add(cfNop);
 
         List<String> body = new ArrayList<>();
+        instructions.add(cfNop.getAssemblyLabel() + ":");
         if (!cfNop.isEnd()) {
-            body.add("jmp " + cfNop.getNext().getAssemblyLabel());
+          instructions.add(AssemblyFactory.indent("jmp " + cfNop.getNext().getAssemblyLabel()));
+        } else if (cfNop instanceof InnerCFEndOfMiniCFG) {
+          instructions.add(AssemblyFactory.indent("jmp " + ((InnerCFEndOfMiniCFG) cfNop).getEnclosingNode().getEndOfMiniCFGLabel()));
         } else {
             // should have been end of MiniCFG
             throw new UnsupportedOperationException("CFNop should have been constructed as a CFEndOfMiniCFG");
         }
 
-        instructions.add(cfNop.getAssemblyLabel() + ":");
-        instructions.addAll(AssemblyFactory.indent(body));
-
         for (InnerCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
-    }
-
-    public void visit(InnerCFEndOfMiniCFG endOfMiniCFG) {
-        instructions.add(endOfMiniCFG.getAssemblyLabel() + ":");
-        instructions.add(AssemblyFactory.indent("jmp " + endOfMiniCFG.getEnclosingNode().getEndOfMiniCFGLabel()));
     }
 
     @Override
