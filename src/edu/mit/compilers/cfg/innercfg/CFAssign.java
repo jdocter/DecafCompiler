@@ -9,7 +9,6 @@ import edu.mit.compilers.inter.*;
 
 import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.parser.Id;
 import edu.mit.compilers.parser.Lit;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
@@ -52,9 +51,9 @@ public class CFAssign extends UIDObject implements CFStatement {
     public Expr canonicalExpr;
 
     // Optional additional destination for expression, to be used for Common Subexpression Elimination
-    public SharedTemp dstOptionalCSE;
+    public AssemblyVariable dstOptionalCSE;
     // Optional additional source for expression, to be used for Common Subexpression Elimination
-    public SharedTemp srcOptionalCSE;
+    public AssemblyVariable srcOptionalCSE;
 
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
@@ -402,9 +401,9 @@ public class CFAssign extends UIDObject implements CFStatement {
     /**
      * Add another destination variable for the RHS of this assign such
      * that toAssembly includes code for storing the RHS value in dst
-     * @param dst SharedTemp that the RHS should also be stored in
+     * @param dst variable that the RHS should also be stored in
      */
-    public void additionalDestination(SharedTemp dst) {
+    public void additionalDestination(AssemblyVariable dst) {
         dstOptionalCSE = dst;
     }
 
@@ -412,9 +411,9 @@ public class CFAssign extends UIDObject implements CFStatement {
      * Add an alternative source variable for the RHS of this assign such
      * that toAssembly includes code for retrieving the RHS value from src
      * instead of calculating it again.
-     * @param src SharedTemp that the RHS should be retried from
+     * @param src variable that the RHS should be retried from
      */
-    public void alternativeSource(SharedTemp src) {
+    public void alternativeSource(AssemblyVariable src) {
         srcOptionalCSE = src;
     }
 
@@ -455,7 +454,7 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override
     public Set<SharedTemp> getSharedTemps() {
-        if (dstOptionalCSE != null) return Set.of(dstOptionalCSE);
+        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) return Set.of((SharedTemp)dstOptionalCSE);
         else return Set.of();
     }
 

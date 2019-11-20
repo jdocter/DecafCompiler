@@ -1,10 +1,7 @@
 package edu.mit.compilers.cse;
 
 import edu.mit.compilers.cfg.*;
-import edu.mit.compilers.cfg.innercfg.CFAssign;
-import edu.mit.compilers.cfg.innercfg.CFStatement;
-import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
-import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.*;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -23,6 +20,8 @@ public class CommonSubExpressionEliminator implements CFVisitor {
 
         // go forward using saved expressions -- whenever using, check backwards to save previous use
         methodCFG.accept(this);
+
+        methodCFG.accept(new LocalCSEActivator(sharedExpressionsMap));
     }
 
     private void eliminateExprsInnerCFNode(Set<Expr> available, InnerCFNode node, Set<CFNode> parents) {

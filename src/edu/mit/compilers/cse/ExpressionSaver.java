@@ -18,21 +18,38 @@ import java.util.*;
 public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
     private final CFNode start;
+    private final InnerCFNode innerStart;
+
     private final Expr expr;
-    private final SharedTemp sharedTemp;
+    private final AssemblyVariable suggestedDst;
+
+    public AssemblyVariable finalDst;
 
     Set<CFNode> visited = new HashSet<>();
 
+
     ExpressionSaver(CFNode start, Expr expr, SharedTemp sharedTemp) {
         this.start = start;
+        this.innerStart = null;
         this.expr = expr;
-        this.sharedTemp = sharedTemp;
+        this.suggestedDst = sharedTemp;
+    }
+
+    ExpressionSaver(InnerCFNode start, Expr expr, AssemblyVariable newDst) {
+        this.start = null;
+        this.innerStart = start;
+        this.expr = expr;
+        this.suggestedDst = newDst;
     }
 
     public void saveExpressions() {
         // Must make sure to visit start node because it
         // visited.add(start);
-        this.start.accept(this);
+        if (this.innerStart != null) {
+            this.innerStart.accept(this);
+        } else {
+            this.start.accept(this);
+        }
     }
 
     @Override
@@ -106,9 +123,11 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
                     // Bug prevention argument: consider case IN 1; OUT 1 but Common-subexpr is killed in the middle
                     // IN 1; a = b + c; b = 2; d = b + c; OUT 1
                     // ^ in this case only a = b + c would have srcOptionalCSE and not d = b + c.
+                    finalDst = cfAssign.srcOptionalCSE;
                     return;
                 }
-                cfAssign.additionalDestination(sharedTemp);
+                cfAssign.additionalDestination(suggestedDst);
+                finalDst = suggestedDst;
                 return;
             }
         }

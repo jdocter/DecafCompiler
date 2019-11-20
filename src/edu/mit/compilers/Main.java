@@ -8,6 +8,7 @@ import java.util.HashSet;
 import antlr.Token;
 import edu.mit.compilers.cse.CommonSubExpressionEliminator;
 import edu.mit.compilers.cse.GlobalAvailableSubExpressionsAnalyzer;
+import edu.mit.compilers.cse.LocalCommonSubExpressionEliminator;
 import edu.mit.compilers.inter.*;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
