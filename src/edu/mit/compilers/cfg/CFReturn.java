@@ -9,7 +9,6 @@ import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
-import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodDescriptor;
@@ -54,6 +53,10 @@ public class CFReturn extends UIDObject implements CFNode {
         return returnExpr;
     }
 
+    public Temp getReturnTemp() {
+        return returnTemp;
+    }
+
     public void replaceExpr(Temp temp) {
         if (isVoid) throw new UnsupportedOperationException("Tried to give temp to void return");
         this.returnExpr = null;
@@ -76,42 +79,12 @@ public class CFReturn extends UIDObject implements CFNode {
         return miniCFGStart;
     }
 
-    @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        final List<String> assembly = new ArrayList<>();
+    public boolean isVoid() {
+        return isVoid;
+    }
 
-        List<String> body = new ArrayList<>();
-        boolean shouldReturnVoid = methodDescriptor.isVoid();
-        if (isVoid) {
-            if (!shouldReturnVoid) {
-                // generate runtime error
-                body.add("");
-                body.add("jmp " + AssemblyFactory.METHOD_EXIT_2 + " # runtime error: 2"); // return code 2
-
-                assembly.add(getAssemblyLabel() + ":");
-                assembly.addAll(AssemblyFactory.indent(body));
-                return assembly;
-            } else {
-                // return
-                body.add("# return void");
-                body.add("movq $0, %rax");
-            }
-        } else {
-            if (shouldReturnVoid) throw new RuntimeException("semantic checks failed");
-            // calculate expr and return it
-            body.add("# calculating return Expr");
-            body.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
-            body.add(getEndOfMiniCFGLabel() + ":");
-            body.add("");
-            body.add("movq -" + returnTemp.getOffset() + "(%rbp), %rax");
-        }
-        body.add("");
-        body.add("leave");
-        body.add("ret");
-
-        assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
+    public boolean shouldReturnVoid() {
+        return methodDescriptor.isVoid();
     }
 
     @Override

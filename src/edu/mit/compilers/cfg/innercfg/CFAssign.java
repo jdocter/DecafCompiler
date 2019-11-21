@@ -12,6 +12,7 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Lit;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
+import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
 
@@ -398,6 +399,10 @@ public class CFAssign extends UIDObject implements CFStatement {
         }
     }
 
+    public int getType() {
+        return type;
+    }
+
     /**
      * Add another destination variable for the RHS of this assign such
      * that toAssembly includes code for storing the RHS value in dst
@@ -417,14 +422,6 @@ public class CFAssign extends UIDObject implements CFStatement {
         srcOptionalCSE = src;
     }
 
-    @Override
-    public List<String> toAssembly(VariableTable variableTable, ImportTable importTable) {
-        assembly.clear();
-        String dst = dstToAssembly(variableTable);
-        srcToAssembly(variableTable, dst);
-
-        return AssemblyFactory.indent(assembly);
-    }
 
     @Override
     public Optional<Expr> generatedExpr() {
@@ -456,6 +453,11 @@ public class CFAssign extends UIDObject implements CFStatement {
     public Set<SharedTemp> getSharedTemps() {
         if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) return Set.of((SharedTemp)dstOptionalCSE);
         else return Set.of();
+    }
+
+    @Override
+    public void accept(StatementCFVisitor v) {
+        v.visit(this);
     }
 
     @Override public String toString() {
@@ -501,7 +503,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         return new Pair<Temp, List<Temp>>(left,right);
     }
 
-    private String getBinopCommand() {
+    public String getBinopCommand() {
         switch (srcBinOp.binOp) {
             case BinOp.AND:
             case BinOp.OR:

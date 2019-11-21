@@ -11,7 +11,6 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
 public interface InnerCFNode {
-    List<String> toAssembly(ImportTable importTable);
     String getAssemblyLabel();
     String getEndOfMiniCFGLabel();
 

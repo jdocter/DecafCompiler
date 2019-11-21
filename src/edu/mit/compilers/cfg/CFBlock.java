@@ -9,7 +9,6 @@ import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
-import edu.mit.compilers.cfg.innercfg.InnerMethodAssemblyCollector;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -54,6 +53,10 @@ public class CFBlock extends UIDObject implements CFNode {
         return miniCFGStart;
     }
 
+    public boolean isEnd() {
+        return isEnd;
+    }
+
     @Override
     public void setNext(CFNode next) {
         isEnd = false;
@@ -64,25 +67,6 @@ public class CFBlock extends UIDObject implements CFNode {
     @Override
     public CFNode getNext() {
         return next;
-    }
-
-    @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(new InnerMethodAssemblyCollector(miniCFGStart, importTable).getInstructions());
-        assembly.add(getEndOfMiniCFGLabel() + ":");
-
-        List<String> body = new ArrayList<>();
-        if (!isEnd) {
-            body.add("jmp " + next.getAssemblyLabel());
-        } else {
-            throw new RuntimeException("Didn't expect a CFBlock to end the CFG");
-        }
-
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
     }
 
     @Override

@@ -10,7 +10,6 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 
 public interface CFNode {
-    List<String> toAssembly(ImportTable importTable);
     String getAssemblyLabel();
     String getEndOfMiniCFGLabel();
 

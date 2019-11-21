@@ -25,23 +25,6 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     private Set<InnerCFNode> parents = new HashSet<InnerCFNode>();
 
     @Override
-    public List<String> toAssembly(ImportTable importTable) {
-        List<String> assembly = new ArrayList<>();
-
-        List<String> body = new ArrayList<>();
-        if (!isEnd) {
-            body.add("jmp " + next.getAssemblyLabel());
-        } else {
-            // should have been end of MiniCFG
-            throw new UnsupportedOperationException("CFNop should have been constructed as a CFEndOfMiniCFG");
-        }
-
-        assembly.add(getAssemblyLabel() + ":");
-        assembly.addAll(AssemblyFactory.indent(body));
-        return assembly;
-    }
-
-    @Override
     public Set<InnerCFNode> parents() {
         return this.parents;
     }
