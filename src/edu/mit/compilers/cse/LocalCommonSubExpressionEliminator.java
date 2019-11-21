@@ -14,118 +14,133 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
      */
 
     Set<Expr> allExprs;
-    ListIterator<InnerCFNode> iterator;
+    private final LinkedList<InnerCFNode> ts;
 
-    Map<InnerCFNode, Set<Expr>> innerOut = new HashMap<>();
+    private final Map<Expr, AssemblyVariable> sharedExpressionsMap;
+    Map<InnerCFNode, Set<Expr>> availableExprs = new HashMap<>();
     // in, gen, kill unnecessary
 
-    public LocalCommonSubExpressionEliminator(LinkedList<InnerCFNode> ts, Set<Expr> allExprs) {
-        this.allExprs = allExprs;
+    public LocalCommonSubExpressionEliminator(InnerCFNode miniCFGStart, Set<Expr> blockExprs, Map<Expr, SharedTemp> sharedExpressionsMap) {
+        this.allExprs = blockExprs;
+        this.sharedExpressionsMap = new HashMap<>(sharedExpressionsMap);
+        this.ts = new TopologicalSort(miniCFGStart).getTopologicalSort();
 
-        ListIterator<InnerCFNode> listIterator = ts.listIterator(0);
-        this.iterator = listIterator;
-
-        if (iterator.hasNext()) iterator.next().accept(this);
+        computeAvailableExprs();
+        eliminateCommonExprs();
     }
 
-    private Set<Expr> getIn(InnerCFNode cfNode) {
-        Set<Expr> in = new HashSet<>();
-        Set<InnerCFNode> parents = cfNode.parents();
-        if (!parents.isEmpty()) {
-            in.addAll(innerOut.get(parents.iterator().next()));
+    private void eliminateCommonExprs() {
+        for (InnerCFNode cfNode: ts) {
+            cfNode.accept(this);
+        }
+    }
+
+    /**
+     * Computes available expressions within block
+     * No need for fixed point algo because no loops
+     */
+    private void computeAvailableExprs() {
+        for (InnerCFNode cfNode : ts) {
+            Set<Expr> in = new HashSet<>();
+            Set<InnerCFNode> parents = cfNode.parents();
+            // IN
+            if (!parents.isEmpty()) {
+                in.addAll(availableExprs.get(parents.iterator().next()));
+                for (InnerCFNode pred : parents) {
+                    in.retainAll(availableExprs.get(pred));
+                }
+            }
+            // IN - KILL
             for (InnerCFNode pred : parents) {
-                in.retainAll(innerOut.get(pred));
+                in.removeAll(pred.killedExprs(allExprs));
+            }
+            // (IN - KILL) U GEN
+            for (InnerCFNode pred : parents) {
+                in.addAll(pred.generatedExprs(allExprs));
             }
         }
-        return in;
     }
 
-    private AssemblyVariable saveExpr(CFAssign cfAssign, ListIterator<CFStatement> previousStatements, Set<InnerCFNode> parents) {
+    /**
+     * Save expression of CFAssign
+     * @param cfAssign
+     * @param previousStatements
+     * @param parents
+     * @return
+     */
+    private void handleCommonExpr(CFAssign cfAssign, ListIterator<CFStatement> previousStatements, Set<InnerCFNode> parents) {
+        Expr wanted = cfAssign.getRHS();
+
+        AssemblyVariable e;
+        if (sharedExpressionsMap.containsKey(wanted)) {
+            e = sharedExpressionsMap.get(cfAssign.getRHS());
+        } else {
+            e = new Temp();
+            sharedExpressionsMap.put(wanted, e);
+        }
+
         if (cfAssign.srcOptionalCSE != null) {
-            return cfAssign.dstOptionalCSE; // already existing save location
+            assert cfAssign.srcOptionalCSE == e : "shared temp expected to be consistent for an expression";
+            return; // already existing save location
         }
         if (cfAssign.dstArrayOffset != null) {
+            // TODO I don't understand this check
             throw new RuntimeException("Please run Local CSE before peephole-removing {t = op; a[b] = t}" + "\nStatement: " + cfAssign);
         }
-
-
-        Expr wanted = cfAssign.getRHS();
 
         while (previousStatements.hasPrevious()) {
             CFStatement statement = previousStatements.previous();
             if (statement.generatedExpr().isPresent() && statement.generatedExpr().get().equals(wanted)) {
                 CFAssign previousAssign = (CFAssign) statement;
                 if (previousAssign.dstOptionalCSE != null) {
-                    return previousAssign.dstOptionalCSE;
+                    assert previousAssign.dstOptionalCSE == e : "shared temp expected to be consistent for an expression";
                 } else {
-                    AssemblyVariable newDst;
-                    if (cfAssign.dstArrayOrLoc.isTemporary()) {
-                        newDst = cfAssign.dstArrayOrLoc;
-                    } else {
-                        newDst = new SharedTemp(); // could use normal temp?
-                    }
-                    previousAssign.additionalDestination(newDst);
-                    cfAssign.alternativeSource(newDst);
-                    return newDst;
+                    // save and use expression
+                    previousAssign.additionalDestination(e);
                 }
+                cfAssign.alternativeSource(e);
+                return;
             }
         }
         // expression only available from earlier InnerCFNode
-        AssemblyVariable newDst;
-        if (cfAssign.dstArrayOrLoc.isTemporary()) {
-            newDst = cfAssign.dstArrayOrLoc;
-        } else {
-            newDst = new SharedTemp(); // could use normal temp?
-        }
         for (InnerCFNode parent : parents) {
-            ExpressionSaver saver = new ExpressionSaver(parent, wanted, newDst);
-            // TODO
-            // Have to consider saver.finalDst
-            // Must set cfAssign.alternativeSource with something
+            new ExpressionSaver(parent, wanted, e).saveExpressions();
         }
-        return ;// TODO choose variable to return
+        cfAssign.alternativeSource(e);
     }
-
 
     @Override
     public void visit(InnerCFBlock cfBlock) {
+
         ListIterator<CFStatement> statements = cfBlock.getCfStatements().listIterator(0);
 
-        Set<Expr> in = getIn(cfBlock);
+        Set<Expr> in = new HashSet<>(availableExprs.get(cfBlock));
 
         while (statements.hasNext()) {
             CFStatement statement = statements.next();
-            Optional<Expr> generatedExpr = statement.generatedExpr();
-            if (generatedExpr.isPresent()) {
-                Expr expr = generatedExpr.get();
-                if (in.contains(expr)) {
-                    CFAssign cfAssign = (CFAssign) statement;
-                    // Save expr
-                    ListIterator<CFStatement> backTrack = cfBlock.getCfStatements().listIterator(statements.previousIndex() - 1);
-                    AssemblyVariable src = saveExpr(cfAssign, backTrack, cfBlock.parents());
-                    cfAssign.alternativeSource(src);
 
-                    // extract
-                    // TODO
-                    // don't remember what I meant by "extract"
-                }
-                in.add(expr);
+            Expr rhs = statement.getRHS();
+            if (rhs !=null && in.contains(rhs)) {
+                // save expression
+                ListIterator<CFStatement> backTrack = cfBlock.getCfStatements().listIterator(statements.previousIndex() - 1);
+                handleCommonExpr((CFAssign) statement, backTrack, cfBlock.parents());
             }
-            in.removeAll(statement.killedExprs(in));
+
+            // update available expressions for next statement in inner block
+            in.removeAll(statement.killedExprs(allExprs));
+            if (statement.generatedExpr().isPresent()) in.add(statement.generatedExpr().get());
         }
 
-        innerOut.put(cfBlock, in);
     }
 
     @Override
     public void visit(InnerCFConditional cfConditional) {
-        Set<Expr> in = getIn(cfConditional);
-        innerOut.put(cfConditional, in);
+        // do nothing?
     }
 
     @Override
     public void visit(InnerCFNop cfNop) {
-        Set<Expr> in = getIn(cfNop);
-        innerOut.put(cfNop, in);
+        // do nothing?
     }
+
 }

@@ -17,16 +17,18 @@ public class LocalCSEActivator implements CFVisitor {
 
     private final Set<CFNode> visited = new HashSet<>();
 
+    private final Map<Expr, SharedTemp> sharedExpressionsMap;
+
     public LocalCSEActivator(Map<Expr, SharedTemp> sharedExpressionsMap) {
         // TODO can we usefully use sharedExpressionMap???
+        this.sharedExpressionsMap = sharedExpressionsMap;
     }
 
     @Override
     public void visit(CFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        new LocalCommonSubExpressionEliminator(new TopologicalSort(cfBlock.getMiniCFGStart()).getTopologicalSort(),
-                cfBlock.getSubExpressions());
+        new LocalCommonSubExpressionEliminator(cfBlock.getMiniCFGStart(), cfBlock.getSubExpressions(), sharedExpressionsMap);
         for (CFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
@@ -36,8 +38,7 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        new LocalCommonSubExpressionEliminator(new TopologicalSort(cfConditional.getMiniCFGStart()).getTopologicalSort(),
-                cfConditional.getSubExpressions());
+        new LocalCommonSubExpressionEliminator(cfConditional.getMiniCFGStart(), cfConditional.getSubExpressions(), sharedExpressionsMap);
         for (CFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
@@ -56,7 +57,6 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFReturn cfReturn) {
         if (visited.contains(cfReturn)) return;
         else visited.add(cfReturn);
-        new LocalCommonSubExpressionEliminator(new TopologicalSort(cfReturn.getMiniCFGStart()).getTopologicalSort(),
-                cfReturn.getSubExpressions());
+        new LocalCommonSubExpressionEliminator(cfReturn.getMiniCFGStart(), cfReturn.getSubExpressions(), sharedExpressionsMap);
     }
 }
