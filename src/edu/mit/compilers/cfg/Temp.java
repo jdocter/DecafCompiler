@@ -12,7 +12,7 @@ public class Temp extends UIDObject implements AssemblyVariable {
     private boolean offsetDeclared = false;
     private long offset;
 
-    Temp() {
+    public Temp() {
         name = "t"+getUID();
     }
 

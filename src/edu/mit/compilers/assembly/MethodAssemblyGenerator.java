@@ -327,25 +327,27 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
     private static List<String> srcToAssembly(CFAssign cfAssign, VariableTable variableTable, String dst) {
         List<String> assembly = new ArrayList<>();
-        if (cfAssign.srcOptionalCSE != null) {
-            if (!cfAssign.assignOp.equals(CFAssign.ASSIGN)) throw new RuntimeException("CSE error");
-            assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-            assembly.add("movq %rax, " + dst);
-            return assembly;
-        }
 
         switch (cfAssign.assignOp) { // TODO rax srcTemp?
             case CFAssign.MEQ:
-                assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax");
+                if (cfAssign.srcOptionalCSE == null) assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
+                else assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
                 assembly.add("subq %rax, " + dst);
                 return assembly;
             case CFAssign.PEQ:
-                assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax");
+                if (cfAssign.srcOptionalCSE == null) assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
+                else assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
                 assembly.add("addq %rax, " + dst);
                 return assembly;
             case CFAssign.INC: assembly.add("incq " + dst); return assembly;
             case CFAssign.DEC: assembly.add("decq " + dst); return assembly;
-            case CFAssign.ASSIGN: break; // everything else should be assign
+            case CFAssign.ASSIGN:
+                if (cfAssign.srcOptionalCSE != null) {
+                    assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
+                    assembly.add("movq %rax, " + dst);
+                    return assembly;
+                }
+                break; // everything else should be assign
         }
 
 
