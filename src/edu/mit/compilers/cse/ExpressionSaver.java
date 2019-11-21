@@ -14,6 +14,8 @@ import java.util.*;
  * Traverses backwards from *start* until reach first appearance of *expr*
  *      in all paths and inserts additional assembly destinations
  * Assumes that *expr* is available from all parent paths at *start*
+ *
+ * IMPORTANT: requires that given additional destinations are consistent within the program
  */
 public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
@@ -21,9 +23,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
     private final InnerCFNode innerStart;
 
     private final Expr expr;
-    private final AssemblyVariable suggestedDst;
-
-    public AssemblyVariable finalDst;
+    private final AssemblyVariable additionalDst;
 
     Set<CFNode> visited = new HashSet<>();
 
@@ -32,14 +32,14 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         this.start = start;
         this.innerStart = null;
         this.expr = expr;
-        this.suggestedDst = sharedTemp;
+        this.additionalDst = sharedTemp;
     }
 
     ExpressionSaver(InnerCFNode start, Expr expr, AssemblyVariable newDst) {
         this.start = null;
         this.innerStart = start;
         this.expr = expr;
-        this.suggestedDst = newDst;
+        this.additionalDst = newDst;
     }
 
     public void saveExpressions() {
@@ -117,17 +117,16 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
                 CFAssign cfAssign = ((CFAssign) cfStatement);
 
                 if (cfAssign.srcOptionalCSE != null) {
+                    assert cfAssign.srcOptionalCSE == additionalDst : "shared temp expected to be consistent for an expression";
                     // INVARIANT: must save expression RIGHT AFTER setting optional CSE
                     // consequence: don't need to save again, it's still available
 
                     // Bug prevention argument: consider case IN 1; OUT 1 but Common-subexpr is killed in the middle
                     // IN 1; a = b + c; b = 2; d = b + c; OUT 1
                     // ^ in this case only a = b + c would have srcOptionalCSE and not d = b + c.
-                    finalDst = cfAssign.srcOptionalCSE;
                     return;
                 }
-                cfAssign.additionalDestination(suggestedDst);
-                finalDst = suggestedDst;
+                cfAssign.additionalDestination(additionalDst);
                 return;
             }
         }
