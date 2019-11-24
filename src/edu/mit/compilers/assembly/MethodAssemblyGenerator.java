@@ -229,7 +229,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         // push stack according to size of arguments
 
         List<String> body = new ArrayList<>();
-        body.add("# " + this.toString());
+        body.add("# " + cfMethodCall.toString());
 
         int stackArgs = cfMethodCall.arguments.size() - 6;
 

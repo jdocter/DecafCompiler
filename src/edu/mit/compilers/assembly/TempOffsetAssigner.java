@@ -55,7 +55,11 @@ public class TempOffsetAssigner {
                 blockTempOffset = newOffset;
             }
             // temps never used before they are assigned
-            for (Temp other : temps.getValue()) assert tempsSeen.contains(other);
+            for (Temp other : temps.getValue()) {
+                // System.err.println("Seen: " + tempsSeen + "\nOther: " + other + "\nNode: " + node);
+                assert tempsSeen.contains(other);
+            }
+
         }
         if (blockTempOffset > maxTempOffset) {
             maxTempOffset = blockTempOffset;

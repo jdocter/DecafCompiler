@@ -123,7 +123,7 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
             Expr rhs = statement.getRHS();
             if (rhs !=null && in.contains(rhs)) {
                 // save expression
-                ListIterator<CFStatement> backTrack = cfBlock.getCfStatements().listIterator(statements.previousIndex() - 1);
+                ListIterator<CFStatement> backTrack = cfBlock.getCfStatements().listIterator(statements.previousIndex());
                 handleCommonExpr((CFAssign) statement, backTrack, cfBlock.parents());
             }
 
