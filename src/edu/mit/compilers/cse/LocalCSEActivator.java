@@ -20,7 +20,6 @@ public class LocalCSEActivator implements CFVisitor {
     private final Map<Expr, SharedTemp> sharedExpressionsMap;
 
     public LocalCSEActivator(Map<Expr, SharedTemp> sharedExpressionsMap) {
-        // TODO can we usefully use sharedExpressionMap???
         this.sharedExpressionsMap = sharedExpressionsMap;
     }
 

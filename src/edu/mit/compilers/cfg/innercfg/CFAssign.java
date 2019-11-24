@@ -451,8 +451,11 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override
     public Set<SharedTemp> getSharedTemps() {
-        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) return Set.of((SharedTemp)dstOptionalCSE);
-        else return Set.of();
+        Set<SharedTemp> result = new HashSet<>();
+
+        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) result.add((SharedTemp)dstOptionalCSE);
+        if (srcOptionalCSE != null && srcOptionalCSE instanceof SharedTemp) result.add((SharedTemp)srcOptionalCSE);
+        return result;
     }
 
     @Override
@@ -495,11 +498,18 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Pair<Temp, List<Temp>> getTemps() {
         Temp left = dstArrayOrLoc instanceof Temp ? (Temp) dstArrayOrLoc : null;
+        if (dstOptionalCSE != null && dstOptionalCSE instanceof Temp) {
+            left = (Temp)dstOptionalCSE;
+        }
         List<Temp> right = new ArrayList<Temp>();
-        if (dstArrayOffset != null && dstArrayOffset instanceof Temp) right.add((Temp) dstArrayOffset);
-        if (srcLeftOrSingle != null && srcLeftOrSingle instanceof Temp) right.add((Temp) srcLeftOrSingle);
-        if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
-        if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
+        if (srcOptionalCSE != null && srcOptionalCSE instanceof Temp) {
+            right.add((Temp)srcOptionalCSE);
+        } else {
+            if (dstArrayOffset != null && dstArrayOffset instanceof Temp) right.add((Temp) dstArrayOffset);
+            if (srcLeftOrSingle != null && srcLeftOrSingle instanceof Temp) right.add((Temp) srcLeftOrSingle);
+            if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
+            if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
+        }
         return new Pair<Temp, List<Temp>>(left,right);
     }
 
