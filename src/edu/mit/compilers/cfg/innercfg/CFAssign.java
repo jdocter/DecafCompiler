@@ -465,10 +465,10 @@ public class CFAssign extends UIDObject implements CFStatement {
 
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-        String dst =  "" + dstArrayOrLoc + offsetStr + " {canonical: " + canonicalExpr + "}";
+        String dst =  "" + dstArrayOrLoc + offsetStr;
 
         if (srcOptionalCSE != null) {
-            return dst + " = " + srcOptionalCSE;
+            return dst + " = " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
         }
 
         switch (assignOp) {
@@ -485,21 +485,24 @@ public class CFAssign extends UIDObject implements CFStatement {
             case MINUS: return dst + " = -"+ srcLeftOrSingle;
             case NOT: return dst + " = !" + srcLeftOrSingle;
             case METHOD_CALL: return dst + " = load %rax";
-            case BIN_OP: return dst + " = " + srcLeftOrSingle + " " + srcBinOp + " " + srcRight;
+            case BIN_OP: return dst + " = " + srcLeftOrSingle + " " + srcBinOp + " " + srcRight + " {canonical: " + canonicalExpr + "}";
             case LIT: return dst + " = " + srcLit;
             case TRUE: return dst + " = true";
             case FALSE: return dst + " = false";
-            case SIMPLE: return dst + " = " + srcLeftOrSingle;
+            case SIMPLE: return dst + " = " + srcLeftOrSingle + " {canonical: " + canonicalExpr + "}";
             case ARRAY_LOC: return dst + " = " + srcArray + "[" + srcArrayOffset + "]";
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
     }
 
     @Override
-    public Pair<Temp, List<Temp>> getTemps() {
-        Temp left = dstArrayOrLoc instanceof Temp ? (Temp) dstArrayOrLoc : null;
+    public Pair<List<Temp>, List<Temp>> getTemps() {
+        List<Temp> left = new ArrayList<>();
+        if (dstArrayOrLoc instanceof Temp) {
+            left.add((Temp) dstArrayOrLoc);
+        }
         if (dstOptionalCSE != null && dstOptionalCSE instanceof Temp) {
-            left = (Temp)dstOptionalCSE;
+            left.add((Temp)dstOptionalCSE);
         }
         List<Temp> right = new ArrayList<Temp>();
         if (srcOptionalCSE != null && srcOptionalCSE instanceof Temp) {
@@ -510,7 +513,7 @@ public class CFAssign extends UIDObject implements CFStatement {
             if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
             if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
         }
-        return new Pair<Temp, List<Temp>>(left,right);
+        return new Pair<List<Temp>, List<Temp>>(left,right);
     }
 
     public String getBinopCommand() {

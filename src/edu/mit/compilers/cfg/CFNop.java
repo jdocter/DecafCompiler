@@ -83,7 +83,7 @@ public class CFNop extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<Pair<Temp, List<Temp>>> getTemps() {
+    public List<Pair<List<Temp>, List<Temp>>> getTemps() {
         return List.of();
     }
 

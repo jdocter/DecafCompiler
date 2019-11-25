@@ -31,7 +31,7 @@ public interface CFStatement {
     /**
      * @return Pair<TempUpdated, TempsUsed>, one pair for each statement
      */
-    Pair<Temp, List<Temp>> getTemps();
+    Pair<List<Temp>, List<Temp>> getTemps();
 
     Expr getRHS();
 

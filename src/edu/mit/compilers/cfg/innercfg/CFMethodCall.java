@@ -62,12 +62,12 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Pair<Temp, List<Temp>> getTemps() {
+    public Pair<List<Temp>, List<Temp>> getTemps() {
         List<Temp> allTempsNeeded = new ArrayList<>();
         for (Pair<Temp, StringLit> arg : arguments) {
             if (arg.getKey() != null) allTempsNeeded.add(arg.getKey());
         }
-        return new Pair<Temp, List<Temp>>(null, allTempsNeeded);
+        return new Pair<List<Temp>, List<Temp>>(List.of(), allTempsNeeded);
     }
 
     @Override

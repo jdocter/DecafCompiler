@@ -17,7 +17,7 @@ import edu.mit.compilers.visitor.MiniCFVisitor;
 public class TempCollector implements MiniCFVisitor {
 
     Set<InnerCFNode> visited = new HashSet<>();
-    public List<Pair<Temp, List<Temp>>> temps = new ArrayList<>();
+    public List<Pair<List<Temp>, List<Temp>>> temps = new ArrayList<>();
 
     private void visitNode(InnerCFNode node) {
         if (!visited.contains(node)) {

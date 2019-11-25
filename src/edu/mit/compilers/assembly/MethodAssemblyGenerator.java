@@ -339,8 +339,8 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 else assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
                 assembly.add("addq %rax, " + dst);
                 return assembly;
-            case CFAssign.INC: assembly.add("incq " + dst); return assembly;
-            case CFAssign.DEC: assembly.add("decq " + dst); return assembly;
+            case CFAssign.INC: assembly.add("incq " + dst + " # " + cfAssign.toString()); return assembly;
+            case CFAssign.DEC: assembly.add("decq " + dst + " # " + cfAssign.toString()); return assembly;
             case CFAssign.ASSIGN:
                 if (cfAssign.srcOptionalCSE != null) {
                     assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
@@ -397,24 +397,24 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 switch (cfAssign.assignOp) { // TODO rax srcTemp?
                     case CFAssign.MEQ:
                         assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
+                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
                         assembly.add("subq %rax, " + dst);
                         // can't have additional destination?
                         return assembly;
                     case CFAssign.PEQ:
                         assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
+                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
                         assembly.add("addq %rax, " + dst);
                         // can't have additional destination?
                         return assembly;
-                    case CFAssign.INC: assembly.add("incq " + dst); return assembly;
-                    case CFAssign.DEC: assembly.add("decq " + dst); return assembly;
+                    case CFAssign.INC: assembly.add("incq " + dst + " # " + cfAssign.toString()); return assembly;
+                    case CFAssign.DEC: assembly.add("decq " + dst + " # " + cfAssign.toString()); return assembly;
                     case CFAssign.ASSIGN:
                         assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax");
+                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
+                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
                         assembly.add("movq %rax, " + dst);
                         assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
                         return assembly;
@@ -422,7 +422,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 break;
             case CFAssign.METHOD_CALL:
                 assembly.add("");
-                assembly.add("movq %rax, " + dst + " # " + cfAssign);
+                assembly.add("movq %rax, " + dst + " # " + cfAssign.toString());
                 assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
                 assembly.add("");
                 break;
@@ -433,7 +433,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 final String srcRightString = cfAssign.srcRight.isGlobal(variableTable) ?
                         cfAssign.srcRight.getGlobalLabel(variableTable) + "(%rip)":
                         "-" + cfAssign.srcRight.getStackOffset(variableTable) + "(%rbp)";
-                assembly.add("# "+cfAssign);
+                assembly.add("# "+cfAssign.toString());
                 switch (cfAssign.srcBinOp.binOp) {
                     case BinOp.AND:
                     case BinOp.OR:

@@ -96,8 +96,8 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
      * @return
      */
     @Override
-    public List<Pair<Temp, List<Temp>>> getTemps() {
-        List<Pair<Temp, List<Temp>>> temps = new ArrayList<>();
+    public List<Pair<List<Temp>, List<Temp>>> getTemps() {
+        List<Pair<List<Temp>, List<Temp>>> temps = new ArrayList<>();
         for (CFStatement statement : this.cfStatements) {
             temps.add(statement.getTemps());
         }

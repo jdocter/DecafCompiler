@@ -124,7 +124,7 @@ public class CFBlock extends UIDObject implements CFNode {
      * @return
      */
     @Override
-    public List<Pair<Temp, List<Temp>>> getTemps() {
+    public List<Pair<List<Temp>, List<Temp>>> getTemps() {
         TempCollector collector = new TempCollector();
         miniCFGStart.accept(collector);
         return collector.temps;

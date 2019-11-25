@@ -46,17 +46,19 @@ public class TempOffsetAssigner {
 
         Set<Temp> tempsSeen = new HashSet<>();
         long blockTempOffset = tempOffsetStart;
-        for (Pair<Temp, List<Temp>> temps : node.getTemps()) {
-            Temp dest = temps.getKey();
-            if (dest != null && !tempsSeen.contains(dest)) {
-                tempsSeen.add(dest);
-                long newOffset = blockTempOffset + Temp.TEMP_SIZE;
-                dest.setOffset(newOffset);
-                blockTempOffset = newOffset;
+        for (Pair<List<Temp>, List<Temp>> temps : node.getTemps()) {
+            List<Temp> dests = temps.getKey();
+            for (Temp dest : dests) {
+                if (!tempsSeen.contains(dest)) {
+                    tempsSeen.add(dest);
+                    long newOffset = blockTempOffset + Temp.TEMP_SIZE;
+                    dest.setOffset(newOffset);
+                    blockTempOffset = newOffset;
+                }
             }
             // temps never used before they are assigned
             for (Temp other : temps.getValue()) {
-                // System.err.println("Seen: " + tempsSeen + "\nOther: " + other + "\nNode: " + node);
+                System.err.println("Seen: " + tempsSeen + "\nOther: " + other + "\nNode: " + node);
                 assert tempsSeen.contains(other);
             }
 

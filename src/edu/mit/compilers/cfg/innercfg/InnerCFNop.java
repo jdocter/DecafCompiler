@@ -83,7 +83,7 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public List<Pair<Temp, List<Temp>>> getTemps() {
+    public List<Pair<List<Temp>, List<Temp>>> getTemps() {
         return List.of();
     }
 

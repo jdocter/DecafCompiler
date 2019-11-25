@@ -141,11 +141,11 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public List<Pair<Temp, List<Temp>>> getTemps() {
+    public List<Pair<List<Temp>, List<Temp>>> getTemps() {
         if (boolTemp.isTemporary()) {
-          return List.of(new Pair<Temp, List<Temp>>(null, List.of((Temp) boolTemp)));
+          return List.of(new Pair<List<Temp>, List<Temp>>(List.of(), List.of((Temp) boolTemp)));
         } else {
-          return List.of(new Pair<Temp, List<Temp>>(null, List.of()));
+          return List.of(new Pair<List<Temp>, List<Temp>>(List.of(), List.of()));
         }
     }
 
