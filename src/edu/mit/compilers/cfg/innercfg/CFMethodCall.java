@@ -51,7 +51,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
                 // System.err.println("Considering killing " + expr + ", scope = " + id.getDeclarationScope());
                 if (id.getDeclarationScope() == VariableTable.GLOBAL_SCOPE_UID) {
                     // System.err.println(this.toString() + "kills " + expr);
-                    killed.remove(expr);
+                    killed.add(expr);
                     break;
                 }
             }
