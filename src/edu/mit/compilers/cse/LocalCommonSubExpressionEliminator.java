@@ -17,8 +17,9 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
     private final LinkedList<InnerCFNode> ts;
 
     private final Map<Expr, AssemblyVariable> sharedExpressionsMap;
+
+    // maps cfnode to set of expressions available to it
     Map<InnerCFNode, Set<Expr>> availableExprs = new HashMap<>();
-    // in, gen, kill unnecessary
 
     public LocalCommonSubExpressionEliminator(InnerCFNode miniCFGStart, Set<Expr> blockExprs, Map<Expr, SharedTemp> sharedExpressionsMap) {
         this.allExprs = blockExprs;
@@ -51,9 +52,13 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
                 }
             }
             // IN - KILL
-            in.removeAll(cfNode.killedExprs(allExprs));
+            for (InnerCFNode pred : parents) {
+                in.removeAll(pred.killedExprs(allExprs));
+            }
             // (IN - KILL) U GEN
-            in.addAll(cfNode.generatedExprs(allExprs));
+            for (InnerCFNode pred : parents) {
+                in.addAll(pred.generatedExprs(allExprs));
+            }
             availableExprs.put(cfNode, in);
         }
     }
