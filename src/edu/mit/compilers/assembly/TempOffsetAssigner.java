@@ -58,7 +58,7 @@ public class TempOffsetAssigner {
             }
             // temps never used before they are assigned
             for (Temp other : temps.getValue()) {
-                System.err.println("Seen: " + tempsSeen + "\nOther: " + other + "\nNode: " + node);
+                // System.err.println("Seen: " + tempsSeen + "\nOther: " + other + "\nNode: " + node);
                 assert tempsSeen.contains(other);
             }
 

@@ -166,6 +166,15 @@ public class Main {
                new EliminateShadowingVisitor(table);
 
                MethodCFGFactory.makeAndSetMethodCFGs(table);
+
+               if (CLI.opts[0]) { // CSE
+                   for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                       new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                       // copy propagate?
+                       // dead code?
+                   }
+               }
+
                for (MethodDescriptor methodDescriptor : table.methodTable.values()) {
                    outputStream.println("CFG for " + methodDescriptor.getMethodName());
                    outputStream.println("----------");
