@@ -36,6 +36,17 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         }
     }
 
+    private Set<Expr> calculateParentOut(InnerCFNode parent) {
+        Set<Expr> out = new HashSet<>();
+
+        // (IN - KILL) U GEN
+        out.addAll(availableExprs.get(parent));
+        out.removeAll(parent.killedExprs(allExprs));
+        out.addAll(parent.generatedExprs(allExprs));
+
+        return out;
+    }
+
     /**
      * Computes available expressions within block
      * No need for fixed point algo because no loops
@@ -44,20 +55,8 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         for (InnerCFNode cfNode : ts) {
             Set<Expr> in = new HashSet<>();
             Set<InnerCFNode> parents = cfNode.parents();
-            // IN
-            if (!parents.isEmpty()) {
-                in.addAll(availableExprs.get(parents.iterator().next()));
-                for (InnerCFNode pred : parents) {
-                    in.retainAll(availableExprs.get(pred));
-                }
-            }
-            // IN - KILL
             for (InnerCFNode pred : parents) {
-                in.removeAll(pred.killedExprs(allExprs));
-            }
-            // (IN - KILL) U GEN
-            for (InnerCFNode pred : parents) {
-                in.addAll(pred.generatedExprs(allExprs));
+                in.addAll(calculateParentOut(pred));
             }
             availableExprs.put(cfNode, in);
         }
