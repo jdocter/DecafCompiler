@@ -134,7 +134,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             // calculate expr and return it
             instructions.add(AssemblyFactory.indent("# calculating return Expr"));
             cfReturn.getMiniCFGStart().accept(this);
-            instructions.add(AssemblyFactory.indent(cfReturn.getEndOfMiniCFGLabel() + ":"));
+            instructions.add(cfReturn.getEndOfMiniCFGLabel() + ":");
             instructions.add(AssemblyFactory.indent(""));
             instructions.add(AssemblyFactory.indent("movq -" + cfReturn.getReturnTemp().getOffset() + "(%rbp), %rax"));
         }
