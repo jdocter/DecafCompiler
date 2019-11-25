@@ -36,32 +36,25 @@ public class CommonSubExpressionEliminator implements CFVisitor {
         // Only InnerCFBlock have usable sub-expressions
         for (CFStatement statement : ((InnerCFBlock) node).getCfStatements()) {
             Optional<Expr> exprNeeded = statement.generatedExpr();
-            if (!exprNeeded.isPresent()) continue; // next statement
+            if (exprNeeded.isPresent() && remainingAvailable.contains(exprNeeded.get())) {
+                Expr rhs = exprNeeded.get();
+                // Only CFAssign need exprs
+                CFAssign cfAssign = (CFAssign) statement;
 
-            Expr rhs = exprNeeded.get();
-            if (!remainingAvailable.contains(rhs)) continue; // next statement
+                SharedTemp newSrc;
+                if (sharedExpressionsMap.containsKey(rhs)) {
+                    newSrc = sharedExpressionsMap.get(rhs);
+                } else {
+                    newSrc = new SharedTemp();
+                    sharedExpressionsMap.put(rhs, newSrc);
+                }
 
-            // Could add this here, but that would be a local CSE so it would be tricky
-            // to figure out when we have to do statement.additionalDestination(rhs);
-            // remainingAvailable.add(rhs);
-            // statement.additionalDestination(rhs);
-
-            // Only CFAssign need exprs
-            CFAssign cfAssign = (CFAssign) statement;
-
-            SharedTemp newSrc;
-            if (sharedExpressionsMap.containsKey(rhs)) {
-                newSrc = sharedExpressionsMap.get(rhs);
-            } else {
-                newSrc = new SharedTemp();
-                sharedExpressionsMap.put(rhs, newSrc);
-            }
-
-            // have to mark as used first before saving so that if we loop
-            // back, we don't insert an extra save after this statement
-            cfAssign.alternativeSource(newSrc);
-            for (CFNode parent : parents) {
-                new ExpressionSaver(parent, rhs, newSrc).saveExpressions();
+                // have to mark as used first before saving so that if we loop
+                // back, we don't insert an extra save after this statement
+                cfAssign.alternativeSource(newSrc);
+                for (CFNode parent : parents) {
+                    new ExpressionSaver(parent, rhs, newSrc).saveExpressions();
+                }
             }
 
             // Don't re-use exprs that have been killed in an earlier statement in this InnerCFNode
