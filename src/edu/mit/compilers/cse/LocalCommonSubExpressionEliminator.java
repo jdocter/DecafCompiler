@@ -51,13 +51,9 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
                 }
             }
             // IN - KILL
-            for (InnerCFNode pred : parents) {
-                in.removeAll(pred.killedExprs(allExprs));
-            }
+            in.removeAll(cfNode.killedExprs(allExprs));
             // (IN - KILL) U GEN
-            for (InnerCFNode pred : parents) {
-                in.addAll(pred.generatedExprs(allExprs));
-            }
+            in.addAll(cfNode.generatedExprs(allExprs));
             availableExprs.put(cfNode, in);
         }
     }

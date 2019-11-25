@@ -48,7 +48,9 @@ public class CFMethodCall extends UIDObject implements CFStatement {
         Set<Expr> killed = new HashSet<>();
         for (Expr expr: exprs) {
             for (Id id: expr.getIds()) {
+                // System.err.println("Considering killing " + expr + ", scope = " + id.getDeclarationScope());
                 if (id.getDeclarationScope() == VariableTable.GLOBAL_SCOPE_UID) {
+                    // System.err.println(this.toString() + "kills " + expr);
                     killed.remove(expr);
                     break;
                 }
