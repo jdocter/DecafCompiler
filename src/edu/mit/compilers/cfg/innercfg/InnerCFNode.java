@@ -3,6 +3,7 @@ package edu.mit.compilers.cfg.innercfg;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -59,4 +60,6 @@ public interface InnerCFNode {
      * @return subset of exprs that are killed by this CFStatement
      */
     Set<Expr> killedExprs(Set<Expr> allExprs);
+
+    Set<AssemblyVariable> getAllAssemblyVariables();
 }

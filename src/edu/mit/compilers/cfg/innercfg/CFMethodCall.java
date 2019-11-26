@@ -2,6 +2,7 @@ package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.cfg.Variable;
@@ -36,6 +37,15 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     @Override
     public void accept(StatementCFVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getAllAssemblyVariables() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+        for (Pair<Temp, StringLit> arg : arguments) {
+            if (arg.getKey() != null) assemblyVariables.add(arg.getKey());
+        }
+        return assemblyVariables;
     }
 
     @Override

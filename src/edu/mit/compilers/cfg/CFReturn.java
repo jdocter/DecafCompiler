@@ -199,6 +199,11 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getOuterAssemblyVariables() {
+        return null;
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_return_" + UID;
     }

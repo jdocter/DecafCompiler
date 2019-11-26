@@ -48,4 +48,6 @@ public interface CFNode {
 
     Set<Expr> generatedExprs(Set<Expr> allExprs);
     Set<Expr> killedExprs(Set<Expr> allExprs);
+
+    Set<AssemblyVariable> getOuterAssemblyVariables();
 }

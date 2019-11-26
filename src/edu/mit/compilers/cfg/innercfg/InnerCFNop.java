@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -100,6 +101,11 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     @Override
     public Set<Expr> killedExprs(Set<Expr> allExprs) {
         return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getAllAssemblyVariables() {
+        return new HashSet<>();
     }
 
     @Override

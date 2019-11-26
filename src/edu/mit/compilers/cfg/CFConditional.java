@@ -187,6 +187,11 @@ public class CFConditional extends UIDObject implements CFNode {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<AssemblyVariable> getOuterAssemblyVariables() {
+        return null;
+    }
+
 
     @Override
     public String getAssemblyLabel() {

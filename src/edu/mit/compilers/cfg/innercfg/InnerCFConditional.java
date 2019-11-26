@@ -11,10 +11,7 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class InnerCFConditional extends UIDObject implements InnerCFNode {
     @Override public String toString() {
@@ -161,6 +158,15 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> allExprs) { return  Set.of(); }
+
+    @Override
+    public Set<AssemblyVariable> getAllAssemblyVariables() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+        if (boolTemp != null) assemblyVariables.add(boolTemp);
+        if (left != null) assemblyVariables.add(left);
+        if (right != null) assemblyVariables.add(right);
+        return assemblyVariables;
+    }
 
     @Override
     public String getAssemblyLabel() {

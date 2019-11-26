@@ -246,6 +246,25 @@ public class CFAssign extends UIDObject implements CFStatement {
         v.visit(this);
     }
 
+    @Override
+    public Set<AssemblyVariable> getAllAssemblyVariables() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+
+        if (null != dstArrayOffset) assemblyVariables.add(dstArrayOffset);
+        if (null != dstArrayOrLoc) assemblyVariables.add(dstArrayOrLoc);
+        if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
+        if (null != srcOptionalCSE) {
+            assemblyVariables.add(srcOptionalCSE);
+            return assemblyVariables;
+        }
+        if (null != srcLeftOrSingle) assemblyVariables.add(srcLeftOrSingle);
+        if (null != srcRight) assemblyVariables.add(srcRight);
+        if (null != srcId) assemblyVariables.add(srcId);
+        if (null != srcArray) assemblyVariables.add(srcArray);
+        if (null != srcArrayOffset) assemblyVariables.add(srcArrayOffset);
+        return assemblyVariables;
+    }
+
     @Override public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
         String dst =  "" + dstArrayOrLoc + offsetStr;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
@@ -38,4 +39,6 @@ public interface CFStatement {
     Set<SharedTemp> getSharedTemps();
 
     void accept(StatementCFVisitor v);
+
+    Set<AssemblyVariable> getAllAssemblyVariables();
 }

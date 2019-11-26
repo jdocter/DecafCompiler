@@ -103,6 +103,11 @@ public class CFNop extends UIDObject implements CFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getOuterAssemblyVariables() {
+        return new HashSet<>();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_nop_" + UID;
     }
