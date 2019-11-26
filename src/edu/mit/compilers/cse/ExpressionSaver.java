@@ -126,7 +126,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
                     // ^ in this case only a = b + c would have srcOptionalCSE and not d = b + c.
                     return;
                 }
-                cfAssign.additionalDestination(additionalDst);
+                cfAssign.setAdditionalDestination(additionalDst);
                 return;
             }
         }

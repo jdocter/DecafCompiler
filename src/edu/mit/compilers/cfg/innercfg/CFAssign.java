@@ -19,7 +19,6 @@ import java.util.*;
 public class CFAssign extends UIDObject implements CFStatement {
 
     private int type;
-    private final List<String> assembly = new ArrayList<>();
 
     public static final int LEN = 0;
     public static final int MINUS = 1;
@@ -185,7 +184,7 @@ public class CFAssign extends UIDObject implements CFStatement {
      * that toAssembly includes code for storing the RHS value in dst
      * @param dst variable that the RHS should also be stored in
      */
-    public void additionalDestination(AssemblyVariable dst) {
+    public void setAdditionalDestination(AssemblyVariable dst) {
         dstOptionalCSE = dst;
     }
 
@@ -195,7 +194,14 @@ public class CFAssign extends UIDObject implements CFStatement {
      * instead of calculating it again.
      * @param src variable that the RHS should be retried from
      */
-    public void alternativeSource(AssemblyVariable src) {
+    public void setAlternativeSource(AssemblyVariable src) {
+        srcLeftOrSingle = null;
+        srcBinOp = null;
+        srcRight = null;
+        srcId = null;
+        srcArray = null;
+        srcArrayOffset = null;
+        srcLit = null;
         srcOptionalCSE = src;
     }
 

@@ -97,9 +97,9 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
                     assert previousAssign.dstOptionalCSE == e : "shared temp expected to be consistent for an expression";
                 } else {
                     // save and use expression
-                    previousAssign.additionalDestination(e);
+                    previousAssign.setAdditionalDestination(e);
                 }
-                cfAssign.alternativeSource(e);
+                cfAssign.setAlternativeSource(e);
                 return;
             }
         }
@@ -107,7 +107,7 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         for (InnerCFNode parent : parents) {
             new ExpressionSaver(parent, wanted, e).saveExpressions();
         }
-        cfAssign.alternativeSource(e);
+        cfAssign.setAlternativeSource(e);
     }
 
     @Override

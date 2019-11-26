@@ -51,7 +51,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
 
                 // have to mark as used first before saving so that if we loop
                 // back, we don't insert an extra save after this statement
-                cfAssign.alternativeSource(newSrc);
+                cfAssign.setAlternativeSource(newSrc);
                 for (CFNode parent : parents) {
                     new ExpressionSaver(parent, rhs, newSrc).saveExpressions();
                 }
