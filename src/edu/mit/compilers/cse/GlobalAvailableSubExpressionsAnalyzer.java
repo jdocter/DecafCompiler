@@ -48,6 +48,7 @@ public class GlobalAvailableSubExpressionsAnalyzer implements CFVisitor {
         while (!changed.isEmpty()) {
           OuterCFNode currentNode = changed.iterator().next();
           changed.remove(currentNode);
+
           in.put(currentNode, new HashSet<>(subExpressions));
           for (OuterCFNode pred: currentNode.parents()) {
             in.get(currentNode).retainAll(out.get(pred));

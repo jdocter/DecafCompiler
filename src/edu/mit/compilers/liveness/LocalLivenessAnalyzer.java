@@ -19,6 +19,8 @@ public class LocalLivenessAnalyzer {
         globalIn = in;
         globalOut = out;
     }
+
+
     private void runLocalFixedPointAlgorithm(InnerCFNode miniCFG) {
         // fixed point algo for miniCFG
         // use topo sort to get all statements?
