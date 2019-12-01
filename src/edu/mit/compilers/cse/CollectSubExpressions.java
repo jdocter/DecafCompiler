@@ -12,7 +12,7 @@ public class CollectSubExpressions implements CFVisitor {
      * To be called AFTER TempifySubExpressions
      */
 
-    Set<CFNode> visited = new HashSet<>();
+    Set<OuterCFNode> visited = new HashSet<>();
 
     Set<Expr> subExpressions = new HashSet<>();
 
@@ -21,7 +21,7 @@ public class CollectSubExpressions implements CFVisitor {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
         subExpressions.addAll(cfBlock.getSubExpressions());
-        for (CFNode child: cfBlock.dfsTraverse()) {
+        for (OuterCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -31,7 +31,7 @@ public class CollectSubExpressions implements CFVisitor {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
         subExpressions.addAll(cfConditional.getSubExpressions());
-        for (CFNode child: cfConditional.dfsTraverse()) {
+        for (OuterCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -41,7 +41,7 @@ public class CollectSubExpressions implements CFVisitor {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
         subExpressions.addAll(cfNop.getSubExpressions());
-        for (CFNode child: cfNop.dfsTraverse()) {
+        for (OuterCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
     }

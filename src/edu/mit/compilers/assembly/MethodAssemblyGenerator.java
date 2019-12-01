@@ -18,7 +18,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
      * To be called AFTER TempifySubExpressions
      */
 
-    private final Set<CFNode> visited = new HashSet<>();
+    private final Set<OuterCFNode> visited = new HashSet<>();
 
     private final Set<InnerCFNode> innerVisited = new HashSet<>();
 
@@ -28,7 +28,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
     private ImportTable importTable;
 
-    public MethodAssemblyGenerator(CFNode cfMethodStart, ImportTable importTable) {
+    public MethodAssemblyGenerator(OuterCFNode cfMethodStart, ImportTable importTable) {
         this.importTable = importTable;
         cfMethodStart.accept(this);
     }
@@ -56,7 +56,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
         instructions.addAll(AssemblyFactory.indent(body));
 
-        for (CFNode child: cfBlock.dfsTraverse()) {
+        for (OuterCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -84,7 +84,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         instructions.addAll(AssemblyFactory.indent(body));
 
 
-        for (CFNode child: cfConditional.dfsTraverse()) {
+        for (OuterCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -105,7 +105,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         instructions.add(cfNop.getAssemblyLabel() + ":");
         instructions.addAll(AssemblyFactory.indent(body));
 
-        for (CFNode child: cfNop.dfsTraverse()) {
+        for (OuterCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
     }

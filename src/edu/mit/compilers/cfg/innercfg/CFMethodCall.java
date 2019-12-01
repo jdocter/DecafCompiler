@@ -40,7 +40,7 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Set<AssemblyVariable> getAllAssemblyVariables() {
+    public Set<AssemblyVariable> getLocalAssemblyVariables() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
         for (Pair<Temp, StringLit> arg : arguments) {
             if (arg.getKey() != null) assemblyVariables.add(arg.getKey());

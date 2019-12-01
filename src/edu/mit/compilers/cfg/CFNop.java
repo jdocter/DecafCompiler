@@ -1,53 +1,49 @@
 package edu.mit.compilers.cfg;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
-import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CFNop extends UIDObject implements CFNode {
+public class CFNop extends UIDObject implements OuterCFNode {
     @Override public String toString() {
         if (isEnd()) return "UID " + UID + " CFNop";
         return "UID " + UID + " CFNop [next=" + next.getUID() + "]";
     }
 
-    CFNode next;
+    OuterCFNode next;
     private boolean isEnd = true; // end of function
-    private Set<CFNode> parents = new HashSet<CFNode>();
+    private Set<OuterCFNode> parents = new HashSet<OuterCFNode>();
 
     @Override
-    public Set<CFNode> parents() {
+    public Set<OuterCFNode> parents() {
         return this.parents;
     }
 
     @Override
-    public void setNext(CFNode next) {
+    public void setNext(OuterCFNode next) {
         setEnd(false);
         this.next = next;
         next.addParent(this);
     }
 
     @Override
-    public void addParent(CFNode parent) {
+    public void addParent(OuterCFNode parent) {
         this.parents.add(parent);
     }
 
     @Override
-    public CFNode getNext() {
+    public OuterCFNode getNext() {
         return next;
     }
 
     @Override
-    public List<CFNode> dfsTraverse() {
+    public List<OuterCFNode> dfsTraverse() {
         if (next == null) return List.of();
         return List.of(next);
     }
@@ -66,12 +62,12 @@ public class CFNop extends UIDObject implements CFNode {
     }
 
     @Override
-    public void removeParent(CFNode parent) {
+    public void removeParent(OuterCFNode parent) {
         this.parents.remove(parent);
     }
 
     @Override
-    public void replacePointers(CFNode original, CFNode replacement) {
+    public void replacePointers(OuterCFNode original, OuterCFNode replacement) {
         if (this.next == original) {
             this.setNext(replacement);
         }
@@ -100,11 +96,6 @@ public class CFNop extends UIDObject implements CFNode {
     @Override
     public Set<Expr> killedExprs(Set<Expr> allExprs) {
         return Set.of();
-    }
-
-    @Override
-    public Set<AssemblyVariable> getOuterAssemblyVariables() {
-        return new HashSet<>();
     }
 
     @Override

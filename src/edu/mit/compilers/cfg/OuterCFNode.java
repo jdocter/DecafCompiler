@@ -1,18 +1,14 @@
-package edu.mit.compilers.cfg.innercfg;
+package edu.mit.compilers.cfg;
 
 import java.util.List;
 import java.util.Set;
 
-import edu.mit.compilers.cfg.AssemblyVariable;
-import edu.mit.compilers.cfg.CFNode;
-import edu.mit.compilers.cfg.Temp;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.MiniCFVisitor;
+import edu.mit.compilers.visitor.CFVisitor;
 
-public interface InnerCFNode extends CFNode {
+public interface OuterCFNode extends CFNode {
     String getAssemblyLabel();
     String getEndOfMiniCFGLabel();
 
@@ -21,13 +17,13 @@ public interface InnerCFNode extends CFNode {
      * dfsTraverse() is the inverse of parents(), aka:
      * node.dfsTraverse().contains(succ) iff succ.parents().contains(node)
      */
-    Set<InnerCFNode> parents();
-    void addParent(InnerCFNode parent);
-    void removeParent(InnerCFNode parent);
+    Set<OuterCFNode> parents();
+    void addParent(OuterCFNode parent);
+    void removeParent(OuterCFNode parent);
 
-    List<InnerCFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
-    void setNext(InnerCFNode next);
-    InnerCFNode getNext();
+    List<OuterCFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
+    void setNext(OuterCFNode next);
+    OuterCFNode getNext();
 
     VariableTable getVariableTable();
 
@@ -36,11 +32,11 @@ public interface InnerCFNode extends CFNode {
      * This is because parents is a set, so there may be multiple
      * ways to get to a node from the parent.  Caller is responsible for fixing the parent pointers on original.
      */
-    void replacePointers(InnerCFNode original, InnerCFNode replacement);
+    void replacePointers(OuterCFNode original, OuterCFNode replacement);
 
     int getUID();
 
-    void accept(MiniCFVisitor v);
+    void accept(CFVisitor v);
 
     /**
      * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
@@ -49,20 +45,13 @@ public interface InnerCFNode extends CFNode {
 
     Set<Expr> getSubExpressions();
 
-    /**
-     * @param allExprs list of all expressions that should be considered -- necessary
-     *                 parameter because
-     * @return list of expressions that are available at the end of this CFStatement
-     */
     Set<Expr> generatedExprs(Set<Expr> allExprs);
-
-    /**
-     * @param allExprs list of all expressions that should be considered
-     * @return subset of exprs that are killed by this CFStatement
-     */
     Set<Expr> killedExprs(Set<Expr> allExprs);
 
+    /** set of LOCAL variables used or defined in this outerCFNode */
     Set<AssemblyVariable> getLocalAssemblyVariables();
-    Set<AssemblyVariable> getDefined();
+    /** set of variables used before being defined in this outerCFNode */
     Set<AssemblyVariable> getUsed();
+    /** set of variables defined in this outerCFNode */
+    Set<AssemblyVariable> getDefined();
 }

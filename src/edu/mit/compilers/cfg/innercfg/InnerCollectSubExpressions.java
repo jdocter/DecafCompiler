@@ -1,6 +1,5 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 

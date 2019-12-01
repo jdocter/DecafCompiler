@@ -5,15 +5,10 @@ import java.util.Set;
 
 import java.util.List;
 
-import edu.mit.compilers.cfg.CFBlock;
-import edu.mit.compilers.cfg.CFConditional;
-import edu.mit.compilers.cfg.CFNode;
-import edu.mit.compilers.cfg.CFNop;
-import edu.mit.compilers.cfg.CFReturn;
+import edu.mit.compilers.cfg.OuterCFNode;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.CFVisitor;
 
 
 public class TempOffsetAssigner {
@@ -25,9 +20,9 @@ public class TempOffsetAssigner {
 
     public long tempOffsetStart;
     public long maxTempOffset;
-    private CFNode methodCFGStart;
+    private OuterCFNode methodCFGStart;
 
-    private final Set<CFNode> visited = new HashSet<>();
+    private final Set<OuterCFNode> visited = new HashSet<>();
 
     public TempOffsetAssigner(MethodDescriptor methodDescriptor, long maxMethodStackOffset) {
         tempOffsetStart = maxMethodStackOffset;
@@ -40,7 +35,7 @@ public class TempOffsetAssigner {
         return maxTempOffset;
     }
 
-    private void visitNode(CFNode node) {
+    private void visitNode(OuterCFNode node) {
         if (visited.contains(node)) return;
         else visited.add(node);
 
@@ -67,7 +62,7 @@ public class TempOffsetAssigner {
             maxTempOffset = blockTempOffset;
         }
 
-        for (CFNode child: node.dfsTraverse()) {
+        for (OuterCFNode child: node.dfsTraverse()) {
             visitNode(child);
         }
     }

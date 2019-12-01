@@ -1,7 +1,6 @@
 package edu.mit.compilers.cse;
 
 import edu.mit.compilers.cfg.*;
-import edu.mit.compilers.cfg.innercfg.TopologicalSort;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.visitor.CFVisitor;
 
@@ -15,7 +14,7 @@ public class LocalCSEActivator implements CFVisitor {
      * Does DFS on nodes and activates LocalCommonSubExpressionEliminator on all of them.
      */
 
-    private final Set<CFNode> visited = new HashSet<>();
+    private final Set<OuterCFNode> visited = new HashSet<>();
 
     private final Map<Expr, SharedTemp> sharedExpressionsMap;
 
@@ -28,7 +27,7 @@ public class LocalCSEActivator implements CFVisitor {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
         new LocalCommonSubExpressionEliminator(cfBlock.getMiniCFGStart(), cfBlock.getSubExpressions(), sharedExpressionsMap);
-        for (CFNode child: cfBlock.dfsTraverse()) {
+        for (OuterCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -38,7 +37,7 @@ public class LocalCSEActivator implements CFVisitor {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
         new LocalCommonSubExpressionEliminator(cfConditional.getMiniCFGStart(), cfConditional.getSubExpressions(), sharedExpressionsMap);
-        for (CFNode child: cfConditional.dfsTraverse()) {
+        for (OuterCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -47,7 +46,7 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFNop cfNop) {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
-        for (CFNode child: cfNop.dfsTraverse()) {
+        for (OuterCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
     }

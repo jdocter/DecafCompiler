@@ -5,12 +5,10 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Statement;
@@ -19,16 +17,16 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
 
-public class CFBlock extends UIDObject implements CFNode {
+public class CFBlock extends UIDObject implements OuterCFNode {
 
     private InnerCFNode miniCFGStart;
     private InnerCFNode miniCFGEnd;
     // Should all be either CFAssign or CFMethodCall
     private final List<Statement> statements = new ArrayList<>();
-    CFNode next;
+    OuterCFNode next;
 
     boolean isEnd; // end of function
-    private Set<CFNode> parents = new HashSet<CFNode>();
+    private Set<OuterCFNode> parents = new HashSet<OuterCFNode>();
     private final VariableTable variableTable;
 
     public CFBlock(Statement statement, VariableTable variableTable) {
@@ -58,24 +56,24 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public void setNext(CFNode next) {
+    public void setNext(OuterCFNode next) {
         isEnd = false;
         this.next = next;
         next.addParent(this);
     }
 
     @Override
-    public CFNode getNext() {
+    public OuterCFNode getNext() {
         return next;
     }
 
     @Override
-    public Set<CFNode> parents() {
+    public Set<OuterCFNode> parents() {
         return this.parents;
     }
 
     @Override
-    public void addParent(CFNode parent) {
+    public void addParent(OuterCFNode parent) {
         this.parents.add(parent);
     }
 
@@ -88,7 +86,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public List<CFNode> dfsTraverse() {
+    public List<OuterCFNode> dfsTraverse() {
         if (isEnd) return List.of();
         return List.of(next);
     }
@@ -99,7 +97,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public void removeParent(CFNode parent) {
+    public void removeParent(OuterCFNode parent) {
         this.parents.remove(parent);
     }
 
@@ -109,7 +107,7 @@ public class CFBlock extends UIDObject implements CFNode {
     }
 
     @Override
-    public void replacePointers(CFNode original, CFNode replacement) {
+    public void replacePointers(OuterCFNode original, OuterCFNode replacement) {
         if (this.next == original) {
             this.setNext(replacement);
         }
@@ -179,11 +177,6 @@ public class CFBlock extends UIDObject implements CFNode {
         return ts.stream()
                 .flatMap(node -> node.killedExprs(allExprs).stream())
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<AssemblyVariable> getOuterAssemblyVariables() {
-        return null;
     }
 
     public void prependAllStatements(CFBlock block) {

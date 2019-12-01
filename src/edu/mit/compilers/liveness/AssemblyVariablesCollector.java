@@ -9,11 +9,11 @@ import java.util.HashSet;
 public class AssemblyVariablesCollector implements CFVisitor {
 
     private final HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
-    private final HashSet<CFNode> visited = new HashSet<>();
-    private final CFNode start;
+    private final HashSet<OuterCFNode> visited = new HashSet<>();
+    private final OuterCFNode start;
 
 
-    AssemblyVariablesCollector(CFNode start) {
+    AssemblyVariablesCollector(OuterCFNode start) {
         this.start= start;
     }
 
@@ -25,7 +25,7 @@ public class AssemblyVariablesCollector implements CFVisitor {
     }
 
     private void visit(InnerCFNode innerCFNode) {
-        assemblyVariables.addAll(innerCFNode.getAllAssemblyVariables());
+        assemblyVariables.addAll(innerCFNode.getLocalAssemblyVariables());
         for (InnerCFNode child: innerCFNode.dfsTraverse()) {
             visit(innerCFNode);
         }
@@ -36,7 +36,7 @@ public class AssemblyVariablesCollector implements CFVisitor {
         visited.add(cfBlock);
         assemblyVariables.addAll(cfBlock.getOuterAssemblyVariables());
         visit(cfBlock.getMiniCFGStart());
-        for (CFNode child: cfBlock.dfsTraverse()) {
+        for (OuterCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -47,7 +47,7 @@ public class AssemblyVariablesCollector implements CFVisitor {
         visited.add(cfConditional);
         assemblyVariables.addAll(cfConditional.getOuterAssemblyVariables());
         visit(cfConditional.getMiniCFGStart());
-        for (CFNode child: cfConditional.dfsTraverse()) {
+        for (OuterCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -56,7 +56,7 @@ public class AssemblyVariablesCollector implements CFVisitor {
     public void visit(CFNop cfNop) {
         if (visited.contains(cfNop)) return;
         visited.add(cfNop);
-        for (CFNode child: cfNop.dfsTraverse()) {
+        for (OuterCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -67,7 +67,7 @@ public class AssemblyVariablesCollector implements CFVisitor {
         visited.add(cfReturn);
         assemblyVariables.addAll(cfReturn.getOuterAssemblyVariables());
         visit(cfReturn.getMiniCFGStart());
-        for (CFNode child: cfReturn.dfsTraverse()) {
+        for (OuterCFNode child: cfReturn.dfsTraverse()) {
             child.accept(this);
         }
     }

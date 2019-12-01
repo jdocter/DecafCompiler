@@ -1,15 +1,15 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.OuterCFNode;
 
 public class InnerCFEndOfMiniCFG extends InnerCFNop {
-    private CFNode enclosingNode;
+    private OuterCFNode enclosingNode;
 
-    public InnerCFEndOfMiniCFG(CFNode enclosingNode) {
+    public InnerCFEndOfMiniCFG(OuterCFNode enclosingNode) {
         this.enclosingNode = enclosingNode;
     }
 
-    public CFNode getEnclosingNode() {
+    public OuterCFNode getEnclosingNode() {
         return enclosingNode;
     }
 

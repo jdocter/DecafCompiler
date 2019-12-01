@@ -10,12 +10,12 @@ import java.util.*;
 public class CommonSubExpressionEliminator implements CFVisitor {
 
     private final GlobalAvailableSubExpressionsAnalyzer analysis;
-    private final Set<CFNode> visited = new HashSet<>();
+    private final Set<OuterCFNode> visited = new HashSet<>();
 
     // To avoid re-saving expressions every time, map the same expr to the same shared temp.
     private final HashMap<Expr, SharedTemp> sharedExpressionsMap = new HashMap<>();
 
-    public CommonSubExpressionEliminator(CFNode methodCFG) {
+    public CommonSubExpressionEliminator(OuterCFNode methodCFG) {
         analysis = new GlobalAvailableSubExpressionsAnalyzer(methodCFG);
 
         // go forward using saved expressions -- whenever using, check backwards to save previous use
@@ -24,7 +24,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
         methodCFG.accept(new LocalCSEActivator(sharedExpressionsMap));
     }
 
-    private void eliminateExprsInnerCFNode(Set<Expr> available, InnerCFNode node, Set<CFNode> parents) {
+    private void eliminateExprsInnerCFNode(Set<Expr> available, InnerCFNode node, Set<OuterCFNode> parents) {
         Set<Expr> remainingAvailable = new HashSet<>(node.getSubExpressions());
         remainingAvailable.retainAll(available);
 
@@ -52,7 +52,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
                 // have to mark as used first before saving so that if we loop
                 // back, we don't insert an extra save after this statement
                 cfAssign.setAlternativeSource(newSrc);
-                for (CFNode parent : parents) {
+                for (OuterCFNode parent : parents) {
                     new ExpressionSaver(parent, rhs, newSrc).saveExpressions();
                 }
             }
@@ -74,7 +74,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
             eliminateExprsInnerCFNode(available, node, cfBlock.parents());
         }
 
-        for (CFNode neighbor : cfBlock.dfsTraverse()) {
+        for (OuterCFNode neighbor : cfBlock.dfsTraverse()) {
             neighbor.accept(this);
         }
     }
@@ -91,7 +91,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
             eliminateExprsInnerCFNode(available, node, cfConditional.parents());
         }
 
-        for (CFNode neighbor : cfConditional.dfsTraverse()) {
+        for (OuterCFNode neighbor : cfConditional.dfsTraverse()) {
             neighbor.accept(this);
         }
     }
@@ -101,7 +101,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
         if (visited.contains(cfNop)) return;
         visited.add(cfNop);
 
-        for (CFNode neighbor : cfNop.dfsTraverse()) {
+        for (OuterCFNode neighbor : cfNop.dfsTraverse()) {
             neighbor.accept(this);
         }
     }
@@ -118,7 +118,7 @@ public class CommonSubExpressionEliminator implements CFVisitor {
             eliminateExprsInnerCFNode(available, node, cfReturn.parents());
         }
 
-        for (CFNode neighbor : cfReturn.dfsTraverse()) {
+        for (OuterCFNode neighbor : cfReturn.dfsTraverse()) {
             neighbor.accept(this);
         }
     }

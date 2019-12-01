@@ -3,7 +3,7 @@ package edu.mit.compilers.cfg.innercfg;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.OuterCFNode;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
@@ -15,12 +15,12 @@ public class InnerMergeBasicBlocksAndRemoveNops implements MiniCFVisitor {
     Set<InnerCFNode> visited = new HashSet<>();
 
     InnerCFBlock lastSeenCFBlock;
-    private CFNode enclosingCFNode;
+    private OuterCFNode enclosingCFNode;
 
     private InnerCFNode firstNodeOfCFG;
     private InnerCFNode lastNodeOfCFG;
 
-    public InnerMergeBasicBlocksAndRemoveNops(CFNode enclosingCFNode) {
+    public InnerMergeBasicBlocksAndRemoveNops(OuterCFNode enclosingCFNode) {
         this.enclosingCFNode = enclosingCFNode;
     }
 

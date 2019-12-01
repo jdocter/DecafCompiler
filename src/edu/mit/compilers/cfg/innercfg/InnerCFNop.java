@@ -104,7 +104,7 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getAllAssemblyVariables() {
+    public Set<AssemblyVariable> getLocalAssemblyVariables() {
         return new HashSet<>();
     }
 

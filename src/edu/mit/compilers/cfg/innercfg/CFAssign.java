@@ -247,7 +247,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
     @Override
-    public Set<AssemblyVariable> getAllAssemblyVariables() {
+    public Set<AssemblyVariable> getLocalAssemblyVariables() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
 
         if (null != dstArrayOffset) assemblyVariables.add(dstArrayOffset);

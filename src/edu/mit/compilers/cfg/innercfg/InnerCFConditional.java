@@ -160,7 +160,7 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     public Set<Expr> killedExprs(Set<Expr> allExprs) { return  Set.of(); }
 
     @Override
-    public Set<AssemblyVariable> getAllAssemblyVariables() {
+    public Set<AssemblyVariable> getLocalAssemblyVariables() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
         if (boolTemp != null) assemblyVariables.add(boolTemp);
         if (left != null) assemblyVariables.add(left);

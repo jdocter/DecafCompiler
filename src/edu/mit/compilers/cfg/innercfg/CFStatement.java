@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import edu.mit.compilers.cfg.AssemblyVariable;
+import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
@@ -14,7 +15,7 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.StatementCFVisitor;
 
-public interface CFStatement {
+public interface CFStatement extends CFNode {
 
     /**
      * @return expression that is available at the end of this CFStatement
@@ -40,5 +41,7 @@ public interface CFStatement {
 
     void accept(StatementCFVisitor v);
 
-    Set<AssemblyVariable> getAllAssemblyVariables();
+    Set<AssemblyVariable> getLocalAssemblyVariables();
+    Set<AssemblyVariable> getDefined();
+    Set<AssemblyVariable> getUsed();
 }

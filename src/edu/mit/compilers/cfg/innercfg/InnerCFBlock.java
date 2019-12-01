@@ -2,10 +2,8 @@ package edu.mit.compilers.cfg.innercfg;
 
 import java.util.*;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -145,10 +143,10 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getAllAssemblyVariables() {
+    public Set<AssemblyVariable> getLocalAssemblyVariables() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
         for (CFStatement cfStatement: cfStatements) {
-            assemblyVariables.addAll(cfStatement.getAllAssemblyVariables());
+            assemblyVariables.addAll(cfStatement.getLocalAssemblyVariables());
         }
         return assemblyVariables;
     }

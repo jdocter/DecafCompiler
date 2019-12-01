@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class TempifySubExpressions implements CFVisitor {
 
-    Set<CFNode> visited = new HashSet<>();
+    Set<OuterCFNode> visited = new HashSet<>();
 
     @Override
     public void visit(CFBlock cfBlock) {
@@ -42,7 +42,7 @@ public class TempifySubExpressions implements CFVisitor {
             cfBlock.setMiniCFG(mergeBasicBlocksAndRemoveNops.getFirstNodeOfCFG(),
                     mergeBasicBlocksAndRemoveNops.getLastNodeOfCFG());
             visited.add(cfBlock);
-            for (CFNode neighbor : cfBlock.dfsTraverse()) {
+            for (OuterCFNode neighbor : cfBlock.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
@@ -62,7 +62,7 @@ public class TempifySubExpressions implements CFVisitor {
                     mergeBasicBlocksAndRemoveNops.getLastNodeOfCFG());
 
             visited.add(cfConditional);
-            for (CFNode neighbor : cfConditional.dfsTraverse()) {
+            for (OuterCFNode neighbor : cfConditional.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
@@ -72,7 +72,7 @@ public class TempifySubExpressions implements CFVisitor {
     public void visit(CFNop cfNop) {
         if (!visited.contains(cfNop)) {
             visited.add(cfNop);
-            for (CFNode neighbor : cfNop.dfsTraverse()) {
+            for (OuterCFNode neighbor : cfNop.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
@@ -95,7 +95,7 @@ public class TempifySubExpressions implements CFVisitor {
 
 
             visited.add(cfReturn);
-            for (CFNode neighbor : cfReturn.dfsTraverse()) {
+            for (OuterCFNode neighbor : cfReturn.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
