@@ -31,7 +31,7 @@ import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
 
-    public static final String[] optnames = {"cse"};
+    public static final String[] optnames = {"cse", "reg"};
 
   public static void main(String[] args) {
     try {
@@ -230,6 +230,12 @@ public class Main {
                     new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
                     // copy propagate?
                     // dead code?
+                }
+            }
+
+            if (CLI.opts[1]) { // REG
+                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                    // TODO
                 }
             }
 
