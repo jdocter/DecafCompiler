@@ -43,10 +43,12 @@ public class CFBlock extends UIDObject implements OuterCFNode {
         this.miniCFGEnd = miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGEnd() {
         return miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGStart() {
         return miniCFGStart;
     }

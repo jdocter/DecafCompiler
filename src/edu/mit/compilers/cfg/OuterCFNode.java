@@ -3,6 +3,7 @@ package edu.mit.compilers.cfg;
 import java.util.List;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -11,6 +12,9 @@ import edu.mit.compilers.visitor.CFVisitor;
 public interface OuterCFNode extends CFNode {
     String getAssemblyLabel();
     String getEndOfMiniCFGLabel();
+
+    InnerCFNode getMiniCFGStart();
+    InnerCFNode getMiniCFGEnd();
 
     /*
      * Invariant:
@@ -48,10 +52,4 @@ public interface OuterCFNode extends CFNode {
     Set<Expr> generatedExprs(Set<Expr> allExprs);
     Set<Expr> killedExprs(Set<Expr> allExprs);
 
-    /** set of LOCAL variables used or defined in this outerCFNode */
-    Set<AssemblyVariable> getLocalAssemblyVariables();
-    /** set of variables used before being defined in this outerCFNode */
-    Set<AssemblyVariable> getUsed();
-    /** set of variables defined in this outerCFNode */
-    Set<AssemblyVariable> getDefined();
 }

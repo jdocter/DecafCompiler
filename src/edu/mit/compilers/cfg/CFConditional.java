@@ -57,10 +57,12 @@ public class CFConditional extends UIDObject implements OuterCFNode {
         this.miniCFGEnd = miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGEnd() {
         return miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGStart() {
         return miniCFGStart;
     }

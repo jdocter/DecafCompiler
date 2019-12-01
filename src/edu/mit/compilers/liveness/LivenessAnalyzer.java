@@ -46,7 +46,7 @@ public class LivenessAnalyzer {
 
         // calculate in for all end nodes
         for (OuterCFNode end: methodCFGEnds) {
-            globalIn.put(end, new LocalLivenessAnalyzer(Set.of()).getGlobalIn());
+            globalIn.put(end, new LocalLivenessAnalyzer(end.getMiniCFGStart(), Set.of()).getGlobalIn());
         }
         while (!changed.isEmpty()) {
             // fixed point
@@ -61,7 +61,7 @@ public class LivenessAnalyzer {
 
 
             // in = used U (out - def)
-            Set<AssemblyVariable> newIn = new LocalLivenessAnalyzer(globalOut.get(currentNode)).getGlobalIn();
+            Set<AssemblyVariable> newIn = new LocalLivenessAnalyzer(currentNode.getMiniCFGStart(), globalOut.get(currentNode)).getGlobalIn();
 
             if (!newIn.equals(globalIn.get(currentNode))) {
                 globalIn.put(currentNode, newIn);

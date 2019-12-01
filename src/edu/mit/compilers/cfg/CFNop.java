@@ -1,5 +1,8 @@
 package edu.mit.compilers.cfg;
 
+import edu.mit.compilers.cfg.innercfg.InnerCFEndOfMiniCFG;
+import edu.mit.compilers.cfg.innercfg.InnerCFNode;
+import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -106,5 +109,15 @@ public class CFNop extends UIDObject implements OuterCFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Nops don't have Mini CFGs");
+    }
+
+    @Override
+    public InnerCFNode getMiniCFGStart() {
+        return new InnerCFEndOfMiniCFG(this);
+    }
+
+    @Override
+    public InnerCFNode getMiniCFGEnd() {
+        return new InnerCFEndOfMiniCFG(this);
     }
 }

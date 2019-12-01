@@ -67,11 +67,13 @@ public class CFReturn extends UIDObject implements OuterCFNode {
         this.miniCFGEnd = miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGEnd() {
         if (isVoid) return new InnerCFNop();
         return miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGStart() {
         if (isVoid) return new InnerCFNop();
         return miniCFGStart;
