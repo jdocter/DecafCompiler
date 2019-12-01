@@ -1,7 +1,6 @@
 package edu.mit.compilers.liveness;
 
 import edu.mit.compilers.cfg.*;
-import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.*;
 
@@ -20,9 +19,9 @@ public class LivenessAnalyzer {
     Map<OuterCFNode, Set<AssemblyVariable>> globalOut = new HashMap<>();
 
 
-    // for all analysis
-    Map<CFNode, Set<AssemblyVariable>> in = new HashMap<>();
-    Map<CFNode, Set<AssemblyVariable>> out = new HashMap<>();
+    // granular analysis, may include CFStatements, OuterCFNodes, InnerCFNodes
+    Map<CFNode, Set<AssemblyVariable>> granularIn = new HashMap<>();
+    Map<CFNode, Set<AssemblyVariable>> granularOut = new HashMap<>();
 
 
     public LivenessAnalyzer(OuterCFNode methodCFG) {
@@ -31,6 +30,18 @@ public class LivenessAnalyzer {
         doGlobalLivenessAnalysis();
 
         doLocalLivenessAnalysis();
+    }
+
+    public Set<AssemblyVariable> getIn(CFNode cfNode) {
+        if (!granularIn.containsKey(cfNode)) throw new RuntimeException("Tried to get IN liveness analysis of cfNode "
+                + cfNode + " but IN has not been calculated");
+        return granularIn.get(cfNode);
+    }
+
+    public Set<AssemblyVariable> getOut(CFNode cfNode) {
+        if (!granularOut.containsKey(cfNode)) throw new RuntimeException("Tried to get OUT liveness analysis of cfNode "
+                + cfNode + " but OUT has not been calculated");
+        return granularOut.get(cfNode);
     }
 
     private void doGlobalLivenessAnalysis() {
@@ -94,13 +105,13 @@ public class LivenessAnalyzer {
             miniCFGOut.addAll(cfNode.getOuterUsed());
 
             // do out and in for outer CFG, unnecessary for CFNop and CFBlock but not necessarily bad
-            out.put(cfNode, globalOut.get(cfNode));
-            in.put(cfNode, new HashSet<>(miniCFGOut));
+            granularOut.put(cfNode, globalOut.get(cfNode));
+            granularIn.put(cfNode, new HashSet<>(miniCFGOut));
 
             // do out and in for outer CFG, unnecessary for CFNop not necessarily bad?
             LocalLivenessAnalyzer localLivenessAnalyzer = new LocalLivenessAnalyzer(cfNode.getMiniCFGStart(), miniCFGOut);
-            in.putAll(localLivenessAnalyzer.getIn());
-            out.putAll(localLivenessAnalyzer.getOut());
+            granularIn.putAll(localLivenessAnalyzer.getIn());
+            granularOut.putAll(localLivenessAnalyzer.getOut());
         }
     }
 }
