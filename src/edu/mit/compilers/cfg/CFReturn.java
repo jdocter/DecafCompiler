@@ -199,6 +199,16 @@ public class CFReturn extends UIDObject implements OuterCFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getOuterUsed() {
+        return Set.of(returnTemp);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getOuterDefined() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_return_" + UID;
     }

@@ -1,9 +1,7 @@
 package edu.mit.compilers.liveness;
 
-import edu.mit.compilers.cfg.AssemblyVariable;
-import edu.mit.compilers.cfg.CFNode;
-import edu.mit.compilers.cfg.OuterCFNode;
-import edu.mit.compilers.parser.Expr;
+import edu.mit.compilers.cfg.*;
+import edu.mit.compilers.visitor.CFVisitor;
 
 import java.util.*;
 
@@ -30,15 +28,13 @@ public class LivenessAnalyzer {
     public LivenessAnalyzer(OuterCFNode methodCFG) {
         this.methodCFGStart = methodCFG;
 
-        // fixed point algorithm
-        doGlobalLivenessAnalysis(methodCFG);
+        doGlobalLivenessAnalysis();
 
-        // local liveness analysis
-        // use local liveness analyzer as a subproblem
+        doLocalLivenessAnalysis();
     }
 
-    private void doGlobalLivenessAnalysis(OuterCFNode methodCFG) {
-        prepNeighbors(methodCFG);
+    private void doGlobalLivenessAnalysis() {
+        globalAnalysisPrep(methodCFGStart);
 
         // initialize changed to all nodes except end nodes
         Set<OuterCFNode> changed = new HashSet<>(visited);
@@ -46,7 +42,7 @@ public class LivenessAnalyzer {
 
         // calculate in for all end nodes
         for (OuterCFNode end: methodCFGEnds) {
-            globalIn.put(end, new LocalLivenessAnalyzer(end.getMiniCFGStart(), Set.of()).getGlobalIn());
+            globalIn.put(end, new LocalLivenessAnalyzer(end.getMiniCFGStart(), end.getOuterUsed()).getGlobalIn());
         }
         while (!changed.isEmpty()) {
             // fixed point
@@ -59,9 +55,13 @@ public class LivenessAnalyzer {
                 globalOut.get(currentNode).addAll(globalIn.get(succ));
             }
 
+            // in = used U (out - def) :::: first handle outer statments (CFConditional, CFReturn)
+            Set<AssemblyVariable> miniCFGOut = new HashSet<>(globalOut.get(currentNode));
+            miniCFGOut.removeAll(currentNode.getOuterDefined());
+            miniCFGOut.addAll(currentNode.getOuterUsed());
 
-            // in = used U (out - def)
-            Set<AssemblyVariable> newIn = new LocalLivenessAnalyzer(currentNode.getMiniCFGStart(), globalOut.get(currentNode)).getGlobalIn();
+            // in = used U (out - def) :::: use local liveness analyzer to calculate in for the whole current CFNode
+            Set<AssemblyVariable> newIn = new LocalLivenessAnalyzer(currentNode.getMiniCFGStart(), miniCFGOut).getGlobalIn();
 
             if (!newIn.equals(globalIn.get(currentNode))) {
                 globalIn.put(currentNode, newIn);
@@ -70,7 +70,7 @@ public class LivenessAnalyzer {
         }
     }
 
-    private void prepNeighbors(OuterCFNode cfNode) {
+    private void globalAnalysisPrep(OuterCFNode cfNode) {
         if (!visited.contains(cfNode)) {
             visited.add(cfNode);
 
@@ -81,8 +81,26 @@ public class LivenessAnalyzer {
                 methodCFGEnds.add(cfNode);
             }
             for (OuterCFNode neighbor : cfNode.dfsTraverse()) {
-                prepNeighbors(neighbor);
+                globalAnalysisPrep(neighbor);
             }
+        }
+    }
+
+    private void doLocalLivenessAnalysis() {
+        for (OuterCFNode cfNode: visited) {
+            // calculate out for the miniCFG necessary for CFConditional & CFReturn
+            Set<AssemblyVariable> miniCFGOut = new HashSet<>(globalOut.get(cfNode));
+            miniCFGOut.removeAll(cfNode.getOuterDefined());
+            miniCFGOut.addAll(cfNode.getOuterUsed());
+
+            // do out and in for outer CFG, unnecessary for CFNop and CFBlock but not necessarily bad
+            out.put(cfNode, globalOut.get(cfNode));
+            in.put(cfNode, new HashSet<>(miniCFGOut));
+
+            // do out and in for outer CFG, unnecessary for CFNop not necessarily bad?
+            LocalLivenessAnalyzer localLivenessAnalyzer = new LocalLivenessAnalyzer(cfNode.getMiniCFGStart(), miniCFGOut);
+            in.putAll(localLivenessAnalyzer.getIn());
+            out.putAll(localLivenessAnalyzer.getOut());
         }
     }
 }

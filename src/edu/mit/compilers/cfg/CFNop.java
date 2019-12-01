@@ -102,6 +102,16 @@ public class CFNop extends UIDObject implements OuterCFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getOuterUsed() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getOuterDefined() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_nop_" + UID;
     }

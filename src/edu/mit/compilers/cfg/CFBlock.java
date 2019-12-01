@@ -181,6 +181,16 @@ public class CFBlock extends UIDObject implements OuterCFNode {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<AssemblyVariable> getOuterUsed() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getOuterDefined() {
+        return Set.of();
+    }
+
     public void prependAllStatements(CFBlock block) {
         List<Statement> thisCopy = new ArrayList<>(this.statements);
         this.statements.clear();

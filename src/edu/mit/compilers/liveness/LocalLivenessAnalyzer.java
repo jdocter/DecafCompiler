@@ -48,6 +48,11 @@ public class LocalLivenessAnalyzer implements MiniCFVisitor {
 
     private void computeLiveVariables(LinkedList<InnerCFNode> orderCfNodes) {
         // iterate backwards, filling in in/out for CFStatement, InnerCFConditional, and InnerCFNop
+        if (orderCfNodes.size() <= 1) {
+            globalIn = globalOut;
+            return;
+        }
+
         for (InnerCFNode cfNode : orderCfNodes) {
             cfNode.accept(this);
         }

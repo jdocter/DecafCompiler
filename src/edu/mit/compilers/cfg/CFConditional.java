@@ -188,6 +188,16 @@ public class CFConditional extends UIDObject implements OuterCFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getOuterUsed() {
+        return Set.of(boolTemp);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getOuterDefined() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_conditional_" + UID;
     }

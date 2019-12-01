@@ -52,4 +52,10 @@ public interface OuterCFNode extends CFNode {
     Set<Expr> generatedExprs(Set<Expr> allExprs);
     Set<Expr> killedExprs(Set<Expr> allExprs);
 
+    /** set of LOCAL AssemblyVariables that are used only in the outer CFG*/
+    Set<AssemblyVariable> getOuterUsed();
+    /** set of LOCAL AssemblyVariables that are defined only in the outer CFG*/
+    Set<AssemblyVariable> getOuterDefined();
+
+
 }
