@@ -19,6 +19,7 @@ import java.util.*;
 public class CFAssign extends UIDObject implements CFStatement {
 
     private int type;
+    private final VariableTable variableTable;
 
     public static final int LEN = 0;
     public static final int MINUS = 1;
@@ -61,10 +62,13 @@ public class CFAssign extends UIDObject implements CFStatement {
     public static final String INC = "++";
     public static final String DEC = "--";
 
-    private CFAssign(Expr canonicalExpr) {this.canonicalExpr = canonicalExpr;};
+    private CFAssign(Expr canonicalExpr, VariableTable variableTable) {
+        this.canonicalExpr = canonicalExpr;
+        this.variableTable = variableTable;
+    };
 
-    public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
         result.assignOp = assignExprOp;
@@ -74,8 +78,8 @@ public class CFAssign extends UIDObject implements CFStatement {
     }
 
 
-    public static CFAssign makeMinus(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeMinus(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable operand, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -84,8 +88,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLen(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable id, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeLen(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable id, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = LEN;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -94,8 +98,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLit(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeLit(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Lit lit, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = LIT;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -104,8 +108,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeArrayLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable srcArray, AssemblyVariable srcArrayOffset, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeArrayLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable srcArray, AssemblyVariable srcArrayOffset, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = ARRAY_LOC;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -115,8 +119,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable src, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeLocAssign(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Variable src, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = SIMPLE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -125,8 +129,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeLoadRax(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeLoadRax(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = METHOD_CALL;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -135,8 +139,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign makeNot(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign makeNot(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable notOperand, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = MINUS;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -145,8 +149,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignTrue(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign assignTrue(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = TRUE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -154,8 +158,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignFalse(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign assignFalse(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = FALSE;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -163,8 +167,8 @@ public class CFAssign extends UIDObject implements CFStatement {
         return result;
     }
 
-    public static CFAssign assignBinOp(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right, Expr canonicalExpr) {
-        CFAssign result = new CFAssign(canonicalExpr);
+    public static CFAssign assignBinOp(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, AssemblyVariable left, BinOp binOp, AssemblyVariable right, Expr canonicalExpr, VariableTable variableTable) {
+        CFAssign result = new CFAssign(canonicalExpr, variableTable);
         result.type = BIN_OP;
         result.dstArrayOrLoc = dstArrayOrLoc;
         result.dstArrayOffset = arrayOffset;
@@ -253,6 +257,34 @@ public class CFAssign extends UIDObject implements CFStatement {
         if (null != dstArrayOffset) assemblyVariables.add(dstArrayOffset);
         if (null != dstArrayOrLoc) assemblyVariables.add(dstArrayOrLoc);
         if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
+        if (null != srcOptionalCSE) {
+            assemblyVariables.add(srcOptionalCSE);
+            return assemblyVariables;
+        }
+        if (null != srcLeftOrSingle) assemblyVariables.add(srcLeftOrSingle);
+        if (null != srcRight) assemblyVariables.add(srcRight);
+        if (null != srcId) assemblyVariables.add(srcId);
+        if (null != srcArray) assemblyVariables.add(srcArray);
+        if (null != srcArrayOffset) assemblyVariables.add(srcArrayOffset);
+        return assemblyVariables;
+    }
+
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+        // TODO exclude global?
+        // if (null != dstArrayOrLoc && null == dstArrayOffset && !dstArrayOrLoc.isGlobal(variableTable)) assemblyVariables.add(dstArrayOrLoc);
+        if (null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
+        if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
+        return assemblyVariables;
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+
+        if (!assignOp.equals(ASSIGN) && null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
+        if (null != dstArrayOffset) assemblyVariables.add(dstArrayOffset);
         if (null != srcOptionalCSE) {
             assemblyVariables.add(srcOptionalCSE);
             return assemblyVariables;

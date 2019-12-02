@@ -146,26 +146,26 @@ public class TempifySubExpressions implements CFVisitor {
         if (statement.loc.expr != null && statement.assignExpr.expr != null) {
             // a[b] += c
             // canonicalExpr = c
-            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr, assignExpr), locals);
+            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, tempLocExpr, statement.assignExpr.assignExprOp, tempAssignExpr, assignExpr, locals), locals);
             locExprCFG.getValue().setNext(assignExprCFG.getKey());
             assignExprCFG.getValue().setNext(cfBlockAssign);
             return new Pair<InnerCFNode, InnerCFNode>(locExprCFG.getKey(),cfBlockAssign);
         } else if (statement.loc.expr == null && statement.assignExpr.expr == null){
             // a++
             // canonicalExpr = null
-            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, null, statement.assignExpr.assignExprOp, null, null),
+            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, null, statement.assignExpr.assignExprOp, null, null, locals),
                     locals);
             return new Pair<InnerCFNode, InnerCFNode>(cfBlockAssign,cfBlockAssign);
         } else if (statement.loc.expr != null && statement.assignExpr.expr == null) {
             // a[b] ++
             // canonicalExpr = null
-            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, tempLocExpr, statement.assignExpr.assignExprOp, null, null), locals);
+            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, tempLocExpr, statement.assignExpr.assignExprOp, null, null, locals), locals);
             locExprCFG.getValue().setNext(cfBlockAssign);
             return new Pair<InnerCFNode, InnerCFNode>(assignExprCFG.getKey(),cfBlockAssign);
         } else if (statement.loc.expr == null && statement.assignExpr.expr != null) {
             // a += c
             // canonicalExpr = c
-            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, null, statement.assignExpr.assignExprOp, tempAssignExpr, assignExpr), locals);
+            cfBlockAssign = new InnerCFBlock(CFAssign.makeSimple(locId, null, statement.assignExpr.assignExprOp, tempAssignExpr, assignExpr, locals), locals);
             assignExprCFG.getValue().setNext(cfBlockAssign);
             return new Pair<InnerCFNode, InnerCFNode>(assignExprCFG.getKey(),cfBlockAssign);
         } else {
@@ -176,15 +176,15 @@ public class TempifySubExpressions implements CFVisitor {
     private static Pair<InnerCFNode,InnerCFNode> destructExprAssignTemp(Expr expr, AssemblyVariable arrayOrLoc, AssemblyVariable arrayOffset, VariableTable locals) {
         switch (expr.exprType) {
             case Expr.LEN:
-                InnerCFBlock cfBlockLen = new InnerCFBlock(CFAssign.makeLen(arrayOrLoc, arrayOffset, new Variable(expr.id), expr), locals);
+                InnerCFBlock cfBlockLen = new InnerCFBlock(CFAssign.makeLen(arrayOrLoc, arrayOffset, new Variable(expr.id), expr, locals), locals);
                 return new Pair<InnerCFNode, InnerCFNode>(cfBlockLen, cfBlockLen);
             case Expr.LIT:
-                InnerCFBlock cfBlockLit = new InnerCFBlock(CFAssign.makeLit(arrayOrLoc, arrayOffset, expr.lit, expr), locals);
+                InnerCFBlock cfBlockLit = new InnerCFBlock(CFAssign.makeLit(arrayOrLoc, arrayOffset, expr.lit, expr, locals), locals);
                 return new Pair<InnerCFNode, InnerCFNode>(cfBlockLit, cfBlockLit);
             case Expr.MINUS:
                 Temp tempMinusOperand = new Temp();
                 Pair<InnerCFNode, InnerCFNode> minusOperandCFG = destructExprAssignTemp(expr.expr, tempMinusOperand, null, locals);
-                InnerCFBlock cfBlockMinus = new InnerCFBlock(CFAssign.makeMinus(arrayOrLoc, arrayOffset, tempMinusOperand, expr), locals);
+                InnerCFBlock cfBlockMinus = new InnerCFBlock(CFAssign.makeMinus(arrayOrLoc, arrayOffset, tempMinusOperand, expr, locals), locals);
                 minusOperandCFG.getValue().setNext(cfBlockMinus);
                 return new Pair<InnerCFNode, InnerCFNode>(minusOperandCFG.getKey(), cfBlockMinus);
             case Expr.LOC:
@@ -192,22 +192,22 @@ public class TempifySubExpressions implements CFVisitor {
                 final Variable locId = new Variable(expr.loc.id);
                 if (expr.loc.expr != null) {
                     final Pair<InnerCFNode, InnerCFNode> locExprCFG = destructExprAssignTemp(expr.loc.expr, tempLocExpr, null, locals);
-                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFAssign.makeArrayLocAssign(arrayOrLoc, arrayOffset, locId, tempLocExpr, expr), locals);
+                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFAssign.makeArrayLocAssign(arrayOrLoc, arrayOffset, locId, tempLocExpr, expr, locals), locals);
                     locExprCFG.getValue().setNext(cfBlockTempAssign);
                     return new Pair<>(locExprCFG.getKey(),cfBlockTempAssign);
                 } else {
-                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFAssign.makeLocAssign(arrayOrLoc, arrayOffset, locId, expr), locals);
+                    InnerCFBlock cfBlockTempAssign = new InnerCFBlock(CFAssign.makeLocAssign(arrayOrLoc, arrayOffset, locId, expr, locals), locals);
                     return new Pair<>(cfBlockTempAssign, cfBlockTempAssign);
                 }
             case Expr.METHOD_CALL:
                 Pair<InnerCFNode, InnerCFNode> methodCallCFG = destructMethodCall(expr.methodCall, locals);
-                InnerCFBlock cfBlockLoadRax = new InnerCFBlock(CFAssign.makeLoadRax(arrayOrLoc, arrayOffset, expr), locals);
+                InnerCFBlock cfBlockLoadRax = new InnerCFBlock(CFAssign.makeLoadRax(arrayOrLoc, arrayOffset, expr, locals), locals);
                 methodCallCFG.getValue().setNext(cfBlockLoadRax);
                 return new Pair<InnerCFNode, InnerCFNode>(methodCallCFG.getKey(), cfBlockLoadRax);
             case Expr.NOT:
                 Temp tempNotOperand = new Temp();
                 Pair<InnerCFNode, InnerCFNode> notOperandCFG = destructExprAssignTemp(expr.expr, tempNotOperand, null, locals);
-                InnerCFBlock cfBlockNot = new InnerCFBlock(CFAssign.makeNot(arrayOrLoc, arrayOffset, tempNotOperand, expr), locals);
+                InnerCFBlock cfBlockNot = new InnerCFBlock(CFAssign.makeNot(arrayOrLoc, arrayOffset, tempNotOperand, expr, locals), locals);
                 notOperandCFG.getValue().setNext(cfBlockNot);
                 return new Pair<InnerCFNode, InnerCFNode>(notOperandCFG.getKey(), cfBlockNot);
             case Expr.BIN_OP:
@@ -233,8 +233,8 @@ public class TempifySubExpressions implements CFVisitor {
                 }
 
                 // for shortcircuiting
-                InnerCFBlock assignTrue = new InnerCFBlock(CFAssign.assignTrue(arrayOrLoc, arrayOffset, expr), locals);
-                InnerCFBlock assignFalse = new InnerCFBlock(CFAssign.assignFalse(arrayOrLoc, arrayOffset, expr), locals);
+                InnerCFBlock assignTrue = new InnerCFBlock(CFAssign.assignTrue(arrayOrLoc, arrayOffset, expr, locals), locals);
+                InnerCFBlock assignFalse = new InnerCFBlock(CFAssign.assignFalse(arrayOrLoc, arrayOffset, expr, locals), locals);
                 InnerCFNode end = new InnerCFNop();
                 assignTrue.setNext(end);
                 assignFalse.setNext(end);
@@ -264,7 +264,7 @@ public class TempifySubExpressions implements CFVisitor {
                     case BinOp.PLUS:
                     case BinOp.DIV:
                         leftCFG.getValue().setNext(rightCFG.getKey());
-                        InnerCFBlock assignBinOp = new InnerCFBlock(CFAssign.assignBinOp(arrayOrLoc, arrayOffset, left, expr.binOp, right, expr), locals);
+                        InnerCFBlock assignBinOp = new InnerCFBlock(CFAssign.assignBinOp(arrayOrLoc, arrayOffset, left, expr.binOp, right, expr, locals), locals);
                         rightCFG.getValue().setNext(assignBinOp);
                         return new Pair<>(leftCFG.getKey(), assignBinOp);
                     default:

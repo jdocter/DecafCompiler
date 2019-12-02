@@ -151,6 +151,16 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
         return assemblyVariables;
     }
 
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        throw new UnsupportedOperationException("unimplemented for InnerCFBlock");
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        throw new UnsupportedOperationException("unimplemented for InnerCFBlock");
+    }
+
     public void prependAllStatements(InnerCFBlock block) {
         List<CFStatement> thisCopy = new ArrayList<>(this.cfStatements);
         this.cfStatements.clear();

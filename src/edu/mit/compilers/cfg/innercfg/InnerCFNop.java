@@ -109,6 +109,16 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_nop_" + UID;
     }

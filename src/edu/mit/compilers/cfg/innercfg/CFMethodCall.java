@@ -41,8 +41,19 @@ public class CFMethodCall extends UIDObject implements CFStatement {
 
     @Override
     public Set<AssemblyVariable> getLocalAssemblyVariables() {
+        return getUsed();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
         for (Pair<Temp, StringLit> arg : arguments) {
+            // TODO exclude global?
             if (arg.getKey() != null) assemblyVariables.add(arg.getKey());
         }
         return assemblyVariables;
