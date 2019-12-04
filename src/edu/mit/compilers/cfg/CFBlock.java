@@ -17,7 +17,7 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
 
-public class CFBlock extends UIDObject implements OuterCFNode {
+public class CFBlock extends OuterCFNode {
 
     private InnerCFNode miniCFGStart;
     private InnerCFNode miniCFGEnd;

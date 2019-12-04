@@ -11,7 +11,7 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
-public class InnerCFBlock extends UIDObject implements InnerCFNode {
+public class InnerCFBlock extends InnerCFNode {
 
     private final List<CFStatement> cfStatements = new ArrayList<>();
     InnerCFNode next;

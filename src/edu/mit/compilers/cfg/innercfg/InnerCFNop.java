@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class InnerCFNop extends UIDObject implements InnerCFNode {
+public class InnerCFNop extends InnerCFNode {
     @Override public String toString() {
         if (isEnd()) return "UID " + UID + " CFNop";
         return "UID " + UID + " CFNop [next=" + next.getUID() + "]";

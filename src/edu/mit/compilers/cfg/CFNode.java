@@ -1,11 +1,12 @@
 package edu.mit.compilers.cfg;
 
 import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.util.UIDObject;
 
 import java.util.HashMap;
 import java.util.Set;
 
-public abstract class CFNode {
+public abstract class CFNode extends UIDObject {
 
     private final HashMap<AssemblyVariable, Reg> registerAssignments = new HashMap<>();
 
@@ -38,11 +39,4 @@ public abstract class CFNode {
     private void checkRegisterAssignments() {
         assert registerAssignments.size() == Set.of(registerAssignments.values()).size() : "Expected one unique register assignments";
     }
-
-    /** set of LOCAL AssemblyVariables or temps that are used in the node*/
-    abstract Set<AssemblyVariable> getUsed();
-    /** set of LOCAL AssemblyVariables or temps that are defined in the node*/
-    abstract Set<AssemblyVariable> getDefined();
-
-    abstract void setRegister();
 }

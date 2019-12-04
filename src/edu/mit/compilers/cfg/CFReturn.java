@@ -16,7 +16,7 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
-public class CFReturn extends UIDObject implements OuterCFNode {
+public class CFReturn extends OuterCFNode {
 
 
     @Override public String toString() {

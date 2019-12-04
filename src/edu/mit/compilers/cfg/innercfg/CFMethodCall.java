@@ -20,7 +20,7 @@ import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
 
-public class CFMethodCall extends UIDObject implements CFStatement {
+public class CFMethodCall extends CFStatement {
 
     public final Id methodName;
     // every pair will contain one null item, purpose is to preserve order of arguments
