@@ -77,7 +77,11 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             throw new UnsupportedOperationException("You must call TempifySubExpressions on a CFConditional before collecting Assembly code!");
         }
 
-        body.add("cmpq $1, -" + cfConditional.getBoolTemp().getOffset() + "(%rbp) # true = " + cfConditional.getBoolTemp());
+        if (cfConditional.hasRegisterAssignment(cfConditional.getBoolTemp())) {
+            body.add("cmpq $1, " + cfConditional.getRegisterAssignment(cfConditional.getBoolTemp()) + " # true = " + cfConditional.getBoolTemp());
+        } else {
+            body.add("cmpq $1, -" + cfConditional.getBoolTemp().getOffset() + "(%rbp) # true = " + cfConditional.getBoolTemp());
+        }
         body.add("jne " + cfConditional.getIfFalse().getAssemblyLabel() + " # ifFalse");
         body.add("jmp " + cfConditional.getIfTrue().getAssemblyLabel() + " # ifTrue");
 
@@ -136,8 +140,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             cfReturn.getMiniCFGStart().accept(this);
             instructions.add(cfReturn.getEndOfMiniCFGLabel() + ":");
             instructions.add(AssemblyFactory.indent(""));
-            instructions.add(AssemblyFactory.indent("movq -" + cfReturn.getReturnTemp().getOffset() + "(%rbp), %rax"));
+            if (cfReturn.hasRegisterAssignment(cfReturn.getReturnTemp())) {
+                instructions.add(AssemblyFactory.indent("movq " + cfReturn.getRegisterAssignment(cfReturn.getReturnTemp()) + ", %rax"));
+            } else {
+                instructions.add(AssemblyFactory.indent("movq -" + cfReturn.getReturnTemp().getOffset() + "(%rbp), %rax"));
+            }
         }
+
 
         instructions.add(AssemblyFactory.indent(""));
         instructions.add(AssemblyFactory.indent("leave"));
@@ -181,7 +190,12 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             // TODO not tested
             body.add("cmpq $1, " + cfConditional.getBoolTemp().getGlobalLabel(variableTable) + "(%rip) # true = " + cfConditional.getVariableTable());
         } else {
-            body.add("cmpq $1, -" + cfConditional.getBoolTemp().getStackOffset(variableTable) + "(%rbp) # true = " + cfConditional.getVariableTable());
+            if (cfConditional.hasRegisterAssignment(cfConditional.getBoolTemp())) {
+                body.add("cmpq $1, " + cfConditional.getRegisterAssignment(cfConditional.getBoolTemp()) + " # true = " + cfConditional.getVariableTable());
+
+            } else {
+                body.add("cmpq $1, -" + cfConditional.getBoolTemp().getStackOffset(variableTable) + "(%rbp) # true = " + cfConditional.getVariableTable());
+            }
         }
         body.add("jne " + cfConditional.getIfFalse().getAssemblyLabel() + " # ifFalse");
         body.add("jmp " + cfConditional.getIfTrue().getAssemblyLabel() + " # ifTrue");
@@ -247,13 +261,23 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             if (p <= 6) {
                 Reg target = Reg.methodParam(p);
                 if (param.getKey() != null) {
-                    body.add("movq -" + param.getKey().getOffset() + "(%rbp), " + target);
+                    // TODO global
+                    if (cfMethodCall.hasRegisterAssignment(param.getKey())) {
+                        body.add("movq "+cfMethodCall.getRegisterAssignment(param.getKey()) + ", " + target);
+                    } else {
+                        body.add("movq -" + param.getKey().getOffset() + "(%rbp), " + target);
+                    }
                 } else {
                     body.add("leaq " + param.getValue().getLabel() + "(%rip), " + target);
                 }
             } else {
                 if (param.getKey() != null) {
-                    body.add("push -" + param.getKey().getOffset() + "(%rbp)");
+                    // TODO global?
+                    if (cfMethodCall.hasRegisterAssignment(param.getKey())) {
+                        body.add("push " + cfMethodCall.getRegisterAssignment(param.getKey()));
+                    } else {
+                        body.add("push -" + param.getKey().getOffset() + "(%rbp)");
+                    }
                 } else {
                     body.add("leaq " + param.getValue().getLabel() + "(%rip), %rax");
                     body.add("push %rax");
@@ -293,7 +317,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             if (cfAssign.dstArrayOffset == null) {
                 dst = cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + "(%rip)";
             } else {
-                assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) +"(%rbp), %rdi"); // val of temp into rax
+                Reg arrayOffset;
+                if (cfAssign.hasRegisterAssignment(cfAssign.dstArrayOffset)) {
+                    arrayOffset = cfAssign.getRegisterAssignment(cfAssign.dstArrayOffset);
+                } else {
+                    arrayOffset = Reg.RDI;
+                    assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
+                }
 
                 // array out of bounds
                 assembly.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
@@ -302,16 +332,25 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 assembly.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
                 // get dest
-                assembly.add("leaq 0(,%rdi," + cfAssign.dstArrayOrLoc.getElementSize(variableTable) + "), %rcx"); // temp * element size
+                assembly.add("leaq 0(," + arrayOffset +"," + cfAssign.dstArrayOrLoc.getElementSize(variableTable) + "), %rcx"); // temp * element size
                 assembly.add("leaq " + cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + ", %rdi"); // address of base of global array
                 dst = "(%rcx,%rdi)";
             }
         } else {
             if (cfAssign.dstArrayOffset == null) {
-                dst = "-"+ cfAssign.dstArrayOrLoc.getStackOffset(variableTable)+"(%rbp)";
+                if (cfAssign.hasRegisterAssignment(cfAssign.dstArrayOrLoc)) {
+                    dst = cfAssign.getRegisterAssignment(cfAssign.dstArrayOrLoc).toString();
+                } else {
+                    dst = "-" + cfAssign.dstArrayOrLoc.getStackOffset(variableTable) + "(%rbp)";
+                }
             } else {
-                assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) +"(%rbp), %rdi"); // val of temp into rdi
-
+                Reg arrayOffset;
+                if (cfAssign.hasRegisterAssignment(cfAssign.dstArrayOffset)) {
+                    arrayOffset = cfAssign.getRegisterAssignment(cfAssign.dstArrayOffset);
+                } else {
+                    arrayOffset = Reg.RDI;
+                    assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
+                }
                 // array out of bounds
                 assembly.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
                 assembly.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
@@ -319,7 +358,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 assembly.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
                 // get dest
-                dst = "-" + cfAssign.dstArrayOrLoc.getStackOffset(variableTable) +"(%rbp,%rdi,"+cfAssign.dstArrayOrLoc.getElementSize(variableTable)+")";
+                dst = "-" + cfAssign.dstArrayOrLoc.getStackOffset(variableTable) +"(%rbp,"+ arrayOffset +","+cfAssign.dstArrayOrLoc.getElementSize(variableTable)+")";
             }
         }
         return new Pair(assembly, dst);
@@ -330,27 +369,55 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
         switch (cfAssign.assignOp) { // TODO rax srcTemp?
             case CFAssign.MEQ:
-                if (cfAssign.srcOptionalCSE == null) assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-                else assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-                assembly.add("subq %rax, " + dst);
+                if (cfAssign.srcOptionalCSE == null) {
+                    if (cfAssign.hasRegisterAssignment(cfAssign.srcLeftOrSingle)) {
+                        assembly.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                    } else {
+                        assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        assembly.add("subq %rax, " + dst);
+                    }
+                } else {
+                    if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
+                        assembly.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                    } else {
+                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        assembly.add("subq %rax, " + dst);
+                    }
+                }
                 return assembly;
             case CFAssign.PEQ:
-                if (cfAssign.srcOptionalCSE == null) assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-                else assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-                assembly.add("addq %rax, " + dst);
+                if (cfAssign.srcOptionalCSE == null) {
+                    if (cfAssign.hasRegisterAssignment(cfAssign.srcLeftOrSingle)) {
+                        assembly.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                    } else {
+                        assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        assembly.add("addq %rax, " + dst);
+                    }
+                } else {
+                    if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
+                        assembly.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                    } else {
+                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        assembly.add("addq %rax, " + dst);
+                    }
+                }
                 return assembly;
             case CFAssign.INC: assembly.add("incq " + dst + " # " + cfAssign.toString()); return assembly;
             case CFAssign.DEC: assembly.add("decq " + dst + " # " + cfAssign.toString()); return assembly;
             case CFAssign.ASSIGN:
                 if (cfAssign.srcOptionalCSE != null) {
-                    assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) +  "(%rbp), %rax # " + cfAssign.toString());
-                    assembly.add("movq %rax, " + dst);
+                    if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
+                        assembly.add("movq " + cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                    } else {
+                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        assembly.add("movq %rax, " + dst);
+                    }
                     return assembly;
                 }
                 break; // everything else should be assign
         }
 
-
+        // TODO use registers if available for rest of CFAssign
         switch (cfAssign.getType()) {
             case CFAssign.LEN:
                 if (cfAssign.srcId.isArray(variableTable)) {

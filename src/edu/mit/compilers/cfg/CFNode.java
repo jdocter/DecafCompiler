@@ -27,7 +27,7 @@ public abstract class CFNode extends UIDObject {
         checkRegisterAssignments();
     }
 
-    public boolean isAssignedRegister(AssemblyVariable v) {
+    public boolean hasRegisterAssignment(AssemblyVariable v) {
         return registerAssignments.containsKey(v);
     }
 
