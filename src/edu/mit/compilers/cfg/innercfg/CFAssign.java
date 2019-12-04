@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
