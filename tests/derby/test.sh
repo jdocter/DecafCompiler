@@ -17,7 +17,7 @@ source "$(git rev-parse --show-toplevel)/tests/source.sh"
 function check {
   declare -r EXEC="$1"
 
-  if ( cd "$ROOT/tests/optimizer/" && "$EXEC" &> /dev/null ); then
+  if ( cd "$ROOT/tests/derby/" && "$EXEC" &> /dev/null ); then
     declare -r HEAD="$ROOT/tests/derby"
 
     declare -r OUTPUT="$HEAD/output/output.ppm"
