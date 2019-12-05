@@ -211,6 +211,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         if (assignOp != ASSIGN) return Optional.empty();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
                 && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
+        if (canonicalExpr.containsMethodCall()) return Optional.empty();
         return Optional.of(canonicalExpr);
     }
 
