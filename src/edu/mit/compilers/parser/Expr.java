@@ -83,7 +83,7 @@ public class Expr extends Node {
             case Expr.LEN:
                 return "len(" + id + ")";
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
     }
 
@@ -121,8 +121,9 @@ public class Expr extends Node {
                 break;
             case Expr.LEN:
                 ids.add(id);
+                break;
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
         return ids;
     }
@@ -161,7 +162,7 @@ public class Expr extends Node {
             case Expr.LEN:
                 return this.id.equals(that.id);
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
     }
 }

@@ -84,10 +84,6 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
             assert cfAssign.srcOptionalCSE == e : "shared temp expected to be consistent for an expression";
             return; // already existing save location
         }
-        if (cfAssign.dstArrayOffset != null) {
-            // TODO I don't understand this check
-            throw new RuntimeException("Please run Local CSE before peephole-removing {t = op; a[b] = t}" + "\nStatement: " + cfAssign);
-        }
 
         while (previousStatements.hasPrevious()) {
             CFStatement statement = previousStatements.previous();
