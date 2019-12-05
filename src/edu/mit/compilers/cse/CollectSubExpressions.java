@@ -20,7 +20,7 @@ public class CollectSubExpressions implements CFVisitor {
     public void visit(CFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        subExpressions.addAll(cfBlock.getSubExpressions());
+        subExpressions.addAll(cfBlock.getNonMethodCallSubExpressions());
         for (CFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
@@ -30,7 +30,7 @@ public class CollectSubExpressions implements CFVisitor {
     public void visit(CFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        subExpressions.addAll(cfConditional.getSubExpressions());
+        subExpressions.addAll(cfConditional.getNonMethodCallSubExpressions());
         for (CFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
@@ -40,7 +40,7 @@ public class CollectSubExpressions implements CFVisitor {
     public void visit(CFNop cfNop) {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
-        subExpressions.addAll(cfNop.getSubExpressions());
+        subExpressions.addAll(cfNop.getNonMethodCallSubExpressions());
         for (CFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }
@@ -50,6 +50,6 @@ public class CollectSubExpressions implements CFVisitor {
     public void visit(CFReturn cfReturn) {
         if (visited.contains(cfReturn)) return;
         else visited.add(cfReturn);
-        subExpressions.addAll(cfReturn.getSubExpressions());
+        subExpressions.addAll(cfReturn.getNonMethodCallSubExpressions());
     }
 }

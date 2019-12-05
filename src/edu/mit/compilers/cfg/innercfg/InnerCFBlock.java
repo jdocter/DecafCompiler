@@ -105,11 +105,11 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         Set<Expr> exprs = new HashSet<>();
         for (CFStatement cfStatement : cfStatements) {
             Expr rhs = cfStatement.getRHS();
-            if (rhs != null) exprs.add(rhs);
+            if (rhs != null && !rhs.containsMethodCall()) exprs.add(rhs);
         }
         return exprs;
     }

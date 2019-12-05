@@ -251,7 +251,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         String dst =  "" + dstArrayOrLoc + offsetStr;
 
         if (srcOptionalCSE != null) {
-            return dst + " = " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
+            return dst + " " + assignOp + " " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
         }
 
         switch (assignOp) {

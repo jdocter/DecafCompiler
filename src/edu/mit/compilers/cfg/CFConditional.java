@@ -141,7 +141,7 @@ public class CFConditional extends UIDObject implements CFNode {
 
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
         this.miniCFGStart.accept(collector);
         return collector.subExpressions;
@@ -171,7 +171,7 @@ public class CFConditional extends UIDObject implements CFNode {
             for (InnerCFNode parent : innerParents) {
                 thisGen.retainAll(gens.get(parent));
             }
-            thisGen.removeAll(node.killedExprs(this.getSubExpressions()));
+            thisGen.removeAll(node.killedExprs(this.getNonMethodCallSubExpressions()));
             thisGen.addAll(node.generatedExprs(allExprs));
             gens.put(node, thisGen);
         }

@@ -128,6 +128,26 @@ public class Expr extends Node {
         return ids;
     }
 
+    public boolean containsMethodCall() {
+        switch (exprType) {
+            case Expr.METHOD_CALL:
+                return true;
+            case Expr.MINUS:
+            case Expr.NOT:
+                return this.expr.containsMethodCall();
+            case Expr.LOC:
+                return false;
+            case Expr.BIN_OP:
+                return this.expr.containsMethodCall() || this.binOpExpr.containsMethodCall();
+            case Expr.LIT:
+                return false;
+            case Expr.LEN:
+                return false;
+            default:
+                throw new RuntimeException("Unknown exprType: " + exprType);
+        }
+    }
+
     @Override public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -142,6 +162,9 @@ public class Expr extends Node {
         return result;
     }
 
+    /**
+     * WARNING: breaks contract for equals() due to not being reflexive for METHOD_CALLs.
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Expr)) return false;

@@ -150,7 +150,7 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         return Set.of();
     }
 

@@ -88,7 +88,7 @@ public class CFNop extends UIDObject implements CFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         return Set.of();
     }
 

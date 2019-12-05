@@ -88,7 +88,7 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         return Set.of();
     }
 

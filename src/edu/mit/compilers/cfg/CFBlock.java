@@ -132,7 +132,7 @@ public class CFBlock extends UIDObject implements CFNode {
 
     private Set<Expr> subExpressionsCached;
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         if (subExpressionsCached != null) return subExpressionsCached;
         InnerCollectSubExpressions collector = new InnerCollectSubExpressions();
         this.miniCFGStart.accept(collector);

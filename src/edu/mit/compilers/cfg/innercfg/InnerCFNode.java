@@ -45,7 +45,7 @@ public interface InnerCFNode {
      */
     List<Pair<List<Temp>, List<Temp>>> getTemps();
 
-    Set<Expr> getSubExpressions();
+    Set<Expr> getNonMethodCallSubExpressions();
 
     /**
      * @param allExprs list of all expressions that should be considered -- necessary
