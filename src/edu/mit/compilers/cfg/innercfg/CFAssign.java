@@ -218,7 +218,11 @@ public class CFAssign extends UIDObject implements CFStatement {
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
         Set<Expr> killed = new HashSet<>();
-        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
+        // if is an array, should kill all usages of that array
+        // if not an array, should kill all usages of that ID
+        // Either way, dstArrayOrLoc must not be temporary
+        // (for arrays, it is never temporary)
+        if (!dstArrayOrLoc.isTemporary()) {
             for (Expr subExpr : exprs) {
                 if (subExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) {
                     killed.add(subExpr);
