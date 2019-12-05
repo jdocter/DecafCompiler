@@ -334,7 +334,8 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 // get dest
                 assembly.add("leaq 0(," + arrayOffset +"," + cfAssign.dstArrayOrLoc.getElementSize(variableTable) + "), %rcx"); // temp * element size
                 assembly.add("leaq " + cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + ", %rdi"); // address of base of global array
-                dst = "(%rcx,%rdi)";
+                assembly.add("add %rcx, %rdi");
+                dst = "(%rdi)";
             }
         } else {
             if (cfAssign.dstArrayOffset == null) {
