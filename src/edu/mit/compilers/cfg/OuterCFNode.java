@@ -9,53 +9,51 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 
-public interface OuterCFNode extends CFNode {
-    String getAssemblyLabel();
-    String getEndOfMiniCFGLabel();
+public abstract class OuterCFNode extends CFNode {
+    public abstract String getAssemblyLabel();
+    public abstract String getEndOfMiniCFGLabel();
 
-    InnerCFNode getMiniCFGStart();
-    InnerCFNode getMiniCFGEnd();
+    public abstract InnerCFNode getMiniCFGStart();
+    public abstract InnerCFNode getMiniCFGEnd();
 
     /*
      * Invariant:
      * dfsTraverse() is the inverse of parents(), aka:
      * node.dfsTraverse().contains(succ) iff succ.parents().contains(node)
      */
-    Set<OuterCFNode> parents();
-    void addParent(OuterCFNode parent);
-    void removeParent(OuterCFNode parent);
+    public abstract Set<OuterCFNode> parents();
+    public abstract void addParent(OuterCFNode parent);
+    public abstract void removeParent(OuterCFNode parent);
 
-    List<OuterCFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
-    void setNext(OuterCFNode next);
-    OuterCFNode getNext();
+    public abstract List<OuterCFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
+    public abstract void setNext(OuterCFNode next);
+    public abstract OuterCFNode getNext();
 
-    VariableTable getVariableTable();
+    public abstract VariableTable getVariableTable();
 
     /*
      * WARNING!!! Doesn't automatically maintain parent pointers invariant for original!
      * This is because parents is a set, so there may be multiple
      * ways to get to a node from the parent.  Caller is responsible for fixing the parent pointers on original.
      */
-    void replacePointers(OuterCFNode original, OuterCFNode replacement);
+    public abstract void replacePointers(OuterCFNode original, OuterCFNode replacement);
 
-    int getUID();
-
-    void accept(CFVisitor v);
+    public abstract void accept(CFVisitor v);
 
     /**
      * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
      */
-    List<Pair<List<Temp>, List<Temp>>> getTemps();
+    public abstract List<Pair<List<Temp>, List<Temp>>> getTemps();
 
-    Set<Expr> getSubExpressions();
+    public abstract Set<Expr> getSubExpressions();
 
-    Set<Expr> generatedExprs(Set<Expr> allExprs);
-    Set<Expr> killedExprs(Set<Expr> allExprs);
+    public abstract Set<Expr> generatedExprs(Set<Expr> allExprs);
+    public abstract Set<Expr> killedExprs(Set<Expr> allExprs);
 
     /** set of LOCAL AssemblyVariables that are used only in the outer CFG*/
-    Set<AssemblyVariable> getOuterUsed();
+    public abstract Set<AssemblyVariable> getOuterUsed();
     /** set of LOCAL AssemblyVariables that are defined only in the outer CFG*/
-    Set<AssemblyVariable> getOuterDefined();
+    public abstract Set<AssemblyVariable> getOuterDefined();
 
 
 }

@@ -15,7 +15,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CFConditional extends UIDObject implements OuterCFNode {
+public class CFConditional extends OuterCFNode {
     @Override public String toString() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MethodCFGFactory.dfsPrint(miniCFGStart, new HashSet<Integer>(), new PrintStream(baos));

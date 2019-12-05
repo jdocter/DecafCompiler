@@ -13,7 +13,7 @@ import edu.mit.compilers.visitor.MiniCFVisitor;
 
 import java.util.*;
 
-public class InnerCFConditional extends UIDObject implements InnerCFNode {
+public class InnerCFConditional extends InnerCFNode {
     @Override public String toString() {
         return "UID " + UID + " CFConditional [ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }

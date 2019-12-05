@@ -1,12 +1,10 @@
 package edu.mit.compilers.cfg.innercfg;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.cfg.Variable;
-import edu.mit.compilers.inter.*;
-
+import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.BinOp;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.parser.Lit;
@@ -16,7 +14,7 @@ import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
 
-public class CFAssign extends UIDObject implements CFStatement {
+public class CFAssign extends UIDObject, CFStatement {
 
     private int type;
     private final VariableTable variableTable;
@@ -65,7 +63,9 @@ public class CFAssign extends UIDObject implements CFStatement {
     private CFAssign(Expr canonicalExpr, VariableTable variableTable) {
         this.canonicalExpr = canonicalExpr;
         this.variableTable = variableTable;
-    };
+    }
+
+    ;
 
     public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr, Expr canonicalExpr, VariableTable variableTable) {
         CFAssign result = new CFAssign(canonicalExpr, variableTable);
@@ -178,7 +178,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         result.assignOp = ASSIGN;
         return result;
     }
-    
+
     public int getType() {
         return type;
     }
@@ -186,6 +186,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     /**
      * Add another destination variable for the RHS of this assign such
      * that toAssembly includes code for storing the RHS value in dst
+     *
      * @param dst variable that the RHS should also be stored in
      */
     public void setAdditionalDestination(AssemblyVariable dst) {
@@ -196,6 +197,7 @@ public class CFAssign extends UIDObject implements CFStatement {
      * Add an alternative source variable for the RHS of this assign such
      * that toAssembly includes code for retrieving the RHS value from src
      * instead of calculating it again.
+     *
      * @param src variable that the RHS should be retried from
      */
     public void setAlternativeSource(AssemblyVariable src) {
@@ -214,7 +216,7 @@ public class CFAssign extends UIDObject implements CFStatement {
     public Optional<Expr> generatedExpr() {
         if (assignOp != ASSIGN) return Optional.empty();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
-                && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
+                && canonicalExpr.getIds().contains(((Variable) dstArrayOrLoc).getId())) return Optional.empty();
         return Optional.of(canonicalExpr);
     }
 
@@ -223,7 +225,7 @@ public class CFAssign extends UIDObject implements CFStatement {
         Set<Expr> killed = new HashSet<>();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
             for (Expr subExpr : exprs) {
-                if (subExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) {
+                if (subExpr.getIds().contains(((Variable) dstArrayOrLoc).getId())) {
                     killed.add(subExpr);
                 }
             }
@@ -240,8 +242,8 @@ public class CFAssign extends UIDObject implements CFStatement {
     public Set<SharedTemp> getSharedTemps() {
         Set<SharedTemp> result = new HashSet<>();
 
-        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) result.add((SharedTemp)dstOptionalCSE);
-        if (srcOptionalCSE != null && srcOptionalCSE instanceof SharedTemp) result.add((SharedTemp)srcOptionalCSE);
+        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) result.add((SharedTemp) dstOptionalCSE);
+        if (srcOptionalCSE != null && srcOptionalCSE instanceof SharedTemp) result.add((SharedTemp) srcOptionalCSE);
         return result;
     }
 
@@ -283,7 +285,8 @@ public class CFAssign extends UIDObject implements CFStatement {
     public Set<AssemblyVariable> getUsed() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
 
-        if (!assignOp.equals(ASSIGN) && null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
+        if (!assignOp.equals(ASSIGN) && null != dstArrayOrLoc && null == dstArrayOffset)
+            assemblyVariables.add(dstArrayOrLoc);
         if (null != dstArrayOffset) assemblyVariables.add(dstArrayOffset);
         if (null != srcOptionalCSE) {
             assemblyVariables.add(srcOptionalCSE);
@@ -297,9 +300,10 @@ public class CFAssign extends UIDObject implements CFStatement {
         return assemblyVariables;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-        String dst =  "" + dstArrayOrLoc + offsetStr;
+        String dst = "" + dstArrayOrLoc + offsetStr;
 
         if (srcOptionalCSE != null) {
             return dst + " = " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
@@ -308,24 +312,36 @@ public class CFAssign extends UIDObject implements CFStatement {
         switch (assignOp) {
             case MEQ:
             case PEQ:
-                return dst + " "+ assignOp + " " + srcLeftOrSingle;
+                return dst + " " + assignOp + " " + srcLeftOrSingle;
             case INC:
             case DEC:
-                return dst + " "+ assignOp;
-            case ASSIGN: break; // everything else should be assign
+                return dst + " " + assignOp;
+            case ASSIGN:
+                break; // everything else should be assign
         }
         switch (type) {
-            case LEN: return dst + " = len(" + srcId + ")";
-            case MINUS: return dst + " = -"+ srcLeftOrSingle;
-            case NOT: return dst + " = !" + srcLeftOrSingle;
-            case METHOD_CALL: return dst + " = load %rax";
-            case BIN_OP: return dst + " = " + srcLeftOrSingle + " " + srcBinOp + " " + srcRight + " {canonical: " + canonicalExpr + "}";
-            case LIT: return dst + " = " + srcLit;
-            case TRUE: return dst + " = true";
-            case FALSE: return dst + " = false";
-            case SIMPLE: return dst + " = " + srcLeftOrSingle + " {canonical: " + canonicalExpr + "}";
-            case ARRAY_LOC: return dst + " = " + srcArray + "[" + srcArrayOffset + "]";
-            default: throw new RuntimeException("Temp has no type: impossible to reach...");
+            case LEN:
+                return dst + " = len(" + srcId + ")";
+            case MINUS:
+                return dst + " = -" + srcLeftOrSingle;
+            case NOT:
+                return dst + " = !" + srcLeftOrSingle;
+            case METHOD_CALL:
+                return dst + " = load %rax";
+            case BIN_OP:
+                return dst + " = " + srcLeftOrSingle + " " + srcBinOp + " " + srcRight + " {canonical: " + canonicalExpr + "}";
+            case LIT:
+                return dst + " = " + srcLit;
+            case TRUE:
+                return dst + " = true";
+            case FALSE:
+                return dst + " = false";
+            case SIMPLE:
+                return dst + " = " + srcLeftOrSingle + " {canonical: " + canonicalExpr + "}";
+            case ARRAY_LOC:
+                return dst + " = " + srcArray + "[" + srcArrayOffset + "]";
+            default:
+                throw new RuntimeException("Temp has no type: impossible to reach...");
         }
     }
 
@@ -336,18 +352,18 @@ public class CFAssign extends UIDObject implements CFStatement {
             left.add((Temp) dstArrayOrLoc);
         }
         if (dstOptionalCSE != null && dstOptionalCSE instanceof Temp) {
-            left.add((Temp)dstOptionalCSE);
+            left.add((Temp) dstOptionalCSE);
         }
         List<Temp> right = new ArrayList<Temp>();
         if (srcOptionalCSE != null && srcOptionalCSE instanceof Temp) {
-            right.add((Temp)srcOptionalCSE);
+            right.add((Temp) srcOptionalCSE);
         } else {
             if (dstArrayOffset != null && dstArrayOffset instanceof Temp) right.add((Temp) dstArrayOffset);
             if (srcLeftOrSingle != null && srcLeftOrSingle instanceof Temp) right.add((Temp) srcLeftOrSingle);
             if (srcRight != null && srcRight instanceof Temp) right.add((Temp) srcRight);
             if (srcArrayOffset != null && srcArrayOffset instanceof Temp) right.add((Temp) srcArrayOffset);
         }
-        return new Pair<List<Temp>, List<Temp>>(left,right);
+        return new Pair<List<Temp>, List<Temp>>(left, right);
     }
 
     public String getBinopCommand() {
@@ -361,12 +377,18 @@ public class CFAssign extends UIDObject implements CFStatement {
             case BinOp.DIV:
             case BinOp.MOD:
                 throw new RuntimeException("Bad semantic checks");
-            case BinOp.EQ: return "sete";
-            case BinOp.NEQ: return "setne";
-            case BinOp.LT: return "setl";
-            case BinOp.GT: return "setg";
-            case BinOp.LEQ: return "setle";
-            case BinOp.GEQ: return "setge";
+            case BinOp.EQ:
+                return "sete";
+            case BinOp.NEQ:
+                return "setne";
+            case BinOp.LT:
+                return "setl";
+            case BinOp.GT:
+                return "setg";
+            case BinOp.LEQ:
+                return "setle";
+            case BinOp.GEQ:
+                return "setge";
             default:
                 throw new RuntimeException("Unrecognized binOp: " + srcBinOp.binOp);
         }

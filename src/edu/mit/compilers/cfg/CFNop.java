@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CFNop extends UIDObject implements OuterCFNode {
+public class CFNop extends OuterCFNode {
     @Override public String toString() {
         if (isEnd()) return "UID " + UID + " CFNop";
         return "UID " + UID + " CFNop [next=" + next.getUID() + "]";
