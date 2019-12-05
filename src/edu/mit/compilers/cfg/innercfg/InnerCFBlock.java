@@ -115,12 +115,17 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     }
 
 
+    /**
+     * Note the input allExprs is only for removing.  We don't
+     * filter the generated set for only Exprs in allExprs --
+     * that's a pre-condition.
+     */
     @Override
     public Set<Expr> generatedExprs(Set<Expr> allExprs) {
         Set<Expr> generated = new HashSet<>();
         for (CFStatement cfStatement: cfStatements) {
             Optional<Expr> statementGen = cfStatement.generatedExpr();
-            if (statementGen.isPresent()) {
+            if (statementGen.isPresent() && !statementGen.get().containsMethodCall()) {
                 generated.add(statementGen.get());
             }
             // System.err.println(getUID() + " GENERATED AFTER " + cfStatement + " : " + generated);
