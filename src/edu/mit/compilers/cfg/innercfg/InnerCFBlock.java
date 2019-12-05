@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.cfg.Temp;
@@ -51,8 +52,8 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     }
 
     @Override public String toString() {
-        if (isEnd) return "UID " + UID + " CFBlock [" + cfStatements + "], Scope = " + variableTable.getUID();
-        return "UID " + UID + " CFBlock [" + cfStatements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        if (isEnd) return "UID " + UID + " CFBlock [\n\t" + cfStatements.stream().map(CFStatement::toString).collect(Collectors.joining("\n\t")) + "\n], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [\n\t" + cfStatements.stream().map(CFStatement::toString).collect(Collectors.joining("\n\t")) + "\nnext=" + next.getUID() + "\n], Scope = " + variableTable.getUID();
     }
 
     @Override
