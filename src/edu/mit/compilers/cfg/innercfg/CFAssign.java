@@ -218,6 +218,7 @@ public class CFAssign extends CFStatement {
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
                 && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
         if (canonicalExpr.containsMethodCall()) return Optional.empty();
+        if (List.of(LEN, LIT, TRUE, FALSE).contains(type)) return Optional.empty();
         return Optional.of(canonicalExpr);
     }
 
