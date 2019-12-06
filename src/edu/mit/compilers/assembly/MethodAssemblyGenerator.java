@@ -231,12 +231,11 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
     @Override
     public void visit(CFAssign cfAssign) {
-        List<String> assembly = new ArrayList<>();
-        Pair<List<String>, String> dst = dstToAssembly(cfAssign, variableTable.get());
-        assembly.addAll(dst.getKey());
-        assembly.addAll(srcToAssembly(cfAssign, variableTable.get(), dst.getValue()));
+        cfAssignTemporaryInstructions.clear();
+        Operand dst = dstToAssembly(cfAssign, variableTable.get());
+        srcToAssembly(cfAssign, variableTable.get(), dst);
 
-        instructions.addAll(AssemblyFactory.indent(assembly));
+        instructions.addAll(AssemblyFactory.indent(cfAssignTemporaryInstructions));
     }
 
     @Override
@@ -310,40 +309,39 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
      * @param variableTable
      * @return string of destination in assembly, memory access, may use %rcx and %rdi
      */
-    private static Pair<List<String>, String> dstToAssembly(CFAssign cfAssign, VariableTable variableTable) {
+    private Operand dstToAssembly(CFAssign cfAssign, VariableTable variableTable) {
 
-        List<String> assembly = new ArrayList<>();
-        String dst;
+        Operand dst;
         if (cfAssign.dstArrayOrLoc.isGlobal(variableTable)) {
             if (cfAssign.dstArrayOffset == null) {
-                dst = cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + "(%rip)";
+                dst = Operand.makeGlobalAccess(cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable));
             } else {
                 Reg arrayOffset;
                 if (cfAssign.hasRegisterAssignment(cfAssign.dstArrayOffset)) {
                     arrayOffset = cfAssign.getRegisterAssignment(cfAssign.dstArrayOffset);
                 } else {
                     arrayOffset = Reg.RDI;
-                    assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
+                    cfAssignTemporaryInstructions.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
                 }
 
                 // array out of bounds
-                assembly.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
-                assembly.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
-                assembly.add("cmpq $0, %rdi");
-                assembly.add("jl " + AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
+                cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $0, %rdi");
+                cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
                 // get dest
-                assembly.add("leaq 0(," + arrayOffset +"," + cfAssign.dstArrayOrLoc.getElementSize(variableTable) + "), %rcx"); // temp * element size
-                assembly.add("leaq " + cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + ", %rdi"); // address of base of global array
-                assembly.add("add %rcx, %rdi");
-                dst = "(%rdi)";
+                cfAssignTemporaryInstructions.add("leaq 0(," + arrayOffset +"," + cfAssign.dstArrayOrLoc.getElementSize(variableTable) + "), %rcx"); // temp * element size
+                cfAssignTemporaryInstructions.add("leaq " + cfAssign.dstArrayOrLoc.getGlobalLabel(variableTable) + ", %rdi"); // address of base of global array
+                cfAssignTemporaryInstructions.add("add %rcx, %rdi");
+                dst = Operand.makeMemoryAccess(Reg.RDI);
             }
         } else {
             if (cfAssign.dstArrayOffset == null) {
                 if (cfAssign.hasRegisterAssignment(cfAssign.dstArrayOrLoc)) {
-                    dst = cfAssign.getRegisterAssignment(cfAssign.dstArrayOrLoc).toString();
+                    dst = Operand.makeReg(cfAssign.getRegisterAssignment(cfAssign.dstArrayOrLoc));
                 } else {
-                    dst = "-" + cfAssign.dstArrayOrLoc.getStackOffset(variableTable) + "(%rbp)";
+                    dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable),Reg.RBP);
                 }
             } else {
                 Reg arrayOffset;
@@ -351,158 +349,152 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                     arrayOffset = cfAssign.getRegisterAssignment(cfAssign.dstArrayOffset);
                 } else {
                     arrayOffset = Reg.RDI;
-                    assembly.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
+                    cfAssignTemporaryInstructions.add("movq -" + cfAssign.dstArrayOffset.getStackOffset(variableTable) + "(%rbp), %rdi"); // val of temp into rdi
                 }
                 // array out of bounds
-                assembly.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
-                assembly.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
-                assembly.add("cmpq $0, %rdi");
-                assembly.add("jl " + AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
+                cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $0, %rdi");
+                cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
                 // get dest
-                dst = "-" + cfAssign.dstArrayOrLoc.getStackOffset(variableTable) +"(%rbp,"+ arrayOffset +","+cfAssign.dstArrayOrLoc.getElementSize(variableTable)+")";
+                dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable), Reg.RBP, arrayOffset,cfAssign.dstArrayOrLoc.getElementSize(variableTable));
             }
         }
-        return new Pair(assembly, dst);
+        return dst;
     }
 
-    private static List<String> srcToAssembly(CFAssign cfAssign, VariableTable variableTable, String dst) {
-        List<String> assembly = new ArrayList<>();
-
-        switch (cfAssign.assignOp) { // TODO rax srcTemp?
+    private void srcToAssembly(CFAssign cfAssign, VariableTable variableTable, Operand dst) {
+        // First handle all cases with optional source
+        switch (cfAssign.assignOp) {
             case CFAssign.MEQ:
                 if (cfAssign.srcOptionalCSE == null) {
                     if (cfAssign.hasRegisterAssignment(cfAssign.srcLeftOrSingle)) {
-                        assembly.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                        cfAssignTemporaryInstructions.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                    } else if (dst.isReg()) {
+                        cfAssignTemporaryInstructions.add("subq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), "  + dst +" # " + cfAssign.toString());
                     } else {
-                        assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
-                        assembly.add("subq %rax, " + dst);
+                        cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        cfAssignTemporaryInstructions.add("subq %rax, " + dst);
                     }
                 } else {
                     if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
-                        assembly.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                        cfAssignTemporaryInstructions.add("subq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                    } else if (dst.isReg()) {
+                        cfAssignTemporaryInstructions.add("subq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), " + dst +" # " + cfAssign.toString());
                     } else {
-                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
-                        assembly.add("subq %rax, " + dst);
+                        cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        cfAssignTemporaryInstructions.add("subq %rax, " + dst);
                     }
                 }
-                return assembly;
+                return;
             case CFAssign.PEQ:
                 if (cfAssign.srcOptionalCSE == null) {
                     if (cfAssign.hasRegisterAssignment(cfAssign.srcLeftOrSingle)) {
-                        assembly.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                        cfAssignTemporaryInstructions.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcLeftOrSingle) + ", " + dst);
+                    } else if (dst.isReg()) {
+                        cfAssignTemporaryInstructions.add("addq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), "  + dst +" # " + cfAssign.toString());
                     } else {
-                        assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
-                        assembly.add("addq %rax, " + dst);
+                        cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        cfAssignTemporaryInstructions.add("addq %rax, " + dst);
                     }
                 } else {
                     if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
-                        assembly.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                        cfAssignTemporaryInstructions.add("addq " +cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                    } else if (dst.isReg()) {
+                        cfAssignTemporaryInstructions.add("addq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), "  + dst +" # " + cfAssign.toString());
                     } else {
-                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
-                        assembly.add("addq %rax, " + dst);
+                        cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        cfAssignTemporaryInstructions.add("addq %rax, " + dst);
                     }
                 }
-                return assembly;
-            case CFAssign.INC: assembly.add("incq " + dst + " # " + cfAssign.toString()); return assembly;
-            case CFAssign.DEC: assembly.add("decq " + dst + " # " + cfAssign.toString()); return assembly;
+                return;
+            case CFAssign.INC: cfAssignTemporaryInstructions.add("incq " + dst + " # " + cfAssign.toString()); return;
+            case CFAssign.DEC: cfAssignTemporaryInstructions.add("decq " + dst + " # " + cfAssign.toString()); return;
             case CFAssign.ASSIGN:
                 if (cfAssign.srcOptionalCSE != null) {
                     if (cfAssign.hasRegisterAssignment(cfAssign.srcOptionalCSE)) {
-                        assembly.add("movq " + cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                        if (!dst.equals(cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE))) {
+                            cfAssignTemporaryInstructions.add("movq " + cfAssign.getRegisterAssignment(cfAssign.srcOptionalCSE) + ", " + dst);
+                        }
                     } else {
-                        assembly.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
-                        assembly.add("movq %rax, " + dst);
+                        if (dst.isReg()) {
+                            cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp)" + dst + " # " + cfAssign.toString());
+                        } else {
+                        cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
+                        cfAssignTemporaryInstructions.add("movq %rax, " + dst);
+                        }
                     }
-                    return assembly;
+                    return;
                 }
                 break; // everything else should be assign
         }
 
-        // TODO use registers if available for rest of CFAssign
         switch (cfAssign.getType()) {
             case CFAssign.LEN:
                 if (cfAssign.srcId.isArray(variableTable)) {
-                    assembly.add("movq $" + cfAssign.srcId.getArrayLength(variableTable) + ", " + dst + " # " + cfAssign.toString());
-                    assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "$" + cfAssign.srcId.getArrayLength(variableTable)));
+                    cfAssignTemporaryInstructions.add("movq $" + cfAssign.srcId.getArrayLength(variableTable) + ", " + dst + " # " + cfAssign.toString());
+                    if (cfAssign.dstOptionalCSE != null) throw new RuntimeException("Why are we saving an immediate, thats wack\nLen expression has additional destination");
                 } else {
                     throw new RuntimeException("Failed semantic checks");
                 }
                 break;
             case CFAssign.MINUS:
-                assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign);
-                assembly.add("negq %rax");
-                assembly.add("movq %rax, " + dst);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                Reg minusOperand = handleIntoRegister(cfAssign, cfAssign.srcLeftOrSingle); // check for existing register assignment
+                cfAssignTemporaryInstructions.add("negq " + minusOperand);
+                if (!dst.equals(minusOperand)) { // touching webs
+                    cfAssignTemporaryInstructions.add("movq " + minusOperand + ", " + dst);
+                }
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, minusOperand));
                 break;
             case CFAssign.NOT:
-                assembly.add("movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign);
-                assembly.add("xorq $1, %rax");
-                assembly.add("movq %rax, " + dst);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                Reg notOperand = handleIntoRegister(cfAssign, cfAssign.srcLeftOrSingle);  // check for existing register assignment
+                cfAssignTemporaryInstructions.add("xorq $1, " + notOperand);
+                if (!dst.equals(notOperand)) { // touching webs
+                    cfAssignTemporaryInstructions.add("movq " + notOperand + ", " + dst);
+                }
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, notOperand));
                 break;
             case CFAssign.ARRAY_LOC:
+                // TODO use registers
                 String arrayLoc;
-                assembly.add("movq -" +cfAssign.srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + cfAssign); // val of temp into rax
+                cfAssignTemporaryInstructions.add("movq -" +cfAssign.srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + cfAssign); // val of temp into rax
                 // array out of bounds
-                assembly.add("cmpq $" + cfAssign.srcArray.getArrayLength(variableTable) +", %rax");
-                assembly.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
-                assembly.add("cmpq $0, %rax");
-                assembly.add("jl " + AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.srcArray.getArrayLength(variableTable) +", %rax");
+                cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
+                cfAssignTemporaryInstructions.add("cmpq $0, %rax");
+                cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
                 if (cfAssign.srcArray.isGlobal(variableTable)) {
-                    assembly.add("leaq 0(,%rax," + cfAssign.srcArray.getElementSize(variableTable) + "), %rdx"); // temp * element size
-                    assembly.add("leaq " + cfAssign.srcArray.getGlobalLabel(variableTable) + "(%rip), %rax"); // address of base of global array
+                    cfAssignTemporaryInstructions.add("leaq 0(,%rax," + cfAssign.srcArray.getElementSize(variableTable) + "), %rdx"); // temp * element size
+                    cfAssignTemporaryInstructions.add("leaq " + cfAssign.srcArray.getGlobalLabel(variableTable) + "(%rip), %rax"); // address of base of global array
                     arrayLoc = "(%rdx,%rax)";
 
                 } else {
                     arrayLoc = "-"+cfAssign.srcArray.getStackOffset(variableTable)+"(%rbp,%rax,"+cfAssign.srcArray.getElementSize(variableTable)+")";
                 }
-                assembly.add("movq " + arrayLoc + ", %rsi # " + cfAssign); // is this ok?
-                assembly.add("movq %rsi, " + dst);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rsi"));
+                cfAssignTemporaryInstructions.add("movq " + arrayLoc + ", %rsi # " + cfAssign); // is this ok?
+                cfAssignTemporaryInstructions.add("movq %rsi, " + dst);
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RSI));
 
                 break;
             case CFAssign.SIMPLE:
-                switch (cfAssign.assignOp) { // TODO rax srcTemp?
-                    case CFAssign.MEQ:
-                        assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
-                        assembly.add("subq %rax, " + dst);
-                        // can't have additional destination?
-                        return assembly;
-                    case CFAssign.PEQ:
-                        assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
-                        assembly.add("addq %rax, " + dst);
-                        // can't have additional destination?
-                        return assembly;
-                    case CFAssign.INC: assembly.add("incq " + dst + " # " + cfAssign.toString()); return assembly;
-                    case CFAssign.DEC: assembly.add("decq " + dst + " # " + cfAssign.toString()); return assembly;
-                    case CFAssign.ASSIGN:
-                        assembly.add(cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                                "movq " + cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip), %rax" + " # " + cfAssign.toString() :
-                                "movq -" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp), %rax" + " # " + cfAssign.toString());
-                        assembly.add("movq %rax, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
-                        return assembly;
-                }
-                break;
+                assert cfAssign.assignOp == CFAssign.ASSIGN; // all other cases should have been handled above ...
+                Reg assignOperand = handleIntoRegister(cfAssign, cfAssign.srcLeftOrSingle);  // check for existing register assignment
+                cfAssignTemporaryInstructions.add("movq " + assignOperand +", " + dst);
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, assignOperand));
+                return;
             case CFAssign.METHOD_CALL:
-                assembly.add("");
-                assembly.add("movq %rax, " + dst + " # " + cfAssign.toString());
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
-                assembly.add("");
+                cfAssignTemporaryInstructions.add("");
+                cfAssignTemporaryInstructions.add("movq %rax, " + dst + " # " + cfAssign.toString());
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
+                cfAssignTemporaryInstructions.add("");
                 break;
             case CFAssign.BIN_OP:
-                final String srcLeftString = cfAssign.srcLeftOrSingle.isGlobal(variableTable) ?
-                        cfAssign.srcLeftOrSingle.getGlobalLabel(variableTable) + "(%rip)":
-                        "-" + cfAssign.srcLeftOrSingle.getStackOffset(variableTable) + "(%rbp)";
-                final String srcRightString = cfAssign.srcRight.isGlobal(variableTable) ?
-                        cfAssign.srcRight.getGlobalLabel(variableTable) + "(%rip)":
-                        "-" + cfAssign.srcRight.getStackOffset(variableTable) + "(%rbp)";
-                assembly.add("# "+cfAssign.toString());
+                final Reg srcLeftReg;
+                final Reg srcRightReg;
+                final Operand srcLeftOperand;
+                final String srcOperand;
+                cfAssignTemporaryInstructions.add("# "+cfAssign.toString());
                 switch (cfAssign.srcBinOp.binOp) {
                     case BinOp.AND:
                     case BinOp.OR:
@@ -513,68 +505,124 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                     case BinOp.LEQ:
                     case BinOp.GT:
                     case BinOp.LT:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("cmpq " + srcRightString + ", %rax");
-                        assembly.add(cfAssign.getBinopCommand() + " %al");
-                        assembly.add("movzbq %al, %rax");
-                        assembly.add("movq %rax, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                        srcLeftReg = handleIntoRegister(cfAssign, cfAssign.srcLeftOrSingle);
+                        srcLeftOperand = getOperand(cfAssign, cfAssign.srcRight);
+                        cfAssignTemporaryInstructions.add("cmpq " + srcLeftOperand + ", " + srcLeftReg);
+                        if (dst.isReg()) {
+                            cfAssignTemporaryInstructions.add(cfAssign.getBinopCommand() + " " + dst.getReg1().byte0());
+                            cfAssignTemporaryInstructions.add("movzbq " + dst.getReg1().byte0() + ", " + dst.getReg1());
+                        } else {
+                            cfAssignTemporaryInstructions.add(cfAssign.getBinopCommand() + " %al");
+                            cfAssignTemporaryInstructions.add("movzbq %al, %rax");
+                            cfAssignTemporaryInstructions.add("movq %rax, " + dst);
+                        }
+                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
                         break;
                     case BinOp.MINUS:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("subq " + srcRightString + ", %rax");
-                        assembly.add("movq %rax, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                        if (dst.isReg()) {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", "+dst);
+                            cfAssignTemporaryInstructions.add("subq " + getOperand(cfAssign, cfAssign.srcRight) + ", " +dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, dst.getReg1()));
+                        } else {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", %rax");
+                            cfAssignTemporaryInstructions.add("subq " + getOperand(cfAssign, cfAssign.srcRight) + ", %rax");
+                            cfAssignTemporaryInstructions.add("movq %rax, "+dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
+                        }
                         break;
                     case BinOp.PLUS:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("addq " + srcRightString + ", %rax");
-                        assembly.add("movq %rax, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                        if (dst.isReg()) {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", "+dst);
+                            cfAssignTemporaryInstructions.add("addq " + getOperand(cfAssign, cfAssign.srcRight) + ", " +dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, dst.getReg1()));
+                        } else {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", %rax");
+                            cfAssignTemporaryInstructions.add("addq " + getOperand(cfAssign, cfAssign.srcRight) + ", %rax");
+                            cfAssignTemporaryInstructions.add("movq %rax, "+dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
+                        }
                         break;
                     case BinOp.MOD:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("cqto"); // sign extend
-                        assembly.add("idivq "+srcRightString);
-                        assembly.add("movq %rdx, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rdx"));
+                        cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", %rax");
+                        cfAssignTemporaryInstructions.add("cqto"); // sign extend
+                        cfAssignTemporaryInstructions.add("idivq "+ getOperand(cfAssign, cfAssign.srcRight));
+                        cfAssignTemporaryInstructions.add("movq %rdx, " + dst);
+                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RDX));
                         break;
                     case BinOp.MUL:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("imulq " + srcRightString + ", %rax");
-                        assembly.add("movq %rax, " + dst); // TODO overflow?
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                        if (dst.isReg()) {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", "+dst);
+                            cfAssignTemporaryInstructions.add("imulq " + getOperand(cfAssign, cfAssign.srcRight) + ", " +dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, dst.getReg1()));
+                        } else {
+                            cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", %rax");
+                            cfAssignTemporaryInstructions.add("imulq " + getOperand(cfAssign, cfAssign.srcRight) + ", %rax");
+                            cfAssignTemporaryInstructions.add("movq %rax, "+dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
+                        }
                         break;
                     case BinOp.DIV:
-                        assembly.add("movq " + srcLeftString + ", %rax");
-                        assembly.add("cqto"); // sign extend
-                        assembly.add("idivq " + srcRightString);
-                        assembly.add("movq %rax, " + dst);
-                        assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "%rax"));
+                        cfAssignTemporaryInstructions.add("movq " + getOperand(cfAssign, cfAssign.srcLeftOrSingle) + ", %rax");
+                        cfAssignTemporaryInstructions.add("cqto"); // sign extend
+                        cfAssignTemporaryInstructions.add("idivq " + getOperand(cfAssign, cfAssign.srcRight));
+                        cfAssignTemporaryInstructions.add("movq %rax, " + dst);
+                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
                         break;
                 }
                 break;
             case CFAssign.LIT:
-                // TODO runtime checks
-                assembly.add("movq " + cfAssign.srcLit.toAssembly() + ", " + dst + " # " + cfAssign);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, cfAssign.srcLit.toAssembly()));
+                cfAssignTemporaryInstructions.add("movq " + cfAssign.srcLit.toAssembly() + ", " + dst + " # " + cfAssign);
+                if (cfAssign.dstOptionalCSE != null) throw new RuntimeException("Why are we saving an immediate, thats wack\nLen expression has additional destination");
                 break;
             case CFAssign.TRUE:
-                assembly.add("movq $1, " + dst + " # " + cfAssign);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "$1")); // seems unnecessary?
+                cfAssignTemporaryInstructions.add("movq $1, " + dst + " # " + cfAssign);
+                if (cfAssign.dstOptionalCSE != null) throw new RuntimeException("Why are we saving an immediate, thats wack\nLen expression has additional destination");
                 break;
             case CFAssign.FALSE:
-                assembly.add("movq $0, " + dst + " # " + cfAssign);
-                assembly.addAll(additionalDestinationToAssembly(cfAssign, variableTable, "$0")); // seems unnecessary?
+                cfAssignTemporaryInstructions.add("movq $0, " + dst + " # " + cfAssign);
+                if (cfAssign.dstOptionalCSE != null) throw new RuntimeException("Why are we saving an immediate, thats wack\nLen expression has additional destination");
                 break;
             default: throw new RuntimeException("Temp has no type: impossible to reach...");
         }
-        return assembly;
     }
 
-    private static List<String> additionalDestinationToAssembly(CFAssign cfAssign, VariableTable variableTable, String src) {
+    /**
+     * put assembly variable into register if not existing register allocated
+     * return the register that the assembly variable is in
+     */
+    private Reg handleIntoRegister(CFAssign cfAssign, AssemblyVariable assemblyVariable) {
+        if (assemblyVariable.isGlobal(cfAssign.getVariableTable())) {
+            cfAssignTemporaryInstructions.add("movq " + assemblyVariable.getGlobalLabel(cfAssign.getVariableTable()) + "(%rip), %rax" + " # " + cfAssign.toString());
+            return Reg.RAX;
+        } else if (cfAssign.hasRegisterAssignment(assemblyVariable)) {
+            return cfAssign.getRegisterAssignment(assemblyVariable);
+        } else {
+            cfAssignTemporaryInstructions.add("movq -" + assemblyVariable.getStackOffset(cfAssign.getVariableTable()) + "(%rbp), %rax # " + cfAssign);
+            return Reg.RAX;
+        }
+    }
+
+    private Operand getOperand(CFAssign cfAssign, AssemblyVariable assemblyVariable) {
+        if (assemblyVariable.isGlobal(cfAssign.getVariableTable())) {
+            return Operand.makeGlobalAccess(assemblyVariable.getGlobalLabel(cfAssign.getVariableTable()));
+        } else if (cfAssign.hasRegisterAssignment(assemblyVariable)) {
+            return Operand.makeReg(cfAssign.getRegisterAssignment(assemblyVariable));
+        } else {
+            return Operand.makeMemoryAccess(assemblyVariable.getStackOffset(cfAssign.getVariableTable()));
+        }
+    }
+
+
+    private static List<String> additionalDestinationToAssembly(CFAssign cfAssign, VariableTable variableTable, Reg src) {
         if (cfAssign.dstOptionalCSE != null) {
-            return List.of("movq " + src + ", -" + cfAssign.dstOptionalCSE.getStackOffset(variableTable) + "(%rbp) # " + cfAssign.dstOptionalCSE + " = " + cfAssign.canonicalExpr);
+            if (cfAssign.hasRegisterAssignment(cfAssign.dstOptionalCSE)) {
+                if (cfAssign.getRegisterAssignment(cfAssign.dstOptionalCSE).equals(src))
+                    return List.of();
+                else
+                    return List.of("movq " + src + ", " + cfAssign.getRegisterAssignment(cfAssign.dstOptionalCSE) + " # " + cfAssign.dstOptionalCSE + " = " + cfAssign.canonicalExpr);
+            } else {
+                return List.of("movq " + src + ", -" + cfAssign.dstOptionalCSE.getStackOffset(variableTable) + "(%rbp) # " + cfAssign.dstOptionalCSE + " = " + cfAssign.canonicalExpr);
+            }
         } else {
             return List.of();
         }
