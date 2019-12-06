@@ -172,7 +172,9 @@ public class Expr extends Node {
         if (this.exprType != that.exprType) return false;
         switch (exprType) {
             case Expr.METHOD_CALL:
-                return false;
+            case Expr.LIT:
+            case Expr.LEN:
+                return this == obj;
             case Expr.MINUS:
             case Expr.NOT:
                 return this.expr.equals(that.expr);
@@ -180,10 +182,6 @@ public class Expr extends Node {
                 return loc.equals(that.loc);
             case Expr.BIN_OP:
                 return binOp.equals(that.binOp) && this.expr.equals(that.expr) && this.binOpExpr.equals(that.binOpExpr);
-            case Expr.LIT:
-                return this.lit.equals(that.lit);
-            case Expr.LEN:
-                return this.id.equals(that.id);
             default:
                 throw new RuntimeException("Unknown exprType: " + exprType);
         }

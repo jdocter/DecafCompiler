@@ -55,9 +55,17 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         for (InnerCFNode cfNode : ts) {
             Set<Expr> in = new HashSet<>();
             Set<InnerCFNode> parents = cfNode.parents();
-            for (InnerCFNode pred : parents) {
-                in.addAll(calculateParentOut(pred));
+
+            if (parents.isEmpty()) {
+                availableExprs.put(cfNode, Set.of());
+                return;
             }
+
+            in.addAll(calculateParentOut(parents.iterator().next()));
+            for (InnerCFNode pred : parents) {
+                in.retainAll(calculateParentOut(pred));
+            }
+
             availableExprs.put(cfNode, in);
         }
     }
