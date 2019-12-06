@@ -25,6 +25,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
     private Optional<VariableTable> variableTable = Optional.empty();
 
     private final List<String> instructions = new ArrayList<>();
+    private final List<String> cfAssignTemporaryInstructions = new ArrayList<>();
 
     private ImportTable importTable;
 
@@ -272,7 +273,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 }
             } else {
                 if (param.getKey() != null) {
-                    // TODO global?
+                    // no globals
                     if (cfMethodCall.hasRegisterAssignment(param.getKey())) {
                         body.add("push " + cfMethodCall.getRegisterAssignment(param.getKey()));
                     } else {

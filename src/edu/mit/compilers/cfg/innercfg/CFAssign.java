@@ -14,7 +14,7 @@ import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
 
-public class CFAssign extends UIDObject, CFStatement {
+public class CFAssign extends CFStatement {
 
     private int type;
     private final VariableTable variableTable;
@@ -269,6 +269,10 @@ public class CFAssign extends UIDObject, CFStatement {
         if (null != srcArray) assemblyVariables.add(srcArray);
         if (null != srcArrayOffset) assemblyVariables.add(srcArrayOffset);
         return assemblyVariables;
+    }
+
+    public VariableTable getVariableTable() {
+        return variableTable;
     }
 
     @Override
