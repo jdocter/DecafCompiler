@@ -27,7 +27,7 @@ public class LocalCSEActivator implements CFVisitor {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
         new LocalCommonSubExpressionEliminator(cfBlock.getMiniCFGStart(), cfBlock.getNonMethodCallSubExpressions(), sharedExpressionsMap);
-        for (CFNode child: cfBlock.dfsTraverse()) {
+        for (OuterCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -37,7 +37,7 @@ public class LocalCSEActivator implements CFVisitor {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
         new LocalCommonSubExpressionEliminator(cfConditional.getMiniCFGStart(), cfConditional.getNonMethodCallSubExpressions(), sharedExpressionsMap);
-        for (CFNode child: cfConditional.dfsTraverse()) {
+        for (OuterCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
