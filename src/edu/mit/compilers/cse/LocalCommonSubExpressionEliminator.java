@@ -55,9 +55,17 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         for (InnerCFNode cfNode : ts) {
             Set<Expr> in = new HashSet<>();
             Set<InnerCFNode> parents = cfNode.parents();
-            for (InnerCFNode pred : parents) {
-                in.addAll(calculateParentOut(pred));
+
+            if (parents.isEmpty()) {
+                availableExprs.put(cfNode, Set.of());
+                return;
             }
+
+            in.addAll(calculateParentOut(parents.iterator().next()));
+            for (InnerCFNode pred : parents) {
+                in.retainAll(calculateParentOut(pred));
+            }
+
             availableExprs.put(cfNode, in);
         }
     }
@@ -83,10 +91,6 @@ public class LocalCommonSubExpressionEliminator implements MiniCFVisitor {
         if (cfAssign.srcOptionalCSE != null) {
             assert cfAssign.srcOptionalCSE == e : "shared temp expected to be consistent for an expression";
             return; // already existing save location
-        }
-        if (cfAssign.dstArrayOffset != null) {
-            // TODO I don't understand this check
-            throw new RuntimeException("Please run Local CSE before peephole-removing {t = op; a[b] = t}" + "\nStatement: " + cfAssign);
         }
 
         while (previousStatements.hasPrevious()) {

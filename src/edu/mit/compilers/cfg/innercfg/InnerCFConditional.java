@@ -147,7 +147,7 @@ public class InnerCFConditional extends InnerCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         return Set.of();
     }
 

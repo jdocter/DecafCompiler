@@ -216,14 +216,19 @@ public class CFAssign extends CFStatement {
     public Optional<Expr> generatedExpr() {
         if (assignOp != ASSIGN) return Optional.empty();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
-                && canonicalExpr.getIds().contains(((Variable) dstArrayOrLoc).getId())) return Optional.empty();
+                && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
+        if (canonicalExpr.containsMethodCall()) return Optional.empty();
         return Optional.of(canonicalExpr);
     }
 
     @Override
     public Set<Expr> killedExprs(Set<Expr> exprs) {
         Set<Expr> killed = new HashSet<>();
-        if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary()) {
+        // if is an array, should kill all usages of that array
+        // if not an array, should kill all usages of that ID
+        // Either way, dstArrayOrLoc must not be temporary
+        // (for arrays, it is never temporary)
+        if (!dstArrayOrLoc.isTemporary()) {
             for (Expr subExpr : exprs) {
                 if (subExpr.getIds().contains(((Variable) dstArrayOrLoc).getId())) {
                     killed.add(subExpr);
@@ -307,10 +312,11 @@ public class CFAssign extends CFStatement {
     @Override
     public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
-        String dst = "" + dstArrayOrLoc + offsetStr;
+	    String additionalDst = dstOptionalCSE == null ? "" : dstOptionalCSE + ", ";
+        String dst = additionalDst + dstArrayOrLoc + offsetStr;
 
         if (srcOptionalCSE != null) {
-            return dst + " = " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
+            return dst + " " + assignOp + " " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";
         }
 
         switch (assignOp) {

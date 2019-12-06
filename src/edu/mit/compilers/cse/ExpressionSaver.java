@@ -57,7 +57,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (visited.contains(cfBlock)) return;
         visited.add(cfBlock);
 
-        if (cfBlock.getSubExpressions().contains(expr)) {
+        if (cfBlock.getNonMethodCallSubExpressions().contains(expr)) {
             cfBlock.getMiniCFGEnd().accept(this);
         } else {
             for (OuterCFNode cfNode : cfBlock.parents()) {
@@ -71,7 +71,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (visited.contains(cfConditional)) return;
         visited.add(cfConditional);
 
-        if (cfConditional.getSubExpressions().contains(expr)) {
+        if (cfConditional.getNonMethodCallSubExpressions().contains(expr)) {
             cfConditional.getMiniCFGEnd().accept(this);
         } else {
             for (OuterCFNode cfNode : cfConditional.parents()) {
@@ -96,7 +96,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (visited.contains(cfReturn)) return;
         visited.add(cfReturn);
 
-        if (cfReturn.getSubExpressions().contains(expr)) {
+        if (cfReturn.getNonMethodCallSubExpressions().contains(expr)) {
             cfReturn.getMiniCFGEnd().accept(this);
         } else {
             for (OuterCFNode cfNode : cfReturn.parents()) {

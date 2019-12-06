@@ -19,7 +19,7 @@ public class InnerCollectSubExpressions implements MiniCFVisitor {
     public void visit(InnerCFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        subExpressions.addAll(cfBlock.getSubExpressions());
+        subExpressions.addAll(cfBlock.getNonMethodCallSubExpressions());
         for (InnerCFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
@@ -29,7 +29,7 @@ public class InnerCollectSubExpressions implements MiniCFVisitor {
     public void visit(InnerCFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        subExpressions.addAll(cfConditional.getSubExpressions());
+        subExpressions.addAll(cfConditional.getNonMethodCallSubExpressions());
         for (InnerCFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
@@ -39,7 +39,7 @@ public class InnerCollectSubExpressions implements MiniCFVisitor {
     public void visit(InnerCFNop cfNop) {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
-        subExpressions.addAll(cfNop.getSubExpressions());
+        subExpressions.addAll(cfNop.getNonMethodCallSubExpressions());
         for (InnerCFNode child: cfNop.dfsTraverse()) {
             child.accept(this);
         }

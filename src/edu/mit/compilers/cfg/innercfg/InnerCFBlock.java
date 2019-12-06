@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
@@ -50,8 +51,8 @@ public class InnerCFBlock extends InnerCFNode {
     }
 
     @Override public String toString() {
-        if (isEnd) return "UID " + UID + " CFBlock [" + cfStatements + "], Scope = " + variableTable.getUID();
-        return "UID " + UID + " CFBlock [" + cfStatements + ", next=" + next.getUID() + "], Scope = " + variableTable.getUID();
+        if (isEnd) return "UID " + UID + " CFBlock [\n\t" + cfStatements.stream().map(CFStatement::toString).collect(Collectors.joining("\n\t")) + "\n], Scope = " + variableTable.getUID();
+        return "UID " + UID + " CFBlock [\n\t" + cfStatements.stream().map(CFStatement::toString).collect(Collectors.joining("\n\t")) + "\nnext=" + next.getUID() + "\n], Scope = " + variableTable.getUID();
     }
 
     @Override
@@ -104,22 +105,27 @@ public class InnerCFBlock extends InnerCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         Set<Expr> exprs = new HashSet<>();
         for (CFStatement cfStatement : cfStatements) {
             Expr rhs = cfStatement.getRHS();
-            if (rhs != null) exprs.add(rhs);
+            if (rhs != null && !rhs.containsMethodCall()) exprs.add(rhs);
         }
         return exprs;
     }
 
 
+    /**
+     * Note the input allExprs is only for removing.  We don't
+     * filter the generated set for only Exprs in allExprs --
+     * that's a pre-condition.
+     */
     @Override
     public Set<Expr> generatedExprs(Set<Expr> allExprs) {
         Set<Expr> generated = new HashSet<>();
         for (CFStatement cfStatement: cfStatements) {
             Optional<Expr> statementGen = cfStatement.generatedExpr();
-            if (statementGen.isPresent()) {
+            if (statementGen.isPresent() && !statementGen.get().containsMethodCall()) {
                 generated.add(statementGen.get());
             }
             // System.err.println(getUID() + " GENERATED AFTER " + cfStatement + " : " + generated);

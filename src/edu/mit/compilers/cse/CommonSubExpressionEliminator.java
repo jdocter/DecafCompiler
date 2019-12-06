@@ -24,8 +24,8 @@ public class CommonSubExpressionEliminator implements CFVisitor {
         methodCFG.accept(new LocalCSEActivator(sharedExpressionsMap));
     }
 
-    private void eliminateExprsInnerCFNode(Set<Expr> available, InnerCFNode node, Set<OuterCFNode> parents) {
-        Set<Expr> remainingAvailable = new HashSet<>(node.getSubExpressions());
+    private void eliminateExprsInnerCFNode(Set<Expr> available, InnerCFNode node, Set<CFNode> parents) {
+        Set<Expr> remainingAvailable = new HashSet<>(node.getNonMethodCallSubExpressions());
         remainingAvailable.retainAll(available);
 
         // TODO: register allocation -- sometimes this introduces more register pressure

@@ -87,7 +87,7 @@ public class CFNop extends OuterCFNode {
     }
 
     @Override
-    public Set<Expr> getSubExpressions() {
+    public Set<Expr> getNonMethodCallSubExpressions() {
         return Set.of();
     }
 

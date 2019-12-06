@@ -83,7 +83,7 @@ public class Expr extends Node {
             case Expr.LEN:
                 return "len(" + id + ")";
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
     }
 
@@ -121,10 +121,31 @@ public class Expr extends Node {
                 break;
             case Expr.LEN:
                 ids.add(id);
+                break;
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
         return ids;
+    }
+
+    public boolean containsMethodCall() {
+        switch (exprType) {
+            case Expr.METHOD_CALL:
+                return true;
+            case Expr.MINUS:
+            case Expr.NOT:
+                return this.expr.containsMethodCall();
+            case Expr.LOC:
+                return false;
+            case Expr.BIN_OP:
+                return this.expr.containsMethodCall() || this.binOpExpr.containsMethodCall();
+            case Expr.LIT:
+                return false;
+            case Expr.LEN:
+                return false;
+            default:
+                throw new RuntimeException("Unknown exprType: " + exprType);
+        }
     }
 
     @Override public int hashCode() {
@@ -141,6 +162,9 @@ public class Expr extends Node {
         return result;
     }
 
+    /**
+     * WARNING: breaks contract for equals() due to not being reflexive for METHOD_CALLs.
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Expr)) return false;
@@ -148,7 +172,9 @@ public class Expr extends Node {
         if (this.exprType != that.exprType) return false;
         switch (exprType) {
             case Expr.METHOD_CALL:
-                return false;
+            case Expr.LIT:
+            case Expr.LEN:
+                return this == obj;
             case Expr.MINUS:
             case Expr.NOT:
                 return this.expr.equals(that.expr);
@@ -156,12 +182,8 @@ public class Expr extends Node {
                 return loc.equals(that.loc);
             case Expr.BIN_OP:
                 return binOp.equals(that.binOp) && this.expr.equals(that.expr) && this.binOpExpr.equals(that.binOpExpr);
-            case Expr.LIT:
-                return this.lit.equals(that.lit);
-            case Expr.LEN:
-                return this.id.equals(that.id);
             default:
-                throw new RuntimeException("Unknown exprType: " + expr.exprType);
+                throw new RuntimeException("Unknown exprType: " + exprType);
         }
     }
 }

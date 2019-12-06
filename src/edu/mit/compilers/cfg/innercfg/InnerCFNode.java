@@ -45,7 +45,7 @@ public abstract class InnerCFNode extends CFNode {
      */
     public abstract List<Pair<List<Temp>, List<Temp>>> getTemps();
 
-    public abstract Set<Expr> getSubExpressions();
+    Set<Expr> getNonMethodCallSubExpressions();
 
     /**
      * @param allExprs list of all expressions that should be considered -- necessary

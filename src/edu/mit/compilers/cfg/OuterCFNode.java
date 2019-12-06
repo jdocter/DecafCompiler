@@ -45,8 +45,7 @@ public abstract class OuterCFNode extends CFNode {
      */
     public abstract List<Pair<List<Temp>, List<Temp>>> getTemps();
 
-    public abstract Set<Expr> getSubExpressions();
-
+    public abstract Set<Expr> getNonMethodCallSubExpressions();
     public abstract Set<Expr> generatedExprs(Set<Expr> allExprs);
     public abstract Set<Expr> killedExprs(Set<Expr> allExprs);
 

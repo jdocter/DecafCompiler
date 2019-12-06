@@ -26,8 +26,8 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFBlock cfBlock) {
         if (visited.contains(cfBlock)) return;
         else visited.add(cfBlock);
-        new LocalCommonSubExpressionEliminator(cfBlock.getMiniCFGStart(), cfBlock.getSubExpressions(), sharedExpressionsMap);
-        for (OuterCFNode child: cfBlock.dfsTraverse()) {
+        new LocalCommonSubExpressionEliminator(cfBlock.getMiniCFGStart(), cfBlock.getNonMethodCallSubExpressions(), sharedExpressionsMap);
+        for (CFNode child: cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -36,8 +36,8 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFConditional cfConditional) {
         if (visited.contains(cfConditional)) return;
         else visited.add(cfConditional);
-        new LocalCommonSubExpressionEliminator(cfConditional.getMiniCFGStart(), cfConditional.getSubExpressions(), sharedExpressionsMap);
-        for (OuterCFNode child: cfConditional.dfsTraverse()) {
+        new LocalCommonSubExpressionEliminator(cfConditional.getMiniCFGStart(), cfConditional.getNonMethodCallSubExpressions(), sharedExpressionsMap);
+        for (CFNode child: cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -55,6 +55,6 @@ public class LocalCSEActivator implements CFVisitor {
     public void visit(CFReturn cfReturn) {
         if (visited.contains(cfReturn)) return;
         else visited.add(cfReturn);
-        new LocalCommonSubExpressionEliminator(cfReturn.getMiniCFGStart(), cfReturn.getSubExpressions(), sharedExpressionsMap);
+        new LocalCommonSubExpressionEliminator(cfReturn.getMiniCFGStart(), cfReturn.getNonMethodCallSubExpressions(), sharedExpressionsMap);
     }
 }
