@@ -456,25 +456,25 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, notOperand));
                 break;
             case CFAssign.ARRAY_LOC:
-                // TODO use registers
-                String arrayLoc;
+                Operand arrayLocOperand;
+                Reg arrayOffsetOperand = handleIntoRegister(cfAssign, cfAssign.srcArrayOffset);
                 cfAssignTemporaryInstructions.add("movq -" +cfAssign.srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + cfAssign); // val of temp into rax
                 // array out of bounds
-                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.srcArray.getArrayLength(variableTable) +", %rax");
+                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.srcArray.getArrayLength(variableTable) +", " + arrayOffsetOperand);
                 cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
-                cfAssignTemporaryInstructions.add("cmpq $0, %rax");
+                cfAssignTemporaryInstructions.add("cmpq $0, " + arrayOffsetOperand);
                 cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
                 if (cfAssign.srcArray.isGlobal(variableTable)) {
-                    cfAssignTemporaryInstructions.add("leaq 0(,%rax," + cfAssign.srcArray.getElementSize(variableTable) + "), %rdx"); // temp * element size
                     cfAssignTemporaryInstructions.add("leaq " + cfAssign.srcArray.getGlobalLabel(variableTable) + "(%rip), %rax"); // address of base of global array
-                    arrayLoc = "(%rdx,%rax)";
+                    arrayLocOperand = Operand.makeMemoryAccess(Reg.RAX, arrayOffsetOperand, cfAssign.srcArray.getElementSize(variableTable));
 
                 } else {
-                    arrayLoc = "-"+cfAssign.srcArray.getStackOffset(variableTable)+"(%rbp,%rax,"+cfAssign.srcArray.getElementSize(variableTable)+")";
+                    arrayLocOperand = Operand.makeMemoryAccess(cfAssign.srcArray.getStackOffset(variableTable),
+                            Reg.RBP, arrayOffsetOperand,cfAssign.srcArray.getElementSize(variableTable));
                 }
-                cfAssignTemporaryInstructions.add("movq " + arrayLoc + ", %rsi # " + cfAssign); // is this ok?
-                cfAssignTemporaryInstructions.add("movq %rsi, " + dst);
-                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RSI));
+                cfAssignTemporaryInstructions.add("movq " + arrayLocOperand + ", %rdx # " + cfAssign); // is this ok?
+                cfAssignTemporaryInstructions.add("movq %rdx, " + dst);
+                cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RDX));
 
                 break;
             case CFAssign.SIMPLE:

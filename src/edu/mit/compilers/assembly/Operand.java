@@ -51,6 +51,15 @@ public class Operand {
         return operand;
     }
 
+    static Operand makeMemoryAccess(Reg reg1, Reg reg2, int scaledIndex) {
+        Operand operand = new Operand("(" + reg1 +"," + reg2 + "," +scaledIndex +")");
+        operand.reg1 = reg1;
+        operand.reg2 = reg2;
+        operand.isMemoryAccess = true;
+        operand.scaledIndex = scaledIndex;
+        return operand;
+    }
+
     static Operand makeMemoryAccess(long offset, Reg reg1, Reg reg2, int scaledIndex) {
         Operand operand = new Operand("-" + offset + "(" + reg1 +"," + reg2 + "," +scaledIndex +")");
         operand.offset = offset;
