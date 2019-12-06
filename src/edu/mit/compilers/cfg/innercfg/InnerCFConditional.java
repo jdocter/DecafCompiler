@@ -160,11 +160,6 @@ public class InnerCFConditional extends InnerCFNode {
     public Set<Expr> killedExprs(Set<Expr> allExprs) { return  Set.of(); }
 
     @Override
-    public Set<AssemblyVariable> getLocalAssemblyVariables() {
-        return getUsed();
-    }
-
-    @Override
     public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }

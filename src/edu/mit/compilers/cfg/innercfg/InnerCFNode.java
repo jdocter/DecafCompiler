@@ -60,7 +60,4 @@ public abstract class InnerCFNode extends CFNode {
      */
     public abstract Set<Expr> killedExprs(Set<Expr> allExprs);
 
-    public abstract Set<AssemblyVariable> getLocalAssemblyVariables();
-    public abstract Set<AssemblyVariable> getDefined();
-    public abstract Set<AssemblyVariable> getUsed();
 }

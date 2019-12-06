@@ -53,7 +53,7 @@ public class LivenessAnalyzer {
 
         // calculate in for all end nodes
         for (OuterCFNode end: methodCFGEnds) {
-            globalIn.put(end, new LocalLivenessAnalyzer(end.getMiniCFGStart(), end.getOuterUsed()).getGlobalIn());
+            globalIn.put(end, new LocalLivenessAnalyzer(end.getMiniCFGStart(), end.getUsed()).getGlobalIn());
         }
         while (!changed.isEmpty()) {
             // fixed point
@@ -68,8 +68,8 @@ public class LivenessAnalyzer {
 
             // in = used U (out - def) :::: first handle outer statments (CFConditional, CFReturn)
             Set<AssemblyVariable> miniCFGOut = new HashSet<>(globalOut.get(currentNode));
-            miniCFGOut.removeAll(currentNode.getOuterDefined());
-            miniCFGOut.addAll(currentNode.getOuterUsed());
+            miniCFGOut.removeAll(currentNode.getDefined());
+            miniCFGOut.addAll(currentNode.getUsed());
 
             // in = used U (out - def) :::: use local liveness analyzer to calculate in for the whole current CFNode
             Set<AssemblyVariable> newIn = new LocalLivenessAnalyzer(currentNode.getMiniCFGStart(), miniCFGOut).getGlobalIn();
@@ -101,8 +101,8 @@ public class LivenessAnalyzer {
         for (OuterCFNode cfNode: visited) {
             // calculate out for the miniCFG necessary for CFConditional & CFReturn
             Set<AssemblyVariable> miniCFGOut = new HashSet<>(globalOut.get(cfNode));
-            miniCFGOut.removeAll(cfNode.getOuterDefined());
-            miniCFGOut.addAll(cfNode.getOuterUsed());
+            miniCFGOut.removeAll(cfNode.getDefined());
+            miniCFGOut.addAll(cfNode.getUsed());
 
             // do out and in for outer CFG, unnecessary for CFNop and CFBlock but not necessarily bad
             granularOut.put(cfNode, globalOut.get(cfNode));

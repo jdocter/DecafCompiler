@@ -104,11 +104,6 @@ public class InnerCFNop extends InnerCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getLocalAssemblyVariables() {
-        return new HashSet<>();
-    }
-
-    @Override
     public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }

@@ -39,7 +39,4 @@ public abstract class CFStatement extends CFNode {
 
     public abstract void accept(StatementCFVisitor v);
 
-    public abstract Set<AssemblyVariable> getLocalAssemblyVariables();
-    public abstract Set<AssemblyVariable> getDefined();
-    public abstract Set<AssemblyVariable> getUsed();
 }

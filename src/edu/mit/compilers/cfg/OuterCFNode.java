@@ -50,9 +50,8 @@ public abstract class OuterCFNode extends CFNode {
     public abstract Set<Expr> killedExprs(Set<Expr> allExprs);
 
     /** set of LOCAL AssemblyVariables that are used only in the outer CFG*/
-    public abstract Set<AssemblyVariable> getOuterUsed();
+    public abstract Set<AssemblyVariable> getUsed();
     /** set of LOCAL AssemblyVariables that are defined only in the outer CFG*/
-    public abstract Set<AssemblyVariable> getOuterDefined();
-
+    public abstract Set<AssemblyVariable> getDefined();
 
 }

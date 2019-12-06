@@ -149,15 +149,6 @@ public class InnerCFBlock extends InnerCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getLocalAssemblyVariables() {
-        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
-        for (CFStatement cfStatement: cfStatements) {
-            assemblyVariables.addAll(cfStatement.getLocalAssemblyVariables());
-        }
-        return assemblyVariables;
-    }
-
-    @Override
     public Set<AssemblyVariable> getDefined() {
         throw new UnsupportedOperationException("unimplemented for InnerCFBlock");
     }

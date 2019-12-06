@@ -182,12 +182,12 @@ public class CFBlock extends OuterCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterUsed() {
+    public Set<AssemblyVariable> getUsed() {
         return Set.of();
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterDefined() {
+    public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }
 

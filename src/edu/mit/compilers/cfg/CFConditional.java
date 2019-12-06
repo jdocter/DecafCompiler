@@ -188,12 +188,12 @@ public class CFConditional extends OuterCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterUsed() {
+    public Set<AssemblyVariable> getUsed() {
         return Set.of(boolTemp);
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterDefined() {
+    public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }
 

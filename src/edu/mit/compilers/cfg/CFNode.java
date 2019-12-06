@@ -39,4 +39,7 @@ public abstract class CFNode extends UIDObject {
     private void checkRegisterAssignments() {
         assert registerAssignments.size() == Set.of(registerAssignments.values()).size() : "Expected one unique register assignments";
     }
+
+    public abstract Set<AssemblyVariable> getDefined();
+    public abstract Set<AssemblyVariable> getUsed();
 }

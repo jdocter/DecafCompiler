@@ -199,12 +199,12 @@ public class CFReturn extends OuterCFNode {
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterUsed() {
+    public Set<AssemblyVariable> getUsed() {
         return Set.of(returnTemp);
     }
 
     @Override
-    public Set<AssemblyVariable> getOuterDefined() {
+    public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }
 

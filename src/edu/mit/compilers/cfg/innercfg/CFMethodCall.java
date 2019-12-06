@@ -40,11 +40,6 @@ public class CFMethodCall extends CFStatement {
     }
 
     @Override
-    public Set<AssemblyVariable> getLocalAssemblyVariables() {
-        return getUsed();
-    }
-
-    @Override
     public Set<AssemblyVariable> getDefined() {
         return Set.of();
     }
