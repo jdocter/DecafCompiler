@@ -18,7 +18,6 @@ import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.liveness.LivenessAnalyzer;
 import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
-import sun.jvm.hotspot.utilities.LivenessAnalysis;
 
 public class InterferenceGraph {
 

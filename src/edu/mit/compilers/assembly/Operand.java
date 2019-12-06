@@ -74,7 +74,7 @@ public class Operand {
     }
 
     public boolean isReg() {
-        return !isMemoryAccess;
+        return isReg;
     }
 
     public boolean isImm() {
