@@ -21,86 +21,175 @@ import edu.mit.compilers.visitor.MiniCFVisitor;
 
 public class InterferenceGraph {
 
-    class Builder implements CFVisitor, MiniCFVisitor {
-
-        @Override
-        public void visit(InnerCFBlock cfBlock) {
-
-        }
-
-        @Override
-        public void visit(InnerCFConditional cfConditional) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void visit(InnerCFNop cfNop) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void visit(CFBlock cfBlock) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void visit(CFConditional cfConditional) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void visit(CFNop cfNop) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void visit(CFReturn cfReturn) {
-            // TODO Auto-generated method stub
-
-        }
-
-    }
-
+    /*
+     * RI:
+     * - webs == adjList.keySet();
+     * - adjList.get(A).contains(B) iff adjList.get(B).contains(A)
+     */
     Set<Web> webs;
     Map<Web, Set<Web>> adjList;
-    Map<CFNode, Set<Web>> statementToContainingWebs;
+    /*
+     * Key: CFNodes containing USE statements
+     * Value: Map(variables used -> web)
+     */
+    Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs;
     LivenessAnalyzer analysis;
 
     public InterferenceGraph(OuterCFNode methodCFG) {
         analysis = new LivenessAnalyzer(methodCFG);
-        buildNodes(methodCFG); // build webs using union find
-        buildEdges(methodCFG);
-    }
-
-    private void buildNodes(OuterCFNode methodCFG) {
         // Algorithm description:
 
-        // Iterate through CFNodes.
-        // for each DEF, search forward until next USE, DEF, or dead.
-        //      when encountering a USE, add to current web, and union webs of same variable.  keep going
-        //      when encountering a DEF and/or dead, clear away web since last USE.  stop
+        CFNodeIterator iterator = new CFNodeIterator(methodCFG);
+        while (iterator.hasNext()) {
+            CFNode nextNode = iterator.next();
+            // Unleash a new web builder that builds webs for each def in this node
+            for (AssemblyVariable target : nextNode.getDefined()) {
+                if (useStatementsToContainingWebs.containsKey(nextNode) &&
+                        useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
+                    // already created a web for this variable
+                    // probably shouldn't happen?
+                    System.err.println("Warning: Already created a web for " + target + " at " + nextNode);
+                }
+                CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
+                buildWeb(target, webBuildingIterator, nextNode);
+            }
+        }
 
-        Set<OuterCFNode> visited = new HashSet<>();
-        // traverse and unleash Builder, which searches forward until next USE, DEF, or dead
+        injectImplicitInitializations(methodCFG);
+    }
 
-
-
+    @SuppressWarnings("static-method")
+    private void injectImplicitInitializations(OuterCFNode methodCFG) {
         // Finally:
         // for each USE not in a web, that means it was depending on a default value of 0;
         // inject def 0 in beginning of CFG and build webs from those
+        // Skipped because this is a rare and confusing use case.
+        return;
     }
 
-    private void addToWeb(CFNode toAdd, Web currentWeb) {
+    /**
+     * Iterate through CFNodes.
+     * for each DEF, search forward until next USE, DEF, or dead.
+     *      when encountering a USE, add to current web, and union webs of same variable.  keep going
+     *      when encountering a DEF and/or dead, clear away web since last USE.  stop
+     *
+     * @param target
+     * @param iterator
+     * @param def
+     */
+    private void buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
+        Web web = new Web(analysis, def, target);
+        boolean addedToGraph = false;
 
+        CFNode nextNode = def;
+        while (iterator.alive()) {
+            if (iterator.hasNext()) {
+                nextNode = iterator.next();
+                if (nextNode.getUsed().contains(target) ||
+                        addedToGraph && web.spanningStatements.contains(nextNode)
+                        ) {
+                    Set<CFNode> betweenDefAndNext = iterator.getActivePath();
+                    web.extendWeb(betweenDefAndNext);
+
+                    if (useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
+                        Web other = useStatementsToContainingWebs.get(nextNode).get(target);
+                        mergeWebs(web, other);
+                        addedToGraph = true;
+                    }
+                }
+                // not "else if" because if nextNode is a = a; then it's equivalent to
+                // "USE a; DEF a;"
+                if (!analysis.getOut(nextNode).contains(target) ||
+                        nextNode.getDefined().contains(target)
+                        ) {
+                    iterator.backtrackToLastBranchPoint();
+                }
+            } else {
+                switch (iterator.deadEndType()) {
+                    case END:
+                        // did not reach a "dead" node even though reached end of CFG.
+                        throw new RuntimeException("While building Web, fell off a CFG without the variable dying.\n"
+                                + "CFG: " + nextNode + "\n"
+                                + "Liveness: " + analysis.getOut(nextNode) + "\n"
+                                + "Variable of interest: " + target);
+                        // if you delete the above throw make sure you add a break; here.
+                    case VISITED:
+                        CFNode visited = iterator.deadEndNode();
+                        if (web.spanningStatements.contains(visited)) {
+                            web.extendWeb(iterator.getActivePath());
+                        }
+                        iterator.backtrackToLastBranchPoint();
+                        break;
+                    default:
+                        throw new RuntimeException("Unknown DeadEndType: " + iterator.deadEndType());
+                }
+            }
+        }
+
+        if (!addedToGraph && !web.uses.isEmpty()) {
+            addWeb(web);
+        }
     }
 
-    private void buildEdges(OuterCFNode methodCFG) {
+    private void addWeb(Web web) {
+        webs.add(web);
+        adjList.put(web, new HashSet<>());
 
+        for (Web possibleInterferer : webs) {
+            Set<CFNode> interferingStatements = new HashSet<>(possibleInterferer.spanningStatements);
+            interferingStatements.retainAll(web.spanningStatements);
+
+            Set<CFNode> webNonInterfering = new HashSet<>(web.defs);
+            // a = a; in a loop would technically be an interfering statement.  Imagine the following
+            // pathological example.
+            // for (int a = 0; b < 4; a++) { a = a; }
+            // where every statement is a DEF.  The correct behavior is an infinite loop
+            // but if we don't include a = a; as an interfering statement this could result in
+            // a terminating program, if a and b are assigned to the same register.
+            webNonInterfering.removeAll(web.uses);
+
+            Set<CFNode> interfererNonInterfering = new HashSet<>(possibleInterferer.defs);
+            interfererNonInterfering.removeAll(possibleInterferer.uses);
+
+            interferingStatements.removeAll(webNonInterfering);
+            interferingStatements.removeAll(interfererNonInterfering);
+
+            if (interferingStatements.isEmpty()) {
+                adjList.get(web).add(possibleInterferer);
+                adjList.get(possibleInterferer).add(web);
+            }
+        }
+
+        // TODO build statementToContainingWebs
+//        for (CFNode statement : web.spanningStatements) {
+//            if (web.beginningDefs.contains(statement) && !web.endingUses.contains(statement)) {
+//                // No interference because DEFs happen last in a CFNode
+//                continue;
+//            }
+//        }
     }
 
+    /**
+     * Replace all references in InterferenceGraph: old -> new,
+     * and augment new with all of old's information.
+     *
+     * @param newWeb the newer web, which is currently being built
+     * @param oldWeb the older web, which is already stable (no
+     *      other USEs reachable from its DEF)
+     */
+    private void mergeWebs(Web newWeb, Web oldWeb) {
+        webs.remove(oldWeb);
+        webs.add(newWeb);
+
+        Set<Web> neighbors = adjList.get(oldWeb);
+        for (Web neighbor : neighbors) {
+            adjList.get(neighbor).remove(oldWeb);
+            adjList.get(neighbor).add(newWeb);
+        }
+        adjList.remove(oldWeb);
+        adjList.put(newWeb, neighbors);
+
+        newWeb.merge(oldWeb);
+        oldWeb.release();
+    }
 }
