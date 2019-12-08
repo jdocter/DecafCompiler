@@ -58,6 +58,10 @@ public class InterferenceGraph {
         injectImplicitInitializations(methodCFG);
     }
 
+    public Set<Web> getAdj(Web w) {
+        return adjList.get(w);
+    }
+
     @SuppressWarnings("static-method")
     private void injectImplicitInitializations(OuterCFNode methodCFG) {
         // Finally:

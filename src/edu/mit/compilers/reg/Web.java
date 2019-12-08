@@ -17,6 +17,8 @@ public class Web {
     Set<CFNode> defs = new HashSet<>();
     Set<CFNode> uses = new HashSet<>();
     final AssemblyVariable targetVariable;
+    private Reg assignedReg;
+    private boolean isSpilled;
 
     public Web(LivenessAnalyzer liveness, CFNode def, AssemblyVariable variable) {
         targetVariable = variable;
@@ -67,9 +69,24 @@ public class Web {
     }
 
     void assignRegister(Reg reg) {
+
         for (CFNode cfNode: spanningStatements) {
             cfNode.assignRegister(targetVariable, reg);
         }
+
+        isSpilled = false;
+    }
+
+    public Reg getAssignedReg() {
+        return assignedReg;
+    }
+
+    void spill() {
+        isSpilled = true;
+    }
+
+    public boolean isSpilled() {
+        return isSpilled;
     }
 
     public void merge(Web other) {
@@ -89,4 +106,7 @@ public class Web {
         uses = null;
     }
 
+    public int spillCost() {
+        return defs.size() + uses.size();
+    }
 }
