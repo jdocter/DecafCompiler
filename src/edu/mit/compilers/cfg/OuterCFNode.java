@@ -25,6 +25,9 @@ public abstract class OuterCFNode extends CFNode {
     public abstract void addParent(OuterCFNode parent);
     public abstract void removeParent(OuterCFNode parent);
 
+    /*
+     * Return in arbitrary order, but must be the same order every time.
+     */
     public abstract List<OuterCFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
     public abstract void setNext(OuterCFNode next);
     public abstract OuterCFNode getNext();
@@ -50,8 +53,10 @@ public abstract class OuterCFNode extends CFNode {
     public abstract Set<Expr> killedExprs(Set<Expr> allExprs);
 
     /** set of LOCAL AssemblyVariables that are used only in the outer CFG*/
+    @Override
     public abstract Set<AssemblyVariable> getUsed();
     /** set of LOCAL AssemblyVariables that are defined only in the outer CFG*/
+    @Override
     public abstract Set<AssemblyVariable> getDefined();
 
 }
