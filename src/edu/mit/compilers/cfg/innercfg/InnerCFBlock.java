@@ -178,4 +178,9 @@ public class InnerCFBlock extends InnerCFNode {
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Inner Blocks don't have mini CFGs");
     }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
+    }
 }

@@ -122,4 +122,9 @@ public class InnerCFNop extends InnerCFNode {
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Nops don't have Mini CFGs");
     }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
+    }
 }

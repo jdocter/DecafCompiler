@@ -97,4 +97,9 @@ public class CFMethodCall extends CFStatement {
     public Set<SharedTemp> getSharedTemps() {
         return Set.of();
     }
+
+    @Override
+    public String toWebString() {
+        return toString();
+    }
 }

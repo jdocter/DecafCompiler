@@ -22,6 +22,7 @@ import edu.mit.compilers.cfg.MethodCFGFactory;
  */
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.reg.InterferenceGraph;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
 import edu.mit.compilers.semantics.CheckIdDeclared;
 import edu.mit.compilers.semantics.CheckTypes;
@@ -252,7 +253,64 @@ public class Main {
             e.printStackTrace();
             System.exit(1);
         }
-      }
+      } else if (CLI.target == Action.WEB) {
+          DecafScanner scanner =
+                  new DecafScanner(new DataInputStream(inputStream));
+              Parser myParser = new Parser(scanner);
+              try {
+                  Program p = myParser.parse();
+
+                  ProgramDescriptor table = new ProgramDescriptor(p);
+
+                  List<SemanticException> semanticExceptions = new ArrayList<>();
+
+                  SemanticChecker[] semanticCheckers = {
+                          new CheckIdDeclared(table),
+                          new UniqueGlobalIds(table),
+                          new VoidMainNoArgs(table),
+                          new BreakAndContinueInAnyLoop(),
+                          new CheckTypes(table),
+                          new IntLiteralInRange(),
+                  };
+
+                  for (SemanticChecker checker : semanticCheckers) {
+                      p.accept(checker);
+                      semanticExceptions.addAll(checker.getSemanticExceptions());
+                  }
+                  if (!semanticExceptions.isEmpty()) {
+                      for (SemanticException e : semanticExceptions) {
+                          outputStream.println(e.getMessage());
+                      }
+                      System.exit(1);
+                  }
+
+                  // set Declaration Scopes on all Id's
+                  new EliminateShadowingVisitor(table);
+
+                  MethodCFGFactory.makeAndSetMethodCFGs(table);
+
+                  if (CLI.opts[0]) { // CSE
+                      for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                          new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                          // copy propagate?
+                          // dead code?
+                      }
+                  }
+
+                  for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
+                      outputStream.println(graph);
+                  }
+
+              } catch (DecafParseException e) {
+                  e.printStackTrace();
+                  System.exit(1);
+              } catch (SemanticException e) {
+                  // exception while building symbol tables
+                  e.printStackTrace();
+                  System.exit(1);
+              }
+            }
 
       outputStream.close();
     } catch(Exception e) {

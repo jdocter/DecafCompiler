@@ -217,4 +217,8 @@ public class CFReturn extends OuterCFNode {
     public String getEndOfMiniCFGLabel() {
         return "_end_of_return_" + UID;
     }
+
+    @Override public String toWebString() {
+        return "return " + returnTemp;
+    }
 }

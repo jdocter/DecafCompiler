@@ -182,4 +182,9 @@ public class InnerCFConditional extends InnerCFNode {
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Inner Conditionals don't have mini CFGs");
     }
+
+    @Override
+    public String toWebString() {
+        return left + " " + binOp + " " + right + "?";
+    }
 }

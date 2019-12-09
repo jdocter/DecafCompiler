@@ -206,4 +206,8 @@ public class CFConditional extends OuterCFNode {
     public String getEndOfMiniCFGLabel() {
         return "_end_of_conditional_" + UID;
     }
+
+    @Override public String toWebString() {
+        return boolTemp + "?";
+    }
 }

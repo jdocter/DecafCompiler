@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.CFBlock;
@@ -196,5 +197,25 @@ public class InterferenceGraph {
 
         newWeb.merge(oldWeb);
         oldWeb.release();
+    }
+
+    private String adjListToUIDString() {
+        StringBuilder output = new StringBuilder();
+        for (Web key : adjList.keySet()) {
+            output.append(key.getUID());
+            output.append(": {");
+            for (Web value : adjList.get(key)) {
+                output.append(value.getUID());
+                output.append(", ");
+            }
+            output.replace(output.length() - 2, output.length(), "}\n\t");
+        }
+        return output.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "Webs:\n\t" + webs.stream().map(Web::toString).collect(Collectors.joining("\n\t")) + "\n"
+                + "Adjacencies:\n\t" + adjListToUIDString();
     }
 }

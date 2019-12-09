@@ -2,13 +2,15 @@ package edu.mit.compilers.reg;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.liveness.LivenessAnalyzer;
+import edu.mit.compilers.util.UIDObject;
 
-public class Web {
+public class Web extends UIDObject {
 
     // granular analysis, may include CFStatements, OuterCFNodes, InnerCFNodes
     private final LivenessAnalyzer liveness;
@@ -104,6 +106,14 @@ public class Web {
         spanningStatements = null;
         defs = null;
         uses = null;
+    }
+
+    @Override
+    public String toString() {
+        return "UID " + getUID() + " Web:\n"
+                + "\tSpans " + spanningStatements.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
+                + "\tStarts at " + defs.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
+                + "\tUses at " + uses.stream().map(CFNode::toWebString).collect(Collectors.toList());
     }
 
     public int spillCost() {

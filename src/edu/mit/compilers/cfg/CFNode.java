@@ -42,4 +42,6 @@ public abstract class CFNode extends UIDObject {
 
     public abstract Set<AssemblyVariable> getDefined();
     public abstract Set<AssemblyVariable> getUsed();
+
+    public abstract String toWebString();
 }

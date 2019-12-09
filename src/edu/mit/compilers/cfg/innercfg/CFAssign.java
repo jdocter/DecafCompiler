@@ -386,4 +386,9 @@ public class CFAssign extends CFStatement {
         }
     }
 
+    @Override
+    public String toWebString() {
+        return toString();
+    }
+
 }

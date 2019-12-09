@@ -130,4 +130,9 @@ public class CFNop extends OuterCFNode {
     public InnerCFNode getMiniCFGEnd() {
         return new InnerCFEndOfMiniCFG(this);
     }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
+    }
 }

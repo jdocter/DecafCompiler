@@ -52,7 +52,7 @@ public class CLI {
    * CFG: Produce CFG from input and print them out.
    * ASSEMBLY: produce assembly from the input.
    */
-    public enum Action {DEFAULT, ABOUT, SCAN, PARSE, INTER, CFG, ASSEMBLY};
+    public enum Action {DEFAULT, ABOUT, SCAN, PARSE, INTER, CFG, ASSEMBLY, WEB};
 
   /**
    * Array indicating which optimizations should be performed.  If
@@ -193,6 +193,7 @@ public class CLI {
       else if (targetStr.equals("inter")) target = Action.INTER;
       else if (targetStr.equals("cfg")) target = Action.CFG;
       else if (targetStr.equals("assembly")) target = Action.ASSEMBLY;
+      else if (targetStr.equals("web")) target = Action.WEB;
       else if (targetStr.equals("about")) {
 	  printUsage("Test run successful. Command line parameters: ");
 	  System.exit(0);

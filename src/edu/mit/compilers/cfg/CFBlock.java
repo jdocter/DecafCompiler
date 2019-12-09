@@ -211,4 +211,9 @@ public class CFBlock extends OuterCFNode {
     public String getEndOfMiniCFGLabel() {
         return "_end_of_block_" + UID;
     }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
+    }
 }
