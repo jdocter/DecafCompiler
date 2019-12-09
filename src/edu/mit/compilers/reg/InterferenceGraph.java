@@ -55,13 +55,6 @@ public class InterferenceGraph {
                 // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
                 // Unleash a new web builder that builds webs for each def in this node
                 for (AssemblyVariable target : nextNode.getDefined()) {
-                    if (useStatementsToContainingWebs.containsKey(nextNode) &&
-                            useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
-                        // already created a web for this variable
-                        // probably shouldn't happen?
-                        System.err.println("Warning: Already created a web for " + target + " at " + nextNode);
-                    }
-
                     CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
                     buildWeb(target, webBuildingIterator, nextNode);
                 }
@@ -243,10 +236,14 @@ public class InterferenceGraph {
         oldWeb.release();
     }
 
+    private String webToIDAndTarget(Web web) {
+        return web.getUID() + " (" + web.targetVariable + ")";
+    }
+
     private String adjListToUIDString() {
         StringBuilder output = new StringBuilder();
         for (Web key : adjList.keySet()) {
-            output.append(key.getUID());
+            output.append(webToIDAndTarget(key));
 
             if (adjList.get(key).isEmpty()) {
                 output.append(": no neighbors\n\t");
@@ -255,7 +252,7 @@ public class InterferenceGraph {
 
             output.append(": {");
             for (Web value : adjList.get(key)) {
-                output.append(value.getUID());
+                output.append(webToIDAndTarget(value));
                 output.append(", ");
             }
             output.replace(output.length() - 2, output.length(), "}\n\t");
