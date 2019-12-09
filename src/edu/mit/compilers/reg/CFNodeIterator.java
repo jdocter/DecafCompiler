@@ -12,8 +12,10 @@ import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.CFNop;
 import edu.mit.compilers.cfg.CFReturn;
 import edu.mit.compilers.cfg.OuterCFNode;
+import edu.mit.compilers.cfg.innercfg.CFStatement;
 import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
 import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
+import edu.mit.compilers.cfg.innercfg.InnerCFEndOfMiniCFG;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.util.Pair;
@@ -43,27 +45,53 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
      * Note: visit() implementations are meant for internal use only.
      */
 
+    private enum IteratorAction {
+        PEEK, ADVANCE
+    }
+
+    private enum IteratorInstruction {
+        BEGIN_MINICFG, END_MINICFG, NEXT_MINICFG,
+    }
+
     private class IteratorLocation {
         OuterCFNode outerCFNode;
-        boolean finishedWithOuter;
+        boolean finishedMiniCFG;
         InnerCFNode innerCFNode;
-        boolean finishedWithInner;
         int innerCFBlockStatement;
 
+        /**
+         * Create a new Iterator location.  Contains all information necessary to determine next CFNode.
+         * @param outerCFNode
+         * @param finishedWithOuter true if next() == outerCFNode
+         *          false if next() is in outerCFNode's miniCFG (or empty miniCFG)
+         * @param innerCFNode
+         *          if innerCFNode == null && !finishedWithOuter, signifies have not
+         *              started iterating the miniCFG of outerCFNode (next == outerCFNode.getMiniCFG)
+         *          if innerCFNode == null && finishedWithOuter, signifies we have
+         *              finished iterating the miniCFG of outerCFNode (next == outerCFNode)
+         * @param finishedWithInner
+         *          true if next() == InnerCFConditional or CFStatement for innerCFNode's children
+         *          false if next() == CFStatement
+         * @param innerCFBlockStatement
+         *          index into InnerCFBlock's statements if innerCFNode.instanceof () == CFBlock
+         *
+         */
         public IteratorLocation(OuterCFNode outerCFNode, boolean finishedWithOuter, InnerCFNode innerCFNode,
                 boolean finishedWithInner, int innerCFBlockStatement) {
             this.outerCFNode = outerCFNode;
-            this.finishedWithOuter = finishedWithOuter;
+            this.finishedMiniCFG = finishedWithOuter;
             this.innerCFNode = innerCFNode;
-            this.finishedWithInner = finishedWithInner;
             this.innerCFBlockStatement = innerCFBlockStatement;
         }
 
+        /**
+         * Copy the other IteratorLocation
+         * @param location
+         */
         public IteratorLocation(IteratorLocation location) {
             this.outerCFNode = location.outerCFNode;
-            this.finishedWithOuter = location.finishedWithOuter;
+            this.finishedMiniCFG = location.finishedMiniCFG;
             this.innerCFNode = location.innerCFNode;
-            this.finishedWithInner = location.finishedWithInner;
             this.innerCFBlockStatement = location.innerCFBlockStatement;
         }
     }
@@ -76,10 +104,17 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     /*
      * branchesNotTaken indexes into activePath with the alternate branch.
      * also a Stack -- branchesNotTaken[i][0] ≤ branchesNotTaken[i+1][0]
+     *
+     * branchesNotTaken[i][0] ≤ activePath.size() + 1 -- may look ahead to a branch during peek(),
+     * we save branches not taken so that we always take the same branch when peeking multiple times.
      */
     List<Pair<Integer, IteratorLocation>> branchesNotTaken = new ArrayList<>();
 
     IteratorLocation location;
+    IteratorAction currentAction;
+    IteratorInstruction currentInstruction;
+    Optional<CFNode> instructionResult;
+
     Set<CFNode> visited = new HashSet<>();
 
     public CFNodeIterator(OuterCFNode methodCFG) {
@@ -101,7 +136,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
 
     public boolean hasNext() {
         Optional<CFNode> next = peek();
-        return next.isPresent() && visited.contains(next.get());
+        return next.isPresent() && !visited.contains(next.get());
     }
 
     /**
@@ -109,10 +144,20 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
      * return notPresent if at a CFG end.
      */
     private Optional<CFNode> peek() {
-        if (location.finishedWithOuter) {
+        currentAction = IteratorAction.PEEK;
+
+        if (location.finishedMiniCFG) {
             // TODO
-        } // TODO
-        return Optional.empty();
+        } else {
+            if (location.innerCFNode != null) {
+                currentInstruction = IteratorInstruction.NEXT_MINICFG;
+                location.innerCFNode.accept(this);
+            } else {
+                currentInstruction = IteratorInstruction.BEGIN_MINICFG;
+                location.outerCFNode.accept(this);
+            }
+        }
+        return instructionResult;
     }
 
     /**
@@ -120,12 +165,15 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
      * @return false if location not advanced due to end of CFG.
      */
     private boolean advanceLocation() {
-        // TODO
+        currentAction = IteratorAction.ADVANCE;
+        // TODO similar to peek()
         return false;
     }
 
     public CFNode next() {
         CFNode toReturn = peek().get();
+        visited.add(toReturn);
+        activePath.add(toReturn);
         advanceLocation();
         return toReturn;
     }
@@ -166,44 +214,120 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     }
 
     @Override
-    public void visit(InnerCFBlock cfBlock) {
-        // TODO Auto-generated method stub
-
+    public void visit(InnerCFBlock innerCFBlock) {
+        switch (currentAction) {
+        case PEEK:
+            switch (currentInstruction) {
+            case BEGIN_MINICFG:
+                if (innerCFBlock.getCfStatements().isEmpty()) {
+                    throw new RuntimeException("Hopefully no empty InnerCFBlocks");
+                }
+                instructionResult = Optional.of(innerCFBlock.getCfStatements().get(0));
+                break;
+            case NEXT_MINICFG:
+                // TODO
+                break;
+            case END_MINICFG:
+                throw new RuntimeException("Unexpected END_MINICFG");
+            default:
+                throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+            }
+            break;
+        case ADVANCE:
+            break;
+        default:
+            throw new RuntimeException("Unrecognized action: " + currentAction);
+        }
     }
 
     @Override
-    public void visit(InnerCFConditional cfConditional) {
-        // TODO Auto-generated method stub
-
+    public void visit(InnerCFConditional innerCFConditional) {
+        switch (currentAction) {
+        case PEEK:
+            switch (currentInstruction) {
+            case BEGIN_MINICFG:
+                instructionResult = Optional.of(innerCFConditional);
+                break;
+            case NEXT_MINICFG:
+                // TODO
+                break;
+            case END_MINICFG:
+                throw new RuntimeException("Unexpected END_MINICFG");
+            default:
+                throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+            }
+            break;
+        case ADVANCE:
+            break;
+        default:
+            throw new RuntimeException("Unrecognized action: " + currentAction);
+        }
     }
 
     @Override
-    public void visit(InnerCFNop cfNop) {
-        // TODO Auto-generated method stub
+    public void visit(InnerCFNop innerCFNop) {
+        throw new RuntimeException("Expected non-endOfCFG Nops to be peephole removed from MiniCFGs: " + location.outerCFNode);
+    }
 
+    public void visit(InnerCFEndOfMiniCFG innerCFEndOfMiniCFG) {
+        switch (currentAction) {
+        case PEEK:
+            switch (currentInstruction) {
+            case BEGIN_MINICFG:
+                currentInstruction = IteratorInstruction.END_MINICFG;
+                innerCFEndOfMiniCFG.getEnclosingNode().getMiniCFGStart().accept(this);
+                break;
+            case NEXT_MINICFG:
+                throw new RuntimeException("Stable Location should never be on a CFEndOfMiniCFG");
+            case END_MINICFG:
+                throw new RuntimeException("Unexpected END_MINICFG");
+            default:
+                throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+            }
+            break;
+        case ADVANCE:
+            break;
+        default:
+            throw new RuntimeException("Unrecognized action: " + currentAction);
+        }
     }
 
     @Override
     public void visit(CFBlock cfBlock) {
-        // TODO Auto-generated method stub
-
+        switch (currentAction) {
+        case PEEK:
+            switch (currentInstruction) {
+            case BEGIN_MINICFG:
+                cfBlock.getMiniCFGStart().accept(this);
+                break;
+            case NEXT_MINICFG:
+                throw new RuntimeException("NEXT_MINICFG on an OuterCFNode");
+            case END_MINICFG:
+                instructionResult = Optional.of(cfBlock);
+                break;
+            default:
+                throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+            }
+            break;
+        case ADVANCE:
+            break;
+        default:
+            throw new RuntimeException("Unrecognized action: " + currentAction);
+        }
     }
 
     @Override
     public void visit(CFConditional cfConditional) {
-        // TODO Auto-generated method stub
-
+        // TODO
     }
 
     @Override
     public void visit(CFNop cfNop) {
-        // TODO Auto-generated method stub
-
+        // TODO
     }
 
     @Override
     public void visit(CFReturn cfReturn) {
-        // TODO Auto-generated method stub
-
+        // TODO
     }
 }
