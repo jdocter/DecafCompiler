@@ -13,7 +13,6 @@ import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.CFNop;
 import edu.mit.compilers.cfg.CFReturn;
 import edu.mit.compilers.cfg.OuterCFNode;
-import edu.mit.compilers.cfg.innercfg.CFStatement;
 import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
 import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
 import edu.mit.compilers.cfg.innercfg.InnerCFEndOfMiniCFG;
@@ -22,7 +21,6 @@ import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.CFVisitor;
 import edu.mit.compilers.visitor.MiniCFVisitor;
-import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 
 /**
@@ -52,7 +50,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
      */
 
     private enum IteratorAction {
-        PEEK, ADVANCE
+        PEEK, PEEK_AND_ADVANCE
     }
 
     private enum IteratorInstruction {
@@ -175,19 +173,20 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     }
 
     /**
-     * if next location is a CFNode, move to it.
+     * if next location is a CFNode, move to it and return it.
      * At a branch point, take the appropriate branch depending on
      * current location.nextBranchPoint.
      *
-     * Give up (stay same location) if at a CFG end.
+     * Stay same location and return notPresent if at a CFG end.
      */
-    private void advanceLocation() {
-        currentAction = IteratorAction.ADVANCE;
+    private Optional<CFNode> peekAndAdvanceLocation() {
+        currentAction = IteratorAction.PEEK_AND_ADVANCE;
         instructionDispatchBasedOnLocation();
+        return instructionResult;
     }
 
     /**
-     * @return instruction result --
+     * dispatch instruction in global variable.
      */
     private void instructionDispatchBasedOnLocation() {
         // first node
@@ -208,24 +207,23 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     }
 
     public CFNode next() {
-        CFNode toReturn = peek().get();
+        CFNode toReturn = peekAndAdvanceLocation().get();
         visited.add(toReturn);
         activePath.add(toReturn);
-        advanceLocation();
         return toReturn;
     }
 
     /**
      * Don't include the beginning nodes.
      *
-     * @return
+     * @return active path, excluding first node.
      */
     public Set<CFNode> getActivePath() {
         if (activePath.isEmpty()) {
             // Theoretically possible if function is just a "return;"
             return Set.of();
         }
-        return new HashSet<>(activePath.subList(1, activePath.size()));
+        return new HashSet<>(activePath.subList(1, activePath.size())); // subList is O(1) time
     }
 
     /**
@@ -305,12 +303,9 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
             if (innerCFBlock.getCfStatements().isEmpty()) {
                 throw new RuntimeException("Hopefully no empty InnerCFBlocks");
             }
-            if (currentAction == IteratorAction.PEEK) {
-                instructionResult = Optional.of(innerCFBlock.getCfStatements().get(0));
-            } else if (currentAction == IteratorAction.ADVANCE) {
+            instructionResult = Optional.of(innerCFBlock.getCfStatements().get(0));
+            if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 this.location = new IteratorLocation(location.outerCFNode, false, innerCFBlock, 0);
-            } else {
-                throw new RuntimeException("Unrecognized IteratorAction: " + currentAction);
             }
             break;
         case NEXT_MINICFG:
@@ -331,22 +326,19 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     public void visit(InnerCFConditional innerCFConditional) {
         switch (currentInstruction) {
         case FIRST_AVAILABLE_CFNODE:
-            if (currentAction == IteratorAction.PEEK) {
-                instructionResult = Optional.of(innerCFConditional);
-            } else if (currentAction == IteratorAction.ADVANCE) {
+            instructionResult = Optional.of(innerCFConditional);
+            if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 this.location = new IteratorLocation(
                         location.outerCFNode,
                         false,
                         innerCFConditional,
                         -1);
-            } else {
-                throw new RuntimeException("Unexpected IteratorAction: " + currentAction);
             }
             break;
         case NEXT_MINICFG:
             currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
             assert location.nextBranchChoice <= 1; // cfConditionals have 2 branches
-            if (currentAction == IteratorAction.ADVANCE) {
+            if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 pushBranchNotTaken();
             }
             innerCFConditional.dfsTraverse().get(location.nextBranchChoice).accept(this);
@@ -395,6 +387,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
             currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
             assert location.nextBranchChoice == 0; // CFBlocks have only one successor
             cfBlock.dfsTraverse().get(location.nextBranchChoice).accept(this);
+            break;
         default:
             throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
         }
@@ -409,21 +402,19 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
         case NEXT_MINICFG:
             throw new RuntimeException("NEXT_MINICFG on an OuterCFNode");
         case END_MINICFG:
-            if (currentAction == IteratorAction.PEEK) {
-                instructionResult = Optional.of(cfConditional);
-            } else if (currentAction == IteratorAction.ADVANCE) {
+            instructionResult = Optional.of(cfConditional);
+            if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 this.location = new IteratorLocation(cfConditional, true, null, -1);
-            } else {
-                throw new RuntimeException("Unexpected IteratorAction: " + currentAction);
             }
             break;
         case NEXT_OUTERCFNODE:
             currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
             assert location.nextBranchChoice <= 1; // CFConditionals have two successors
-            if (currentAction == IteratorAction.ADVANCE) {
+            if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 pushBranchNotTaken();
             }
             cfConditional.dfsTraverse().get(location.nextBranchChoice).accept(this);
+            break;
         default:
             throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
         }
@@ -439,9 +430,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
         switch (currentInstruction) {
         case FIRST_AVAILABLE_CFNODE:
             if (cfReturn.isVoid()) {
-                if (currentAction == IteratorAction.PEEK) {
-                    instructionResult = Optional.empty();
-                }
+                instructionResult = Optional.empty();
             } else {
                 cfReturn.getMiniCFGStart().accept(this);
             }
@@ -452,19 +441,14 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
             if (cfReturn.isVoid()) {
                 throw new RuntimeException("END_MINICFG on a void Return");
             } else {
-                if (currentAction == IteratorAction.PEEK) {
-                    instructionResult = Optional.of(cfReturn);
-                } else if (currentAction == IteratorAction.ADVANCE) {
+                instructionResult = Optional.of(cfReturn);
+                if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                     this.location = new IteratorLocation(cfReturn, true, null, -1);
-                } else {
-                    throw new RuntimeException("Unexpected IteratorAction: " + currentAction);
                 }
             }
             break;
         case NEXT_OUTERCFNODE:
-            if (currentAction == IteratorAction.PEEK) {
-                instructionResult = Optional.empty();
-            }
+            instructionResult = Optional.empty();
             break;
         default:
             throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
