@@ -224,6 +224,12 @@ public class InterferenceGraph {
         StringBuilder output = new StringBuilder();
         for (Web key : adjList.keySet()) {
             output.append(key.getUID());
+
+            if (adjList.get(key).isEmpty()) {
+                output.append(": no neighbors\n\t");
+                continue;
+            }
+
             output.append(": {");
             for (Web value : adjList.get(key)) {
                 output.append(value.getUID());
