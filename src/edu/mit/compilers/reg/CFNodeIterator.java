@@ -138,7 +138,9 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     public CFNodeIterator(OuterCFNode methodCFG) {
         this.location = new IteratorLocation(methodCFG, false, null, -1, 0);
         this.originalLocation = new IteratorLocation(this.location);
-        this.activePath.add(peek().get());
+        if (hasNext()) {
+            this.activePath.add(peek().get());
+        }
     }
 
     /**
@@ -151,11 +153,14 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     public CFNodeIterator(CFNodeIterator iterator) {
         this.location = new IteratorLocation(iterator.location);
         this.originalLocation = new IteratorLocation(this.location);
-        this.activePath.add(peek().get());
+        if (hasNext()) {
+            this.activePath.add(peek().get());
+        }
     }
 
     public boolean hasNext() {
         Optional<CFNode> next = peek();
+        System.err.println("Next: " + next.isPresent() + " present; " + (next.isPresent() ? next.get() : ""));
         return next.isPresent() && !visited.contains(next.get());
     }
 
@@ -354,23 +359,24 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
 
     @Override
     public void visit(InnerCFNop innerCFNop) {
-        throw new RuntimeException("Expected non-endOfCFG Nops to be peephole removed from MiniCFGs: " + location.outerCFNode);
-    }
-
-    public void visit(InnerCFEndOfMiniCFG innerCFEndOfMiniCFG) {
-        switch (currentInstruction) {
-        case FIRST_AVAILABLE_CFNODE:
-            currentInstruction = IteratorInstruction.END_MINICFG;
-            innerCFEndOfMiniCFG.getEnclosingNode().accept(this);
-            break;
-        case NEXT_MINICFG:
-            throw new RuntimeException("Stable Location should never be on a CFEndOfMiniCFG");
-        case END_MINICFG:
-            throw new RuntimeException("Unexpected END_MINICFG");
-        case NEXT_OUTERCFNODE:
-            throw new RuntimeException("NEXT_OUTERCFNODE in an InnerCFNode");
-        default:
-            throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+        if (innerCFNop instanceof InnerCFEndOfMiniCFG) {
+            InnerCFEndOfMiniCFG innerCFEndOfMiniCFG = (InnerCFEndOfMiniCFG) innerCFNop;
+            switch (currentInstruction) {
+            case FIRST_AVAILABLE_CFNODE:
+                currentInstruction = IteratorInstruction.END_MINICFG;
+                innerCFEndOfMiniCFG.getEnclosingNode().accept(this);
+                break;
+            case NEXT_MINICFG:
+                throw new RuntimeException("Stable Location should never be on a CFEndOfMiniCFG");
+            case END_MINICFG:
+                throw new RuntimeException("Unexpected END_MINICFG");
+            case NEXT_OUTERCFNODE:
+                throw new RuntimeException("NEXT_OUTERCFNODE in an InnerCFNode");
+            default:
+                throw new RuntimeException("Unrecognized instruction: " + currentInstruction);
+            }
+        } else {
+            throw new RuntimeException("Expected non-endOfCFG Nops to be peephole removed from MiniCFGs: " + location.outerCFNode);
         }
     }
 

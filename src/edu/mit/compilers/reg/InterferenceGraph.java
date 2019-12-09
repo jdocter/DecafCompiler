@@ -28,13 +28,13 @@ public class InterferenceGraph {
      * - webs == adjList.keySet();
      * - adjList.get(A).contains(B) iff adjList.get(B).contains(A)
      */
-    Set<Web> webs;
-    Map<Web, Set<Web>> adjList;
+    Set<Web> webs = new HashSet<>();
+    Map<Web, Set<Web>> adjList = new HashMap<>();
     /*
      * Key: CFNodes containing USE statements
      * Value: Map(variables used -> web)
      */
-    Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs;
+    Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs = new HashMap<>();
     LivenessAnalyzer analysis;
 
     public InterferenceGraph(OuterCFNode methodCFG) {
@@ -44,6 +44,7 @@ public class InterferenceGraph {
         CFNodeIterator iterator = new CFNodeIterator(methodCFG);
         while (iterator.hasNext()) {
             CFNode nextNode = iterator.next();
+            System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
             // Unleash a new web builder that builds webs for each def in this node
             for (AssemblyVariable target : nextNode.getDefined()) {
                 if (useStatementsToContainingWebs.containsKey(nextNode) &&
@@ -52,6 +53,7 @@ public class InterferenceGraph {
                     // probably shouldn't happen?
                     System.err.println("Warning: Already created a web for " + target + " at " + nextNode);
                 }
+
                 CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
                 buildWeb(target, webBuildingIterator, nextNode);
             }

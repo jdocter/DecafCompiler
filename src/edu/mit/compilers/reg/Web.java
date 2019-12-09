@@ -34,7 +34,8 @@ public class Web extends UIDObject {
     }
 
     void addDef(CFNode def) {
-        assert liveness.getOut(def).contains(targetVariable);
+        // let InterferenceGraph decide when a web is dead.
+        // assert liveness.getOut(def).contains(targetVariable);
         spanningStatements.add(def);
         defs.add(def);
         // uses unchanged because a = a + 1 <=> use a; def a; -- not def a; use a;
@@ -78,11 +79,11 @@ public class Web extends UIDObject {
     void assignRegister(Reg reg) {
 
         for (CFNode def: defs) {
-            def.assignRegister(targetVariable, reg);
+            def.assignRegisterDef(targetVariable, reg);
         }
 
         for (CFNode use: uses) {
-            use.assignRegister(targetVariable, reg);
+            use.assignRegisterUse(targetVariable, reg);
         }
         registerAssignment = reg;
         isSpilled = false;

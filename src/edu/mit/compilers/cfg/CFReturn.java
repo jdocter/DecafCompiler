@@ -200,6 +200,7 @@ public class CFReturn extends OuterCFNode {
 
     @Override
     public Set<AssemblyVariable> getUsed() {
+        if (isVoid) return Set.of();
         return Set.of(returnTemp);
     }
 
@@ -219,6 +220,7 @@ public class CFReturn extends OuterCFNode {
     }
 
     @Override public String toWebString() {
+        if (isVoid) throw new RuntimeException("not supported");
         return "return " + returnTemp;
     }
 }
