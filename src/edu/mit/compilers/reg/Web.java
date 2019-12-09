@@ -18,8 +18,9 @@ public class Web extends UIDObject {
     Set<CFNode> spanningStatements = new HashSet<>();
     Set<CFNode> defs = new HashSet<>();
     Set<CFNode> uses = new HashSet<>();
+    final private Set<Web> neighbors = new HashSet<>();
     final AssemblyVariable targetVariable;
-    private Reg assignedReg;
+    private Reg registerAssignment;
     private boolean isSpilled;
 
     public Web(LivenessAnalyzer liveness, CFNode def, AssemblyVariable variable) {
@@ -70,17 +71,29 @@ public class Web extends UIDObject {
         }
     }
 
+    void addNeighbor(Web w) {
+        neighbors.add(w);
+    }
+
     void assignRegister(Reg reg) {
 
-        for (CFNode cfNode: spanningStatements) {
-            cfNode.assignRegister(targetVariable, reg);
+        for (CFNode def: defs) {
+            def.assignRegister(targetVariable, reg);
         }
 
+        for (CFNode use: uses) {
+            use.assignRegister(targetVariable, reg);
+        }
+        registerAssignment = reg;
         isSpilled = false;
     }
 
-    public Reg getAssignedReg() {
-        return assignedReg;
+    public Reg getRegisterAssignment() {
+        return registerAssignment;
+    }
+
+    public boolean hasRegisterAssignment() {
+        return registerAssignment != null;
     }
 
     void spill() {
@@ -119,4 +132,5 @@ public class Web extends UIDObject {
     public int spillCost() {
         return defs.size() + uses.size();
     }
+
 }
