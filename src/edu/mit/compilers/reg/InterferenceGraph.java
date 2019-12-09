@@ -42,21 +42,24 @@ public class InterferenceGraph {
         // Algorithm description:
 
         CFNodeIterator iterator = new CFNodeIterator(methodCFG);
-        while (iterator.hasNext()) {
-            CFNode nextNode = iterator.next();
-            System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
-            // Unleash a new web builder that builds webs for each def in this node
-            for (AssemblyVariable target : nextNode.getDefined()) {
-                if (useStatementsToContainingWebs.containsKey(nextNode) &&
-                        useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
-                    // already created a web for this variable
-                    // probably shouldn't happen?
-                    System.err.println("Warning: Already created a web for " + target + " at " + nextNode);
-                }
+        while (iterator.alive()) {
+            while (iterator.hasNext()) {
+                CFNode nextNode = iterator.next();
+                // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
+                // Unleash a new web builder that builds webs for each def in this node
+                for (AssemblyVariable target : nextNode.getDefined()) {
+                    if (useStatementsToContainingWebs.containsKey(nextNode) &&
+                            useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
+                        // already created a web for this variable
+                        // probably shouldn't happen?
+                        System.err.println("Warning: Already created a web for " + target + " at " + nextNode);
+                    }
 
-                CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
-                buildWeb(target, webBuildingIterator, nextNode);
+                    CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
+                    buildWeb(target, webBuildingIterator, nextNode);
+                }
             }
+            iterator.backtrackToLastBranchPoint();
         }
 
         injectImplicitInitializations(methodCFG);
@@ -93,16 +96,24 @@ public class InterferenceGraph {
         while (iterator.alive()) {
             if (iterator.hasNext()) {
                 nextNode = iterator.next();
-                if (nextNode.getUsed().contains(target) ||
-                        addedToGraph && web.spanningStatements.contains(nextNode)
-                        ) {
+                if (nextNode.getUsed().contains(target)) {
                     Set<CFNode> betweenDefAndNext = iterator.getActivePath();
                     web.extendWeb(betweenDefAndNext);
 
-                    if (useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
+                    if (useStatementsToContainingWebs.containsKey(nextNode) &&
+                            useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
                         Web other = useStatementsToContainingWebs.get(nextNode).get(target);
-                        mergeWebs(web, other);
-                        addedToGraph = true;
+
+                        // System.err.println(web.getUID() + " merge with " + other.getUID());
+                        if (web.equals(other)) {
+                            assert addedToGraph;
+                        } else {
+                            mergeWebs(web, other);
+                            addedToGraph = true;
+                        }
+
+                        iterator.backtrackToLastBranchPoint(); // other web should have already explored forward.
+                        continue;
                     }
                 }
                 // not "else if" because if nextNode is a = a; then it's equivalent to
@@ -142,7 +153,6 @@ public class InterferenceGraph {
     }
 
     private void addWeb(Web web, AssemblyVariable target) {
-        webs.add(web);
         adjList.put(web, new HashSet<>());
 
         for (Web possibleInterferer : webs) {
@@ -164,11 +174,13 @@ public class InterferenceGraph {
             interferingStatements.removeAll(webNonInterfering);
             interferingStatements.removeAll(interfererNonInterfering);
 
-            if (interferingStatements.isEmpty()) {
+            if (!interferingStatements.isEmpty()) {
                 adjList.get(web).add(possibleInterferer);
                 adjList.get(possibleInterferer).add(web);
             }
         }
+
+        webs.add(web); // add after so a web doesn't interfere with itself.
 
         for (CFNode statement : web.uses) {
             Map<AssemblyVariable, Web> priorWebs = useStatementsToContainingWebs.getOrDefault(statement, new HashMap<>());
@@ -186,9 +198,6 @@ public class InterferenceGraph {
      *      other USEs reachable from its DEF)
      */
     private void mergeWebs(Web newWeb, Web oldWeb) {
-        webs.remove(oldWeb);
-        webs.add(newWeb);
-
         Set<Web> neighbors = adjList.get(oldWeb);
         for (Web neighbor : neighbors) {
             adjList.get(neighbor).remove(oldWeb);
@@ -197,7 +206,17 @@ public class InterferenceGraph {
         adjList.remove(oldWeb);
         adjList.put(newWeb, neighbors);
 
+        webs.remove(oldWeb);
+        webs.add(newWeb);
+
         newWeb.merge(oldWeb);
+
+        for (CFNode statement : oldWeb.uses) {
+            Map<AssemblyVariable, Web> priorWebs = useStatementsToContainingWebs.get(statement);
+            assert priorWebs.put(oldWeb.targetVariable, newWeb) != null; // assert prior web for this target, else shouldn't have merged
+            useStatementsToContainingWebs.put(statement, priorWebs);
+        }
+
         oldWeb.release();
     }
 

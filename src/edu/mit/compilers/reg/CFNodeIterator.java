@@ -54,7 +54,13 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
     }
 
     private enum IteratorInstruction {
-        FIRST_AVAILABLE_CFNODE, END_MINICFG, NEXT_MINICFG, NEXT_OUTERCFNODE
+        /*
+         * FIRST_AVAILABLE_CFNODE: return the first CFNode of the InnerCFNode if possible
+         * END_MINICFG: return the OuterCFNode at the current location if possible
+         * NEXT_CFNODE: return the first CFNode after the current location if possible
+         * NEXT_OUTERCFNODE: return the first CFNode from the next OuterCFNode if possible
+         */
+        FIRST_AVAILABLE_CFNODE, END_MINICFG, NEXT_CFNODE, NEXT_OUTERCFNODE
     }
 
     private class IteratorLocation {
@@ -76,6 +82,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
          *              finished iterating the miniCFG of outerCFNode (next == outerCFNode)
          * @param innerCFBlockStatement
          *          index into InnerCFBlock's statements if innerCFNode.instanceof () == CFBlock
+         *          can be -1, which means we haven't started iterating the InnerCFBlock yet.
          *
          */
         public IteratorLocation(OuterCFNode outerCFNode, boolean finishedWithOuter, InnerCFNode innerCFNode,
@@ -160,7 +167,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
 
     public boolean hasNext() {
         Optional<CFNode> next = peek();
-        System.err.println("Next: " + next.isPresent() + " present; " + (next.isPresent() ? next.get() : ""));
+        // System.err.println("Next: " + next.isPresent() + " present; " + (next.isPresent() ? next.get() : ""));
         return next.isPresent() && !visited.contains(next.get());
     }
 
@@ -206,7 +213,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
             currentInstruction = IteratorInstruction.NEXT_OUTERCFNODE;
             location.outerCFNode.accept(this);
         } else {
-            currentInstruction = IteratorInstruction.NEXT_MINICFG;
+            currentInstruction = IteratorInstruction.NEXT_CFNODE;
             location.innerCFNode.accept(this);
         }
     }
@@ -273,7 +280,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
         if (!next.isPresent()) {
             return DeadEndType.END;
         }
-        if (!visited.contains(next.get())) {
+        if (visited.contains(next.get())) {
             return DeadEndType.VISITED;
         }
         return DeadEndType.HAS_NEXT;
@@ -308,15 +315,25 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
             if (innerCFBlock.getCfStatements().isEmpty()) {
                 throw new RuntimeException("Hopefully no empty InnerCFBlocks");
             }
+            // not necessarily location.innerCFBlockStatement == -1 because
+            // could be a successor of a previous innerCFBlock
             instructionResult = Optional.of(innerCFBlock.getCfStatements().get(0));
             if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
                 this.location = new IteratorLocation(location.outerCFNode, false, innerCFBlock, 0);
             }
             break;
-        case NEXT_MINICFG:
-            currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
-            assert location.nextBranchChoice == 0; // cfBlocks only have one branch
-            innerCFBlock.dfsTraverse().get(location.nextBranchChoice).accept(this);
+        case NEXT_CFNODE:
+            int nextStatementIndex = location.innerCFBlockStatement + 1;
+            if (nextStatementIndex >= innerCFBlock.getCfStatements().size()) {
+                currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
+                assert location.nextBranchChoice == 0; // cfBlocks only have one branch
+                innerCFBlock.dfsTraverse().get(location.nextBranchChoice).accept(this);
+            } else {
+                instructionResult = Optional.of(innerCFBlock.getCfStatements().get(nextStatementIndex));
+                if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
+                    this.location = new IteratorLocation(location.outerCFNode, false, innerCFBlock, nextStatementIndex);
+                }
+            }
             break;
         case END_MINICFG:
             throw new RuntimeException("Unexpected END_MINICFG");
@@ -340,7 +357,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
                         -1);
             }
             break;
-        case NEXT_MINICFG:
+        case NEXT_CFNODE:
             currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
             assert location.nextBranchChoice <= 1; // cfConditionals have 2 branches
             if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
@@ -366,7 +383,7 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
                 currentInstruction = IteratorInstruction.END_MINICFG;
                 innerCFEndOfMiniCFG.getEnclosingNode().accept(this);
                 break;
-            case NEXT_MINICFG:
+            case NEXT_CFNODE:
                 throw new RuntimeException("Stable Location should never be on a CFEndOfMiniCFG");
             case END_MINICFG:
                 throw new RuntimeException("Unexpected END_MINICFG");
@@ -386,8 +403,8 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
         case FIRST_AVAILABLE_CFNODE:
             cfBlock.getMiniCFGStart().accept(this);
             break;
-        case NEXT_MINICFG:
-            throw new RuntimeException("NEXT_MINICFG on an OuterCFNode");
+        case NEXT_CFNODE:
+            throw new RuntimeException("NEXT_CFNODE on an OuterCFNode");
         case END_MINICFG: // cfBlock is not a CFNode, so traverse outer CFG
         case NEXT_OUTERCFNODE:
             currentInstruction = IteratorInstruction.FIRST_AVAILABLE_CFNODE;
@@ -405,8 +422,8 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
         case FIRST_AVAILABLE_CFNODE:
             cfConditional.getMiniCFGStart().accept(this);
             break;
-        case NEXT_MINICFG:
-            throw new RuntimeException("NEXT_MINICFG on an OuterCFNode");
+        case NEXT_CFNODE:
+            throw new RuntimeException("NEXT_CFNODE on an OuterCFNode");
         case END_MINICFG:
             instructionResult = Optional.of(cfConditional);
             if (currentAction == IteratorAction.PEEK_AND_ADVANCE) {
@@ -441,8 +458,8 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
                 cfReturn.getMiniCFGStart().accept(this);
             }
             break;
-        case NEXT_MINICFG:
-            throw new RuntimeException("NEXT_MINICFG on an OuterCFNode");
+        case NEXT_CFNODE:
+            throw new RuntimeException("NEXT_CFNODE on an OuterCFNode");
         case END_MINICFG:
             if (cfReturn.isVoid()) {
                 throw new RuntimeException("END_MINICFG on a void Return");

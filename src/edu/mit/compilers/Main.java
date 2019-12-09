@@ -298,8 +298,12 @@ public class Main {
                   }
 
                   for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                      outputStream.println("CFG for " + methodDescriptor.getMethodName());
+                      outputStream.println("----------");
+                      MethodCFGFactory.dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
                       InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
                       outputStream.println(graph);
+                      outputStream.println("----------");
                   }
 
               } catch (DecafParseException e) {

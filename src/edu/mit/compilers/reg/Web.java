@@ -124,10 +124,10 @@ public class Web extends UIDObject {
 
     @Override
     public String toString() {
-        return "UID " + getUID() + " Web:\n"
-                + "\tSpans " + spanningStatements.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
-                + "\tStarts at " + defs.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
-                + "\tUses at " + uses.stream().map(CFNode::toWebString).collect(Collectors.toList());
+        return "UID " + getUID() + " Web (variable " + targetVariable + "):\n"
+                + "\t\tSpans " + spanningStatements.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
+                + "\t\tStarts at " + defs.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
+                + "\t\tUses at " + uses.stream().map(CFNode::toWebString).collect(Collectors.toList());
     }
 
     public int spillCost() {
