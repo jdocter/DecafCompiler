@@ -301,7 +301,9 @@ public class Main {
                       outputStream.println("CFG for " + methodDescriptor.getMethodName());
                       outputStream.println("----------");
                       MethodCFGFactory.dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
-                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
+
+                      boolean debugInterferenceGraph = CLI.debug;
+                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), debugInterferenceGraph);
                       outputStream.println(graph);
                       outputStream.println("----------");
                   }

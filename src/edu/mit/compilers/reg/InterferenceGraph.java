@@ -37,7 +37,14 @@ public class InterferenceGraph {
     Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs = new HashMap<>();
     LivenessAnalyzer analysis;
 
+    final boolean debug;
+
     public InterferenceGraph(OuterCFNode methodCFG) {
+        this(methodCFG, false);
+    }
+
+    public InterferenceGraph(OuterCFNode methodCFG, boolean debugInterferenceGraph) {
+        debug = debugInterferenceGraph;
         analysis = new LivenessAnalyzer(methodCFG);
         // Algorithm description:
 
@@ -63,6 +70,10 @@ public class InterferenceGraph {
         }
 
         injectImplicitInitializations(methodCFG);
+    }
+
+    private void debugPrint(String message) {
+        if (debug) System.err.println(message);
     }
 
     public Set<Web> getAdj(Web w) {
@@ -92,12 +103,16 @@ public class InterferenceGraph {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
+        debugPrint("START BUILD WEB " + web.getUID() + ": " + target + " @ " + def.toWebString());
+
         CFNode nextNode = def;
         while (iterator.alive()) {
             if (iterator.hasNext()) {
                 nextNode = iterator.next();
+                debugPrint("Consider " + nextNode.toWebString());
                 if (nextNode.getUsed().contains(target)) {
                     Set<CFNode> betweenDefAndNext = iterator.getActivePath();
+                    debugPrint("Extend " + betweenDefAndNext.stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
                     web.extendWeb(betweenDefAndNext);
 
                     if (useStatementsToContainingWebs.containsKey(nextNode) &&
@@ -121,6 +136,9 @@ public class InterferenceGraph {
                 if (!analysis.getOut(nextNode).contains(target) ||
                         nextNode.getDefined().contains(target)
                         ) {
+                    debugPrint("Backtrack because dead or defined");
+                    debugPrint("OUT: " + analysis.getOut(nextNode));
+                    debugPrint("DEF Target: " + nextNode.getDefined().contains(target));
                     iterator.backtrackToLastBranchPoint();
                 }
             } else {
@@ -135,8 +153,11 @@ public class InterferenceGraph {
                     case VISITED:
                         CFNode visited = iterator.deadEndNode();
                         if (web.spanningStatements.contains(visited)) {
+                            debugPrint("Extend because reached node in previously merged web");
+                            debugPrint("Extend " + iterator.getActivePath().stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
                             web.extendWeb(iterator.getActivePath());
                         }
+                        debugPrint("Backtrack because reached visited");
                         iterator.backtrackToLastBranchPoint();
                         break;
                     default:
@@ -146,9 +167,11 @@ public class InterferenceGraph {
         }
 
         if (!addedToGraph && !web.uses.isEmpty()) {
+            debugPrint("Web for " + target + " at " + def.toWebString());
             addWeb(web, target);
         } else {
             // TODO dead code eliminate the DEF
+            debugPrint("No web for " + target + " at " + def.toWebString());
         }
     }
 
