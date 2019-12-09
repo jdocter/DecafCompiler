@@ -1,5 +1,6 @@
 package edu.mit.compilers.reg;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -131,11 +132,13 @@ public class InterferenceGraph {
         }
 
         if (!addedToGraph && !web.uses.isEmpty()) {
-            addWeb(web);
+            addWeb(web, target);
+        } else {
+            // TODO dead code eliminate the DEF
         }
     }
 
-    private void addWeb(Web web) {
+    private void addWeb(Web web, AssemblyVariable target) {
         webs.add(web);
         adjList.put(web, new HashSet<>());
 
@@ -164,13 +167,11 @@ public class InterferenceGraph {
             }
         }
 
-        // TODO build statementToContainingWebs
-//        for (CFNode statement : web.spanningStatements) {
-//            if (web.beginningDefs.contains(statement) && !web.endingUses.contains(statement)) {
-//                // No interference because DEFs happen last in a CFNode
-//                continue;
-//            }
-//        }
+        for (CFNode statement : web.uses) {
+            Map<AssemblyVariable, Web> priorWebs = useStatementsToContainingWebs.getOrDefault(statement, new HashMap<>());
+            assert priorWebs.put(target, web) == null; // assert no prior web for this target, else should have merged
+            useStatementsToContainingWebs.put(statement, priorWebs);
+        }
     }
 
     /**
