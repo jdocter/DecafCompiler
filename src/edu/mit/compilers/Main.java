@@ -242,11 +242,10 @@ public class Main {
                     InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
                     new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
 		    if (CLI.debug) {
-			outputStream.println("Webs for " + methodDescriptor.getMethodName());
-			outputStream.println("----------");
-			InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), true);
-			outputStream.println(graph);
-			outputStream.println("----------");
+			System.err.println("Webs for " + methodDescriptor.getMethodName());
+			System.err.println("----------");
+			System.err.println(graph);
+			System.err.println("----------");
 		    }
                 }
             }
