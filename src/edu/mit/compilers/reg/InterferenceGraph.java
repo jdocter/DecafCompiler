@@ -112,13 +112,6 @@ public class InterferenceGraph {
         debugPrint("START BUILD WEB " + web.getUID() + ": " + target + " @ " + def.toWebString());
 
         CFNode nextNode = def;
-        /*
-         * Buffer of next statements to add to a web.  If we loop back
-         * on ourself, we want to save statements to a buffer, so that
-         * we can add the statements when we find the USE in a
-         * different branch.
-         */
-        Set<CFNode> nextUse = new HashSet<>();
         while (iterator.alive()) {
             if (iterator.hasNext()) {
                 nextNode = iterator.next();
@@ -126,8 +119,7 @@ public class InterferenceGraph {
                 if (nextNode.getUsed().contains(target)) {
                     Set<CFNode> betweenDefAndNext = iterator.getActivePath();
                     debugPrint("Extend " + betweenDefAndNext.stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
-                    nextUse.addAll(betweenDefAndNext);
-                    web.extendWeb(nextUse);
+                    web.extendWeb(betweenDefAndNext);
 
                     if (useStatementsToContainingWebs.containsKey(nextNode) &&
                             useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
@@ -171,13 +163,21 @@ public class InterferenceGraph {
                     case VISITED:
                         CFNode visited = iterator.deadEndNode();
                         if (web.spanningStatements.contains(visited)) {
+                            Set<CFNode> toExtend = iterator.getActivePath();
                             debugPrint("Extend because reached node in previously merged web");
-                            debugPrint("Extend " + iterator.getActivePath().stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
-                            nextUse.addAll(iterator.getActivePath());
-                            web.extendWeb(nextUse);
+                            debugPrint("Extend " + toExtend.stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
+                            web.extendWeb(toExtend);
                         } else {
+                            Set<CFNode> toExtend = iterator.getActivePath();
                             debugPrint("Extend because looped back while searching for USE");
-                            nextUse.addAll(iterator.getActivePath());
+                            /*
+                             * Could theoretically put off extension until confirmation
+                             * of a USE in the loop at visited.
+                             *
+                             * This creates extra interferences -- should be conservative.
+                             */
+                            debugPrint("Extend " + toExtend.stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
+                            web.extendWeb(toExtend);
                         }
                         debugPrint("Backtrack because reached visited");
                         iterator.backtrackToLastBranchPoint();
