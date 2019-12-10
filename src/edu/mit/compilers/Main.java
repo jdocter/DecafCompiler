@@ -15,6 +15,7 @@ import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.MethodCFGFactory;
 /*
  * You have to include this line, or else when you ant clean,
@@ -239,7 +240,7 @@ public class Main {
             if (CLI.opts[1]) { // REG
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
                     InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
-                    new RegisterAllocator(graph.getAdjList(), Set.of());
+                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
                 }
             }
 

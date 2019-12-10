@@ -1,5 +1,7 @@
 package edu.mit.compilers.assembly;
 
+import java.util.List;
+
 public enum Reg {
     RAX("%rax"),
     RBX("%rbx"),
@@ -78,4 +80,12 @@ public enum Reg {
             default: throw new RuntimeException("Parameter " + i + " is not passed by register");
         }
     }
+
+    public static List<Reg> usableCalleeSaved = List.of(
+            Reg.RBX,
+            Reg.R12,
+            Reg.R13,
+            Reg.R14,
+            Reg.R15
+            );
 }

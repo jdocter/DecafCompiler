@@ -150,6 +150,18 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
 
         instructions.add(AssemblyFactory.indent(""));
+        instructions.add(AssemblyFactory.indent("# restore callee-saved registers"));
+
+        // save callee-saved registers so that we can
+        // use them for register allocation
+
+        // iterate backwards
+        ListIterator<Reg> backwardsIterator = Reg.usableCalleeSaved.listIterator(Reg.usableCalleeSaved.size());
+        while (backwardsIterator.hasPrevious()) {
+            Reg callee = backwardsIterator.previous();
+            instructions.add(AssemblyFactory.indent("popq " + callee.toString()));
+        }
+
         instructions.add(AssemblyFactory.indent("leave"));
         instructions.add(AssemblyFactory.indent("ret"));
 
