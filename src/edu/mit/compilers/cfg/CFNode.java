@@ -49,18 +49,18 @@ public abstract class CFNode extends UIDObject {
     }
 
     public Reg getRegisterAssignmentForUse(AssemblyVariable v) {
-        if (registerAssignmentsForUses.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
+        if (!registerAssignmentsForUses.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
         return registerAssignmentsForUses.get(v);
     }
 
     public Reg getRegisterAssignmentForDef(AssemblyVariable v) {
-        if (registerAssignmentsForDefs.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
+        if (!registerAssignmentsForDefs.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
         return registerAssignmentsForDefs.get(v);
     }
 
     private void checkRegisterAssignments() {
-        assert registerAssignmentsForDefs.size() == Set.of(registerAssignmentsForDefs.values()).size() : "Expected one unique register assignments";
-        assert registerAssignmentsForUses.size() == Set.of(registerAssignmentsForUses.values()).size() : "Expected one unique register assignments";
+        assert registerAssignmentsForDefs.size() == new HashSet<>(registerAssignmentsForDefs.values()).size() : "Expected one unique register assignments";
+        assert registerAssignmentsForUses.size() == new HashSet<>(registerAssignmentsForUses.values()).size() : "Expected one unique register assignments";
     }
 
     public abstract Set<AssemblyVariable> getDefined();
