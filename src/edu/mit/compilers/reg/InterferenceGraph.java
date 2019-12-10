@@ -14,6 +14,7 @@ import edu.mit.compilers.cfg.CFNop;
 import edu.mit.compilers.cfg.CFReturn;
 import edu.mit.compilers.cfg.OuterCFNode;
 import edu.mit.compilers.cfg.Temp;
+import edu.mit.compilers.cfg.innercfg.CFAssign;
 import edu.mit.compilers.cfg.innercfg.InnerCFBlock;
 import edu.mit.compilers.cfg.innercfg.InnerCFConditional;
 import edu.mit.compilers.cfg.innercfg.InnerCFNop;
@@ -96,6 +97,15 @@ public class InterferenceGraph {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
+        if (compoundAssign(def, target)) {
+            assert useStatementsToContainingWebs.containsKey(def) : "If this is false it means we encountered a USE without a preceding DEF";
+
+            Web other = useStatementsToContainingWebs.get(def).get(target);
+            debugPrint("Merging new Web with ending web for " + def.toWebString());
+            mergeWebs(web, other);
+            addedToGraph = true;
+        }
+
         debugPrint("START BUILD WEB " + web.getUID() + ": " + target + " @ " + def.toWebString());
 
         CFNode nextNode = def;
@@ -170,6 +180,12 @@ public class InterferenceGraph {
             // TODO dead code eliminate the DEF
             debugPrint("No web for " + target + " at " + def.toWebString());
         }
+    }
+
+    private boolean compoundAssign(CFNode def, AssemblyVariable target) {
+        if (!(def instanceof CFAssign)) return false;
+        CFAssign cfAssign = (CFAssign) def;
+        return Set.of(CFAssign.PEQ, CFAssign.MEQ, CFAssign.INC, CFAssign.DEC).contains(cfAssign.assignOp);
     }
 
     private void addWeb(Web web, AssemblyVariable target) {
