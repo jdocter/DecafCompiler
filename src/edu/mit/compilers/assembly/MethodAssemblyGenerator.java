@@ -323,6 +323,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             body.add("popq " + reg + " # saving caller save reg");
         }
 
+        // this has to be done before pushing args onto stack
+        // maintain 16-byte alignment -- assuming 16 aligned before call
+        if (stackArgs > 0 && (stackArgs+regsToSave.size()) % 2 != 0 || regsToSave.size()%2 != 0) {
+            stackArgs++;
+            body.add("popq %rax # dummy argument used to maintain 16-byte alignment");
+        }
+
         body.add("cmpq $0, " + AssemblyFactory.GLOBAL_EXIT_CODE);
         body.add("jne " + AssemblyFactory.METHOD_EXIT + " # premature exit if the call resulted in runtime exception");
 
