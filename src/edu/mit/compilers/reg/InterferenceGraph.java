@@ -97,13 +97,16 @@ public class InterferenceGraph {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
-        if (compoundAssign(def, target)) {
-            assert useStatementsToContainingWebs.containsKey(def) : "If this is false it means we encountered a USE without a preceding DEF";
-
+        if (compoundAssignOnTarget(def, target)) {
             Web other = useStatementsToContainingWebs.get(def).get(target);
-            debugPrint("Merging new Web with ending web for " + def.toWebString());
-            mergeWebs(web, other);
-            addedToGraph = true;
+            if (other == null) {
+                // we encountered a USE without a preceding DEF"
+                System.err.println("WARNING: " + def + " is a USE without a preceding DEF!");
+            } else {
+                debugPrint("Merging new Web with ending web for " + def.toWebString());
+                mergeWebs(web, other);
+                addedToGraph = true;
+            }
         }
 
         debugPrint("START BUILD WEB " + web.getUID() + ": " + target + " @ " + def.toWebString());
@@ -182,10 +185,13 @@ public class InterferenceGraph {
         }
     }
 
-    private boolean compoundAssign(CFNode def, AssemblyVariable target) {
+    private boolean compoundAssignOnTarget(CFNode def, AssemblyVariable target) {
         if (!(def instanceof CFAssign)) return false;
         CFAssign cfAssign = (CFAssign) def;
-        return Set.of(CFAssign.PEQ, CFAssign.MEQ, CFAssign.INC, CFAssign.DEC).contains(cfAssign.assignOp);
+
+        return cfAssign.dstArrayOrLoc.equals(target) &&
+                Set.of(CFAssign.PEQ, CFAssign.MEQ, CFAssign.INC, CFAssign.DEC)
+                    .contains(cfAssign.assignOp);
     }
 
     private void addWeb(Web web, AssemblyVariable target) {
