@@ -2,6 +2,7 @@ package edu.mit.compilers;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -23,6 +24,7 @@ import edu.mit.compilers.cfg.MethodCFGFactory;
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.reg.InterferenceGraph;
+import edu.mit.compilers.reg.RegisterAllocator;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
 import edu.mit.compilers.semantics.CheckIdDeclared;
 import edu.mit.compilers.semantics.CheckTypes;
@@ -236,7 +238,8 @@ public class Main {
 
             if (CLI.opts[1]) { // REG
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                    // TODO
+                    InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
+                    new RegisterAllocator(graph.getAdjList(), Set.of());
                 }
             }
 

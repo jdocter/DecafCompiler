@@ -265,4 +265,8 @@ public class InterferenceGraph {
         return "Webs:\n\t" + webs.stream().map(Web::toString).collect(Collectors.joining("\n\t")) + "\n"
                 + "Adjacencies:\n\t" + adjListToUIDString();
     }
+
+    public Map<Web, Set<Web>> getAdjList() {
+        return new HashMap<>(adjList);
+    }
 }

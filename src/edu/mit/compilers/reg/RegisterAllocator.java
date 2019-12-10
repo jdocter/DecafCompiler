@@ -33,7 +33,7 @@ public class RegisterAllocator {
      * @param interferenceGraph requires that graph is undirected
      * @param availableRegisters
      */
-    RegisterAllocator(Map<Web,Set<Web>> interferenceGraph, Set<Reg> availableRegisters) {
+    public RegisterAllocator(Map<Web,Set<Web>> interferenceGraph, Set<Reg> availableRegisters) {
         this.interferenceGraph = interferenceGraph;
         this.availableRegisters = availableRegisters;
         k = this.availableRegisters.size();
@@ -41,6 +41,8 @@ public class RegisterAllocator {
         for (Web web : interferenceGraph.keySet()) {
             chaitinInterferenceGraph.put(web, new HashSet<>(interferenceGraph.get(web)));
         }
+
+        allocateRegistersChaitin();
     }
 
     private void allocateRegistersChaitin() {
