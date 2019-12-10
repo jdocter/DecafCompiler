@@ -356,9 +356,9 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 }
 
                 // array out of bounds
-                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", %rdi");
+                cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.dstArrayOrLoc.getArrayLength(variableTable) +", " + arrayOffset);
                 cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
-                cfAssignTemporaryInstructions.add("cmpq $0, %rdi");
+                cfAssignTemporaryInstructions.add("cmpq $0, " + arrayOffset);
                 cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
                 // get dest
