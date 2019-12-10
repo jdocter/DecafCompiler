@@ -305,6 +305,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             body.add("addq $" + stackArgs * 8 + ", %rsp");
         }
 
+        Collections.reverse(regsToSave);
         for (Reg reg: regsToSave) {
             body.add("popq " + reg + " # saving caller save reg");
         }
