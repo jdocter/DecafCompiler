@@ -4,6 +4,7 @@ import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.util.UIDObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public abstract class CFNode extends UIDObject {
@@ -32,6 +33,13 @@ public abstract class CFNode extends UIDObject {
 //        registerAssignments.putAll(registerAssignments);
 //        checkRegisterAssignments();
 //    }
+
+
+    public Set<Reg> getRegisters() {
+        Set<Reg> regs = new HashSet(registerAssignmentsForUses.values());
+        regs.addAll(registerAssignmentsForDefs.values());
+        return regs;
+    }
 
     public boolean hasRegisterAssignmentForUse(AssemblyVariable v) {
         return registerAssignmentsForUses.containsKey(v);

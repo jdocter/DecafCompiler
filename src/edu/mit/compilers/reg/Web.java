@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.innercfg.CFMethodCall;
 import edu.mit.compilers.liveness.LivenessAnalyzer;
 import edu.mit.compilers.util.UIDObject;
 
@@ -84,6 +85,12 @@ public class Web extends UIDObject {
 
         for (CFNode use: uses) {
             use.assignRegisterUse(targetVariable, reg);
+        }
+
+        for (CFNode cfNode : spanningStatements) {
+            if (cfNode instanceof CFMethodCall) {
+                cfNode.assignRegisterUse(targetVariable, reg);
+            }
         }
         registerAssignment = reg;
         isSpilled = false;
