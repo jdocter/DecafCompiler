@@ -35,7 +35,7 @@ public enum Reg {
     R12B("%r12b"),
     R13B("%r13b"),
     R14B("%r14b"),
-    R15B("%r15Bb");
+    R15B("%r15b");
 
     private final String reg;
 
