@@ -131,7 +131,15 @@ public class Web extends UIDObject {
 
     @Override
     public String toString() {
-        return "UID " + getUID() + " Web (variable " + targetVariable + "):\n"
+	String regInfo;
+	if (isSpilled) {
+	    regInfo = " spilled";
+	} else if (registerAssignment != null) {
+	    regInfo = " assigned " + registerAssignment;
+        } else {
+	    regInfo = "";
+	}
+        return "UID " + getUID() + " Web (variable " + targetVariable + regInfo + "):\n"
                 + "\t\tSpans " + spanningStatements.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
                 + "\t\tStarts at " + defs.stream().map(CFNode::toWebString).collect(Collectors.toList()) + "\n"
                 + "\t\tUses at " + uses.stream().map(CFNode::toWebString).collect(Collectors.toList());
