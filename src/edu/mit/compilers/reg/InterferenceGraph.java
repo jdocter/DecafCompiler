@@ -179,6 +179,10 @@ public class InterferenceGraph {
             Set<CFNode> interferingStatements = new HashSet<>(possibleInterferer.spanningStatements);
             interferingStatements.retainAll(web.spanningStatements);
 
+            // We were going to make a = b + c; not cause a and b to interfere,
+            // but it makes assembly generation harder (can't do a = b; a = a + c;).
+
+            /*
             Set<CFNode> webNonInterfering = new HashSet<>(web.defs);
             // a = a; in a loop would technically be an interfering statement.  Imagine the following
             // pathological example.
@@ -193,6 +197,7 @@ public class InterferenceGraph {
 
             interferingStatements.removeAll(webNonInterfering);
             interferingStatements.removeAll(interfererNonInterfering);
+            */
 
             if (!interferingStatements.isEmpty()) {
                 adjList.get(web).add(possibleInterferer);
