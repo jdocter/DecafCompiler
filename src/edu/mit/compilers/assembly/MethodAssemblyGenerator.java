@@ -470,15 +470,14 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             case CFAssign.ARRAY_LOC:
                 Operand arrayLocOperand;
                 Reg arrayOffsetOperand = handleIntoRegisterForUse(cfAssign, cfAssign.srcArrayOffset);
-                cfAssignTemporaryInstructions.add("movq -" +cfAssign.srcArrayOffset.getStackOffset(variableTable)+"(%rbp), %rax # " + cfAssign); // val of temp into rax
                 // array out of bounds
                 cfAssignTemporaryInstructions.add("cmpq $" + cfAssign.srcArray.getArrayLength(variableTable) +", " + arrayOffsetOperand);
                 cfAssignTemporaryInstructions.add("jge "+ AssemblyFactory.METHOD_EXIT_1);
                 cfAssignTemporaryInstructions.add("cmpq $0, " + arrayOffsetOperand);
                 cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
                 if (cfAssign.srcArray.isGlobal(variableTable)) {
-                    cfAssignTemporaryInstructions.add("leaq " + cfAssign.srcArray.getGlobalLabel(variableTable) + "(%rip), %rax"); // address of base of global array
-                    arrayLocOperand = Operand.makeMemoryAccess(Reg.RAX, arrayOffsetOperand, cfAssign.srcArray.getElementSize(variableTable));
+                    cfAssignTemporaryInstructions.add("leaq " + cfAssign.srcArray.getGlobalLabel(variableTable) + "(%rip), %rdx"); // address of base of global array
+                    arrayLocOperand = Operand.makeMemoryAccess(Reg.RDX, arrayOffsetOperand, cfAssign.srcArray.getElementSize(variableTable));
 
                 } else {
                     arrayLocOperand = Operand.makeMemoryAccess(cfAssign.srcArray.getStackOffset(variableTable),
