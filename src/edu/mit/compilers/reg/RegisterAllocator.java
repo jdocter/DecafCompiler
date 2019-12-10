@@ -60,7 +60,7 @@ public class RegisterAllocator {
             }
         }
 
-        while (chaitinStack.peek() != null) {
+        while (!chaitinStack.empty()) {
             Web web = chaitinStack.pop();
             web.assignRegister(getAvailableReg(web));
         }
