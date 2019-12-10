@@ -280,7 +280,15 @@ public class InterferenceGraph {
     }
 
     private String webToIDAndTarget(Web web) {
-        return web.getUID() + " (" + web.targetVariable + ")";
+	String regInfo;
+        if (web.isSpilled()) {
+            regInfo = "(spilled)";
+        } else if (web.hasRegisterAssignment()) {
+            regInfo = "(" + web.getRegisterAssignment() + ")";
+        } else {
+            regInfo = "";
+        }
+        return web.getUID() + " " + regInfo;
     }
 
     private String adjListToUIDString() {
