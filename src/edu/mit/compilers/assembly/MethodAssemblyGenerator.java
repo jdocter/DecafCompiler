@@ -258,6 +258,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
         // push registers need to save on stack
         List<Reg> regsToSave = new ArrayList<>(cfMethodCall.getRegisters());
+        regsToSave.removeAll(Reg.usableCalleeSaved);
 
         body.add("# " + cfMethodCall.toString());
 
