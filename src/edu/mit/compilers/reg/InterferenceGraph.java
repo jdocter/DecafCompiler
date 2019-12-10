@@ -112,6 +112,13 @@ public class InterferenceGraph {
         debugPrint("START BUILD WEB " + web.getUID() + ": " + target + " @ " + def.toWebString());
 
         CFNode nextNode = def;
+        /*
+         * Buffer of next statements to add to a web.  If we loop back
+         * on ourself, we want to save statements to a buffer, so that
+         * we can add the statements when we find the USE in a
+         * different branch.
+         */
+        Set<CFNode> nextUse = new HashSet<>();
         while (iterator.alive()) {
             if (iterator.hasNext()) {
                 nextNode = iterator.next();
@@ -119,7 +126,8 @@ public class InterferenceGraph {
                 if (nextNode.getUsed().contains(target)) {
                     Set<CFNode> betweenDefAndNext = iterator.getActivePath();
                     debugPrint("Extend " + betweenDefAndNext.stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
-                    web.extendWeb(betweenDefAndNext);
+                    nextUse.addAll(betweenDefAndNext);
+                    web.extendWeb(nextUse);
 
                     if (useStatementsToContainingWebs.containsKey(nextNode) &&
                             useStatementsToContainingWebs.get(nextNode).containsKey(target)) {
@@ -165,7 +173,11 @@ public class InterferenceGraph {
                         if (web.spanningStatements.contains(visited)) {
                             debugPrint("Extend because reached node in previously merged web");
                             debugPrint("Extend " + iterator.getActivePath().stream().map(CFNode::toWebString).collect(Collectors.joining(", ")));
-                            web.extendWeb(iterator.getActivePath());
+                            nextUse.addAll(iterator.getActivePath());
+                            web.extendWeb(nextUse);
+                        } else {
+                            debugPrint("Extend because looped back while searching for USE");
+                            nextUse.addAll(iterator.getActivePath());
                         }
                         debugPrint("Backtrack because reached visited");
                         iterator.backtrackToLastBranchPoint();
