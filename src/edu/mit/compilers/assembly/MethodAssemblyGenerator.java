@@ -151,6 +151,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
         instructions.add(AssemblyFactory.indent(""));
         instructions.add(AssemblyFactory.indent("# restore callee-saved registers"));
+        instructions.add(AssemblyFactory.indent("popq " + Reg.R15 + " # dummy pop to maintain 16-alignment"));
 
         // save callee-saved registers so that we can
         // use them for register allocation
