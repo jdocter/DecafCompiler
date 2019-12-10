@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import edu.mit.compilers.cfg.CFBlock;
 import edu.mit.compilers.cfg.CFConditional;
@@ -113,6 +114,15 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
 
         public void incrementBranchChoice() {
             nextBranchChoice++;
+        }
+
+        @Override
+        public String toString() {
+            return "Location<outer=" + outerCFNode.getUID() +
+                    ", finished=" + finishedMiniCFG +
+                    ", innerCFNode=" + (innerCFNode == null ? "null" : innerCFNode.getUID()) +
+                    ", index=" + innerCFBlockStatement +
+                    ", branchChoice=" + nextBranchChoice + ">";
         }
     }
 

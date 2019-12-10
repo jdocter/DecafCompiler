@@ -137,12 +137,16 @@ public class InterferenceGraph {
             } else {
                 switch (iterator.deadEndType()) {
                     case END:
-                        // did not reach a "dead" node even though reached end of CFG.
-                        throw new RuntimeException("While building Web, fell off a CFG without the variable dying.\n"
-                                + "CFG: " + nextNode + "\n"
-                                + "Liveness: " + analysis.getOut(nextNode) + "\n"
-                                + "Variable of interest: " + target);
-                        // if you delete the above throw make sure you add a break; here.
+                        // Interestingly, it is possible to fall off a CFG without a variable dying,
+                        // if a CFConditional has a void return on one branch, for example.
+
+//                        throw new RuntimeException("While building Web, fell off a CFG without the variable dying.\n"
+//                                + "CFG: " + nextNode + "\n"
+//                                + "Liveness: " + analysis.getOut(nextNode) + "\n"
+//                                + "Variable of interest: " + target);
+                        debugPrint("Backtrack because fell off CFG without variable dying (must be a Nop branch)");
+                        iterator.backtrackToLastBranchPoint();
+                        break;
                     case VISITED:
                         CFNode visited = iterator.deadEndNode();
                         if (web.spanningStatements.contains(visited)) {
