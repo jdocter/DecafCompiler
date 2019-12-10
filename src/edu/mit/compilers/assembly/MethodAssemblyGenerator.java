@@ -451,7 +451,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         }
                     } else {
                         if (dst.isReg()) {
-                            cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp)" + dst + " # " + cfAssign.toString());
+                            cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), " + dst + " # " + cfAssign.toString());
                         } else {
                         cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
                         cfAssignTemporaryInstructions.add("movq %rax, " + dst);
