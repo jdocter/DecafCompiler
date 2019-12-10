@@ -214,7 +214,7 @@ public class CFAssign extends CFStatement {
 
     @Override
     public Optional<Expr> generatedExpr() {
-        if (assignOp != ASSIGN) return Optional.empty();
+        if (canonicalExpr == null) return Optional.empty();
         if (dstArrayOffset == null && !dstArrayOrLoc.isTemporary() // check that it is type Id
                 && canonicalExpr.getIds().contains(((Variable)dstArrayOrLoc).getId())) return Optional.empty();
         if (canonicalExpr.containsMethodCall()) return Optional.empty();
