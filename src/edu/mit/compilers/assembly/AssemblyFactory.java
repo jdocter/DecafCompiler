@@ -154,6 +154,7 @@ public class AssemblyFactory {
         prologue.add("# save callee-save registers");
         for (Reg callee : Reg.usableCalleeSaved) {
             prologue.add("pushq " + callee.toString());
+            prologue.add("movq $0, " + callee.toString());
         }
         prologue.add("pushq " + Reg.R15 + " # Dummy push to maintain 16-alignment");
 
