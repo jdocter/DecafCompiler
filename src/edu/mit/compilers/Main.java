@@ -17,7 +17,6 @@ import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.MethodCFGFactory;
-import edu.mit.compilers.cfg.OuterCFNode;
 /*
  * You have to include this line, or else when you ant clean,
  * `ant` won't work on the second try.
@@ -25,7 +24,6 @@ import edu.mit.compilers.cfg.OuterCFNode;
  */
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
-import edu.mit.compilers.reg.AvailableRegistersHeuristic;
 import edu.mit.compilers.reg.InterferenceGraph;
 import edu.mit.compilers.reg.RegisterAllocator;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
@@ -241,23 +239,14 @@ public class Main {
 
             if (CLI.opts[1]) { // REG
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                    OuterCFNode cfg = methodDescriptor.getMethodCFG();
-
-                    InterferenceGraph graph = new InterferenceGraph(cfg, CLI.debug);
-
-                    AvailableRegistersHeuristic heuristic = new AvailableRegistersHeuristic(cfg);
-
-                    new RegisterAllocator(graph.getAdjList(), heuristic.recommendedRegisters());
-
-                    if (CLI.debug) {
-                        System.err.println("Statistics: " + heuristic.getMethodCallCount() +
-                                " MC / " + heuristic.getTotalCount() + " TOT");
-        		        System.err.println("Used regs: " + heuristic.recommendedRegisters());
-            			System.err.println("Webs for " + methodDescriptor.getMethodName());
-            			System.err.println("----------");
-            			System.err.println(graph);
-            			System.err.println("----------");
-        		    }
+                    InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
+                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
+		    if (CLI.debug) {
+			System.err.println("Webs for " + methodDescriptor.getMethodName());
+			System.err.println("----------");
+			System.err.println(graph);
+			System.err.println("----------");
+		    }
                 }
             }
 

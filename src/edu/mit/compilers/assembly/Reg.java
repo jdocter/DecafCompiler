@@ -88,12 +88,4 @@ public enum Reg {
             Reg.R14,
             Reg.R15
             );
-
-    public static List<Reg> usableCallerSaved = List.of(
-            Reg.RSI,
-            Reg.R8,
-            Reg.R9,
-            Reg.R10,
-            Reg.R11
-            );
 }
