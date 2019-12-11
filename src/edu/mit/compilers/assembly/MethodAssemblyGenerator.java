@@ -406,7 +406,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         cfAssignTemporaryInstructions.add("movq " + cfAssign.getRegisterAssignmentForUse(cfAssign.dstArrayOrLoc) + ", " + dst);
                     }
                 } else if (dst.isReg()) {
-                    cfAssignTemporaryInstructions.add("movq " +cfAssign.getRegisterAssignmentForUse(cfAssign.dstArrayOrLoc) + ", " + dst);
+                    cfAssignTemporaryInstructions.add("movq " +cfAssign.dstArrayOrLoc.getStackOffset(variableTable) + ", " + dst);
                 }
 
                 if (cfAssign.srcOptionalCSE == null) {
