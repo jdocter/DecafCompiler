@@ -37,6 +37,6 @@ public class LocalDescriptor extends UIDObject implements VariableDescriptor {
 
     @Override
     public boolean canAssignRegister() {
-        return !isFormalParam;
+        return !isFormalParam && !type.isArray();
     }
 }
