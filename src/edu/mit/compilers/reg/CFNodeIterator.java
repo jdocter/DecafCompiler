@@ -254,12 +254,6 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
      */
     public void backtrackToLastBranchPoint() {
         // System.err.println("Backtracked and our stack was " + branchesNotTaken);
-        if (branchesNotTaken.isEmpty()) {
-            this.location = new IteratorLocation(this.originalLocation);
-            activePath.clear();
-            return;
-        }
-
         if (this.location.outerCFNode instanceof CFConditional &&
                 this.location.finishedMiniCFG &&
                 this.location.nextBranchChoice == 0
@@ -269,6 +263,12 @@ public class CFNodeIterator implements CFVisitor, MiniCFVisitor {
                 this.location.nextBranchChoice == 0) {
             // next() was looking down the wrong branch, try again but looking down the other branch.
             this.location.nextBranchChoice = 1;
+            return;
+        }
+
+        if (branchesNotTaken.isEmpty()) {
+            this.location = new IteratorLocation(this.originalLocation);
+            activePath.clear();
             return;
         }
 
