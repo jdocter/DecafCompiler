@@ -64,9 +64,9 @@ public class AvailableRegistersHeuristic {
         int callerRegHeuristic;
         if (getMethodCallCount() == 0) {
             callerRegHeuristic = Integer.MAX_VALUE;
+        } else {
+            callerRegHeuristic = getTotalCount() / getMethodCallCount();
         }
-
-        callerRegHeuristic = getTotalCount() / getMethodCallCount();
         if (callerRegHeuristic > 0) {
             toInclude.add(caller.get(0));
         }
