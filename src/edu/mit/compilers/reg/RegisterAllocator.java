@@ -87,7 +87,19 @@ public class RegisterAllocator {
         return webAvailableRegisters.iterator().next();
     }
 
-    private void allocateRegistersSpillCost() {
+    private void allocateRegistersSimple() {
+        List<Web> maxUses = new ArrayList<>(interferenceGraph.keySet());
+        Collections.sort(maxUses, spillComparator);
+        Collections.reverse(maxUses);
+
+        for (Reg reg : availableRegisters) {
+            if (maxUses.isEmpty()) break;
+            maxUses.get(0).assignRegister(reg);
+            maxUses.remove(0);
+        }
+        for (Web web : maxUses) {
+            web.spill();
+        }
         // order webs in ascending order of spill cost
         // while not k colorable (any web has deg >= k):
         //      remove lowest spill cost web with deg >=k
