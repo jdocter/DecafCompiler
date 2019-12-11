@@ -78,9 +78,32 @@ public class InterferenceGraph {
     private void injectImplicitInitializations(OuterCFNode methodCFG) {
         // Finally:
         // for each USE not in a web, that means it was depending on a default value of 0;
-        // inject def 0 in beginning of CFG and build webs from those
-        // Skipped because this is a rare and confusing use case.
-        return;
+        // inject def 0 in beginning of CFG and build webs from those.
+
+        CFNodeIterator iterator = new CFNodeIterator(methodCFG);
+        CFNode first = null;
+        while (iterator.alive()) {
+            while (iterator.hasNext()) {
+                CFNode nextNode = iterator.next();
+                if (first == null) {
+                    first = nextNode;
+                    // Don't build a web for the first CFNode because it already gets DEF 0.
+                    continue;
+                }
+                // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
+                // Unleash a new web builder that builds webs for each def in this node
+                Map<AssemblyVariable, Web> foundWebs = useStatementsToContainingWebs.getOrDefault(nextNode, new HashMap<>());
+                Set<AssemblyVariable> usedVars = new HashSet<>(nextNode.getUsed());
+                usedVars.removeAll(foundWebs.keySet());
+                for (AssemblyVariable unDefined : usedVars) {
+                    CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
+                    buildWeb(unDefined, webBuildingIterator,
+                            first // simulate a DEF 0 by using the first statement.
+                            );
+                }
+            }
+            iterator.backtrackToLastBranchPoint();
+        }
     }
 
     /**
