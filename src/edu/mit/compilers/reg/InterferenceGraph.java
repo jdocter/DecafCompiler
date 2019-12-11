@@ -98,13 +98,16 @@ public class InterferenceGraph {
         if (first == null) return; // empty method
 
         // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
-        // Unleash a new web builder that builds webs for each use without a def
-        for (AssemblyVariable unDefined : analysis.getIn(first)) {
+        // Unleash a new web builder that builds webs for each use reachable from the start
+        for (AssemblyVariable usedVar : analysis.getIn(first)) {
             CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
-            System.err.println("fixing undefined USE: " + unDefined);
-            buildWeb(unDefined, webBuildingIterator,
+            boolean unDefined = buildWeb(usedVar, webBuildingIterator,
                     first // simulate a DEF 0 by using the first statement.
                     );
+            // If there is a def, this web won't be added.
+            if (unDefined) {
+                System.err.println("fixed undefined USE: " + usedVar);
+            }
         }
     }
 
@@ -117,8 +120,10 @@ public class InterferenceGraph {
      * @param target
      * @param iterator
      * @param def
+     *
+     * @return whether there was a new or updated web.
      */
-    private void buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
+    private boolean buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
@@ -215,7 +220,7 @@ public class InterferenceGraph {
 
         if (web.uses.isEmpty()) {
             debugPrint("No web for " + target + " at " + def.toWebString());
-            return;
+            return false;
         }
         if (!addedToGraph) {
             debugPrint("Web for " + target + " at " + def.toWebString());
@@ -225,6 +230,7 @@ public class InterferenceGraph {
             debugPrint("Updated web for " + target + " at " + def.toWebString());
         }
         updateWeb(web, target);
+        return true;
     }
 
     private void updateWeb(Web web, AssemblyVariable target) {
