@@ -428,12 +428,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         cfAssignTemporaryInstructions.add("subq %rax, " + dst);
                     }
                 }
+
                 // additional destination
                 if (dst.isReg()) {
-                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
                 } else {
                     cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
                 }
                 return;
             case CFAssign.PEQ:
@@ -468,10 +469,10 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
                 // additional destination
                 if (dst.isReg()) {
-                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
                 } else {
                     cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
                 }
                 return;
             case CFAssign.INC:
@@ -487,10 +488,10 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
                 // additional destination
                 if (dst.isReg()) {
-                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
                 } else {
                     cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
                 }
                 return;
             case CFAssign.DEC:
@@ -506,10 +507,10 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
                 // additional destination
                 if (dst.isReg()) {
-                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
                 } else {
                     cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
                 }
                 return;
             case CFAssign.ASSIGN:
@@ -529,10 +530,10 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
                     // additional destination
                     if (dst.isReg()) {
-                        additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
                     } else {
                         cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                        additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
                     }
                     return;
                 }
