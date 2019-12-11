@@ -11,12 +11,9 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class InnerCFConditional extends UIDObject implements InnerCFNode {
+public class InnerCFConditional extends InnerCFNode {
     @Override public String toString() {
         return "UID " + UID + " CFConditional [ifTrue=" + ifTrue.getUID() + ", ifFalse=" + ifFalse.getUID() + "], Scope = " + variableTable.getUID();
     }
@@ -163,6 +160,20 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     public Set<Expr> killedExprs(Set<Expr> allExprs) { return  Set.of(); }
 
     @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+        if (boolTemp != null) assemblyVariables.add(boolTemp);
+        if (left != null) assemblyVariables.add(left);
+        if (right != null) assemblyVariables.add(right);
+        return assemblyVariables;
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_conditional_" + UID;
     }
@@ -170,5 +181,10 @@ public class InnerCFConditional extends UIDObject implements InnerCFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Inner Conditionals don't have mini CFGs");
+    }
+
+    @Override
+    public String toWebString() {
+        return left + " " + binOp + " " + right + "?";
     }
 }

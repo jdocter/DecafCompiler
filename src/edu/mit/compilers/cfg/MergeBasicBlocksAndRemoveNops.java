@@ -14,21 +14,21 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
      * Similar to InnerMergeBasicBlocksAndRemoveNops
      */
 
-    Set<CFNode> visited = new HashSet<>();
+    Set<OuterCFNode> visited = new HashSet<>();
 
     CFBlock lastSeenCFBlock;
     private MethodDescriptor methodDescriptor;
 
-    private CFNode firstNodeOfCFG;
+    private OuterCFNode firstNodeOfCFG;
 
     public MergeBasicBlocksAndRemoveNops(MethodDescriptor methodDescriptor) {
         this.methodDescriptor = methodDescriptor;
     }
 
-    private void visitNeighbors(CFNode node) {
+    private void visitNeighbors(OuterCFNode node) {
         if (!visited.contains(node)) {
              visited.add(node);
-            for (CFNode neighbor : node.dfsTraverse()) {
+            for (OuterCFNode neighbor : node.dfsTraverse()) {
                 neighbor.accept(this);
             }
         }
@@ -37,12 +37,12 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
     /**
      * @param toRemove
      */
-    private void peepholeRemove(CFNode toRemove) {
-        Set<CFNode> parents = toRemove.parents();
+    private void peepholeRemove(OuterCFNode toRemove) {
+        Set<OuterCFNode> parents = toRemove.parents();
 
         // System.out.println("removing " + toRemove.getUID());
-        CFNode next = toRemove.getNext();
-        for (CFNode parent : parents) {
+        OuterCFNode next = toRemove.getNext();
+        for (OuterCFNode parent : parents) {
             parent.replacePointers(toRemove, next);
         }
         // Don't care about parents for toRemove because it's removed from the graph
@@ -56,7 +56,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         if (!visited.contains(cfBlock)) {
             visited.add(cfBlock);
 
-            Set<CFNode> cfBlockParents = cfBlock.parents();
+            Set<OuterCFNode> cfBlockParents = cfBlock.parents();
             // Any execution of parent implies execution of cfBlock
             if (lastSeenCFBlock != null && cfBlockParents.contains(lastSeenCFBlock)) {
                 // any execution of cfBlock implies execution of parent
@@ -88,7 +88,7 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         visited.add(cfNop);
         if (cfNop.isEnd()) {
             // ending Nops should be replaced with returns in the large CFG
-            CFNode replacement = new CFReturn(null, null, methodDescriptor);
+            OuterCFNode replacement = new CFReturn(null, null, methodDescriptor);
             cfNop.setNext(replacement);
             peepholeRemove(cfNop);
             return;
@@ -104,11 +104,11 @@ public class MergeBasicBlocksAndRemoveNops implements CFVisitor {
         visitNeighbors(cfReturn);
     }
 
-    public CFNode getFirstNodeOfCFG() {
+    public OuterCFNode getFirstNodeOfCFG() {
         return firstNodeOfCFG;
     }
 
-    public void setFirstNodeOfCFG(CFNode firstNodeOfCFG) {
+    public void setFirstNodeOfCFG(OuterCFNode firstNodeOfCFG) {
         this.firstNodeOfCFG = firstNodeOfCFG;
     }
 

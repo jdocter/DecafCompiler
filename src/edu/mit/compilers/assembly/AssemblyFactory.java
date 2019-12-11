@@ -149,6 +149,15 @@ public class AssemblyFactory {
             prologue.add("movq $0, -" +b +"(%rbp)");
         }
 
+        // save callee-saved registers so that we can
+        // use them for register allocation
+        prologue.add("# save callee-save registers");
+        for (Reg callee : Reg.usableCalleeSaved) {
+            prologue.add("pushq " + callee.toString());
+            prologue.add("movq $0, " + callee.toString());
+        }
+        prologue.add("pushq " + Reg.R15 + " # Dummy push to maintain 16-alignment");
+
         // move parameters
         LocalTable localTable = methodDescriptor.getLocalTable();
         for (int p = 0; p < methodDescriptor.getParams().size(); p++) {

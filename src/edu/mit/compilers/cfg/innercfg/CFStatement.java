@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import edu.mit.compilers.cfg.AssemblyVariable;
+import edu.mit.compilers.cfg.CFNode;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
@@ -13,29 +15,28 @@ import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.visitor.StatementCFVisitor;
 
-public interface CFStatement {
+public abstract class CFStatement extends CFNode {
 
     /**
      * @return expression that is available at the end of this CFStatement
      */
-    Optional<Expr> generatedExpr();
+    public abstract Optional<Expr> generatedExpr();
 
     /**
      * @param exprs list of all expressions that could potentially be killed
      * @return subset of exprs that are killed by this CFStatement
      */
-    Set<Expr> killedExprs(Set<Expr> exprs);
-
-    int getUID();
+    public abstract Set<Expr> killedExprs(Set<Expr> exprs);
 
     /**
      * @return Pair<TempUpdated, TempsUsed>, one pair for each statement
      */
-    Pair<List<Temp>, List<Temp>> getTemps();
+    public abstract Pair<List<Temp>, List<Temp>> getTemps();
 
-    Expr getRHS();
+    public abstract Expr getRHS();
 
-    Set<SharedTemp> getSharedTemps();
+    public abstract Set<SharedTemp> getSharedTemps();
 
-    void accept(StatementCFVisitor v);
+    public abstract void accept(StatementCFVisitor v);
+
 }

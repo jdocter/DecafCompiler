@@ -2,6 +2,7 @@ package edu.mit.compilers;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -14,6 +15,7 @@ import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.assembly.Reg;
 import edu.mit.compilers.cfg.MethodCFGFactory;
 /*
  * You have to include this line, or else when you ant clean,
@@ -22,6 +24,8 @@ import edu.mit.compilers.cfg.MethodCFGFactory;
  */
 import edu.mit.compilers.grammar.*;
 import edu.mit.compilers.parser.*;
+import edu.mit.compilers.reg.InterferenceGraph;
+import edu.mit.compilers.reg.RegisterAllocator;
 import edu.mit.compilers.semantics.BreakAndContinueInAnyLoop;
 import edu.mit.compilers.semantics.CheckIdDeclared;
 import edu.mit.compilers.semantics.CheckTypes;
@@ -31,7 +35,7 @@ import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
 
-    public static final String[] optnames = {"cse"};
+    public static final String[] optnames = {"cse", "reg"};
 
   public static void main(String[] args) {
     try {
@@ -233,6 +237,19 @@ public class Main {
                 }
             }
 
+            if (CLI.opts[1]) { // REG
+                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                    InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
+                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
+		    if (CLI.debug) {
+			System.err.println("Webs for " + methodDescriptor.getMethodName());
+			System.err.println("----------");
+			System.err.println(graph);
+			System.err.println("----------");
+		    }
+                }
+            }
+
             List<String> assembly = AssemblyFactory.programAssemblyGen(table);
 
             for (String line : assembly) {
@@ -246,7 +263,70 @@ public class Main {
             e.printStackTrace();
             System.exit(1);
         }
-      }
+      } else if (CLI.target == Action.WEB) {
+          DecafScanner scanner =
+                  new DecafScanner(new DataInputStream(inputStream));
+              Parser myParser = new Parser(scanner);
+              try {
+                  Program p = myParser.parse();
+
+                  ProgramDescriptor table = new ProgramDescriptor(p);
+
+                  List<SemanticException> semanticExceptions = new ArrayList<>();
+
+                  SemanticChecker[] semanticCheckers = {
+                          new CheckIdDeclared(table),
+                          new UniqueGlobalIds(table),
+                          new VoidMainNoArgs(table),
+                          new BreakAndContinueInAnyLoop(),
+                          new CheckTypes(table),
+                          new IntLiteralInRange(),
+                  };
+
+                  for (SemanticChecker checker : semanticCheckers) {
+                      p.accept(checker);
+                      semanticExceptions.addAll(checker.getSemanticExceptions());
+                  }
+                  if (!semanticExceptions.isEmpty()) {
+                      for (SemanticException e : semanticExceptions) {
+                          outputStream.println(e.getMessage());
+                      }
+                      System.exit(1);
+                  }
+
+                  // set Declaration Scopes on all Id's
+                  new EliminateShadowingVisitor(table);
+
+                  MethodCFGFactory.makeAndSetMethodCFGs(table);
+
+                  if (CLI.opts[0]) { // CSE
+                      for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                          new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                          // copy propagate?
+                          // dead code?
+                      }
+                  }
+
+                  for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                      outputStream.println("CFG for " + methodDescriptor.getMethodName());
+                      outputStream.println("----------");
+                      MethodCFGFactory.dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
+
+                      boolean debugInterferenceGraph = CLI.debug;
+                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), debugInterferenceGraph);
+                      outputStream.println(graph);
+                      outputStream.println("----------");
+                  }
+
+              } catch (DecafParseException e) {
+                  e.printStackTrace();
+                  System.exit(1);
+              } catch (SemanticException e) {
+                  // exception while building symbol tables
+                  e.printStackTrace();
+                  System.exit(1);
+              }
+            }
 
       outputStream.close();
     } catch(Exception e) {

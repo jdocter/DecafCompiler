@@ -1,11 +1,9 @@
 package edu.mit.compilers.cfg;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -17,7 +15,7 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CFConditional extends UIDObject implements CFNode {
+public class CFConditional extends OuterCFNode {
     @Override public String toString() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MethodCFGFactory.dfsPrint(miniCFGStart, new HashSet<Integer>(), new PrintStream(baos));
@@ -28,14 +26,14 @@ public class CFConditional extends UIDObject implements CFNode {
     private InnerCFNode miniCFGStart;
     private InnerCFNode miniCFGEnd;
     private Expr boolExpr;
-    private CFNode ifTrue;
-    private CFNode ifFalse;
-    private Set<CFNode> parents = new HashSet<CFNode>();
+    private OuterCFNode ifTrue;
+    private OuterCFNode ifFalse;
+    private Set<OuterCFNode> parents = new HashSet<OuterCFNode>();
     private final VariableTable variableTable;
 
     private Temp boolTemp; // Call TempifySubExpressions to populate
 
-    public CFConditional(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
+    public CFConditional(Expr expr, OuterCFNode ifTrue, OuterCFNode ifFalse, VariableTable variableTable) {
         this.boolExpr = expr;
         this.ifTrue= ifTrue;
         ifTrue.addParent(this);
@@ -59,10 +57,12 @@ public class CFConditional extends UIDObject implements CFNode {
         this.miniCFGEnd = miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGEnd() {
         return miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGStart() {
         return miniCFGStart;
     }
@@ -73,27 +73,27 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     @Override
-    public Set<CFNode> parents() {
+    public Set<OuterCFNode> parents() {
         return this.parents ;
     }
 
     @Override
-    public void setNext(CFNode next) {
+    public void setNext(OuterCFNode next) {
         throw new UnsupportedOperationException("CFConditional doesn't support setNext");
     }
 
     @Override
-    public void addParent(CFNode parent) {
+    public void addParent(OuterCFNode parent) {
         this.parents.add(parent);
     }
 
     @Override
-    public CFNode getNext() {
+    public OuterCFNode getNext() {
         throw new UnsupportedOperationException("Don't know how to find NEXT for a CFConditional");
     }
 
     @Override
-    public List<CFNode> dfsTraverse() {
+    public List<OuterCFNode> dfsTraverse() {
         return List.of(ifTrue, ifFalse);
     }
 
@@ -103,7 +103,7 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     @Override
-    public void removeParent(CFNode parent) {
+    public void removeParent(OuterCFNode parent) {
         this.parents.remove(parent);
     }
 
@@ -113,7 +113,7 @@ public class CFConditional extends UIDObject implements CFNode {
     }
 
     @Override
-    public void replacePointers(CFNode original, CFNode replacement) {
+    public void replacePointers(OuterCFNode original, OuterCFNode replacement) {
         if (this.ifFalse == original) {
             this.ifFalse = replacement;
             this.ifFalse.addParent(this);
@@ -124,11 +124,11 @@ public class CFConditional extends UIDObject implements CFNode {
         }
     }
 
-    public CFNode getIfTrue() {
+    public OuterCFNode getIfTrue() {
         return ifTrue;
     }
 
-    public CFNode getIfFalse() {
+    public OuterCFNode getIfFalse() {
         return ifFalse;
     }
 
@@ -187,6 +187,15 @@ public class CFConditional extends UIDObject implements CFNode {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        return Set.of(boolTemp);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
 
     @Override
     public String getAssemblyLabel() {
@@ -196,5 +205,9 @@ public class CFConditional extends UIDObject implements CFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         return "_end_of_conditional_" + UID;
+    }
+
+    @Override public String toWebString() {
+        return boolTemp + "?";
     }
 }

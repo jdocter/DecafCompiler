@@ -2,6 +2,7 @@ package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.SharedTemp;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.cfg.Variable;
@@ -19,7 +20,7 @@ import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
 
-public class CFMethodCall extends UIDObject implements CFStatement {
+public class CFMethodCall extends CFStatement {
 
     public final Id methodName;
     // every pair will contain one null item, purpose is to preserve order of arguments
@@ -36,6 +37,21 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     @Override
     public void accept(StatementCFVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
+        for (Pair<Temp, StringLit> arg : arguments) {
+            // TODO exclude global?
+            if (arg.getKey() != null) assemblyVariables.add(arg.getKey());
+        }
+        return assemblyVariables;
     }
 
     @Override
@@ -80,5 +96,10 @@ public class CFMethodCall extends UIDObject implements CFStatement {
     @Override
     public Set<SharedTemp> getSharedTemps() {
         return Set.of();
+    }
+
+    @Override
+    public String toWebString() {
+        return toString();
     }
 }

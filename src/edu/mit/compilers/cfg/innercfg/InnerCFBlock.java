@@ -3,9 +3,8 @@ package edu.mit.compilers.cfg.innercfg;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
 import edu.mit.compilers.util.Pair;
@@ -13,7 +12,7 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.MiniCFVisitor;
 
 
-public class InnerCFBlock extends UIDObject implements InnerCFNode {
+public class InnerCFBlock extends InnerCFNode {
 
     private final List<CFStatement> cfStatements = new ArrayList<>();
     InnerCFNode next;
@@ -149,6 +148,16 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
         return killed;
     }
 
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        throw new UnsupportedOperationException("unimplemented for InnerCFBlock");
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        throw new UnsupportedOperationException("unimplemented for InnerCFBlock");
+    }
+
     public void prependAllStatements(InnerCFBlock block) {
         List<CFStatement> thisCopy = new ArrayList<>(this.cfStatements);
         this.cfStatements.clear();
@@ -168,5 +177,10 @@ public class InnerCFBlock extends UIDObject implements InnerCFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Inner Blocks don't have mini CFGs");
+    }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
     }
 }

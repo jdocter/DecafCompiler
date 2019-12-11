@@ -1,51 +1,70 @@
 package edu.mit.compilers.cfg;
 
-import java.util.List;
+import edu.mit.compilers.assembly.Reg;
+import edu.mit.compilers.util.UIDObject;
+
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
-import edu.mit.compilers.inter.ImportTable;
-import edu.mit.compilers.inter.VariableTable;
-import edu.mit.compilers.parser.Expr;
-import edu.mit.compilers.util.Pair;
-import edu.mit.compilers.visitor.CFVisitor;
+public abstract class CFNode extends UIDObject {
 
-public interface CFNode {
-    String getAssemblyLabel();
-    String getEndOfMiniCFGLabel();
+    private final HashMap<AssemblyVariable, Reg> registerAssignmentsForDefs = new HashMap<>();
+    private final HashMap<AssemblyVariable, Reg> registerAssignmentsForUses = new HashMap<>();
 
-    /*
-     * Invariant:
-     * dfsTraverse() is the inverse of parents(), aka:
-     * node.dfsTraverse().contains(succ) iff succ.parents().contains(node)
-     */
-    Set<CFNode> parents();
-    void addParent(CFNode parent);
-    void removeParent(CFNode parent);
+    public void assignRegisterDef(AssemblyVariable v, Reg r) {
+        registerAssignmentsForDefs.put(v, r);
+        checkRegisterAssignments();
+    }
 
-    List<CFNode> dfsTraverse(); // different from getNext for CFConditional, for example.
-    void setNext(CFNode next);
-    CFNode getNext();
+    public void assignRegisterUse(AssemblyVariable v, Reg r) {
+        registerAssignmentsForUses.put(v, r);
+        checkRegisterAssignments();
+    }
 
-    VariableTable getVariableTable();
+//    public void unassignRegister(AssemblyVariable v) {
+//        if (!registerAssignments.containsKey(v)) throw new RuntimeException("Register cannot be unassigned from Assembly Variable "
+//                + v+ " which does not have an existing assignment");
+//        registerAssignments.remove(v);
+//        checkRegisterAssignments();
+//    }
+//
+//    public void assignRegisters(HashMap<AssemblyVariable, Reg> registerAssignments) {
+//        registerAssignments.putAll(registerAssignments);
+//        checkRegisterAssignments();
+//    }
 
-    /*
-     * WARNING!!! Doesn't automatically maintain parent pointers invariant for original!
-     * This is because parents is a set, so there may be multiple
-     * ways to get to a node from the parent.  Caller is responsible for fixing the parent pointers on original.
-     */
-    void replacePointers(CFNode original, CFNode replacement);
 
-    int getUID();
+    public Set<Reg> getRegisters() {
+        Set<Reg> regs = new HashSet(registerAssignmentsForUses.values());
+        regs.addAll(registerAssignmentsForDefs.values());
+        return regs;
+    }
 
-    void accept(CFVisitor v);
+    public boolean hasRegisterAssignmentForUse(AssemblyVariable v) {
+        return registerAssignmentsForUses.containsKey(v);
+    }
+    public boolean hasRegisterAssignmentForDef(AssemblyVariable v) {
+        return registerAssignmentsForDefs.containsKey(v);
+    }
 
-    /**
-     * @return List< Pair<TempUpdated, TempsUsed> >, one pair for each statement
-     */
-    List<Pair<List<Temp>, List<Temp>>> getTemps();
+    public Reg getRegisterAssignmentForUse(AssemblyVariable v) {
+        if (!registerAssignmentsForUses.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
+        return registerAssignmentsForUses.get(v);
+    }
 
-    Set<Expr> getNonMethodCallSubExpressions();
+    public Reg getRegisterAssignmentForDef(AssemblyVariable v) {
+        if (!registerAssignmentsForDefs.containsKey(v)) throw new RuntimeException("Assembly Variable " + v + " does not have a register assignment");
+        return registerAssignmentsForDefs.get(v);
+    }
 
-    Set<Expr> generatedExprs(Set<Expr> allExprs);
-    Set<Expr> killedExprs(Set<Expr> allExprs);
+    private void checkRegisterAssignments() {
+        assert registerAssignmentsForDefs.size() == new HashSet<>(registerAssignmentsForDefs.values()).size() : "Expected one unique register assignments";
+        assert registerAssignmentsForUses.size() == new HashSet<>(registerAssignmentsForUses.values()).size() : "Expected one unique register assignments";
+    }
+
+    public abstract Set<AssemblyVariable> getDefined();
+    public abstract Set<AssemblyVariable> getUsed();
+
+    public abstract String toWebString();
 }

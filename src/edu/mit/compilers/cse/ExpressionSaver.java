@@ -19,16 +19,16 @@ import java.util.*;
  */
 public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
 
-    private final CFNode start;
+    private final OuterCFNode start;
     private final InnerCFNode innerStart;
 
     private final Expr expr;
     private final AssemblyVariable additionalDst;
 
-    Set<CFNode> visited = new HashSet<>();
+    Set<OuterCFNode> visited = new HashSet<>();
 
 
-    ExpressionSaver(CFNode start, Expr expr, SharedTemp sharedTemp) {
+    ExpressionSaver(OuterCFNode start, Expr expr, SharedTemp sharedTemp) {
         this.start = start;
         this.innerStart = null;
         this.expr = expr;
@@ -60,7 +60,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (cfBlock.getNonMethodCallSubExpressions().contains(expr)) {
             cfBlock.getMiniCFGEnd().accept(this);
         } else {
-            for (CFNode cfNode : cfBlock.parents()) {
+            for (OuterCFNode cfNode : cfBlock.parents()) {
                 cfNode.accept(this);
             }
         }
@@ -74,7 +74,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (cfConditional.getNonMethodCallSubExpressions().contains(expr)) {
             cfConditional.getMiniCFGEnd().accept(this);
         } else {
-            for (CFNode cfNode : cfConditional.parents()) {
+            for (OuterCFNode cfNode : cfConditional.parents()) {
                 cfNode.accept(this);
             }
         }
@@ -86,7 +86,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         visited.add(cfNop);
 
         // do nothing
-        for (CFNode cfNode: cfNop.parents()) {
+        for (OuterCFNode cfNode: cfNop.parents()) {
             cfNode.accept(this);
         }
     }
@@ -99,7 +99,7 @@ public class ExpressionSaver implements CFVisitor, MiniCFVisitor {
         if (cfReturn.getNonMethodCallSubExpressions().contains(expr)) {
             cfReturn.getMiniCFGEnd().accept(this);
         } else {
-            for (CFNode cfNode : cfReturn.parents()) {
+            for (OuterCFNode cfNode : cfReturn.parents()) {
                 cfNode.accept(this);
             }
         }

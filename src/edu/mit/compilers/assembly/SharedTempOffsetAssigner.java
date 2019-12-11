@@ -14,10 +14,10 @@ public class SharedTempOffsetAssigner implements CFVisitor, MiniCFVisitor {
 
     public long sharedTempOffsetStart;
     public long sharedTempOffsetCount;
-    private CFNode methodCFGStart;
+    private OuterCFNode methodCFGStart;
     Set<SharedTemp> sharedTemps = new HashSet<>();
 
-    private final Set<CFNode> visited = new HashSet<>();
+    private final Set<OuterCFNode> visited = new HashSet<>();
 
     public SharedTempOffsetAssigner(MethodDescriptor methodDescriptor, long maxMethodStackOffset) {
         sharedTempOffsetStart = maxMethodStackOffset;
@@ -36,7 +36,7 @@ public class SharedTempOffsetAssigner implements CFVisitor, MiniCFVisitor {
         else visited.add(cfBlock);
         cfBlock.getMiniCFGStart().accept(this);
 
-        for (CFNode child : cfBlock.dfsTraverse()) {
+        for (OuterCFNode child : cfBlock.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -47,7 +47,7 @@ public class SharedTempOffsetAssigner implements CFVisitor, MiniCFVisitor {
         else visited.add(cfConditional);
         cfConditional.getMiniCFGStart().accept(this);
 
-        for (CFNode child : cfConditional.dfsTraverse()) {
+        for (OuterCFNode child : cfConditional.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -57,7 +57,7 @@ public class SharedTempOffsetAssigner implements CFVisitor, MiniCFVisitor {
         if (visited.contains(cfNop)) return;
         else visited.add(cfNop);
 
-        for (CFNode child : cfNop.dfsTraverse()) {
+        for (OuterCFNode child : cfNop.dfsTraverse()) {
             child.accept(this);
         }
     }
@@ -68,7 +68,7 @@ public class SharedTempOffsetAssigner implements CFVisitor, MiniCFVisitor {
         else visited.add(cfReturn);
         cfReturn.getMiniCFGStart().accept(this);
 
-        for (CFNode child : cfReturn.dfsTraverse()) {
+        for (OuterCFNode child : cfReturn.dfsTraverse()) {
             child.accept(this);
         }
     }

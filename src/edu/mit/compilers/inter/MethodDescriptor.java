@@ -1,10 +1,9 @@
 package edu.mit.compilers.inter;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-import edu.mit.compilers.cfg.CFNode;
+import edu.mit.compilers.cfg.OuterCFNode;
 import edu.mit.compilers.parser.*;
 import edu.mit.compilers.util.Pair;
 
@@ -17,7 +16,7 @@ public class MethodDescriptor {
     private final LocalTable localTable;
     private final Block block;
     private final String methodName;
-    private CFNode methodCFG;
+    private OuterCFNode methodCFG;
     public final int declarationLineNumber;
 
     MethodDescriptor(MethodDeclaration methodDeclaration, FieldTable globalFieldTable) throws SemanticException {
@@ -77,11 +76,11 @@ public class MethodDescriptor {
 
     public Block getMethodBlock() { return block; }
 
-    public void setMethodCFG(CFNode cfMethodStart) {
+    public void setMethodCFG(OuterCFNode cfMethodStart) {
         this.methodCFG = cfMethodStart;
     }
 
-    public CFNode getMethodCFG() {
+    public OuterCFNode getMethodCFG() {
         return methodCFG;
     }
 

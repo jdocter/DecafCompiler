@@ -1,6 +1,7 @@
 package edu.mit.compilers.cfg.innercfg;
 
 import edu.mit.compilers.assembly.AssemblyFactory;
+import edu.mit.compilers.cfg.AssemblyVariable;
 import edu.mit.compilers.cfg.Temp;
 import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.VariableTable;
@@ -14,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class InnerCFNop extends UIDObject implements InnerCFNode {
+public class InnerCFNop extends InnerCFNode {
     @Override public String toString() {
         if (isEnd()) return "UID " + UID + " CFNop";
         return "UID " + UID + " CFNop [next=" + next.getUID() + "]";
@@ -103,6 +104,16 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
+    public Set<AssemblyVariable> getUsed() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_nop_" + UID;
     }
@@ -110,5 +121,10 @@ public class InnerCFNop extends UIDObject implements InnerCFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         throw new UnsupportedOperationException("Nops don't have Mini CFGs");
+    }
+
+    @Override
+    public String toWebString() {
+        throw new RuntimeException("not a CFNode");
     }
 }

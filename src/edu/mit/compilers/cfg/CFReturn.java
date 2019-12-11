@@ -4,13 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
-import edu.mit.compilers.assembly.AssemblyFactory;
 import edu.mit.compilers.assembly.TempCollector;
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
 import edu.mit.compilers.cfg.innercfg.InnerCFNop;
 import edu.mit.compilers.cfg.innercfg.InnerCollectSubExpressions;
 import edu.mit.compilers.cfg.innercfg.TopologicalSort;
-import edu.mit.compilers.inter.ImportTable;
 import edu.mit.compilers.inter.MethodDescriptor;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.parser.Expr;
@@ -18,7 +16,7 @@ import edu.mit.compilers.util.Pair;
 import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.CFVisitor;
 
-public class CFReturn extends UIDObject implements CFNode {
+public class CFReturn extends OuterCFNode {
 
 
     @Override public String toString() {
@@ -31,11 +29,11 @@ public class CFReturn extends UIDObject implements CFNode {
         "UID " + UID + " CFReturn [miniCFG=" + miniCFGStart.getUID() + ", returnTemp=" + returnTemp + "]";
     }
 
-    private CFNode next;
+    private OuterCFNode next;
     boolean isEnd; // end of function
     private Expr returnExpr;
     private Temp returnTemp;
-    private final Set<CFNode> parents = new HashSet<CFNode>();
+    private final Set<OuterCFNode> parents = new HashSet<OuterCFNode>();
     private final VariableTable variableTable;
     private boolean isVoid;
     private MethodDescriptor methodDescriptor;
@@ -69,11 +67,13 @@ public class CFReturn extends UIDObject implements CFNode {
         this.miniCFGEnd = miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGEnd() {
         if (isVoid) return new InnerCFNop();
         return miniCFGEnd;
     }
 
+    @Override
     public InnerCFNode getMiniCFGStart() {
         if (isVoid) return new InnerCFNop();
         return miniCFGStart;
@@ -88,37 +88,37 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
-    public CFNode getNext() {
+    public OuterCFNode getNext() {
         return next;
     }
 
     @Override
-    public Set<CFNode> parents() {
+    public Set<OuterCFNode> parents() {
         return this.parents;
     }
 
     @Override
-    public void setNext(CFNode next) {
+    public void setNext(OuterCFNode next) {
         throw new UnsupportedOperationException("Tried setNext on a Return.  a return should not go anywhere");
     }
 
     @Override
-    public void addParent(CFNode parent) {
+    public void addParent(OuterCFNode parent) {
         this.parents.add(parent);
     }
 
     @Override
-    public List<CFNode> dfsTraverse() {
+    public List<OuterCFNode> dfsTraverse() {
         return List.of();
     }
 
     @Override
-    public void removeParent(CFNode parent) {
+    public void removeParent(OuterCFNode parent) {
         this.parents.remove(parent);
     }
 
     @Override
-    public void replacePointers(CFNode original, CFNode replacement) {
+    public void replacePointers(OuterCFNode original, OuterCFNode replacement) {
         if (this.next == original) {
             this.setNext(replacement);
         }
@@ -199,6 +199,17 @@ public class CFReturn extends UIDObject implements CFNode {
     }
 
     @Override
+    public Set<AssemblyVariable> getUsed() {
+        if (isVoid) return Set.of();
+        return Set.of(returnTemp);
+    }
+
+    @Override
+    public Set<AssemblyVariable> getDefined() {
+        return Set.of();
+    }
+
+    @Override
     public String getAssemblyLabel() {
         return "_return_" + UID;
     }
@@ -206,5 +217,10 @@ public class CFReturn extends UIDObject implements CFNode {
     @Override
     public String getEndOfMiniCFGLabel() {
         return "_end_of_return_" + UID;
+    }
+
+    @Override public String toWebString() {
+        if (isVoid) throw new RuntimeException("not supported");
+        return "return " + returnTemp;
     }
 }

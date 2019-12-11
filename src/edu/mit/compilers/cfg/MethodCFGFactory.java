@@ -1,7 +1,6 @@
 package edu.mit.compilers.cfg;
 
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Set;
 
 import edu.mit.compilers.cfg.innercfg.InnerCFNode;
@@ -24,10 +23,10 @@ public class MethodCFGFactory {
         }
     }
 
-    private static CFNode makeBlockCFG(Block block, MethodDescriptor methodDescriptor) {
-        CFNode contLoop = new CFNop(); // dummy node
-        CFNode endBlock = new CFNop();
-        CFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock, methodDescriptor);
+    private static OuterCFNode makeBlockCFG(Block block, MethodDescriptor methodDescriptor) {
+        OuterCFNode contLoop = new CFNop(); // dummy node
+        OuterCFNode endBlock = new CFNop();
+        OuterCFNode methodCFG = makeBlockCFG(block, endBlock, contLoop, endBlock, methodDescriptor);
         MergeBasicBlocksAndRemoveNops mergeBasicBlocksAndRemoveNops = new MergeBasicBlocksAndRemoveNops(methodDescriptor);
         methodCFG.accept(mergeBasicBlocksAndRemoveNops);
 
@@ -46,51 +45,51 @@ public class MethodCFGFactory {
      * @param breakLoop the CFNode that control should flow towards to break out of a loop
      * @return the start CFNode of the CFG that represents block
      */
-    private static CFNode makeBlockCFG(Block block, CFNode endBlock, CFNode contLoop, CFNode breakLoop, MethodDescriptor methodDescriptor) {
-        final CFNode startBlock = new CFNop();
-        CFNode previousCFNode = startBlock;
+    private static OuterCFNode makeBlockCFG(Block block, OuterCFNode endBlock, OuterCFNode contLoop, OuterCFNode breakLoop, MethodDescriptor methodDescriptor) {
+        final OuterCFNode startBlock = new CFNop();
+        OuterCFNode previousCFNode = startBlock;
         for (Statement statement : block.statements) {
             switch (statement.statementType) {
                 case Statement.LOC_ASSIGN:
                 case Statement.METHOD_CALL:
-                    final CFNode cfBlock = new CFBlock(statement, block.localTable);
+                    final OuterCFNode cfBlock = new CFBlock(statement, block.localTable);
                     previousCFNode.setNext(cfBlock);
                     previousCFNode = cfBlock;
                     break;
                 case Statement.IF:
-                    final CFNode endIf = new CFNop();
-                    final CFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop, methodDescriptor);
-                    final CFNode startIf;
+                    final OuterCFNode endIf = new CFNop();
+                    final OuterCFNode cfIfBlock = makeBlockCFG(statement.ifBlock, endIf, contLoop, breakLoop, methodDescriptor);
+                    final OuterCFNode startIf;
                     if (statement.elseBlock == null) {
                         startIf = shortCircuit(statement.expr, cfIfBlock, endIf, block.localTable);
                     } else {
-                        final CFNode cfElseBlock = makeBlockCFG(statement.elseBlock, endIf, contLoop, breakLoop, methodDescriptor);
+                        final OuterCFNode cfElseBlock = makeBlockCFG(statement.elseBlock, endIf, contLoop, breakLoop, methodDescriptor);
                         startIf = shortCircuit(statement.expr, cfIfBlock, cfElseBlock, block.localTable);
                     }
                     previousCFNode.setNext(startIf);
                     previousCFNode = endIf;
                     break;
                 case Statement.FOR:
-                    final CFNode endFor = new CFNop();
-                    final CFNode initAssignment = new CFBlock(statement.initAssignment, block.localTable);
-                    final CFNode contFor = new CFBlock(statement.updateAssignment, block.localTable);
-                    final CFNode cfForBlock = makeBlockCFG(statement.block, contFor, contFor, endFor, methodDescriptor);
-                    final CFNode startFor = shortCircuit(statement.exitExpr, cfForBlock, endFor, block.localTable);
+                    final OuterCFNode endFor = new CFNop();
+                    final OuterCFNode initAssignment = new CFBlock(statement.initAssignment, block.localTable);
+                    final OuterCFNode contFor = new CFBlock(statement.updateAssignment, block.localTable);
+                    final OuterCFNode cfForBlock = makeBlockCFG(statement.block, contFor, contFor, endFor, methodDescriptor);
+                    final OuterCFNode startFor = shortCircuit(statement.exitExpr, cfForBlock, endFor, block.localTable);
                     previousCFNode.setNext(initAssignment);
                     initAssignment.setNext(startFor);
                     contFor.setNext(startFor);
                     previousCFNode = endFor;
                     break;
                 case Statement.WHILE:
-                    final CFNode endWhile = new CFNop();
-                    final CFNode contWhile = new CFNop();
-                    final CFNode cfWhileBlock = makeBlockCFG(statement.block, contWhile, contWhile, endWhile, methodDescriptor);
+                    final OuterCFNode endWhile = new CFNop();
+                    final OuterCFNode contWhile = new CFNop();
+                    final OuterCFNode cfWhileBlock = makeBlockCFG(statement.block, contWhile, contWhile, endWhile, methodDescriptor);
                     contWhile.setNext(shortCircuit(statement.expr, cfWhileBlock, endWhile, block.localTable));
                     previousCFNode.setNext(contWhile);
                     previousCFNode = endWhile;
                     break;
                 case Statement.RETURN:
-                    final CFNode cfReturn = new CFReturn(statement.expr, block.localTable, methodDescriptor);
+                    final OuterCFNode cfReturn = new CFReturn(statement.expr, block.localTable, methodDescriptor);
                     previousCFNode.setNext(cfReturn);
                     return startBlock;
                 case Statement.BREAK:
@@ -114,7 +113,7 @@ public class MethodCFGFactory {
      * @param ifFalse
      * @return CFNode representing conditional evaluation of the expr
      */
-    private static CFNode shortCircuit(Expr expr, CFNode ifTrue, CFNode ifFalse, VariableTable variableTable) {
+    private static OuterCFNode shortCircuit(Expr expr, OuterCFNode ifTrue, OuterCFNode ifFalse, VariableTable variableTable) {
         switch (expr.exprType) {
             case Expr.LEN:
             case Expr.MINUS:
@@ -128,12 +127,12 @@ public class MethodCFGFactory {
             case Expr.BIN_OP:
                 switch (expr.binOp.binOp) {
                     case BinOp.AND:
-                        CFNode rightAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
-                        CFNode leftAnd = shortCircuit(expr.expr, rightAnd, ifFalse, variableTable);
+                        OuterCFNode rightAnd = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
+                        OuterCFNode leftAnd = shortCircuit(expr.expr, rightAnd, ifFalse, variableTable);
                         return leftAnd;
                     case BinOp.OR:
-                        CFNode rightOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
-                        CFNode leftOr = shortCircuit(expr.expr, ifTrue, rightOr, variableTable);
+                        OuterCFNode rightOr = shortCircuit(expr.binOpExpr,ifTrue, ifFalse, variableTable);
+                        OuterCFNode leftOr = shortCircuit(expr.expr, ifTrue, rightOr, variableTable);
                         return leftOr;
                     case BinOp.EQ:
                     case BinOp.NEQ:
@@ -168,12 +167,12 @@ public class MethodCFGFactory {
                 (expr.exprType == Expr.BIN_OP && Set.of(BinOp.AND, BinOp.OR, BinOp.EQ, BinOp.NEQ).contains(expr.binOp));
     }
 
-    public static void dfsPrint(CFNode cfg, Set<Integer> visited, PrintStream outputStream) {
+    public static void dfsPrint(OuterCFNode cfg, Set<Integer> visited, PrintStream outputStream) {
         int cfgID = cfg.getUID();
         if (!visited.contains(cfgID)) {
             visited.add(cfgID);
             outputStream.println(cfg.toString());
-            for (CFNode neighbor : cfg.dfsTraverse()) {
+            for (OuterCFNode neighbor : cfg.dfsTraverse()) {
                 dfsPrint(neighbor, visited, outputStream);
             }
         }
