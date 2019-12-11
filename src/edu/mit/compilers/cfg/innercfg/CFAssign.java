@@ -13,6 +13,7 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CFAssign extends CFStatement {
 
@@ -265,11 +266,11 @@ public class CFAssign extends CFStatement {
     @Override
     public Set<AssemblyVariable> getDefined() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
-        // TODO exclude global?
-        // if (null != dstArrayOrLoc && null == dstArrayOffset && !dstArrayOrLoc.isGlobal(variableTable)) assemblyVariables.add(dstArrayOrLoc);
         if (null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
         if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
-        return assemblyVariables;
+        return assemblyVariables.stream()
+                .filter((AssemblyVariable var) -> var.isGlobal(variableTable))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -288,7 +289,9 @@ public class CFAssign extends CFStatement {
         if (null != srcId) assemblyVariables.add(srcId);
         if (null != srcArray) assemblyVariables.add(srcArray);
         if (null != srcArrayOffset) assemblyVariables.add(srcArrayOffset);
-        return assemblyVariables;
+        return assemblyVariables.stream()
+                .filter((AssemblyVariable var) -> var.isGlobal(variableTable))
+                .collect(Collectors.toSet());
     }
 
     @Override
