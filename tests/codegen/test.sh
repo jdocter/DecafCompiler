@@ -29,7 +29,7 @@ function get-input-files-should-fail {
 # $1 -> decaf file to compile
 # $2 -> assembly file to create
 function dcf-to-asm {
-  "$RUNNER" --target=assembly "$1" -o "$2"
+  "$RUNNER" --target=assembly --opt=all "$1" -o "$2"
 }
 
 # $1 -> assembly file to assemble

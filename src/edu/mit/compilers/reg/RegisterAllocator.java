@@ -42,7 +42,7 @@ public class RegisterAllocator {
             chaitinInterferenceGraph.put(web, new HashSet<>(interferenceGraph.get(web)));
         }
 
-        allocateRegistersChaitin();
+        allocateRegistersSimple();
     }
 
     private void allocateRegistersChaitin() {
