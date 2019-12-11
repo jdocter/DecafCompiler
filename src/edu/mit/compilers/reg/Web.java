@@ -17,6 +17,10 @@ public class Web extends UIDObject {
     private final LivenessAnalyzer liveness;
 
     Set<CFNode> spanningStatements = new HashSet<>();
+    /*
+     * As a hack, a def might not actually have teh targetVariable in getDefined(),
+     * if it is the first node in the CFG.
+     */
     Set<CFNode> defs = new HashSet<>();
     Set<CFNode> uses = new HashSet<>();
     final private Set<Web> neighbors = new HashSet<>();

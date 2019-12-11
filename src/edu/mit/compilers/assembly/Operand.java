@@ -120,7 +120,7 @@ public class Operand {
         if (! (obj instanceof Operand) ) return false;
         Operand that = (Operand) obj;
         return this.imm == that.imm
-                && this.globalLabel.equals(that.globalLabel)
+                && (this.globalLabel == that.globalLabel || this.globalLabel.equals(that.globalLabel))
                 && this.reg1 == that.reg1
                 && this.reg2 == that.reg2
                 && this.offset == that.offset

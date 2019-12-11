@@ -5,11 +5,13 @@ import edu.mit.compilers.util.UIDObject;
 
 public class LocalDescriptor extends UIDObject implements VariableDescriptor {
     private final TypeDescriptor type;
+    private boolean isFormalParam;
     private long stackOffset;
     private boolean offsetDeclared = false;
 
-    LocalDescriptor(TypeDescriptor type) {
+    LocalDescriptor(TypeDescriptor type, boolean isFormalParam) {
         this.type = type;
+        this.isFormalParam = isFormalParam;
     }
 
     public void setStackOffset(long stackOffset) {
@@ -31,5 +33,10 @@ public class LocalDescriptor extends UIDObject implements VariableDescriptor {
     @Override
     public boolean isGlobal() {
         return false;
+    }
+
+    @Override
+    public boolean canAssignRegister() {
+        return !isFormalParam && !type.isArray();
     }
 }

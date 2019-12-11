@@ -74,13 +74,41 @@ public class InterferenceGraph {
         return adjList.get(w);
     }
 
-    @SuppressWarnings("static-method")
     private void injectImplicitInitializations(OuterCFNode methodCFG) {
         // Finally:
         // for each USE not in a web, that means it was depending on a default value of 0;
-        // inject def 0 in beginning of CFG and build webs from those
-        // Skipped because this is a rare and confusing use case.
-        return;
+        // inject def 0 in beginning of CFG and build webs from those.
+
+        // this fancy loop isn't strictly necessary because methods
+        // don't start with conditionals.  However just put it here in case.
+        CFNodeIterator iterator = new CFNodeIterator(methodCFG);
+        CFNode first = null;
+        outer:
+        while (iterator.alive()) {
+            while (iterator.hasNext()) {
+                CFNode nextNode = iterator.next();
+                if (first == null) {
+                    first = nextNode;
+                    // Don't build a web for the first CFNode because it already gets DEF 0.
+                    break outer;
+                }
+            }
+            iterator.backtrackToLastBranchPoint(); //
+        }
+        if (first == null) return; // empty method
+
+        // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
+        // Unleash a new web builder that builds webs for each use reachable from the start
+        for (AssemblyVariable usedVar : analysis.getIn(first)) {
+            CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
+            boolean unDefined = buildWeb(usedVar, webBuildingIterator,
+                    first // simulate a DEF 0 by using the first statement.
+                    );
+            // If there is a def, this web won't be added.
+            if (unDefined) {
+                System.err.println("fixed undefined USE: " + usedVar);
+            }
+        }
     }
 
     /**
@@ -92,8 +120,10 @@ public class InterferenceGraph {
      * @param target
      * @param iterator
      * @param def
+     *
+     * @return whether there was a new or updated web.
      */
-    private void buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
+    private boolean buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
@@ -190,7 +220,7 @@ public class InterferenceGraph {
 
         if (web.uses.isEmpty()) {
             debugPrint("No web for " + target + " at " + def.toWebString());
-            return;
+            return false;
         }
         if (!addedToGraph) {
             debugPrint("Web for " + target + " at " + def.toWebString());
@@ -200,6 +230,7 @@ public class InterferenceGraph {
             debugPrint("Updated web for " + target + " at " + def.toWebString());
         }
         updateWeb(web, target);
+        return true;
     }
 
     private void updateWeb(Web web, AssemblyVariable target) {
