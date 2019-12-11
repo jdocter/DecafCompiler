@@ -74,36 +74,37 @@ public class InterferenceGraph {
         return adjList.get(w);
     }
 
-    @SuppressWarnings("static-method")
     private void injectImplicitInitializations(OuterCFNode methodCFG) {
         // Finally:
         // for each USE not in a web, that means it was depending on a default value of 0;
         // inject def 0 in beginning of CFG and build webs from those.
 
+        // this fancy loop isn't strictly necessary because methods
+        // don't start with conditionals.  However just put it here in case.
         CFNodeIterator iterator = new CFNodeIterator(methodCFG);
         CFNode first = null;
+        outer:
         while (iterator.alive()) {
             while (iterator.hasNext()) {
                 CFNode nextNode = iterator.next();
                 if (first == null) {
                     first = nextNode;
                     // Don't build a web for the first CFNode because it already gets DEF 0.
-                    continue;
-                }
-                // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
-                // Unleash a new web builder that builds webs for each def in this node
-                Map<AssemblyVariable, Web> foundWebs = useStatementsToContainingWebs.getOrDefault(nextNode, new HashMap<>());
-                Set<AssemblyVariable> usedVars = new HashSet<>(nextNode.getUsed());
-                usedVars.removeAll(foundWebs.keySet());
-                for (AssemblyVariable unDefined : usedVars) {
-                    CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
-                    buildWeb(unDefined, webBuildingIterator,
-                            first // simulate a DEF 0 by using the first statement.
-                            );
-                    System.err.println("FIXED: " + nextNode);
+                    break outer;
                 }
             }
-            iterator.backtrackToLastBranchPoint();
+            iterator.backtrackToLastBranchPoint(); //
+        }
+        if (first == null) return; // empty method
+
+        // System.err.println(nextNode + " USED: " + nextNode.getUsed() + " \t\tDEFINED: " + nextNode.getDefined());
+        // Unleash a new web builder that builds webs for each use without a def
+        for (AssemblyVariable unDefined : analysis.getIn(first)) {
+            CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
+            System.err.println("fixing undefined USE: " + unDefined);
+            buildWeb(unDefined, webBuildingIterator,
+                    first // simulate a DEF 0 by using the first statement.
+                    );
         }
     }
 
