@@ -188,12 +188,16 @@ public class InterferenceGraph {
             }
         }
 
-        if (!addedToGraph && !web.uses.isEmpty()) {
+        if (web.uses.isEmpty()) {
+            debugPrint("No web for " + target + " at " + def.toWebString());
+            return;
+        }
+        if (!addedToGraph) {
             debugPrint("Web for " + target + " at " + def.toWebString());
             addWeb(web, target);
         } else {
             // TODO dead code eliminate the DEF
-            debugPrint("No web for " + target + " at " + def.toWebString());
+            debugPrint("Updated web for " + target + " at " + def.toWebString());
         }
         updateWeb(web, target);
     }
