@@ -100,6 +100,7 @@ public class InterferenceGraph {
                     buildWeb(unDefined, webBuildingIterator,
                             first // simulate a DEF 0 by using the first statement.
                             );
+                    System.err.println("FIXED: " + nextNode);
                 }
             }
             iterator.backtrackToLastBranchPoint();
