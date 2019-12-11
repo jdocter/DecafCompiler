@@ -428,6 +428,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         cfAssignTemporaryInstructions.add("subq %rax, " + dst);
                     }
                 }
+                // additional destination
+                if (dst.isReg()) {
+                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                } else {
+                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                }
                 return;
             case CFAssign.PEQ:
                 // if a += 1 and use and def of a not same
@@ -458,6 +465,14 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         cfAssignTemporaryInstructions.add("addq %rax, " + dst);
                     }
                 }
+
+                // additional destination
+                if (dst.isReg()) {
+                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                } else {
+                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                }
                 return;
             case CFAssign.INC:
                 // if a += 1 and use and def of a not same
@@ -468,7 +483,16 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 } else if (dst.isReg()) {
                     cfAssignTemporaryInstructions.add("movq " +cfAssign.getRegisterAssignmentForUse(cfAssign.dstArrayOrLoc) + ", " + dst);
                 }
-                cfAssignTemporaryInstructions.add("incq " + dst + " # " + cfAssign.toString()); return;
+                cfAssignTemporaryInstructions.add("incq " + dst + " # " + cfAssign.toString());
+
+                // additional destination
+                if (dst.isReg()) {
+                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                } else {
+                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                }
+                return;
             case CFAssign.DEC:
                 // if a += 1 and use and def of a not same
                 if (cfAssign.hasRegisterAssignmentForUse(cfAssign.dstArrayOrLoc)) {
@@ -478,7 +502,16 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 } else if (dst.isReg()) {
                     cfAssignTemporaryInstructions.add("movq " +cfAssign.getRegisterAssignmentForUse(cfAssign.dstArrayOrLoc) + ", " + dst);
                 }
-                cfAssignTemporaryInstructions.add("decq " + dst + " # " + cfAssign.toString()); return;
+                cfAssignTemporaryInstructions.add("decq " + dst + " # " + cfAssign.toString());
+
+                // additional destination
+                if (dst.isReg()) {
+                    additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                } else {
+                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+                    additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
+                }
+                return;
             case CFAssign.ASSIGN:
                 if (cfAssign.srcOptionalCSE != null) {
                     if (cfAssign.hasRegisterAssignmentForUse(cfAssign.srcOptionalCSE)) {
@@ -492,6 +525,14 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         cfAssignTemporaryInstructions.add("movq -" + cfAssign.srcOptionalCSE.getStackOffset(variableTable) + "(%rbp), %rax # " + cfAssign.toString());
                         cfAssignTemporaryInstructions.add("movq %rax, " + dst);
                         }
+                    }
+
+                    // additional destination
+                    if (dst.isReg()) {
+                        additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1());
+                    } else {
+                        cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+                        additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX);
                     }
                     return;
                 }
