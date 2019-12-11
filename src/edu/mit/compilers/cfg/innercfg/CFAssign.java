@@ -269,7 +269,7 @@ public class CFAssign extends CFStatement {
         if (null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
         if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
         return assemblyVariables.stream()
-                .filter((AssemblyVariable var) -> var.isGlobal(variableTable))
+                .filter((AssemblyVariable var) -> var.canAssignRegister(variableTable))
                 .collect(Collectors.toSet());
     }
 
@@ -290,7 +290,7 @@ public class CFAssign extends CFStatement {
         if (null != srcArray) assemblyVariables.add(srcArray);
         if (null != srcArrayOffset) assemblyVariables.add(srcArrayOffset);
         return assemblyVariables.stream()
-                .filter((AssemblyVariable var) -> var.isGlobal(variableTable))
+                .filter((AssemblyVariable var) -> var.canAssignRegister(variableTable))
                 .collect(Collectors.toSet());
     }
 

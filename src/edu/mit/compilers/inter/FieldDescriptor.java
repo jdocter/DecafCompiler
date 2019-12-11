@@ -34,4 +34,9 @@ public class FieldDescriptor extends UIDObject implements VariableDescriptor {
     public String getGlobalLabel() {
         return "_global_" + name;
     }
+
+    @Override
+    public boolean canAssignRegister() {
+        return !isGlobal(); // always false
+    }
 }

@@ -15,6 +15,8 @@ public interface AssemblyVariable {
 
     boolean isGlobal(VariableTable variableTable);
 
+    boolean canAssignRegister(VariableTable variableTable);
+
     String getName();
 
     String getGlobalLabel(VariableTable variableTable);

@@ -49,6 +49,11 @@ public class Variable implements AssemblyVariable {
     }
 
     @Override
+    public boolean canAssignRegister(VariableTable variableTable) {
+        return variableTable.getDescriptor(id.getName()).canAssignRegister();
+    }
+
+    @Override
     public String getName() {
         return id.getName();
     }

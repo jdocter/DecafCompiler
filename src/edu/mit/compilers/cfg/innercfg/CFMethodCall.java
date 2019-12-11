@@ -52,7 +52,7 @@ public class CFMethodCall extends CFStatement {
             if (arg.getKey() != null) assemblyVariables.add(arg.getKey());
         }
         return assemblyVariables.stream()
-                .filter((AssemblyVariable var) -> var.isGlobal(variableTable))
+                .filter((AssemblyVariable var) -> var.canAssignRegister(variableTable))
                 .collect(Collectors.toSet());
     }
 
