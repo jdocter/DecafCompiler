@@ -195,21 +195,16 @@ public class InterferenceGraph {
             // TODO dead code eliminate the DEF
             debugPrint("No web for " + target + " at " + def.toWebString());
         }
+        updateWeb(web, target);
     }
 
-    private boolean compoundAssignOnTarget(CFNode def, AssemblyVariable target) {
-        if (!(def instanceof CFAssign)) return false;
-        CFAssign cfAssign = (CFAssign) def;
-
-        return cfAssign.dstArrayOrLoc.equals(target) &&
-                Set.of(CFAssign.PEQ, CFAssign.MEQ, CFAssign.INC, CFAssign.DEC)
-                    .contains(cfAssign.assignOp);
-    }
-
-    private void addWeb(Web web, AssemblyVariable target) {
-        adjList.put(web, new HashSet<>());
-
+    private void updateWeb(Web web, AssemblyVariable target) {
         for (Web possibleInterferer : webs) {
+            // don't interfere with self
+            if (possibleInterferer == web) continue;
+            // we can never lose interference (never remove spanning statements)
+            if (adjList.get(possibleInterferer).contains(web)) continue;
+
             Set<CFNode> interferingStatements = new HashSet<>(possibleInterferer.spanningStatements);
             interferingStatements.retainAll(web.spanningStatements);
 
@@ -239,13 +234,25 @@ public class InterferenceGraph {
             }
         }
 
-        webs.add(web); // add after so a web doesn't interfere with itself.
-
         for (CFNode statement : web.uses) {
             Map<AssemblyVariable, Web> priorWebs = useStatementsToContainingWebs.getOrDefault(statement, new HashMap<>());
-            assert priorWebs.put(target, web) == null; // assert no prior web for this target, else should have merged
+            priorWebs.put(target, web); // might already exist
             useStatementsToContainingWebs.put(statement, priorWebs);
         }
+    }
+
+    private boolean compoundAssignOnTarget(CFNode def, AssemblyVariable target) {
+        if (!(def instanceof CFAssign)) return false;
+        CFAssign cfAssign = (CFAssign) def;
+
+        return cfAssign.dstArrayOrLoc.equals(target) &&
+                Set.of(CFAssign.PEQ, CFAssign.MEQ, CFAssign.INC, CFAssign.DEC)
+                    .contains(cfAssign.assignOp);
+    }
+
+    private void addWeb(Web web, AssemblyVariable target) {
+        adjList.put(web, new HashSet<>());
+        webs.add(web);
     }
 
     /**
