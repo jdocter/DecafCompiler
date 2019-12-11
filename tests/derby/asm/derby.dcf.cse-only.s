@@ -323,7 +323,7 @@ _return_116:
 	ret
 
 _method_createUnsharpMaskV:
-	enter $(944), $0
+	enter $(1024), $0
 	movq $0, -8(%rbp)
 	movq $0, -16(%rbp)
 	movq $0, -24(%rbp)
@@ -442,6 +442,16 @@ _method_createUnsharpMaskV:
 	movq $0, -928(%rbp)
 	movq $0, -936(%rbp)
 	movq $0, -944(%rbp)
+	movq $0, -952(%rbp)
+	movq $0, -960(%rbp)
+	movq $0, -968(%rbp)
+	movq $0, -976(%rbp)
+	movq $0, -984(%rbp)
+	movq $0, -992(%rbp)
+	movq $0, -1000(%rbp)
+	movq $0, -1008(%rbp)
+	movq $0, -1016(%rbp)
+	movq $0, -1024(%rbp)
 	# save callee-save registers
 	pushq %rbx
 	movq $0, %rbx
@@ -470,12 +480,12 @@ _block_484:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_486
 _nop_486:
 	jmp _end_of_conditional_425
 _end_of_conditional_425:
-	cmpq $1, -88(%rbp) # true = t475
+	cmpq $1, -112(%rbp) # true = t475
 	jne _block_428 # ifFalse
 	jmp _block_400 # ifTrue
 _block_400:
@@ -493,45 +503,45 @@ _block_502:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_504
 _nop_504:
 	jmp _end_of_conditional_404
 _end_of_conditional_404:
-	cmpq $1, -88(%rbp) # true = t493
+	cmpq $1, -112(%rbp) # true = t493
 	jne _block_406 # ifFalse
 	jmp _block_403 # ifTrue
 _block_403:
 _block_572:
-	movq $731, -88(%rbp) # t510 = 731
+	movq $731, -112(%rbp) # t510 = 731
 	# t508 = r_s65 * t510 {canonical: (r_s65) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t507 = t508 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t532 = 2193
-	# t530 = r_s65 * t532 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t544 = 3
+	# t507 = t508 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t532 = 2193
+	# t530 = r_s65 * t532 {canonical: (r_s65) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t544 = 3
 	# t542 = c_s65 * t544 {canonical: (c_s65) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t529 = t530 + t542 {canonical: ((r_s65) * (2193)) + ((c_s65) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $2, -152(%rbp) # t561 = 2
-	# t528 = t529 + t561 {canonical: (((r_s65) * (2193)) + ((c_s65) * (3))) + (2)}
-	movq -144(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq -104(%rbp), %rdi
+	# t529 = t530 + t542 {canonical: ((r_s65) * (2193)) + ((c_s65) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $2, -176(%rbp) # t561 = 2
+	# t528 = t529 + t561 {canonical: (((r_s65) * (2193)) + ((c_s65) * (3))) + (2)}
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -539,7 +549,7 @@ _block_572:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -160(%rbp), %rax # unsharpMask_s0[t507] = image_s0[t528]
+	movq -184(%rbp), %rax # unsharpMask_s0[t507] = image_s0[t528]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -554,8 +564,8 @@ _end_of_block_403:
 	jmp _block_401
 _block_401:
 _block_581:
-	movq $1, -88(%rbp) # t577 = 1
-	movq -88(%rbp), %rax # c_s65 += t577
+	movq $1, -112(%rbp) # t577 = 1
+	movq -112(%rbp), %rax # c_s65 += t577
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_582
@@ -574,92 +584,35 @@ _end_of_block_406:
 	jmp _conditional_418
 _conditional_418:
 _block_608:
-	# t592 = cols_s0 - center_s65 {canonical: (cols_s0) - (center_s65)}
+	# shared_t11360, t592 = cols_s0 - center_s65 {canonical: (cols_s0) - (center_s65)}
 	movq _global_cols(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -88(%rbp) # shared_t11360 = (cols_s0) - (center_s65)
 	# t590 = c_s65 < t592 {canonical: (c_s65) < ((cols_s0) - (center_s65))}
 	movq -40(%rbp), %rax # t590 = c_s65 < t592 {canonical: (c_s65) < ((cols_s0) - (center_s65))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_610
 _nop_610:
 	jmp _end_of_conditional_418
 _end_of_conditional_418:
-	cmpq $1, -96(%rbp) # true = t590
+	cmpq $1, -120(%rbp) # true = t590
 	jne _block_420 # ifFalse
 	jmp _block_417 # ifTrue
 _block_417:
 _block_1269:
-	movq $731, -88(%rbp) # t616 = 731
+	movq $731, -112(%rbp) # t616 = 731
 	# t614 = r_s65 * t616 {canonical: (r_s65) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t613 = t614 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
-	cmpq $750000, %rdi
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rdi
-	jl _sp_method_exit_with_status_1
-	leaq 0(,%rdi,8), %rcx
-	leaq _global_unsharpMask, %rdi
-	add %rcx, %rdi
-	movq $0, (%rdi) # unsharpMask_s0[t613] = 0
-	movq $731, -112(%rbp) # t639 = 731
-	# t637 = r_s65 * t639 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	# t636 = t637 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
+	# t613 = t614 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
 	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
 	movq %rax, -128(%rbp)
-	movq $2193, -136(%rbp) # t663 = 2193
-	# t661 = r_s65 * t663 {canonical: (r_s65) * (2193)}
-	movq -32(%rbp), %rax
-	imulq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $3, -152(%rbp) # t674 = 3
-	# t673 = t674 * c_s65 {canonical: (3) * (c_s65)}
-	movq -152(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -160(%rbp)
-	# t660 = t661 + t673 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -144(%rbp), %rax
-	addq -160(%rbp), %rax
-	movq %rax, -168(%rbp)
-	movq $7, -176(%rbp) # t692 = 7
-	# t659 = t660 - t692 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) - (7)}
-	movq -168(%rbp), %rax
-	subq -176(%rbp), %rax
-	movq %rax, -184(%rbp)
-	movq -184(%rbp), %rax # t658 = image_s0[t659]
-	cmpq $2300000, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_image(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t658 = image_s0[t659]
-	movq %rdx, -192(%rbp)
-	movq $0, -200(%rbp) # t705 = 0
-	movq -200(%rbp), %rax # t704 = unsharpKernel_s0[t705]
-	cmpq $9, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_unsharpKernel(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t704 = unsharpKernel_s0[t705]
-	movq %rdx, -208(%rbp)
-	# t657 = t658 * t704 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (7)]) * (unsharpKernel_s0[0])}
-	movq -192(%rbp), %rax
-	imulq -208(%rbp), %rax
-	movq %rax, -216(%rbp)
 	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
@@ -668,59 +621,119 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -216(%rbp), %rax # unsharpMask_s0[t636] += t657
+	movq $0, (%rdi) # unsharpMask_s0[t613] = 0
+	movq $731, -136(%rbp) # t639 = 731
+	# t637 = r_s65 * t639 {canonical: (r_s65) * (731)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	# t636 = t637 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
+	movq -144(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -152(%rbp)
+	movq $2193, -160(%rbp) # t663 = 2193
+	# t661 = r_s65 * t663 {canonical: (r_s65) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $3, -176(%rbp) # t674 = 3
+	# t673 = t674 * c_s65 {canonical: (3) * (c_s65)}
+	movq -176(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -184(%rbp)
+	# t660 = t661 + t673 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
+	movq -168(%rbp), %rax
+	addq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	movq $7, -200(%rbp) # t692 = 7
+	# t659 = t660 - t692 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) - (7)}
+	movq -192(%rbp), %rax
+	subq -200(%rbp), %rax
+	movq %rax, -208(%rbp)
+	movq -208(%rbp), %rax # t658 = image_s0[t659]
+	cmpq $2300000, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_image(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t658 = image_s0[t659]
+	movq %rdx, -216(%rbp)
+	movq $0, -224(%rbp) # t705 = 0
+	movq -224(%rbp), %rax # t704 = unsharpKernel_s0[t705]
+	cmpq $9, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_unsharpKernel(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t704 = unsharpKernel_s0[t705]
+	movq %rdx, -232(%rbp)
+	# t11363, t657 = t658 * t704 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (7)]) * (unsharpKernel_s0[0])}
+	movq -216(%rbp), %rax
+	imulq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11363 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (7)]) * (unsharpKernel_s0[0])
+	movq -152(%rbp), %rdi
+	cmpq $750000, %rdi
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rdi
+	jl _sp_method_exit_with_status_1
+	leaq 0(,%rdi,8), %rcx
+	leaq _global_unsharpMask, %rdi
+	add %rcx, %rdi
+	movq -248(%rbp), %rax # unsharpMask_s0[t636] += t11363 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (7)]) * (unsharpKernel_s0[0])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -224(%rbp) # t722 = 731
+	movq $731, -256(%rbp) # t722 = 731
 	# t720 = r_s65 * t722 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -224(%rbp), %rax
-	movq %rax, -232(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t719 = t720 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -232(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -240(%rbp)
-	movq $2193, -248(%rbp) # t746 = 2193
+	movq %rax, -272(%rbp)
+	movq $2193, -280(%rbp) # t746 = 2193
 	# t744 = r_s65 * t746 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -248(%rbp), %rax
-	movq %rax, -256(%rbp)
-	movq $3, -264(%rbp) # t757 = 3
+	imulq -280(%rbp), %rax
+	movq %rax, -288(%rbp)
+	movq $3, -296(%rbp) # t757 = 3
 	# t756 = t757 * c_s65 {canonical: (3) * (c_s65)}
-	movq -264(%rbp), %rax
+	movq -296(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -272(%rbp)
+	movq %rax, -304(%rbp)
 	# t743 = t744 + t756 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -256(%rbp), %rax
-	addq -272(%rbp), %rax
-	movq %rax, -280(%rbp)
-	movq $4, -288(%rbp) # t775 = 4
+	movq -288(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq $4, -320(%rbp) # t775 = 4
 	# t742 = t743 - t775 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) - (4)}
-	movq -280(%rbp), %rax
-	subq -288(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t741 = image_s0[t742]
+	movq -312(%rbp), %rax
+	subq -320(%rbp), %rax
+	movq %rax, -328(%rbp)
+	movq -328(%rbp), %rax # t741 = image_s0[t742]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t741 = image_s0[t742]
-	movq %rdx, -304(%rbp)
-	movq $1, -312(%rbp) # t788 = 1
-	movq -312(%rbp), %rax # t787 = unsharpKernel_s0[t788]
+	movq %rdx, -336(%rbp)
+	movq $1, -344(%rbp) # t788 = 1
+	movq -344(%rbp), %rax # t787 = unsharpKernel_s0[t788]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t787 = unsharpKernel_s0[t788]
-	movq %rdx, -320(%rbp)
-	# t740 = t741 * t787 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (4)]) * (unsharpKernel_s0[1])}
-	movq -304(%rbp), %rax
-	imulq -320(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -240(%rbp), %rdi
+	movq %rdx, -352(%rbp)
+	# t11364, t740 = t741 * t787 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (4)]) * (unsharpKernel_s0[1])}
+	movq -336(%rbp), %rax
+	imulq -352(%rbp), %rax
+	movq %rax, -360(%rbp)
+	movq %rax, -368(%rbp) # t11364 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (4)]) * (unsharpKernel_s0[1])
+	movq -272(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -728,59 +741,60 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -328(%rbp), %rax # unsharpMask_s0[t719] += t740
+	movq -368(%rbp), %rax # unsharpMask_s0[t719] += t11364 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (4)]) * (unsharpKernel_s0[1])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -336(%rbp) # t805 = 731
+	movq $731, -376(%rbp) # t805 = 731
 	# t803 = r_s65 * t805 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -336(%rbp), %rax
-	movq %rax, -344(%rbp)
+	imulq -376(%rbp), %rax
+	movq %rax, -384(%rbp)
 	# t802 = t803 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -344(%rbp), %rax
+	movq -384(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -352(%rbp)
-	movq $2193, -360(%rbp) # t829 = 2193
+	movq %rax, -392(%rbp)
+	movq $2193, -400(%rbp) # t829 = 2193
 	# t827 = r_s65 * t829 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq $3, -376(%rbp) # t840 = 3
-	# t839 = t840 * c_s65 {canonical: (3) * (c_s65)}
-	movq -376(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -384(%rbp)
-	# t826 = t827 + t839 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -368(%rbp), %rax
-	addq -384(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq $1, -400(%rbp) # t858 = 1
-	# t825 = t826 - t858 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) - (1)}
-	movq -392(%rbp), %rax
-	subq -400(%rbp), %rax
+	imulq -400(%rbp), %rax
 	movq %rax, -408(%rbp)
-	movq -408(%rbp), %rax # t824 = image_s0[t825]
+	movq $3, -416(%rbp) # t840 = 3
+	# t839 = t840 * c_s65 {canonical: (3) * (c_s65)}
+	movq -416(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -424(%rbp)
+	# t826 = t827 + t839 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
+	movq -408(%rbp), %rax
+	addq -424(%rbp), %rax
+	movq %rax, -432(%rbp)
+	movq $1, -440(%rbp) # t858 = 1
+	# t825 = t826 - t858 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) - (1)}
+	movq -432(%rbp), %rax
+	subq -440(%rbp), %rax
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t824 = image_s0[t825]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t824 = image_s0[t825]
-	movq %rdx, -416(%rbp)
-	movq $2, -424(%rbp) # t871 = 2
-	movq -424(%rbp), %rax # t870 = unsharpKernel_s0[t871]
+	movq %rdx, -456(%rbp)
+	movq $2, -464(%rbp) # t871 = 2
+	movq -464(%rbp), %rax # t870 = unsharpKernel_s0[t871]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t870 = unsharpKernel_s0[t871]
-	movq %rdx, -432(%rbp)
-	# t823 = t824 * t870 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (1)]) * (unsharpKernel_s0[2])}
-	movq -416(%rbp), %rax
-	imulq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -352(%rbp), %rdi
+	movq %rdx, -472(%rbp)
+	# t11365, t823 = t824 * t870 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (1)]) * (unsharpKernel_s0[2])}
+	movq -456(%rbp), %rax
+	imulq -472(%rbp), %rax
+	movq %rax, -480(%rbp)
+	movq %rax, -488(%rbp) # t11365 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (1)]) * (unsharpKernel_s0[2])
+	movq -392(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -788,59 +802,60 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -440(%rbp), %rax # unsharpMask_s0[t802] += t823
+	movq -488(%rbp), %rax # unsharpMask_s0[t802] += t11365 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) - (1)]) * (unsharpKernel_s0[2])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -448(%rbp) # t888 = 731
+	movq $731, -496(%rbp) # t888 = 731
 	# t886 = r_s65 * t888 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -448(%rbp), %rax
-	movq %rax, -456(%rbp)
+	imulq -496(%rbp), %rax
+	movq %rax, -504(%rbp)
 	# t885 = t886 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -456(%rbp), %rax
+	movq -504(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -464(%rbp)
-	movq $2193, -472(%rbp) # t912 = 2193
+	movq %rax, -512(%rbp)
+	movq $2193, -520(%rbp) # t912 = 2193
 	# t910 = r_s65 * t912 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq $3, -488(%rbp) # t923 = 3
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	movq $3, -536(%rbp) # t923 = 3
 	# t922 = t923 * c_s65 {canonical: (3) * (c_s65)}
-	movq -488(%rbp), %rax
+	movq -536(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -496(%rbp)
+	movq %rax, -544(%rbp)
 	# t909 = t910 + t922 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -480(%rbp), %rax
-	addq -496(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq $2, -512(%rbp) # t941 = 2
+	movq -528(%rbp), %rax
+	addq -544(%rbp), %rax
+	movq %rax, -552(%rbp)
+	movq $2, -560(%rbp) # t941 = 2
 	# t908 = t909 + t941 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) + (2)}
-	movq -504(%rbp), %rax
-	addq -512(%rbp), %rax
-	movq %rax, -520(%rbp)
-	movq -520(%rbp), %rax # t907 = image_s0[t908]
+	movq -552(%rbp), %rax
+	addq -560(%rbp), %rax
+	movq %rax, -568(%rbp)
+	movq -568(%rbp), %rax # t907 = image_s0[t908]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t907 = image_s0[t908]
-	movq %rdx, -528(%rbp)
-	movq $3, -536(%rbp) # t954 = 3
-	movq -536(%rbp), %rax # t953 = unsharpKernel_s0[t954]
+	movq %rdx, -576(%rbp)
+	movq $3, -584(%rbp) # t954 = 3
+	movq -584(%rbp), %rax # t953 = unsharpKernel_s0[t954]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t953 = unsharpKernel_s0[t954]
-	movq %rdx, -544(%rbp)
-	# t906 = t907 * t953 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (2)]) * (unsharpKernel_s0[3])}
-	movq -528(%rbp), %rax
-	imulq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
-	movq -464(%rbp), %rdi
+	movq %rdx, -592(%rbp)
+	# t11366, t906 = t907 * t953 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (2)]) * (unsharpKernel_s0[3])}
+	movq -576(%rbp), %rax
+	imulq -592(%rbp), %rax
+	movq %rax, -600(%rbp)
+	movq %rax, -608(%rbp) # t11366 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (2)]) * (unsharpKernel_s0[3])
+	movq -512(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -848,59 +863,60 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -552(%rbp), %rax # unsharpMask_s0[t885] += t906
+	movq -608(%rbp), %rax # unsharpMask_s0[t885] += t11366 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (2)]) * (unsharpKernel_s0[3])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -560(%rbp) # t971 = 731
+	movq $731, -616(%rbp) # t971 = 731
 	# t969 = r_s65 * t971 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -560(%rbp), %rax
-	movq %rax, -568(%rbp)
+	imulq -616(%rbp), %rax
+	movq %rax, -624(%rbp)
 	# t968 = t969 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -568(%rbp), %rax
+	movq -624(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -576(%rbp)
-	movq $2193, -584(%rbp) # t995 = 2193
+	movq %rax, -632(%rbp)
+	movq $2193, -640(%rbp) # t995 = 2193
 	# t993 = r_s65 * t995 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -584(%rbp), %rax
-	movq %rax, -592(%rbp)
-	movq $3, -600(%rbp) # t1006 = 3
+	imulq -640(%rbp), %rax
+	movq %rax, -648(%rbp)
+	movq $3, -656(%rbp) # t1006 = 3
 	# t1005 = t1006 * c_s65 {canonical: (3) * (c_s65)}
-	movq -600(%rbp), %rax
+	movq -656(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -608(%rbp)
+	movq %rax, -664(%rbp)
 	# t992 = t993 + t1005 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -592(%rbp), %rax
-	addq -608(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq $5, -624(%rbp) # t1024 = 5
+	movq -648(%rbp), %rax
+	addq -664(%rbp), %rax
+	movq %rax, -672(%rbp)
+	movq $5, -680(%rbp) # t1024 = 5
 	# t991 = t992 + t1024 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) + (5)}
-	movq -616(%rbp), %rax
-	addq -624(%rbp), %rax
-	movq %rax, -632(%rbp)
-	movq -632(%rbp), %rax # t990 = image_s0[t991]
+	movq -672(%rbp), %rax
+	addq -680(%rbp), %rax
+	movq %rax, -688(%rbp)
+	movq -688(%rbp), %rax # t990 = image_s0[t991]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t990 = image_s0[t991]
-	movq %rdx, -640(%rbp)
-	movq $4, -648(%rbp) # t1037 = 4
-	movq -648(%rbp), %rax # t1036 = unsharpKernel_s0[t1037]
+	movq %rdx, -696(%rbp)
+	movq $4, -704(%rbp) # t1037 = 4
+	movq -704(%rbp), %rax # t1036 = unsharpKernel_s0[t1037]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1036 = unsharpKernel_s0[t1037]
-	movq %rdx, -656(%rbp)
-	# t989 = t990 * t1036 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (5)]) * (unsharpKernel_s0[4])}
-	movq -640(%rbp), %rax
-	imulq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
-	movq -576(%rbp), %rdi
+	movq %rdx, -712(%rbp)
+	# t11367, t989 = t990 * t1036 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (5)]) * (unsharpKernel_s0[4])}
+	movq -696(%rbp), %rax
+	imulq -712(%rbp), %rax
+	movq %rax, -720(%rbp)
+	movq %rax, -728(%rbp) # t11367 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (5)]) * (unsharpKernel_s0[4])
+	movq -632(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -908,59 +924,60 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -664(%rbp), %rax # unsharpMask_s0[t968] += t989
+	movq -728(%rbp), %rax # unsharpMask_s0[t968] += t11367 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (5)]) * (unsharpKernel_s0[4])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -672(%rbp) # t1054 = 731
+	movq $731, -736(%rbp) # t1054 = 731
 	# t1052 = r_s65 * t1054 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -672(%rbp), %rax
-	movq %rax, -680(%rbp)
+	imulq -736(%rbp), %rax
+	movq %rax, -744(%rbp)
 	# t1051 = t1052 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -680(%rbp), %rax
+	movq -744(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -688(%rbp)
-	movq $2193, -696(%rbp) # t1078 = 2193
+	movq %rax, -752(%rbp)
+	movq $2193, -760(%rbp) # t1078 = 2193
 	# t1076 = r_s65 * t1078 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -696(%rbp), %rax
-	movq %rax, -704(%rbp)
-	movq $3, -712(%rbp) # t1089 = 3
+	imulq -760(%rbp), %rax
+	movq %rax, -768(%rbp)
+	movq $3, -776(%rbp) # t1089 = 3
 	# t1088 = t1089 * c_s65 {canonical: (3) * (c_s65)}
-	movq -712(%rbp), %rax
+	movq -776(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -720(%rbp)
+	movq %rax, -784(%rbp)
 	# t1075 = t1076 + t1088 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -704(%rbp), %rax
-	addq -720(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq $8, -736(%rbp) # t1107 = 8
+	movq -768(%rbp), %rax
+	addq -784(%rbp), %rax
+	movq %rax, -792(%rbp)
+	movq $8, -800(%rbp) # t1107 = 8
 	# t1074 = t1075 + t1107 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) + (8)}
-	movq -728(%rbp), %rax
-	addq -736(%rbp), %rax
-	movq %rax, -744(%rbp)
-	movq -744(%rbp), %rax # t1073 = image_s0[t1074]
+	movq -792(%rbp), %rax
+	addq -800(%rbp), %rax
+	movq %rax, -808(%rbp)
+	movq -808(%rbp), %rax # t1073 = image_s0[t1074]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1073 = image_s0[t1074]
-	movq %rdx, -752(%rbp)
-	movq $5, -760(%rbp) # t1120 = 5
-	movq -760(%rbp), %rax # t1119 = unsharpKernel_s0[t1120]
+	movq %rdx, -816(%rbp)
+	movq $5, -824(%rbp) # t1120 = 5
+	movq -824(%rbp), %rax # t1119 = unsharpKernel_s0[t1120]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1119 = unsharpKernel_s0[t1120]
-	movq %rdx, -768(%rbp)
-	# t1072 = t1073 * t1119 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (8)]) * (unsharpKernel_s0[5])}
-	movq -752(%rbp), %rax
-	imulq -768(%rbp), %rax
-	movq %rax, -776(%rbp)
-	movq -688(%rbp), %rdi
+	movq %rdx, -832(%rbp)
+	# t11368, t1072 = t1073 * t1119 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (8)]) * (unsharpKernel_s0[5])}
+	movq -816(%rbp), %rax
+	imulq -832(%rbp), %rax
+	movq %rax, -840(%rbp)
+	movq %rax, -848(%rbp) # t11368 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (8)]) * (unsharpKernel_s0[5])
+	movq -752(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -968,59 +985,60 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -776(%rbp), %rax # unsharpMask_s0[t1051] += t1072
+	movq -848(%rbp), %rax # unsharpMask_s0[t1051] += t11368 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (8)]) * (unsharpKernel_s0[5])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -784(%rbp) # t1137 = 731
+	movq $731, -856(%rbp) # t1137 = 731
 	# t1135 = r_s65 * t1137 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -784(%rbp), %rax
-	movq %rax, -792(%rbp)
+	imulq -856(%rbp), %rax
+	movq %rax, -864(%rbp)
 	# t1134 = t1135 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -792(%rbp), %rax
+	movq -864(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -800(%rbp)
-	movq $2193, -808(%rbp) # t1161 = 2193
+	movq %rax, -872(%rbp)
+	movq $2193, -880(%rbp) # t1161 = 2193
 	# t1159 = r_s65 * t1161 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -808(%rbp), %rax
-	movq %rax, -816(%rbp)
-	movq $3, -824(%rbp) # t1172 = 3
+	imulq -880(%rbp), %rax
+	movq %rax, -888(%rbp)
+	movq $3, -896(%rbp) # t1172 = 3
 	# t1171 = t1172 * c_s65 {canonical: (3) * (c_s65)}
-	movq -824(%rbp), %rax
+	movq -896(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -832(%rbp)
+	movq %rax, -904(%rbp)
 	# t1158 = t1159 + t1171 {canonical: ((r_s65) * (2193)) + ((3) * (c_s65))}
-	movq -816(%rbp), %rax
-	addq -832(%rbp), %rax
-	movq %rax, -840(%rbp)
-	movq $11, -848(%rbp) # t1190 = 11
+	movq -888(%rbp), %rax
+	addq -904(%rbp), %rax
+	movq %rax, -912(%rbp)
+	movq $11, -920(%rbp) # t1190 = 11
 	# t1157 = t1158 + t1190 {canonical: (((r_s65) * (2193)) + ((3) * (c_s65))) + (11)}
-	movq -840(%rbp), %rax
-	addq -848(%rbp), %rax
-	movq %rax, -856(%rbp)
-	movq -856(%rbp), %rax # t1156 = image_s0[t1157]
+	movq -912(%rbp), %rax
+	addq -920(%rbp), %rax
+	movq %rax, -928(%rbp)
+	movq -928(%rbp), %rax # t1156 = image_s0[t1157]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1156 = image_s0[t1157]
-	movq %rdx, -864(%rbp)
-	movq $6, -872(%rbp) # t1203 = 6
-	movq -872(%rbp), %rax # t1202 = unsharpKernel_s0[t1203]
+	movq %rdx, -936(%rbp)
+	movq $6, -944(%rbp) # t1203 = 6
+	movq -944(%rbp), %rax # t1202 = unsharpKernel_s0[t1203]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1202 = unsharpKernel_s0[t1203]
-	movq %rdx, -880(%rbp)
-	# t1155 = t1156 * t1202 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (11)]) * (unsharpKernel_s0[6])}
-	movq -864(%rbp), %rax
-	imulq -880(%rbp), %rax
-	movq %rax, -888(%rbp)
-	movq -800(%rbp), %rdi
+	movq %rdx, -952(%rbp)
+	# t11369, t1155 = t1156 * t1202 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (11)]) * (unsharpKernel_s0[6])}
+	movq -936(%rbp), %rax
+	imulq -952(%rbp), %rax
+	movq %rax, -960(%rbp)
+	movq %rax, -968(%rbp) # t11369 = (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (11)]) * (unsharpKernel_s0[6])
+	movq -872(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1028,36 +1046,36 @@ _block_1269:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -888(%rbp), %rax # unsharpMask_s0[t1134] += t1155
+	movq -968(%rbp), %rax # unsharpMask_s0[t1134] += t11369 {canonical: (image_s0[(((r_s65) * (2193)) + ((3) * (c_s65))) + (11)]) * (unsharpKernel_s0[6])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -896(%rbp) # t1220 = 731
+	movq $731, -976(%rbp) # t1220 = 731
 	# t1218 = r_s65 * t1220 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -896(%rbp), %rax
-	movq %rax, -904(%rbp)
+	imulq -976(%rbp), %rax
+	movq %rax, -984(%rbp)
 	# t1217 = t1218 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -904(%rbp), %rax
+	movq -984(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -912(%rbp)
-	movq $731, -920(%rbp) # t1242 = 731
+	movq %rax, -992(%rbp)
+	movq $731, -1000(%rbp) # t1242 = 731
 	# t1240 = r_s65 * t1242 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -920(%rbp), %rax
-	movq %rax, -928(%rbp)
+	imulq -1000(%rbp), %rax
+	movq %rax, -1008(%rbp)
 	# t1239 = t1240 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -928(%rbp), %rax
+	movq -1008(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -936(%rbp)
-	movq -936(%rbp), %rax # t1238 = unsharpMask_s0[t1239]
+	movq %rax, -1016(%rbp)
+	movq -1016(%rbp), %rax # t1238 = unsharpMask_s0[t1239]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1238 = unsharpMask_s0[t1239]
-	movq %rdx, -944(%rbp)
-	movq -912(%rbp), %rdi
+	movq %rdx, -1024(%rbp)
+	movq -992(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1066,7 +1084,7 @@ _block_1269:
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
 	# unsharpMask_s0[t1217] = t1238 / kernel_sum_s0 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) / (kernel_sum_s0)}
-	movq -944(%rbp), %rax
+	movq -1024(%rbp), %rax
 	cqto
 	idivq _global_kernel_sum(%rip)
 	movq %rax, (%rdi)
@@ -1077,8 +1095,8 @@ _end_of_block_417:
 	jmp _block_407
 _block_407:
 _block_1278:
-	movq $1, -88(%rbp) # t1274 = 1
-	movq -88(%rbp), %rax # c_s65 += t1274
+	movq $1, -112(%rbp) # t1274 = 1
+	movq -112(%rbp), %rax # c_s65 += t1274
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_1279
@@ -1088,10 +1106,9 @@ _end_of_block_407:
 	jmp _conditional_418
 _block_420:
 _block_1291:
-	# c_s65 = cols_s0 - center_s65 {canonical: (cols_s0) - (center_s65)}
-	movq _global_cols(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -88(%rbp), %rax # c_s65 = shared_t11360 {canonical: (cols_s0) - (center_s65)}
 	movq %rax, -40(%rbp)
+	movq -40(%rbp), %rax
 	jmp _nop_1292
 _nop_1292:
 	jmp _end_of_block_420
@@ -1104,45 +1121,45 @@ _block_1302:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_1304
 _nop_1304:
 	jmp _end_of_conditional_424
 _end_of_conditional_424:
-	cmpq $1, -88(%rbp) # true = t1293
+	cmpq $1, -112(%rbp) # true = t1293
 	jne _block_397 # ifFalse
 	jmp _block_423 # ifTrue
 _block_423:
 _block_1372:
-	movq $731, -88(%rbp) # t1310 = 731
+	movq $731, -112(%rbp) # t1310 = 731
 	# t1308 = r_s65 * t1310 {canonical: (r_s65) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t1307 = t1308 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t1332 = 2193
-	# t1330 = r_s65 * t1332 {canonical: (r_s65) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t1344 = 3
+	# t1307 = t1308 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t1332 = 2193
+	# t1330 = r_s65 * t1332 {canonical: (r_s65) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t1344 = 3
 	# t1342 = c_s65 * t1344 {canonical: (c_s65) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t1329 = t1330 + t1342 {canonical: ((r_s65) * (2193)) + ((c_s65) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $2, -152(%rbp) # t1361 = 2
-	# t1328 = t1329 + t1361 {canonical: (((r_s65) * (2193)) + ((c_s65) * (3))) + (2)}
-	movq -144(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq -104(%rbp), %rdi
+	# t1329 = t1330 + t1342 {canonical: ((r_s65) * (2193)) + ((c_s65) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $2, -176(%rbp) # t1361 = 2
+	# t1328 = t1329 + t1361 {canonical: (((r_s65) * (2193)) + ((c_s65) * (3))) + (2)}
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1150,7 +1167,7 @@ _block_1372:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -160(%rbp), %rax # unsharpMask_s0[t1307] = image_s0[t1328]
+	movq -184(%rbp), %rax # unsharpMask_s0[t1307] = image_s0[t1328]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -1165,8 +1182,8 @@ _end_of_block_423:
 	jmp _block_421
 _block_421:
 _block_1381:
-	movq $1, -88(%rbp) # t1377 = 1
-	movq -88(%rbp), %rax # c_s65 += t1377
+	movq $1, -112(%rbp) # t1377 = 1
+	movq -112(%rbp), %rax # c_s65 += t1377
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_1382
@@ -1176,8 +1193,8 @@ _end_of_block_421:
 	jmp _conditional_424
 _block_397:
 _block_1390:
-	movq $1, -88(%rbp) # t1386 = 1
-	movq -88(%rbp), %rax # r_s65 += t1386
+	movq $1, -112(%rbp) # t1386 = 1
+	movq -112(%rbp), %rax # r_s65 += t1386
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_1391
@@ -1187,19 +1204,22 @@ _end_of_block_397:
 	jmp _conditional_425
 _block_428:
 _block_1415:
-	movq -48(%rbp), %rax # t1394 = center_s65 {canonical: center_s65}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t1399 = center_s65 {canonical: center_s65}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t1398 = unsharpKernel_s0[t1399]
+	movq -48(%rbp), %rax # shared_t11361, t1394 = center_s65 {canonical: center_s65}
+	movq %rax, -112(%rbp)
+	movq %rax, -96(%rbp) # shared_t11361 = center_s65
+	movq -96(%rbp), %rax # shared_t11361, t1399 = shared_t11361 {canonical: center_s65}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq %rax, -96(%rbp) # shared_t11361 = center_s65
+	movq -120(%rbp), %rax # t1398 = unsharpKernel_s0[t1399]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1398 = unsharpKernel_s0[t1399]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1208,7 +1228,7 @@ _block_1415:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t1394] = t1398 - kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s65]) - (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	subq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	movq $0, -40(%rbp) # c_s65 = 0
@@ -1224,19 +1244,19 @@ _block_1426:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_1428
 _nop_1428:
 	jmp _end_of_conditional_463
 _end_of_conditional_463:
-	cmpq $1, -88(%rbp) # true = t1417
+	cmpq $1, -112(%rbp) # true = t1417
 	jne _block_464 # ifFalse
 	jmp _block_435 # ifTrue
 _block_435:
 _block_1470:
 	movq -40(%rbp), %rax # t1432 = c_s65 {canonical: c_s65}
-	movq %rax, -88(%rbp)
-	movq -88(%rbp), %rax # m1_s70 = unsharpMask_s0[t1432]
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax # m1_s70 = unsharpMask_s0[t1432]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -1244,12 +1264,12 @@ _block_1470:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m1_s70 = unsharpMask_s0[t1432]
 	movq %rdx, -56(%rbp)
-	movq $731, -96(%rbp) # t1441 = 731
+	movq $731, -120(%rbp) # t1441 = 731
 	# t1439 = c_s65 + t1441 {canonical: (c_s65) + (731)}
 	movq -40(%rbp), %rax
-	addq -96(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # m2_s70 = unsharpMask_s0[t1439]
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # m2_s70 = unsharpMask_s0[t1439]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -1257,12 +1277,12 @@ _block_1470:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m2_s70 = unsharpMask_s0[t1439]
 	movq %rdx, -64(%rbp)
-	movq $1462, -112(%rbp) # t1456 = 1462
+	movq $1462, -136(%rbp) # t1456 = 1462
 	# t1454 = c_s65 + t1456 {canonical: (c_s65) + (1462)}
 	movq -40(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # m3_s70 = unsharpMask_s0[t1454]
+	addq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq -144(%rbp), %rax # m3_s70 = unsharpMask_s0[t1454]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -1283,26 +1303,26 @@ _block_1481:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_1483
 _nop_1483:
 	jmp _end_of_conditional_439
 _end_of_conditional_439:
-	cmpq $1, -88(%rbp) # true = t1472
+	cmpq $1, -112(%rbp) # true = t1472
 	jne _block_441 # ifFalse
 	jmp _block_438 # ifTrue
 _block_438:
 _block_1508:
-	movq $731, -88(%rbp) # t1489 = 731
+	movq $731, -112(%rbp) # t1489 = 731
 	# t1487 = r_s65 * t1489 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t1486 = t1487 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1318,8 +1338,8 @@ _end_of_block_438:
 	jmp _block_436
 _block_436:
 _block_1517:
-	movq $1, -88(%rbp) # t1513 = 1
-	movq -88(%rbp), %rax # r_s65 += t1513
+	movq $1, -112(%rbp) # t1513 = 1
+	movq -112(%rbp), %rax # r_s65 += t1513
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_1518
@@ -1329,8 +1349,9 @@ _end_of_block_436:
 	jmp _conditional_439
 _block_441:
 _block_1524:
-	movq -48(%rbp), %rax # r_s65 = center_s65 {canonical: center_s65}
+	movq -96(%rbp), %rax # r_s65 = shared_t11361 {canonical: center_s65}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_1525
 _nop_1525:
 	jmp _end_of_block_441
@@ -1338,382 +1359,390 @@ _end_of_block_441:
 	jmp _conditional_456
 _conditional_456:
 _block_1544:
-	# t1528 = rows_s0 - center_s65 {canonical: (rows_s0) - (center_s65)}
+	# shared_t11362, t1528 = rows_s0 - center_s65 {canonical: (rows_s0) - (center_s65)}
 	movq _global_rows(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -104(%rbp) # shared_t11362 = (rows_s0) - (center_s65)
 	# t1526 = r_s65 < t1528 {canonical: (r_s65) < ((rows_s0) - (center_s65))}
 	movq -32(%rbp), %rax # t1526 = r_s65 < t1528 {canonical: (r_s65) < ((rows_s0) - (center_s65))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_1546
 _nop_1546:
 	jmp _end_of_conditional_456
 _end_of_conditional_456:
-	cmpq $1, -96(%rbp) # true = t1526
+	cmpq $1, -120(%rbp) # true = t1526
 	jne _block_458 # ifFalse
 	jmp _block_455 # ifTrue
 _block_455:
 _block_2088:
 	movq $0, -80(%rbp) # dot_s72 = 0
-	movq $731, -88(%rbp) # t1558 = 731
+	movq $731, -112(%rbp) # t1558 = 731
 	# t1556 = r_s65 * t1558 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t1555 = t1556 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # t1554 = unsharpMask_s0[t1555]
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t1554 = unsharpMask_s0[t1555]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1554 = unsharpMask_s0[t1555]
-	movq %rdx, -112(%rbp)
-	movq $0, -120(%rbp) # t1581 = 0
-	movq -120(%rbp), %rax # t1580 = unsharpKernel_s0[t1581]
+	movq %rdx, -136(%rbp)
+	movq $0, -144(%rbp) # t1581 = 0
+	movq -144(%rbp), %rax # t1580 = unsharpKernel_s0[t1581]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1580 = unsharpKernel_s0[t1581]
-	movq %rdx, -128(%rbp)
+	movq %rdx, -152(%rbp)
 	# t1578 = m1_s70 * t1580 {canonical: (m1_s70) * (unsharpKernel_s0[0])}
 	movq -56(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t1553 = t1554 + t1578 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m1_s70) * (unsharpKernel_s0[0]))}
-	movq -112(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq -144(%rbp), %rax # dot_s72 += t1553
-	addq %rax, -80(%rbp)
-	movq -80(%rbp), %rax
-	movq $731, -152(%rbp) # t1608 = 731
-	# t1606 = r_s65 * t1608 {canonical: (r_s65) * (731)}
-	movq -32(%rbp), %rax
 	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	# t1605 = t1606 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -160(%rbp), %rax
-	addq -40(%rbp), %rax
+	# t11370, t1553 = t1554 + t1578 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m1_s70) * (unsharpKernel_s0[0]))}
+	movq -136(%rbp), %rax
+	addq -160(%rbp), %rax
 	movq %rax, -168(%rbp)
-	movq -168(%rbp), %rax # t1604 = unsharpMask_s0[t1605]
+	movq %rax, -176(%rbp) # t11370 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m1_s70) * (unsharpKernel_s0[0]))
+	movq -176(%rbp), %rax # dot_s72 += t11370 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m1_s70) * (unsharpKernel_s0[0]))}
+	addq %rax, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq $731, -184(%rbp) # t1608 = 731
+	# t1606 = r_s65 * t1608 {canonical: (r_s65) * (731)}
+	movq -32(%rbp), %rax
+	imulq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	# t1605 = t1606 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
+	movq -192(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -200(%rbp)
+	movq -200(%rbp), %rax # t1604 = unsharpMask_s0[t1605]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1604 = unsharpMask_s0[t1605]
-	movq %rdx, -176(%rbp)
-	movq $1, -184(%rbp) # t1631 = 1
-	movq -184(%rbp), %rax # t1630 = unsharpKernel_s0[t1631]
+	movq %rdx, -208(%rbp)
+	movq $1, -216(%rbp) # t1631 = 1
+	movq -216(%rbp), %rax # t1630 = unsharpKernel_s0[t1631]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1630 = unsharpKernel_s0[t1631]
-	movq %rdx, -192(%rbp)
+	movq %rdx, -224(%rbp)
 	# t1628 = m2_s70 * t1630 {canonical: (m2_s70) * (unsharpKernel_s0[1])}
 	movq -64(%rbp), %rax
-	imulq -192(%rbp), %rax
-	movq %rax, -200(%rbp)
-	# t1603 = t1604 + t1628 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m2_s70) * (unsharpKernel_s0[1]))}
-	movq -176(%rbp), %rax
-	addq -200(%rbp), %rax
-	movq %rax, -208(%rbp)
-	movq -208(%rbp), %rax # dot_s72 += t1603
+	imulq -224(%rbp), %rax
+	movq %rax, -232(%rbp)
+	# t11371, t1603 = t1604 + t1628 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m2_s70) * (unsharpKernel_s0[1]))}
+	movq -208(%rbp), %rax
+	addq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11371 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m2_s70) * (unsharpKernel_s0[1]))
+	movq -248(%rbp), %rax # dot_s72 += t11371 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m2_s70) * (unsharpKernel_s0[1]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -216(%rbp) # t1658 = 731
+	movq $731, -256(%rbp) # t1658 = 731
 	# t1656 = r_s65 * t1658 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -216(%rbp), %rax
-	movq %rax, -224(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t1655 = t1656 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -224(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -232(%rbp)
-	movq -232(%rbp), %rax # t1654 = unsharpMask_s0[t1655]
+	movq %rax, -272(%rbp)
+	movq -272(%rbp), %rax # t1654 = unsharpMask_s0[t1655]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1654 = unsharpMask_s0[t1655]
-	movq %rdx, -240(%rbp)
-	movq $2, -248(%rbp) # t1681 = 2
-	movq -248(%rbp), %rax # t1680 = unsharpKernel_s0[t1681]
+	movq %rdx, -280(%rbp)
+	movq $2, -288(%rbp) # t1681 = 2
+	movq -288(%rbp), %rax # t1680 = unsharpKernel_s0[t1681]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1680 = unsharpKernel_s0[t1681]
-	movq %rdx, -256(%rbp)
+	movq %rdx, -296(%rbp)
 	# t1678 = m3_s70 * t1680 {canonical: (m3_s70) * (unsharpKernel_s0[2])}
 	movq -72(%rbp), %rax
-	imulq -256(%rbp), %rax
-	movq %rax, -264(%rbp)
-	# t1653 = t1654 + t1678 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m3_s70) * (unsharpKernel_s0[2]))}
-	movq -240(%rbp), %rax
-	addq -264(%rbp), %rax
-	movq %rax, -272(%rbp)
-	movq -272(%rbp), %rax # dot_s72 += t1653
+	imulq -296(%rbp), %rax
+	movq %rax, -304(%rbp)
+	# t11372, t1653 = t1654 + t1678 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m3_s70) * (unsharpKernel_s0[2]))}
+	movq -280(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq %rax, -320(%rbp) # t11372 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m3_s70) * (unsharpKernel_s0[2]))
+	movq -320(%rbp), %rax # dot_s72 += t11372 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((m3_s70) * (unsharpKernel_s0[2]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -280(%rbp) # t1708 = 731
+	movq $731, -328(%rbp) # t1708 = 731
 	# t1706 = r_s65 * t1708 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -280(%rbp), %rax
-	movq %rax, -288(%rbp)
+	imulq -328(%rbp), %rax
+	movq %rax, -336(%rbp)
 	# t1705 = t1706 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -288(%rbp), %rax
+	movq -336(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t1704 = unsharpMask_s0[t1705]
+	movq %rax, -344(%rbp)
+	movq -344(%rbp), %rax # t1704 = unsharpMask_s0[t1705]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1704 = unsharpMask_s0[t1705]
-	movq %rdx, -304(%rbp)
-	movq $731, -312(%rbp) # t1732 = 731
+	movq %rdx, -352(%rbp)
+	movq $731, -360(%rbp) # t1732 = 731
 	# t1731 = t1732 * r_s65 {canonical: (731) * (r_s65)}
-	movq -312(%rbp), %rax
+	movq -360(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -320(%rbp)
+	movq %rax, -368(%rbp)
 	# t1730 = t1731 + c_s65 {canonical: ((731) * (r_s65)) + (c_s65)}
-	movq -320(%rbp), %rax
+	movq -368(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -328(%rbp), %rax # t1729 = unsharpMask_s0[t1730]
+	movq %rax, -376(%rbp)
+	movq -376(%rbp), %rax # t1729 = unsharpMask_s0[t1730]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1729 = unsharpMask_s0[t1730]
-	movq %rdx, -336(%rbp)
-	movq $3, -344(%rbp) # t1754 = 3
-	movq -344(%rbp), %rax # t1753 = unsharpKernel_s0[t1754]
+	movq %rdx, -384(%rbp)
+	movq $3, -392(%rbp) # t1754 = 3
+	movq -392(%rbp), %rax # t1753 = unsharpKernel_s0[t1754]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1753 = unsharpKernel_s0[t1754]
-	movq %rdx, -352(%rbp)
+	movq %rdx, -400(%rbp)
 	# t1728 = t1729 * t1753 {canonical: (unsharpMask_s0[((731) * (r_s65)) + (c_s65)]) * (unsharpKernel_s0[3])}
-	movq -336(%rbp), %rax
-	imulq -352(%rbp), %rax
-	movq %rax, -360(%rbp)
-	# t1703 = t1704 + t1728 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[((731) * (r_s65)) + (c_s65)]) * (unsharpKernel_s0[3]))}
-	movq -304(%rbp), %rax
-	addq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq -368(%rbp), %rax # dot_s72 += t1703
+	movq -384(%rbp), %rax
+	imulq -400(%rbp), %rax
+	movq %rax, -408(%rbp)
+	# t11373, t1703 = t1704 + t1728 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[((731) * (r_s65)) + (c_s65)]) * (unsharpKernel_s0[3]))}
+	movq -352(%rbp), %rax
+	addq -408(%rbp), %rax
+	movq %rax, -416(%rbp)
+	movq %rax, -424(%rbp) # t11373 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[((731) * (r_s65)) + (c_s65)]) * (unsharpKernel_s0[3]))
+	movq -424(%rbp), %rax # dot_s72 += t11373 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[((731) * (r_s65)) + (c_s65)]) * (unsharpKernel_s0[3]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -376(%rbp) # t1781 = 731
+	movq $731, -432(%rbp) # t1781 = 731
 	# t1779 = r_s65 * t1781 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -376(%rbp), %rax
-	movq %rax, -384(%rbp)
+	imulq -432(%rbp), %rax
+	movq %rax, -440(%rbp)
 	# t1778 = t1779 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -384(%rbp), %rax
+	movq -440(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq -392(%rbp), %rax # t1777 = unsharpMask_s0[t1778]
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t1777 = unsharpMask_s0[t1778]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1777 = unsharpMask_s0[t1778]
-	movq %rdx, -400(%rbp)
-	movq $731, -408(%rbp) # t1806 = 731
+	movq %rdx, -456(%rbp)
+	movq $731, -464(%rbp) # t1806 = 731
 	# t1805 = t1806 * r_s65 {canonical: (731) * (r_s65)}
-	movq -408(%rbp), %rax
+	movq -464(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -416(%rbp)
+	movq %rax, -472(%rbp)
 	# t1804 = t1805 + c_s65 {canonical: ((731) * (r_s65)) + (c_s65)}
-	movq -416(%rbp), %rax
+	movq -472(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -424(%rbp)
-	movq $731, -432(%rbp) # t1825 = 731
+	movq %rax, -480(%rbp)
+	movq $731, -488(%rbp) # t1825 = 731
 	# t1803 = t1804 + t1825 {canonical: (((731) * (r_s65)) + (c_s65)) + (731)}
-	movq -424(%rbp), %rax
-	addq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -440(%rbp), %rax # t1802 = unsharpMask_s0[t1803]
+	movq -480(%rbp), %rax
+	addq -488(%rbp), %rax
+	movq %rax, -496(%rbp)
+	movq -496(%rbp), %rax # t1802 = unsharpMask_s0[t1803]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1802 = unsharpMask_s0[t1803]
-	movq %rdx, -448(%rbp)
-	movq $4, -456(%rbp) # t1838 = 4
-	movq -456(%rbp), %rax # t1837 = unsharpKernel_s0[t1838]
+	movq %rdx, -504(%rbp)
+	movq $4, -512(%rbp) # t1838 = 4
+	movq -512(%rbp), %rax # t1837 = unsharpKernel_s0[t1838]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1837 = unsharpKernel_s0[t1838]
-	movq %rdx, -464(%rbp)
+	movq %rdx, -520(%rbp)
 	# t1801 = t1802 * t1837 {canonical: (unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (731)]) * (unsharpKernel_s0[4])}
-	movq -448(%rbp), %rax
-	imulq -464(%rbp), %rax
-	movq %rax, -472(%rbp)
-	# t1776 = t1777 + t1801 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (731)]) * (unsharpKernel_s0[4]))}
-	movq -400(%rbp), %rax
-	addq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq -480(%rbp), %rax # dot_s72 += t1776
+	movq -504(%rbp), %rax
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	# t11374, t1776 = t1777 + t1801 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (731)]) * (unsharpKernel_s0[4]))}
+	movq -456(%rbp), %rax
+	addq -528(%rbp), %rax
+	movq %rax, -536(%rbp)
+	movq %rax, -544(%rbp) # t11374 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (731)]) * (unsharpKernel_s0[4]))
+	movq -544(%rbp), %rax # dot_s72 += t11374 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (731)]) * (unsharpKernel_s0[4]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -488(%rbp) # t1865 = 731
+	movq $731, -552(%rbp) # t1865 = 731
 	# t1863 = r_s65 * t1865 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -488(%rbp), %rax
-	movq %rax, -496(%rbp)
+	imulq -552(%rbp), %rax
+	movq %rax, -560(%rbp)
 	# t1862 = t1863 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -496(%rbp), %rax
+	movq -560(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq -504(%rbp), %rax # t1861 = unsharpMask_s0[t1862]
+	movq %rax, -568(%rbp)
+	movq -568(%rbp), %rax # t1861 = unsharpMask_s0[t1862]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1861 = unsharpMask_s0[t1862]
-	movq %rdx, -512(%rbp)
-	movq $731, -520(%rbp) # t1890 = 731
+	movq %rdx, -576(%rbp)
+	movq $731, -584(%rbp) # t1890 = 731
 	# t1889 = t1890 * r_s65 {canonical: (731) * (r_s65)}
-	movq -520(%rbp), %rax
+	movq -584(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -528(%rbp)
+	movq %rax, -592(%rbp)
 	# t1888 = t1889 + c_s65 {canonical: ((731) * (r_s65)) + (c_s65)}
-	movq -528(%rbp), %rax
+	movq -592(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -536(%rbp)
-	movq $1462, -544(%rbp) # t1909 = 1462
+	movq %rax, -600(%rbp)
+	movq $1462, -608(%rbp) # t1909 = 1462
 	# t1887 = t1888 + t1909 {canonical: (((731) * (r_s65)) + (c_s65)) + (1462)}
-	movq -536(%rbp), %rax
-	addq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
-	movq -552(%rbp), %rax # t1886 = unsharpMask_s0[t1887]
+	movq -600(%rbp), %rax
+	addq -608(%rbp), %rax
+	movq %rax, -616(%rbp)
+	movq -616(%rbp), %rax # t1886 = unsharpMask_s0[t1887]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1886 = unsharpMask_s0[t1887]
-	movq %rdx, -560(%rbp)
-	movq $5, -568(%rbp) # t1922 = 5
-	movq -568(%rbp), %rax # t1921 = unsharpKernel_s0[t1922]
+	movq %rdx, -624(%rbp)
+	movq $5, -632(%rbp) # t1922 = 5
+	movq -632(%rbp), %rax # t1921 = unsharpKernel_s0[t1922]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1921 = unsharpKernel_s0[t1922]
-	movq %rdx, -576(%rbp)
+	movq %rdx, -640(%rbp)
 	# t1885 = t1886 * t1921 {canonical: (unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (1462)]) * (unsharpKernel_s0[5])}
-	movq -560(%rbp), %rax
-	imulq -576(%rbp), %rax
-	movq %rax, -584(%rbp)
-	# t1860 = t1861 + t1885 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (1462)]) * (unsharpKernel_s0[5]))}
-	movq -512(%rbp), %rax
-	addq -584(%rbp), %rax
-	movq %rax, -592(%rbp)
-	movq -592(%rbp), %rax # dot_s72 += t1860
+	movq -624(%rbp), %rax
+	imulq -640(%rbp), %rax
+	movq %rax, -648(%rbp)
+	# t11375, t1860 = t1861 + t1885 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (1462)]) * (unsharpKernel_s0[5]))}
+	movq -576(%rbp), %rax
+	addq -648(%rbp), %rax
+	movq %rax, -656(%rbp)
+	movq %rax, -664(%rbp) # t11375 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (1462)]) * (unsharpKernel_s0[5]))
+	movq -664(%rbp), %rax # dot_s72 += t11375 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (1462)]) * (unsharpKernel_s0[5]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -600(%rbp) # t1949 = 731
+	movq $731, -672(%rbp) # t1949 = 731
 	# t1947 = r_s65 * t1949 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -600(%rbp), %rax
-	movq %rax, -608(%rbp)
+	imulq -672(%rbp), %rax
+	movq %rax, -680(%rbp)
 	# t1946 = t1947 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -608(%rbp), %rax
+	movq -680(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq -616(%rbp), %rax # t1945 = unsharpMask_s0[t1946]
+	movq %rax, -688(%rbp)
+	movq -688(%rbp), %rax # t1945 = unsharpMask_s0[t1946]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1945 = unsharpMask_s0[t1946]
-	movq %rdx, -624(%rbp)
-	movq $731, -632(%rbp) # t1974 = 731
+	movq %rdx, -696(%rbp)
+	movq $731, -704(%rbp) # t1974 = 731
 	# t1973 = t1974 * r_s65 {canonical: (731) * (r_s65)}
-	movq -632(%rbp), %rax
+	movq -704(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -640(%rbp)
+	movq %rax, -712(%rbp)
 	# t1972 = t1973 + c_s65 {canonical: ((731) * (r_s65)) + (c_s65)}
-	movq -640(%rbp), %rax
+	movq -712(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -648(%rbp)
-	movq $2193, -656(%rbp) # t1993 = 2193
+	movq %rax, -720(%rbp)
+	movq $2193, -728(%rbp) # t1993 = 2193
 	# t1971 = t1972 + t1993 {canonical: (((731) * (r_s65)) + (c_s65)) + (2193)}
-	movq -648(%rbp), %rax
-	addq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
-	movq -664(%rbp), %rax # t1970 = unsharpMask_s0[t1971]
+	movq -720(%rbp), %rax
+	addq -728(%rbp), %rax
+	movq %rax, -736(%rbp)
+	movq -736(%rbp), %rax # t1970 = unsharpMask_s0[t1971]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t1970 = unsharpMask_s0[t1971]
-	movq %rdx, -672(%rbp)
-	movq $6, -680(%rbp) # t2006 = 6
-	movq -680(%rbp), %rax # t2005 = unsharpKernel_s0[t2006]
+	movq %rdx, -744(%rbp)
+	movq $6, -752(%rbp) # t2006 = 6
+	movq -752(%rbp), %rax # t2005 = unsharpKernel_s0[t2006]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2005 = unsharpKernel_s0[t2006]
-	movq %rdx, -688(%rbp)
+	movq %rdx, -760(%rbp)
 	# t1969 = t1970 * t2005 {canonical: (unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (2193)]) * (unsharpKernel_s0[6])}
-	movq -672(%rbp), %rax
-	imulq -688(%rbp), %rax
-	movq %rax, -696(%rbp)
-	# t1944 = t1945 + t1969 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (2193)]) * (unsharpKernel_s0[6]))}
-	movq -624(%rbp), %rax
-	addq -696(%rbp), %rax
-	movq %rax, -704(%rbp)
-	movq -704(%rbp), %rax # dot_s72 += t1944
+	movq -744(%rbp), %rax
+	imulq -760(%rbp), %rax
+	movq %rax, -768(%rbp)
+	# t11376, t1944 = t1945 + t1969 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (2193)]) * (unsharpKernel_s0[6]))}
+	movq -696(%rbp), %rax
+	addq -768(%rbp), %rax
+	movq %rax, -776(%rbp)
+	movq %rax, -784(%rbp) # t11376 = (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (2193)]) * (unsharpKernel_s0[6]))
+	movq -784(%rbp), %rax # dot_s72 += t11376 {canonical: (unsharpMask_s0[((r_s65) * (731)) + (c_s65)]) + ((unsharpMask_s0[(((731) * (r_s65)) + (c_s65)) + (2193)]) * (unsharpKernel_s0[6]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
 	movq -64(%rbp), %rax # m1_s70 = m2_s70 {canonical: m2_s70}
 	movq %rax, -56(%rbp)
 	movq -72(%rbp), %rax # m2_s70 = m3_s70 {canonical: m3_s70}
 	movq %rax, -64(%rbp)
-	movq $731, -712(%rbp) # t2039 = 731
+	movq $731, -792(%rbp) # t2039 = 731
 	# t2037 = r_s65 * t2039 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -712(%rbp), %rax
-	movq %rax, -720(%rbp)
+	imulq -792(%rbp), %rax
+	movq %rax, -800(%rbp)
 	# t2036 = t2037 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -720(%rbp), %rax
+	movq -800(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq -728(%rbp), %rax # m3_s70 = unsharpMask_s0[t2036]
+	movq %rax, -808(%rbp)
+	movq -808(%rbp), %rax # m3_s70 = unsharpMask_s0[t2036]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -1721,16 +1750,16 @@ _block_2088:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m3_s70 = unsharpMask_s0[t2036]
 	movq %rdx, -72(%rbp)
-	movq $731, -736(%rbp) # t2062 = 731
+	movq $731, -816(%rbp) # t2062 = 731
 	# t2060 = r_s65 * t2062 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -736(%rbp), %rax
-	movq %rax, -744(%rbp)
+	imulq -816(%rbp), %rax
+	movq %rax, -824(%rbp)
 	# t2059 = t2060 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -744(%rbp), %rax
+	movq -824(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -752(%rbp)
-	movq -752(%rbp), %rdi
+	movq %rax, -832(%rbp)
+	movq -832(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1750,8 +1779,8 @@ _end_of_block_455:
 	jmp _block_442
 _block_442:
 _block_2097:
-	movq $1, -88(%rbp) # t2093 = 1
-	movq -88(%rbp), %rax # r_s65 += t2093
+	movq $1, -112(%rbp) # t2093 = 1
+	movq -112(%rbp), %rax # r_s65 += t2093
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_2098
@@ -1761,10 +1790,9 @@ _end_of_block_442:
 	jmp _conditional_456
 _block_458:
 _block_2110:
-	# r_s65 = rows_s0 - center_s65 {canonical: (rows_s0) - (center_s65)}
-	movq _global_rows(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -104(%rbp), %rax # r_s65 = shared_t11362 {canonical: (rows_s0) - (center_s65)}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_2111
 _nop_2111:
 	jmp _end_of_block_458
@@ -1777,26 +1805,26 @@ _block_2121:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_2123
 _nop_2123:
 	jmp _end_of_conditional_462
 _end_of_conditional_462:
-	cmpq $1, -88(%rbp) # true = t2112
+	cmpq $1, -112(%rbp) # true = t2112
 	jne _block_429 # ifFalse
 	jmp _block_461 # ifTrue
 _block_461:
 _block_2148:
-	movq $731, -88(%rbp) # t2129 = 731
+	movq $731, -112(%rbp) # t2129 = 731
 	# t2127 = r_s65 * t2129 {canonical: (r_s65) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t2126 = t2127 + c_s65 {canonical: ((r_s65) * (731)) + (c_s65)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1812,8 +1840,8 @@ _end_of_block_461:
 	jmp _block_459
 _block_459:
 _block_2157:
-	movq $1, -88(%rbp) # t2153 = 1
-	movq -88(%rbp), %rax # r_s65 += t2153
+	movq $1, -112(%rbp) # t2153 = 1
+	movq -112(%rbp), %rax # r_s65 += t2153
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_2158
@@ -1823,8 +1851,8 @@ _end_of_block_459:
 	jmp _conditional_462
 _block_429:
 _block_2166:
-	movq $1, -88(%rbp) # t2162 = 1
-	movq -88(%rbp), %rax # c_s65 += t2162
+	movq $1, -112(%rbp) # t2162 = 1
+	movq -112(%rbp), %rax # c_s65 += t2162
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_2167
@@ -1834,19 +1862,21 @@ _end_of_block_429:
 	jmp _conditional_463
 _block_464:
 _block_2188:
-	movq -48(%rbp), %rax # t2170 = center_s65 {canonical: center_s65}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t2175 = center_s65 {canonical: center_s65}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t2174 = unsharpKernel_s0[t2175]
+	movq -96(%rbp), %rax # t2170 = shared_t11361 {canonical: center_s65}
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax
+	movq -96(%rbp), %rax # t2175 = shared_t11361 {canonical: center_s65}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq -120(%rbp), %rax # t2174 = unsharpKernel_s0[t2175]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2174 = unsharpKernel_s0[t2175]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -1855,7 +1885,7 @@ _block_2188:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t2170] = t2174 + kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s65]) + (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	addq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	jmp _nop_2189
@@ -2176,7 +2206,7 @@ _return_2335:
 	ret
 
 _method_createUnsharpMaskS:
-	enter $(944), $0
+	enter $(1024), $0
 	movq $0, -8(%rbp)
 	movq $0, -16(%rbp)
 	movq $0, -24(%rbp)
@@ -2295,6 +2325,16 @@ _method_createUnsharpMaskS:
 	movq $0, -928(%rbp)
 	movq $0, -936(%rbp)
 	movq $0, -944(%rbp)
+	movq $0, -952(%rbp)
+	movq $0, -960(%rbp)
+	movq $0, -968(%rbp)
+	movq $0, -976(%rbp)
+	movq $0, -984(%rbp)
+	movq $0, -992(%rbp)
+	movq $0, -1000(%rbp)
+	movq $0, -1008(%rbp)
+	movq $0, -1016(%rbp)
+	movq $0, -1024(%rbp)
 	# save callee-save registers
 	pushq %rbx
 	movq $0, %rbx
@@ -2323,12 +2363,12 @@ _block_2501:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_2503
 _nop_2503:
 	jmp _end_of_conditional_2442
 _end_of_conditional_2442:
-	cmpq $1, -88(%rbp) # true = t2492
+	cmpq $1, -112(%rbp) # true = t2492
 	jne _block_2445 # ifFalse
 	jmp _block_2417 # ifTrue
 _block_2417:
@@ -2346,45 +2386,45 @@ _block_2519:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_2521
 _nop_2521:
 	jmp _end_of_conditional_2421
 _end_of_conditional_2421:
-	cmpq $1, -88(%rbp) # true = t2510
+	cmpq $1, -112(%rbp) # true = t2510
 	jne _block_2423 # ifFalse
 	jmp _block_2420 # ifTrue
 _block_2420:
 _block_2589:
-	movq $731, -88(%rbp) # t2527 = 731
+	movq $731, -112(%rbp) # t2527 = 731
 	# t2525 = r_s55 * t2527 {canonical: (r_s55) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t2524 = t2525 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t2549 = 2193
-	# t2547 = r_s55 * t2549 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t2561 = 3
+	# t2524 = t2525 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t2549 = 2193
+	# t2547 = r_s55 * t2549 {canonical: (r_s55) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t2561 = 3
 	# t2559 = c_s55 * t2561 {canonical: (c_s55) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t2546 = t2547 + t2559 {canonical: ((r_s55) * (2193)) + ((c_s55) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $1, -152(%rbp) # t2578 = 1
-	# t2545 = t2546 + t2578 {canonical: (((r_s55) * (2193)) + ((c_s55) * (3))) + (1)}
-	movq -144(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq -104(%rbp), %rdi
+	# t2546 = t2547 + t2559 {canonical: ((r_s55) * (2193)) + ((c_s55) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $1, -176(%rbp) # t2578 = 1
+	# t2545 = t2546 + t2578 {canonical: (((r_s55) * (2193)) + ((c_s55) * (3))) + (1)}
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2392,7 +2432,7 @@ _block_2589:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -160(%rbp), %rax # unsharpMask_s0[t2524] = image_s0[t2545]
+	movq -184(%rbp), %rax # unsharpMask_s0[t2524] = image_s0[t2545]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -2407,8 +2447,8 @@ _end_of_block_2420:
 	jmp _block_2418
 _block_2418:
 _block_2598:
-	movq $1, -88(%rbp) # t2594 = 1
-	movq -88(%rbp), %rax # c_s55 += t2594
+	movq $1, -112(%rbp) # t2594 = 1
+	movq -112(%rbp), %rax # c_s55 += t2594
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_2599
@@ -2427,92 +2467,35 @@ _end_of_block_2423:
 	jmp _conditional_2435
 _conditional_2435:
 _block_2625:
-	# t2609 = cols_s0 - center_s55 {canonical: (cols_s0) - (center_s55)}
+	# shared_t11380, t2609 = cols_s0 - center_s55 {canonical: (cols_s0) - (center_s55)}
 	movq _global_cols(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -88(%rbp) # shared_t11380 = (cols_s0) - (center_s55)
 	# t2607 = c_s55 < t2609 {canonical: (c_s55) < ((cols_s0) - (center_s55))}
 	movq -40(%rbp), %rax # t2607 = c_s55 < t2609 {canonical: (c_s55) < ((cols_s0) - (center_s55))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_2627
 _nop_2627:
 	jmp _end_of_conditional_2435
 _end_of_conditional_2435:
-	cmpq $1, -96(%rbp) # true = t2607
+	cmpq $1, -120(%rbp) # true = t2607
 	jne _block_2437 # ifFalse
 	jmp _block_2434 # ifTrue
 _block_2434:
 _block_3286:
-	movq $731, -88(%rbp) # t2633 = 731
+	movq $731, -112(%rbp) # t2633 = 731
 	# t2631 = r_s55 * t2633 {canonical: (r_s55) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t2630 = t2631 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
-	cmpq $750000, %rdi
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rdi
-	jl _sp_method_exit_with_status_1
-	leaq 0(,%rdi,8), %rcx
-	leaq _global_unsharpMask, %rdi
-	add %rcx, %rdi
-	movq $0, (%rdi) # unsharpMask_s0[t2630] = 0
-	movq $731, -112(%rbp) # t2656 = 731
-	# t2654 = r_s55 * t2656 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	# t2653 = t2654 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
+	# t2630 = t2631 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
 	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
 	movq %rax, -128(%rbp)
-	movq $2193, -136(%rbp) # t2680 = 2193
-	# t2678 = r_s55 * t2680 {canonical: (r_s55) * (2193)}
-	movq -32(%rbp), %rax
-	imulq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $3, -152(%rbp) # t2691 = 3
-	# t2690 = t2691 * c_s55 {canonical: (3) * (c_s55)}
-	movq -152(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -160(%rbp)
-	# t2677 = t2678 + t2690 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -144(%rbp), %rax
-	addq -160(%rbp), %rax
-	movq %rax, -168(%rbp)
-	movq $8, -176(%rbp) # t2709 = 8
-	# t2676 = t2677 - t2709 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) - (8)}
-	movq -168(%rbp), %rax
-	subq -176(%rbp), %rax
-	movq %rax, -184(%rbp)
-	movq -184(%rbp), %rax # t2675 = image_s0[t2676]
-	cmpq $2300000, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_image(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t2675 = image_s0[t2676]
-	movq %rdx, -192(%rbp)
-	movq $0, -200(%rbp) # t2722 = 0
-	movq -200(%rbp), %rax # t2721 = unsharpKernel_s0[t2722]
-	cmpq $9, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_unsharpKernel(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t2721 = unsharpKernel_s0[t2722]
-	movq %rdx, -208(%rbp)
-	# t2674 = t2675 * t2721 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (8)]) * (unsharpKernel_s0[0])}
-	movq -192(%rbp), %rax
-	imulq -208(%rbp), %rax
-	movq %rax, -216(%rbp)
 	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
@@ -2521,59 +2504,119 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -216(%rbp), %rax # unsharpMask_s0[t2653] += t2674
+	movq $0, (%rdi) # unsharpMask_s0[t2630] = 0
+	movq $731, -136(%rbp) # t2656 = 731
+	# t2654 = r_s55 * t2656 {canonical: (r_s55) * (731)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	# t2653 = t2654 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
+	movq -144(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -152(%rbp)
+	movq $2193, -160(%rbp) # t2680 = 2193
+	# t2678 = r_s55 * t2680 {canonical: (r_s55) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $3, -176(%rbp) # t2691 = 3
+	# t2690 = t2691 * c_s55 {canonical: (3) * (c_s55)}
+	movq -176(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -184(%rbp)
+	# t2677 = t2678 + t2690 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
+	movq -168(%rbp), %rax
+	addq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	movq $8, -200(%rbp) # t2709 = 8
+	# t2676 = t2677 - t2709 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) - (8)}
+	movq -192(%rbp), %rax
+	subq -200(%rbp), %rax
+	movq %rax, -208(%rbp)
+	movq -208(%rbp), %rax # t2675 = image_s0[t2676]
+	cmpq $2300000, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_image(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t2675 = image_s0[t2676]
+	movq %rdx, -216(%rbp)
+	movq $0, -224(%rbp) # t2722 = 0
+	movq -224(%rbp), %rax # t2721 = unsharpKernel_s0[t2722]
+	cmpq $9, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_unsharpKernel(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t2721 = unsharpKernel_s0[t2722]
+	movq %rdx, -232(%rbp)
+	# t11383, t2674 = t2675 * t2721 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (8)]) * (unsharpKernel_s0[0])}
+	movq -216(%rbp), %rax
+	imulq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11383 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (8)]) * (unsharpKernel_s0[0])
+	movq -152(%rbp), %rdi
+	cmpq $750000, %rdi
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rdi
+	jl _sp_method_exit_with_status_1
+	leaq 0(,%rdi,8), %rcx
+	leaq _global_unsharpMask, %rdi
+	add %rcx, %rdi
+	movq -248(%rbp), %rax # unsharpMask_s0[t2653] += t11383 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (8)]) * (unsharpKernel_s0[0])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -224(%rbp) # t2739 = 731
+	movq $731, -256(%rbp) # t2739 = 731
 	# t2737 = r_s55 * t2739 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -224(%rbp), %rax
-	movq %rax, -232(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t2736 = t2737 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -232(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -240(%rbp)
-	movq $2193, -248(%rbp) # t2763 = 2193
+	movq %rax, -272(%rbp)
+	movq $2193, -280(%rbp) # t2763 = 2193
 	# t2761 = r_s55 * t2763 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -248(%rbp), %rax
-	movq %rax, -256(%rbp)
-	movq $3, -264(%rbp) # t2774 = 3
+	imulq -280(%rbp), %rax
+	movq %rax, -288(%rbp)
+	movq $3, -296(%rbp) # t2774 = 3
 	# t2773 = t2774 * c_s55 {canonical: (3) * (c_s55)}
-	movq -264(%rbp), %rax
+	movq -296(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -272(%rbp)
+	movq %rax, -304(%rbp)
 	# t2760 = t2761 + t2773 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -256(%rbp), %rax
-	addq -272(%rbp), %rax
-	movq %rax, -280(%rbp)
-	movq $5, -288(%rbp) # t2792 = 5
+	movq -288(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq $5, -320(%rbp) # t2792 = 5
 	# t2759 = t2760 - t2792 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) - (5)}
-	movq -280(%rbp), %rax
-	subq -288(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t2758 = image_s0[t2759]
+	movq -312(%rbp), %rax
+	subq -320(%rbp), %rax
+	movq %rax, -328(%rbp)
+	movq -328(%rbp), %rax # t2758 = image_s0[t2759]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2758 = image_s0[t2759]
-	movq %rdx, -304(%rbp)
-	movq $1, -312(%rbp) # t2805 = 1
-	movq -312(%rbp), %rax # t2804 = unsharpKernel_s0[t2805]
+	movq %rdx, -336(%rbp)
+	movq $1, -344(%rbp) # t2805 = 1
+	movq -344(%rbp), %rax # t2804 = unsharpKernel_s0[t2805]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2804 = unsharpKernel_s0[t2805]
-	movq %rdx, -320(%rbp)
-	# t2757 = t2758 * t2804 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (5)]) * (unsharpKernel_s0[1])}
-	movq -304(%rbp), %rax
-	imulq -320(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -240(%rbp), %rdi
+	movq %rdx, -352(%rbp)
+	# t11384, t2757 = t2758 * t2804 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (5)]) * (unsharpKernel_s0[1])}
+	movq -336(%rbp), %rax
+	imulq -352(%rbp), %rax
+	movq %rax, -360(%rbp)
+	movq %rax, -368(%rbp) # t11384 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (5)]) * (unsharpKernel_s0[1])
+	movq -272(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2581,59 +2624,60 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -328(%rbp), %rax # unsharpMask_s0[t2736] += t2757
+	movq -368(%rbp), %rax # unsharpMask_s0[t2736] += t11384 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (5)]) * (unsharpKernel_s0[1])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -336(%rbp) # t2822 = 731
+	movq $731, -376(%rbp) # t2822 = 731
 	# t2820 = r_s55 * t2822 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -336(%rbp), %rax
-	movq %rax, -344(%rbp)
+	imulq -376(%rbp), %rax
+	movq %rax, -384(%rbp)
 	# t2819 = t2820 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -344(%rbp), %rax
+	movq -384(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -352(%rbp)
-	movq $2193, -360(%rbp) # t2846 = 2193
+	movq %rax, -392(%rbp)
+	movq $2193, -400(%rbp) # t2846 = 2193
 	# t2844 = r_s55 * t2846 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq $3, -376(%rbp) # t2857 = 3
-	# t2856 = t2857 * c_s55 {canonical: (3) * (c_s55)}
-	movq -376(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -384(%rbp)
-	# t2843 = t2844 + t2856 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -368(%rbp), %rax
-	addq -384(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq $2, -400(%rbp) # t2875 = 2
-	# t2842 = t2843 - t2875 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) - (2)}
-	movq -392(%rbp), %rax
-	subq -400(%rbp), %rax
+	imulq -400(%rbp), %rax
 	movq %rax, -408(%rbp)
-	movq -408(%rbp), %rax # t2841 = image_s0[t2842]
+	movq $3, -416(%rbp) # t2857 = 3
+	# t2856 = t2857 * c_s55 {canonical: (3) * (c_s55)}
+	movq -416(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -424(%rbp)
+	# t2843 = t2844 + t2856 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
+	movq -408(%rbp), %rax
+	addq -424(%rbp), %rax
+	movq %rax, -432(%rbp)
+	movq $2, -440(%rbp) # t2875 = 2
+	# t2842 = t2843 - t2875 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) - (2)}
+	movq -432(%rbp), %rax
+	subq -440(%rbp), %rax
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t2841 = image_s0[t2842]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2841 = image_s0[t2842]
-	movq %rdx, -416(%rbp)
-	movq $2, -424(%rbp) # t2888 = 2
-	movq -424(%rbp), %rax # t2887 = unsharpKernel_s0[t2888]
+	movq %rdx, -456(%rbp)
+	movq $2, -464(%rbp) # t2888 = 2
+	movq -464(%rbp), %rax # t2887 = unsharpKernel_s0[t2888]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2887 = unsharpKernel_s0[t2888]
-	movq %rdx, -432(%rbp)
-	# t2840 = t2841 * t2887 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (2)]) * (unsharpKernel_s0[2])}
-	movq -416(%rbp), %rax
-	imulq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -352(%rbp), %rdi
+	movq %rdx, -472(%rbp)
+	# t11385, t2840 = t2841 * t2887 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (2)]) * (unsharpKernel_s0[2])}
+	movq -456(%rbp), %rax
+	imulq -472(%rbp), %rax
+	movq %rax, -480(%rbp)
+	movq %rax, -488(%rbp) # t11385 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (2)]) * (unsharpKernel_s0[2])
+	movq -392(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2641,59 +2685,60 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -440(%rbp), %rax # unsharpMask_s0[t2819] += t2840
+	movq -488(%rbp), %rax # unsharpMask_s0[t2819] += t11385 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) - (2)]) * (unsharpKernel_s0[2])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -448(%rbp) # t2905 = 731
+	movq $731, -496(%rbp) # t2905 = 731
 	# t2903 = r_s55 * t2905 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -448(%rbp), %rax
-	movq %rax, -456(%rbp)
+	imulq -496(%rbp), %rax
+	movq %rax, -504(%rbp)
 	# t2902 = t2903 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -456(%rbp), %rax
+	movq -504(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -464(%rbp)
-	movq $2193, -472(%rbp) # t2929 = 2193
+	movq %rax, -512(%rbp)
+	movq $2193, -520(%rbp) # t2929 = 2193
 	# t2927 = r_s55 * t2929 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq $3, -488(%rbp) # t2940 = 3
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	movq $3, -536(%rbp) # t2940 = 3
 	# t2939 = t2940 * c_s55 {canonical: (3) * (c_s55)}
-	movq -488(%rbp), %rax
+	movq -536(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -496(%rbp)
+	movq %rax, -544(%rbp)
 	# t2926 = t2927 + t2939 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -480(%rbp), %rax
-	addq -496(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq $1, -512(%rbp) # t2958 = 1
+	movq -528(%rbp), %rax
+	addq -544(%rbp), %rax
+	movq %rax, -552(%rbp)
+	movq $1, -560(%rbp) # t2958 = 1
 	# t2925 = t2926 + t2958 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) + (1)}
-	movq -504(%rbp), %rax
-	addq -512(%rbp), %rax
-	movq %rax, -520(%rbp)
-	movq -520(%rbp), %rax # t2924 = image_s0[t2925]
+	movq -552(%rbp), %rax
+	addq -560(%rbp), %rax
+	movq %rax, -568(%rbp)
+	movq -568(%rbp), %rax # t2924 = image_s0[t2925]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2924 = image_s0[t2925]
-	movq %rdx, -528(%rbp)
-	movq $3, -536(%rbp) # t2971 = 3
-	movq -536(%rbp), %rax # t2970 = unsharpKernel_s0[t2971]
+	movq %rdx, -576(%rbp)
+	movq $3, -584(%rbp) # t2971 = 3
+	movq -584(%rbp), %rax # t2970 = unsharpKernel_s0[t2971]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t2970 = unsharpKernel_s0[t2971]
-	movq %rdx, -544(%rbp)
-	# t2923 = t2924 * t2970 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (1)]) * (unsharpKernel_s0[3])}
-	movq -528(%rbp), %rax
-	imulq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
-	movq -464(%rbp), %rdi
+	movq %rdx, -592(%rbp)
+	# t11386, t2923 = t2924 * t2970 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (1)]) * (unsharpKernel_s0[3])}
+	movq -576(%rbp), %rax
+	imulq -592(%rbp), %rax
+	movq %rax, -600(%rbp)
+	movq %rax, -608(%rbp) # t11386 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (1)]) * (unsharpKernel_s0[3])
+	movq -512(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2701,59 +2746,60 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -552(%rbp), %rax # unsharpMask_s0[t2902] += t2923
+	movq -608(%rbp), %rax # unsharpMask_s0[t2902] += t11386 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (1)]) * (unsharpKernel_s0[3])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -560(%rbp) # t2988 = 731
+	movq $731, -616(%rbp) # t2988 = 731
 	# t2986 = r_s55 * t2988 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -560(%rbp), %rax
-	movq %rax, -568(%rbp)
+	imulq -616(%rbp), %rax
+	movq %rax, -624(%rbp)
 	# t2985 = t2986 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -568(%rbp), %rax
+	movq -624(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -576(%rbp)
-	movq $2193, -584(%rbp) # t3012 = 2193
+	movq %rax, -632(%rbp)
+	movq $2193, -640(%rbp) # t3012 = 2193
 	# t3010 = r_s55 * t3012 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -584(%rbp), %rax
-	movq %rax, -592(%rbp)
-	movq $3, -600(%rbp) # t3023 = 3
+	imulq -640(%rbp), %rax
+	movq %rax, -648(%rbp)
+	movq $3, -656(%rbp) # t3023 = 3
 	# t3022 = t3023 * c_s55 {canonical: (3) * (c_s55)}
-	movq -600(%rbp), %rax
+	movq -656(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -608(%rbp)
+	movq %rax, -664(%rbp)
 	# t3009 = t3010 + t3022 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -592(%rbp), %rax
-	addq -608(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq $4, -624(%rbp) # t3041 = 4
+	movq -648(%rbp), %rax
+	addq -664(%rbp), %rax
+	movq %rax, -672(%rbp)
+	movq $4, -680(%rbp) # t3041 = 4
 	# t3008 = t3009 + t3041 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) + (4)}
-	movq -616(%rbp), %rax
-	addq -624(%rbp), %rax
-	movq %rax, -632(%rbp)
-	movq -632(%rbp), %rax # t3007 = image_s0[t3008]
+	movq -672(%rbp), %rax
+	addq -680(%rbp), %rax
+	movq %rax, -688(%rbp)
+	movq -688(%rbp), %rax # t3007 = image_s0[t3008]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3007 = image_s0[t3008]
-	movq %rdx, -640(%rbp)
-	movq $4, -648(%rbp) # t3054 = 4
-	movq -648(%rbp), %rax # t3053 = unsharpKernel_s0[t3054]
+	movq %rdx, -696(%rbp)
+	movq $4, -704(%rbp) # t3054 = 4
+	movq -704(%rbp), %rax # t3053 = unsharpKernel_s0[t3054]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3053 = unsharpKernel_s0[t3054]
-	movq %rdx, -656(%rbp)
-	# t3006 = t3007 * t3053 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (4)]) * (unsharpKernel_s0[4])}
-	movq -640(%rbp), %rax
-	imulq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
-	movq -576(%rbp), %rdi
+	movq %rdx, -712(%rbp)
+	# t11387, t3006 = t3007 * t3053 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (4)]) * (unsharpKernel_s0[4])}
+	movq -696(%rbp), %rax
+	imulq -712(%rbp), %rax
+	movq %rax, -720(%rbp)
+	movq %rax, -728(%rbp) # t11387 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (4)]) * (unsharpKernel_s0[4])
+	movq -632(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2761,59 +2807,60 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -664(%rbp), %rax # unsharpMask_s0[t2985] += t3006
+	movq -728(%rbp), %rax # unsharpMask_s0[t2985] += t11387 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (4)]) * (unsharpKernel_s0[4])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -672(%rbp) # t3071 = 731
+	movq $731, -736(%rbp) # t3071 = 731
 	# t3069 = r_s55 * t3071 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -672(%rbp), %rax
-	movq %rax, -680(%rbp)
+	imulq -736(%rbp), %rax
+	movq %rax, -744(%rbp)
 	# t3068 = t3069 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -680(%rbp), %rax
+	movq -744(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -688(%rbp)
-	movq $2193, -696(%rbp) # t3095 = 2193
+	movq %rax, -752(%rbp)
+	movq $2193, -760(%rbp) # t3095 = 2193
 	# t3093 = r_s55 * t3095 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -696(%rbp), %rax
-	movq %rax, -704(%rbp)
-	movq $3, -712(%rbp) # t3106 = 3
+	imulq -760(%rbp), %rax
+	movq %rax, -768(%rbp)
+	movq $3, -776(%rbp) # t3106 = 3
 	# t3105 = t3106 * c_s55 {canonical: (3) * (c_s55)}
-	movq -712(%rbp), %rax
+	movq -776(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -720(%rbp)
+	movq %rax, -784(%rbp)
 	# t3092 = t3093 + t3105 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -704(%rbp), %rax
-	addq -720(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq $7, -736(%rbp) # t3124 = 7
+	movq -768(%rbp), %rax
+	addq -784(%rbp), %rax
+	movq %rax, -792(%rbp)
+	movq $7, -800(%rbp) # t3124 = 7
 	# t3091 = t3092 + t3124 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) + (7)}
-	movq -728(%rbp), %rax
-	addq -736(%rbp), %rax
-	movq %rax, -744(%rbp)
-	movq -744(%rbp), %rax # t3090 = image_s0[t3091]
+	movq -792(%rbp), %rax
+	addq -800(%rbp), %rax
+	movq %rax, -808(%rbp)
+	movq -808(%rbp), %rax # t3090 = image_s0[t3091]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3090 = image_s0[t3091]
-	movq %rdx, -752(%rbp)
-	movq $5, -760(%rbp) # t3137 = 5
-	movq -760(%rbp), %rax # t3136 = unsharpKernel_s0[t3137]
+	movq %rdx, -816(%rbp)
+	movq $5, -824(%rbp) # t3137 = 5
+	movq -824(%rbp), %rax # t3136 = unsharpKernel_s0[t3137]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3136 = unsharpKernel_s0[t3137]
-	movq %rdx, -768(%rbp)
-	# t3089 = t3090 * t3136 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (7)]) * (unsharpKernel_s0[5])}
-	movq -752(%rbp), %rax
-	imulq -768(%rbp), %rax
-	movq %rax, -776(%rbp)
-	movq -688(%rbp), %rdi
+	movq %rdx, -832(%rbp)
+	# t11388, t3089 = t3090 * t3136 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (7)]) * (unsharpKernel_s0[5])}
+	movq -816(%rbp), %rax
+	imulq -832(%rbp), %rax
+	movq %rax, -840(%rbp)
+	movq %rax, -848(%rbp) # t11388 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (7)]) * (unsharpKernel_s0[5])
+	movq -752(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2821,59 +2868,60 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -776(%rbp), %rax # unsharpMask_s0[t3068] += t3089
+	movq -848(%rbp), %rax # unsharpMask_s0[t3068] += t11388 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (7)]) * (unsharpKernel_s0[5])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -784(%rbp) # t3154 = 731
+	movq $731, -856(%rbp) # t3154 = 731
 	# t3152 = r_s55 * t3154 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -784(%rbp), %rax
-	movq %rax, -792(%rbp)
+	imulq -856(%rbp), %rax
+	movq %rax, -864(%rbp)
 	# t3151 = t3152 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -792(%rbp), %rax
+	movq -864(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -800(%rbp)
-	movq $2193, -808(%rbp) # t3178 = 2193
+	movq %rax, -872(%rbp)
+	movq $2193, -880(%rbp) # t3178 = 2193
 	# t3176 = r_s55 * t3178 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -808(%rbp), %rax
-	movq %rax, -816(%rbp)
-	movq $3, -824(%rbp) # t3189 = 3
+	imulq -880(%rbp), %rax
+	movq %rax, -888(%rbp)
+	movq $3, -896(%rbp) # t3189 = 3
 	# t3188 = t3189 * c_s55 {canonical: (3) * (c_s55)}
-	movq -824(%rbp), %rax
+	movq -896(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -832(%rbp)
+	movq %rax, -904(%rbp)
 	# t3175 = t3176 + t3188 {canonical: ((r_s55) * (2193)) + ((3) * (c_s55))}
-	movq -816(%rbp), %rax
-	addq -832(%rbp), %rax
-	movq %rax, -840(%rbp)
-	movq $10, -848(%rbp) # t3207 = 10
+	movq -888(%rbp), %rax
+	addq -904(%rbp), %rax
+	movq %rax, -912(%rbp)
+	movq $10, -920(%rbp) # t3207 = 10
 	# t3174 = t3175 + t3207 {canonical: (((r_s55) * (2193)) + ((3) * (c_s55))) + (10)}
-	movq -840(%rbp), %rax
-	addq -848(%rbp), %rax
-	movq %rax, -856(%rbp)
-	movq -856(%rbp), %rax # t3173 = image_s0[t3174]
+	movq -912(%rbp), %rax
+	addq -920(%rbp), %rax
+	movq %rax, -928(%rbp)
+	movq -928(%rbp), %rax # t3173 = image_s0[t3174]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3173 = image_s0[t3174]
-	movq %rdx, -864(%rbp)
-	movq $6, -872(%rbp) # t3220 = 6
-	movq -872(%rbp), %rax # t3219 = unsharpKernel_s0[t3220]
+	movq %rdx, -936(%rbp)
+	movq $6, -944(%rbp) # t3220 = 6
+	movq -944(%rbp), %rax # t3219 = unsharpKernel_s0[t3220]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3219 = unsharpKernel_s0[t3220]
-	movq %rdx, -880(%rbp)
-	# t3172 = t3173 * t3219 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (10)]) * (unsharpKernel_s0[6])}
-	movq -864(%rbp), %rax
-	imulq -880(%rbp), %rax
-	movq %rax, -888(%rbp)
-	movq -800(%rbp), %rdi
+	movq %rdx, -952(%rbp)
+	# t11389, t3172 = t3173 * t3219 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (10)]) * (unsharpKernel_s0[6])}
+	movq -936(%rbp), %rax
+	imulq -952(%rbp), %rax
+	movq %rax, -960(%rbp)
+	movq %rax, -968(%rbp) # t11389 = (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (10)]) * (unsharpKernel_s0[6])
+	movq -872(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2881,36 +2929,36 @@ _block_3286:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -888(%rbp), %rax # unsharpMask_s0[t3151] += t3172
+	movq -968(%rbp), %rax # unsharpMask_s0[t3151] += t11389 {canonical: (image_s0[(((r_s55) * (2193)) + ((3) * (c_s55))) + (10)]) * (unsharpKernel_s0[6])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -896(%rbp) # t3237 = 731
+	movq $731, -976(%rbp) # t3237 = 731
 	# t3235 = r_s55 * t3237 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -896(%rbp), %rax
-	movq %rax, -904(%rbp)
+	imulq -976(%rbp), %rax
+	movq %rax, -984(%rbp)
 	# t3234 = t3235 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -904(%rbp), %rax
+	movq -984(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -912(%rbp)
-	movq $731, -920(%rbp) # t3259 = 731
+	movq %rax, -992(%rbp)
+	movq $731, -1000(%rbp) # t3259 = 731
 	# t3257 = r_s55 * t3259 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -920(%rbp), %rax
-	movq %rax, -928(%rbp)
+	imulq -1000(%rbp), %rax
+	movq %rax, -1008(%rbp)
 	# t3256 = t3257 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -928(%rbp), %rax
+	movq -1008(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -936(%rbp)
-	movq -936(%rbp), %rax # t3255 = unsharpMask_s0[t3256]
+	movq %rax, -1016(%rbp)
+	movq -1016(%rbp), %rax # t3255 = unsharpMask_s0[t3256]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3255 = unsharpMask_s0[t3256]
-	movq %rdx, -944(%rbp)
-	movq -912(%rbp), %rdi
+	movq %rdx, -1024(%rbp)
+	movq -992(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -2919,7 +2967,7 @@ _block_3286:
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
 	# unsharpMask_s0[t3234] = t3255 / kernel_sum_s0 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) / (kernel_sum_s0)}
-	movq -944(%rbp), %rax
+	movq -1024(%rbp), %rax
 	cqto
 	idivq _global_kernel_sum(%rip)
 	movq %rax, (%rdi)
@@ -2930,8 +2978,8 @@ _end_of_block_2434:
 	jmp _block_2424
 _block_2424:
 _block_3295:
-	movq $1, -88(%rbp) # t3291 = 1
-	movq -88(%rbp), %rax # c_s55 += t3291
+	movq $1, -112(%rbp) # t3291 = 1
+	movq -112(%rbp), %rax # c_s55 += t3291
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_3296
@@ -2941,10 +2989,9 @@ _end_of_block_2424:
 	jmp _conditional_2435
 _block_2437:
 _block_3308:
-	# c_s55 = cols_s0 - center_s55 {canonical: (cols_s0) - (center_s55)}
-	movq _global_cols(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -88(%rbp), %rax # c_s55 = shared_t11380 {canonical: (cols_s0) - (center_s55)}
 	movq %rax, -40(%rbp)
+	movq -40(%rbp), %rax
 	jmp _nop_3309
 _nop_3309:
 	jmp _end_of_block_2437
@@ -2957,45 +3004,45 @@ _block_3319:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_3321
 _nop_3321:
 	jmp _end_of_conditional_2441
 _end_of_conditional_2441:
-	cmpq $1, -88(%rbp) # true = t3310
+	cmpq $1, -112(%rbp) # true = t3310
 	jne _block_2414 # ifFalse
 	jmp _block_2440 # ifTrue
 _block_2440:
 _block_3389:
-	movq $731, -88(%rbp) # t3327 = 731
+	movq $731, -112(%rbp) # t3327 = 731
 	# t3325 = r_s55 * t3327 {canonical: (r_s55) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t3324 = t3325 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t3349 = 2193
-	# t3347 = r_s55 * t3349 {canonical: (r_s55) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t3361 = 3
+	# t3324 = t3325 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t3349 = 2193
+	# t3347 = r_s55 * t3349 {canonical: (r_s55) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t3361 = 3
 	# t3359 = c_s55 * t3361 {canonical: (c_s55) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t3346 = t3347 + t3359 {canonical: ((r_s55) * (2193)) + ((c_s55) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $1, -152(%rbp) # t3378 = 1
-	# t3345 = t3346 + t3378 {canonical: (((r_s55) * (2193)) + ((c_s55) * (3))) + (1)}
-	movq -144(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq -104(%rbp), %rdi
+	# t3346 = t3347 + t3359 {canonical: ((r_s55) * (2193)) + ((c_s55) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $1, -176(%rbp) # t3378 = 1
+	# t3345 = t3346 + t3378 {canonical: (((r_s55) * (2193)) + ((c_s55) * (3))) + (1)}
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3003,7 +3050,7 @@ _block_3389:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -160(%rbp), %rax # unsharpMask_s0[t3324] = image_s0[t3345]
+	movq -184(%rbp), %rax # unsharpMask_s0[t3324] = image_s0[t3345]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -3018,8 +3065,8 @@ _end_of_block_2440:
 	jmp _block_2438
 _block_2438:
 _block_3398:
-	movq $1, -88(%rbp) # t3394 = 1
-	movq -88(%rbp), %rax # c_s55 += t3394
+	movq $1, -112(%rbp) # t3394 = 1
+	movq -112(%rbp), %rax # c_s55 += t3394
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_3399
@@ -3029,8 +3076,8 @@ _end_of_block_2438:
 	jmp _conditional_2441
 _block_2414:
 _block_3407:
-	movq $1, -88(%rbp) # t3403 = 1
-	movq -88(%rbp), %rax # r_s55 += t3403
+	movq $1, -112(%rbp) # t3403 = 1
+	movq -112(%rbp), %rax # r_s55 += t3403
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_3408
@@ -3040,19 +3087,22 @@ _end_of_block_2414:
 	jmp _conditional_2442
 _block_2445:
 _block_3432:
-	movq -48(%rbp), %rax # t3411 = center_s55 {canonical: center_s55}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t3416 = center_s55 {canonical: center_s55}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t3415 = unsharpKernel_s0[t3416]
+	movq -48(%rbp), %rax # shared_t11381, t3411 = center_s55 {canonical: center_s55}
+	movq %rax, -112(%rbp)
+	movq %rax, -96(%rbp) # shared_t11381 = center_s55
+	movq -96(%rbp), %rax # shared_t11381, t3416 = shared_t11381 {canonical: center_s55}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq %rax, -96(%rbp) # shared_t11381 = center_s55
+	movq -120(%rbp), %rax # t3415 = unsharpKernel_s0[t3416]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3415 = unsharpKernel_s0[t3416]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3061,7 +3111,7 @@ _block_3432:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t3411] = t3415 - kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s55]) - (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	subq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	movq $0, -40(%rbp) # c_s55 = 0
@@ -3077,19 +3127,19 @@ _block_3443:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_3445
 _nop_3445:
 	jmp _end_of_conditional_2480
 _end_of_conditional_2480:
-	cmpq $1, -88(%rbp) # true = t3434
+	cmpq $1, -112(%rbp) # true = t3434
 	jne _block_2481 # ifFalse
 	jmp _block_2452 # ifTrue
 _block_2452:
 _block_3487:
 	movq -40(%rbp), %rax # t3449 = c_s55 {canonical: c_s55}
-	movq %rax, -88(%rbp)
-	movq -88(%rbp), %rax # m1_s60 = unsharpMask_s0[t3449]
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax # m1_s60 = unsharpMask_s0[t3449]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -3097,12 +3147,12 @@ _block_3487:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m1_s60 = unsharpMask_s0[t3449]
 	movq %rdx, -56(%rbp)
-	movq $731, -96(%rbp) # t3458 = 731
+	movq $731, -120(%rbp) # t3458 = 731
 	# t3456 = c_s55 + t3458 {canonical: (c_s55) + (731)}
 	movq -40(%rbp), %rax
-	addq -96(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # m2_s60 = unsharpMask_s0[t3456]
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # m2_s60 = unsharpMask_s0[t3456]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -3110,12 +3160,12 @@ _block_3487:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m2_s60 = unsharpMask_s0[t3456]
 	movq %rdx, -64(%rbp)
-	movq $1462, -112(%rbp) # t3473 = 1462
+	movq $1462, -136(%rbp) # t3473 = 1462
 	# t3471 = c_s55 + t3473 {canonical: (c_s55) + (1462)}
 	movq -40(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # m3_s60 = unsharpMask_s0[t3471]
+	addq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq -144(%rbp), %rax # m3_s60 = unsharpMask_s0[t3471]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -3136,26 +3186,26 @@ _block_3498:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_3500
 _nop_3500:
 	jmp _end_of_conditional_2456
 _end_of_conditional_2456:
-	cmpq $1, -88(%rbp) # true = t3489
+	cmpq $1, -112(%rbp) # true = t3489
 	jne _block_2458 # ifFalse
 	jmp _block_2455 # ifTrue
 _block_2455:
 _block_3525:
-	movq $731, -88(%rbp) # t3506 = 731
+	movq $731, -112(%rbp) # t3506 = 731
 	# t3504 = r_s55 * t3506 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t3503 = t3504 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3171,8 +3221,8 @@ _end_of_block_2455:
 	jmp _block_2453
 _block_2453:
 _block_3534:
-	movq $1, -88(%rbp) # t3530 = 1
-	movq -88(%rbp), %rax # r_s55 += t3530
+	movq $1, -112(%rbp) # t3530 = 1
+	movq -112(%rbp), %rax # r_s55 += t3530
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_3535
@@ -3182,8 +3232,9 @@ _end_of_block_2453:
 	jmp _conditional_2456
 _block_2458:
 _block_3541:
-	movq -48(%rbp), %rax # r_s55 = center_s55 {canonical: center_s55}
+	movq -96(%rbp), %rax # r_s55 = shared_t11381 {canonical: center_s55}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_3542
 _nop_3542:
 	jmp _end_of_block_2458
@@ -3191,382 +3242,390 @@ _end_of_block_2458:
 	jmp _conditional_2473
 _conditional_2473:
 _block_3561:
-	# t3545 = rows_s0 - center_s55 {canonical: (rows_s0) - (center_s55)}
+	# shared_t11382, t3545 = rows_s0 - center_s55 {canonical: (rows_s0) - (center_s55)}
 	movq _global_rows(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -104(%rbp) # shared_t11382 = (rows_s0) - (center_s55)
 	# t3543 = r_s55 < t3545 {canonical: (r_s55) < ((rows_s0) - (center_s55))}
 	movq -32(%rbp), %rax # t3543 = r_s55 < t3545 {canonical: (r_s55) < ((rows_s0) - (center_s55))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_3563
 _nop_3563:
 	jmp _end_of_conditional_2473
 _end_of_conditional_2473:
-	cmpq $1, -96(%rbp) # true = t3543
+	cmpq $1, -120(%rbp) # true = t3543
 	jne _block_2475 # ifFalse
 	jmp _block_2472 # ifTrue
 _block_2472:
 _block_4105:
 	movq $0, -80(%rbp) # dot_s62 = 0
-	movq $731, -88(%rbp) # t3575 = 731
+	movq $731, -112(%rbp) # t3575 = 731
 	# t3573 = r_s55 * t3575 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t3572 = t3573 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # t3571 = unsharpMask_s0[t3572]
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t3571 = unsharpMask_s0[t3572]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3571 = unsharpMask_s0[t3572]
-	movq %rdx, -112(%rbp)
-	movq $0, -120(%rbp) # t3598 = 0
-	movq -120(%rbp), %rax # t3597 = unsharpKernel_s0[t3598]
+	movq %rdx, -136(%rbp)
+	movq $0, -144(%rbp) # t3598 = 0
+	movq -144(%rbp), %rax # t3597 = unsharpKernel_s0[t3598]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3597 = unsharpKernel_s0[t3598]
-	movq %rdx, -128(%rbp)
+	movq %rdx, -152(%rbp)
 	# t3595 = m1_s60 * t3597 {canonical: (m1_s60) * (unsharpKernel_s0[0])}
 	movq -56(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t3570 = t3571 + t3595 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m1_s60) * (unsharpKernel_s0[0]))}
-	movq -112(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq -144(%rbp), %rax # dot_s62 += t3570
-	addq %rax, -80(%rbp)
-	movq -80(%rbp), %rax
-	movq $731, -152(%rbp) # t3625 = 731
-	# t3623 = r_s55 * t3625 {canonical: (r_s55) * (731)}
-	movq -32(%rbp), %rax
 	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	# t3622 = t3623 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -160(%rbp), %rax
-	addq -40(%rbp), %rax
+	# t11390, t3570 = t3571 + t3595 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m1_s60) * (unsharpKernel_s0[0]))}
+	movq -136(%rbp), %rax
+	addq -160(%rbp), %rax
 	movq %rax, -168(%rbp)
-	movq -168(%rbp), %rax # t3621 = unsharpMask_s0[t3622]
+	movq %rax, -176(%rbp) # t11390 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m1_s60) * (unsharpKernel_s0[0]))
+	movq -176(%rbp), %rax # dot_s62 += t11390 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m1_s60) * (unsharpKernel_s0[0]))}
+	addq %rax, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq $731, -184(%rbp) # t3625 = 731
+	# t3623 = r_s55 * t3625 {canonical: (r_s55) * (731)}
+	movq -32(%rbp), %rax
+	imulq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	# t3622 = t3623 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
+	movq -192(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -200(%rbp)
+	movq -200(%rbp), %rax # t3621 = unsharpMask_s0[t3622]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3621 = unsharpMask_s0[t3622]
-	movq %rdx, -176(%rbp)
-	movq $1, -184(%rbp) # t3648 = 1
-	movq -184(%rbp), %rax # t3647 = unsharpKernel_s0[t3648]
+	movq %rdx, -208(%rbp)
+	movq $1, -216(%rbp) # t3648 = 1
+	movq -216(%rbp), %rax # t3647 = unsharpKernel_s0[t3648]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3647 = unsharpKernel_s0[t3648]
-	movq %rdx, -192(%rbp)
+	movq %rdx, -224(%rbp)
 	# t3645 = m2_s60 * t3647 {canonical: (m2_s60) * (unsharpKernel_s0[1])}
 	movq -64(%rbp), %rax
-	imulq -192(%rbp), %rax
-	movq %rax, -200(%rbp)
-	# t3620 = t3621 + t3645 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m2_s60) * (unsharpKernel_s0[1]))}
-	movq -176(%rbp), %rax
-	addq -200(%rbp), %rax
-	movq %rax, -208(%rbp)
-	movq -208(%rbp), %rax # dot_s62 += t3620
+	imulq -224(%rbp), %rax
+	movq %rax, -232(%rbp)
+	# t11391, t3620 = t3621 + t3645 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m2_s60) * (unsharpKernel_s0[1]))}
+	movq -208(%rbp), %rax
+	addq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11391 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m2_s60) * (unsharpKernel_s0[1]))
+	movq -248(%rbp), %rax # dot_s62 += t11391 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m2_s60) * (unsharpKernel_s0[1]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -216(%rbp) # t3675 = 731
+	movq $731, -256(%rbp) # t3675 = 731
 	# t3673 = r_s55 * t3675 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -216(%rbp), %rax
-	movq %rax, -224(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t3672 = t3673 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -224(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -232(%rbp)
-	movq -232(%rbp), %rax # t3671 = unsharpMask_s0[t3672]
+	movq %rax, -272(%rbp)
+	movq -272(%rbp), %rax # t3671 = unsharpMask_s0[t3672]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3671 = unsharpMask_s0[t3672]
-	movq %rdx, -240(%rbp)
-	movq $2, -248(%rbp) # t3698 = 2
-	movq -248(%rbp), %rax # t3697 = unsharpKernel_s0[t3698]
+	movq %rdx, -280(%rbp)
+	movq $2, -288(%rbp) # t3698 = 2
+	movq -288(%rbp), %rax # t3697 = unsharpKernel_s0[t3698]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3697 = unsharpKernel_s0[t3698]
-	movq %rdx, -256(%rbp)
+	movq %rdx, -296(%rbp)
 	# t3695 = m3_s60 * t3697 {canonical: (m3_s60) * (unsharpKernel_s0[2])}
 	movq -72(%rbp), %rax
-	imulq -256(%rbp), %rax
-	movq %rax, -264(%rbp)
-	# t3670 = t3671 + t3695 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m3_s60) * (unsharpKernel_s0[2]))}
-	movq -240(%rbp), %rax
-	addq -264(%rbp), %rax
-	movq %rax, -272(%rbp)
-	movq -272(%rbp), %rax # dot_s62 += t3670
+	imulq -296(%rbp), %rax
+	movq %rax, -304(%rbp)
+	# t11392, t3670 = t3671 + t3695 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m3_s60) * (unsharpKernel_s0[2]))}
+	movq -280(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq %rax, -320(%rbp) # t11392 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m3_s60) * (unsharpKernel_s0[2]))
+	movq -320(%rbp), %rax # dot_s62 += t11392 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((m3_s60) * (unsharpKernel_s0[2]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -280(%rbp) # t3725 = 731
+	movq $731, -328(%rbp) # t3725 = 731
 	# t3723 = r_s55 * t3725 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -280(%rbp), %rax
-	movq %rax, -288(%rbp)
+	imulq -328(%rbp), %rax
+	movq %rax, -336(%rbp)
 	# t3722 = t3723 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -288(%rbp), %rax
+	movq -336(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t3721 = unsharpMask_s0[t3722]
+	movq %rax, -344(%rbp)
+	movq -344(%rbp), %rax # t3721 = unsharpMask_s0[t3722]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3721 = unsharpMask_s0[t3722]
-	movq %rdx, -304(%rbp)
-	movq $731, -312(%rbp) # t3749 = 731
+	movq %rdx, -352(%rbp)
+	movq $731, -360(%rbp) # t3749 = 731
 	# t3748 = t3749 * r_s55 {canonical: (731) * (r_s55)}
-	movq -312(%rbp), %rax
+	movq -360(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -320(%rbp)
+	movq %rax, -368(%rbp)
 	# t3747 = t3748 + c_s55 {canonical: ((731) * (r_s55)) + (c_s55)}
-	movq -320(%rbp), %rax
+	movq -368(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -328(%rbp), %rax # t3746 = unsharpMask_s0[t3747]
+	movq %rax, -376(%rbp)
+	movq -376(%rbp), %rax # t3746 = unsharpMask_s0[t3747]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3746 = unsharpMask_s0[t3747]
-	movq %rdx, -336(%rbp)
-	movq $3, -344(%rbp) # t3771 = 3
-	movq -344(%rbp), %rax # t3770 = unsharpKernel_s0[t3771]
+	movq %rdx, -384(%rbp)
+	movq $3, -392(%rbp) # t3771 = 3
+	movq -392(%rbp), %rax # t3770 = unsharpKernel_s0[t3771]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3770 = unsharpKernel_s0[t3771]
-	movq %rdx, -352(%rbp)
+	movq %rdx, -400(%rbp)
 	# t3745 = t3746 * t3770 {canonical: (unsharpMask_s0[((731) * (r_s55)) + (c_s55)]) * (unsharpKernel_s0[3])}
-	movq -336(%rbp), %rax
-	imulq -352(%rbp), %rax
-	movq %rax, -360(%rbp)
-	# t3720 = t3721 + t3745 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[((731) * (r_s55)) + (c_s55)]) * (unsharpKernel_s0[3]))}
-	movq -304(%rbp), %rax
-	addq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq -368(%rbp), %rax # dot_s62 += t3720
+	movq -384(%rbp), %rax
+	imulq -400(%rbp), %rax
+	movq %rax, -408(%rbp)
+	# t11393, t3720 = t3721 + t3745 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[((731) * (r_s55)) + (c_s55)]) * (unsharpKernel_s0[3]))}
+	movq -352(%rbp), %rax
+	addq -408(%rbp), %rax
+	movq %rax, -416(%rbp)
+	movq %rax, -424(%rbp) # t11393 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[((731) * (r_s55)) + (c_s55)]) * (unsharpKernel_s0[3]))
+	movq -424(%rbp), %rax # dot_s62 += t11393 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[((731) * (r_s55)) + (c_s55)]) * (unsharpKernel_s0[3]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -376(%rbp) # t3798 = 731
+	movq $731, -432(%rbp) # t3798 = 731
 	# t3796 = r_s55 * t3798 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -376(%rbp), %rax
-	movq %rax, -384(%rbp)
+	imulq -432(%rbp), %rax
+	movq %rax, -440(%rbp)
 	# t3795 = t3796 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -384(%rbp), %rax
+	movq -440(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq -392(%rbp), %rax # t3794 = unsharpMask_s0[t3795]
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t3794 = unsharpMask_s0[t3795]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3794 = unsharpMask_s0[t3795]
-	movq %rdx, -400(%rbp)
-	movq $731, -408(%rbp) # t3823 = 731
+	movq %rdx, -456(%rbp)
+	movq $731, -464(%rbp) # t3823 = 731
 	# t3822 = t3823 * r_s55 {canonical: (731) * (r_s55)}
-	movq -408(%rbp), %rax
+	movq -464(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -416(%rbp)
+	movq %rax, -472(%rbp)
 	# t3821 = t3822 + c_s55 {canonical: ((731) * (r_s55)) + (c_s55)}
-	movq -416(%rbp), %rax
+	movq -472(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -424(%rbp)
-	movq $731, -432(%rbp) # t3842 = 731
+	movq %rax, -480(%rbp)
+	movq $731, -488(%rbp) # t3842 = 731
 	# t3820 = t3821 + t3842 {canonical: (((731) * (r_s55)) + (c_s55)) + (731)}
-	movq -424(%rbp), %rax
-	addq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -440(%rbp), %rax # t3819 = unsharpMask_s0[t3820]
+	movq -480(%rbp), %rax
+	addq -488(%rbp), %rax
+	movq %rax, -496(%rbp)
+	movq -496(%rbp), %rax # t3819 = unsharpMask_s0[t3820]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3819 = unsharpMask_s0[t3820]
-	movq %rdx, -448(%rbp)
-	movq $4, -456(%rbp) # t3855 = 4
-	movq -456(%rbp), %rax # t3854 = unsharpKernel_s0[t3855]
+	movq %rdx, -504(%rbp)
+	movq $4, -512(%rbp) # t3855 = 4
+	movq -512(%rbp), %rax # t3854 = unsharpKernel_s0[t3855]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3854 = unsharpKernel_s0[t3855]
-	movq %rdx, -464(%rbp)
+	movq %rdx, -520(%rbp)
 	# t3818 = t3819 * t3854 {canonical: (unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (731)]) * (unsharpKernel_s0[4])}
-	movq -448(%rbp), %rax
-	imulq -464(%rbp), %rax
-	movq %rax, -472(%rbp)
-	# t3793 = t3794 + t3818 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (731)]) * (unsharpKernel_s0[4]))}
-	movq -400(%rbp), %rax
-	addq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq -480(%rbp), %rax # dot_s62 += t3793
+	movq -504(%rbp), %rax
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	# t11394, t3793 = t3794 + t3818 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (731)]) * (unsharpKernel_s0[4]))}
+	movq -456(%rbp), %rax
+	addq -528(%rbp), %rax
+	movq %rax, -536(%rbp)
+	movq %rax, -544(%rbp) # t11394 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (731)]) * (unsharpKernel_s0[4]))
+	movq -544(%rbp), %rax # dot_s62 += t11394 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (731)]) * (unsharpKernel_s0[4]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -488(%rbp) # t3882 = 731
+	movq $731, -552(%rbp) # t3882 = 731
 	# t3880 = r_s55 * t3882 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -488(%rbp), %rax
-	movq %rax, -496(%rbp)
+	imulq -552(%rbp), %rax
+	movq %rax, -560(%rbp)
 	# t3879 = t3880 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -496(%rbp), %rax
+	movq -560(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq -504(%rbp), %rax # t3878 = unsharpMask_s0[t3879]
+	movq %rax, -568(%rbp)
+	movq -568(%rbp), %rax # t3878 = unsharpMask_s0[t3879]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3878 = unsharpMask_s0[t3879]
-	movq %rdx, -512(%rbp)
-	movq $731, -520(%rbp) # t3907 = 731
+	movq %rdx, -576(%rbp)
+	movq $731, -584(%rbp) # t3907 = 731
 	# t3906 = t3907 * r_s55 {canonical: (731) * (r_s55)}
-	movq -520(%rbp), %rax
+	movq -584(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -528(%rbp)
+	movq %rax, -592(%rbp)
 	# t3905 = t3906 + c_s55 {canonical: ((731) * (r_s55)) + (c_s55)}
-	movq -528(%rbp), %rax
+	movq -592(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -536(%rbp)
-	movq $1462, -544(%rbp) # t3926 = 1462
+	movq %rax, -600(%rbp)
+	movq $1462, -608(%rbp) # t3926 = 1462
 	# t3904 = t3905 + t3926 {canonical: (((731) * (r_s55)) + (c_s55)) + (1462)}
-	movq -536(%rbp), %rax
-	addq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
-	movq -552(%rbp), %rax # t3903 = unsharpMask_s0[t3904]
+	movq -600(%rbp), %rax
+	addq -608(%rbp), %rax
+	movq %rax, -616(%rbp)
+	movq -616(%rbp), %rax # t3903 = unsharpMask_s0[t3904]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3903 = unsharpMask_s0[t3904]
-	movq %rdx, -560(%rbp)
-	movq $5, -568(%rbp) # t3939 = 5
-	movq -568(%rbp), %rax # t3938 = unsharpKernel_s0[t3939]
+	movq %rdx, -624(%rbp)
+	movq $5, -632(%rbp) # t3939 = 5
+	movq -632(%rbp), %rax # t3938 = unsharpKernel_s0[t3939]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3938 = unsharpKernel_s0[t3939]
-	movq %rdx, -576(%rbp)
+	movq %rdx, -640(%rbp)
 	# t3902 = t3903 * t3938 {canonical: (unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (1462)]) * (unsharpKernel_s0[5])}
-	movq -560(%rbp), %rax
-	imulq -576(%rbp), %rax
-	movq %rax, -584(%rbp)
-	# t3877 = t3878 + t3902 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (1462)]) * (unsharpKernel_s0[5]))}
-	movq -512(%rbp), %rax
-	addq -584(%rbp), %rax
-	movq %rax, -592(%rbp)
-	movq -592(%rbp), %rax # dot_s62 += t3877
+	movq -624(%rbp), %rax
+	imulq -640(%rbp), %rax
+	movq %rax, -648(%rbp)
+	# t11395, t3877 = t3878 + t3902 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (1462)]) * (unsharpKernel_s0[5]))}
+	movq -576(%rbp), %rax
+	addq -648(%rbp), %rax
+	movq %rax, -656(%rbp)
+	movq %rax, -664(%rbp) # t11395 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (1462)]) * (unsharpKernel_s0[5]))
+	movq -664(%rbp), %rax # dot_s62 += t11395 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (1462)]) * (unsharpKernel_s0[5]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -600(%rbp) # t3966 = 731
+	movq $731, -672(%rbp) # t3966 = 731
 	# t3964 = r_s55 * t3966 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -600(%rbp), %rax
-	movq %rax, -608(%rbp)
+	imulq -672(%rbp), %rax
+	movq %rax, -680(%rbp)
 	# t3963 = t3964 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -608(%rbp), %rax
+	movq -680(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq -616(%rbp), %rax # t3962 = unsharpMask_s0[t3963]
+	movq %rax, -688(%rbp)
+	movq -688(%rbp), %rax # t3962 = unsharpMask_s0[t3963]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3962 = unsharpMask_s0[t3963]
-	movq %rdx, -624(%rbp)
-	movq $731, -632(%rbp) # t3991 = 731
+	movq %rdx, -696(%rbp)
+	movq $731, -704(%rbp) # t3991 = 731
 	# t3990 = t3991 * r_s55 {canonical: (731) * (r_s55)}
-	movq -632(%rbp), %rax
+	movq -704(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -640(%rbp)
+	movq %rax, -712(%rbp)
 	# t3989 = t3990 + c_s55 {canonical: ((731) * (r_s55)) + (c_s55)}
-	movq -640(%rbp), %rax
+	movq -712(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -648(%rbp)
-	movq $2193, -656(%rbp) # t4010 = 2193
+	movq %rax, -720(%rbp)
+	movq $2193, -728(%rbp) # t4010 = 2193
 	# t3988 = t3989 + t4010 {canonical: (((731) * (r_s55)) + (c_s55)) + (2193)}
-	movq -648(%rbp), %rax
-	addq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
-	movq -664(%rbp), %rax # t3987 = unsharpMask_s0[t3988]
+	movq -720(%rbp), %rax
+	addq -728(%rbp), %rax
+	movq %rax, -736(%rbp)
+	movq -736(%rbp), %rax # t3987 = unsharpMask_s0[t3988]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t3987 = unsharpMask_s0[t3988]
-	movq %rdx, -672(%rbp)
-	movq $6, -680(%rbp) # t4023 = 6
-	movq -680(%rbp), %rax # t4022 = unsharpKernel_s0[t4023]
+	movq %rdx, -744(%rbp)
+	movq $6, -752(%rbp) # t4023 = 6
+	movq -752(%rbp), %rax # t4022 = unsharpKernel_s0[t4023]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t4022 = unsharpKernel_s0[t4023]
-	movq %rdx, -688(%rbp)
+	movq %rdx, -760(%rbp)
 	# t3986 = t3987 * t4022 {canonical: (unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (2193)]) * (unsharpKernel_s0[6])}
-	movq -672(%rbp), %rax
-	imulq -688(%rbp), %rax
-	movq %rax, -696(%rbp)
-	# t3961 = t3962 + t3986 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (2193)]) * (unsharpKernel_s0[6]))}
-	movq -624(%rbp), %rax
-	addq -696(%rbp), %rax
-	movq %rax, -704(%rbp)
-	movq -704(%rbp), %rax # dot_s62 += t3961
+	movq -744(%rbp), %rax
+	imulq -760(%rbp), %rax
+	movq %rax, -768(%rbp)
+	# t11396, t3961 = t3962 + t3986 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (2193)]) * (unsharpKernel_s0[6]))}
+	movq -696(%rbp), %rax
+	addq -768(%rbp), %rax
+	movq %rax, -776(%rbp)
+	movq %rax, -784(%rbp) # t11396 = (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (2193)]) * (unsharpKernel_s0[6]))
+	movq -784(%rbp), %rax # dot_s62 += t11396 {canonical: (unsharpMask_s0[((r_s55) * (731)) + (c_s55)]) + ((unsharpMask_s0[(((731) * (r_s55)) + (c_s55)) + (2193)]) * (unsharpKernel_s0[6]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
 	movq -64(%rbp), %rax # m1_s60 = m2_s60 {canonical: m2_s60}
 	movq %rax, -56(%rbp)
 	movq -72(%rbp), %rax # m2_s60 = m3_s60 {canonical: m3_s60}
 	movq %rax, -64(%rbp)
-	movq $731, -712(%rbp) # t4056 = 731
+	movq $731, -792(%rbp) # t4056 = 731
 	# t4054 = r_s55 * t4056 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -712(%rbp), %rax
-	movq %rax, -720(%rbp)
+	imulq -792(%rbp), %rax
+	movq %rax, -800(%rbp)
 	# t4053 = t4054 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -720(%rbp), %rax
+	movq -800(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq -728(%rbp), %rax # m3_s60 = unsharpMask_s0[t4053]
+	movq %rax, -808(%rbp)
+	movq -808(%rbp), %rax # m3_s60 = unsharpMask_s0[t4053]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -3574,16 +3633,16 @@ _block_4105:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m3_s60 = unsharpMask_s0[t4053]
 	movq %rdx, -72(%rbp)
-	movq $731, -736(%rbp) # t4079 = 731
+	movq $731, -816(%rbp) # t4079 = 731
 	# t4077 = r_s55 * t4079 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -736(%rbp), %rax
-	movq %rax, -744(%rbp)
+	imulq -816(%rbp), %rax
+	movq %rax, -824(%rbp)
 	# t4076 = t4077 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -744(%rbp), %rax
+	movq -824(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -752(%rbp)
-	movq -752(%rbp), %rdi
+	movq %rax, -832(%rbp)
+	movq -832(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3603,8 +3662,8 @@ _end_of_block_2472:
 	jmp _block_2459
 _block_2459:
 _block_4114:
-	movq $1, -88(%rbp) # t4110 = 1
-	movq -88(%rbp), %rax # r_s55 += t4110
+	movq $1, -112(%rbp) # t4110 = 1
+	movq -112(%rbp), %rax # r_s55 += t4110
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_4115
@@ -3614,10 +3673,9 @@ _end_of_block_2459:
 	jmp _conditional_2473
 _block_2475:
 _block_4127:
-	# r_s55 = rows_s0 - center_s55 {canonical: (rows_s0) - (center_s55)}
-	movq _global_rows(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -104(%rbp), %rax # r_s55 = shared_t11382 {canonical: (rows_s0) - (center_s55)}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_4128
 _nop_4128:
 	jmp _end_of_block_2475
@@ -3630,26 +3688,26 @@ _block_4138:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_4140
 _nop_4140:
 	jmp _end_of_conditional_2479
 _end_of_conditional_2479:
-	cmpq $1, -88(%rbp) # true = t4129
+	cmpq $1, -112(%rbp) # true = t4129
 	jne _block_2446 # ifFalse
 	jmp _block_2478 # ifTrue
 _block_2478:
 _block_4165:
-	movq $731, -88(%rbp) # t4146 = 731
+	movq $731, -112(%rbp) # t4146 = 731
 	# t4144 = r_s55 * t4146 {canonical: (r_s55) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t4143 = t4144 + c_s55 {canonical: ((r_s55) * (731)) + (c_s55)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3665,8 +3723,8 @@ _end_of_block_2478:
 	jmp _block_2476
 _block_2476:
 _block_4174:
-	movq $1, -88(%rbp) # t4170 = 1
-	movq -88(%rbp), %rax # r_s55 += t4170
+	movq $1, -112(%rbp) # t4170 = 1
+	movq -112(%rbp), %rax # r_s55 += t4170
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_4175
@@ -3676,8 +3734,8 @@ _end_of_block_2476:
 	jmp _conditional_2479
 _block_2446:
 _block_4183:
-	movq $1, -88(%rbp) # t4179 = 1
-	movq -88(%rbp), %rax # c_s55 += t4179
+	movq $1, -112(%rbp) # t4179 = 1
+	movq -112(%rbp), %rax # c_s55 += t4179
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_4184
@@ -3687,19 +3745,21 @@ _end_of_block_2446:
 	jmp _conditional_2480
 _block_2481:
 _block_4205:
-	movq -48(%rbp), %rax # t4187 = center_s55 {canonical: center_s55}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t4192 = center_s55 {canonical: center_s55}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t4191 = unsharpKernel_s0[t4192]
+	movq -96(%rbp), %rax # t4187 = shared_t11381 {canonical: center_s55}
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax
+	movq -96(%rbp), %rax # t4192 = shared_t11381 {canonical: center_s55}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq -120(%rbp), %rax # t4191 = unsharpKernel_s0[t4192]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t4191 = unsharpKernel_s0[t4192]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -3708,7 +3768,7 @@ _block_4205:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t4187] = t4191 + kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s55]) + (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	addq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	jmp _nop_4206
@@ -5611,7 +5671,7 @@ _return_5182:
 	ret
 
 _method_createUnsharpMaskH:
-	enter $(928), $0
+	enter $(1008), $0
 	movq $0, -8(%rbp)
 	movq $0, -16(%rbp)
 	movq $0, -24(%rbp)
@@ -5728,6 +5788,16 @@ _method_createUnsharpMaskH:
 	movq $0, -912(%rbp)
 	movq $0, -920(%rbp)
 	movq $0, -928(%rbp)
+	movq $0, -936(%rbp)
+	movq $0, -944(%rbp)
+	movq $0, -952(%rbp)
+	movq $0, -960(%rbp)
+	movq $0, -968(%rbp)
+	movq $0, -976(%rbp)
+	movq $0, -984(%rbp)
+	movq $0, -992(%rbp)
+	movq $0, -1000(%rbp)
+	movq $0, -1008(%rbp)
 	# save callee-save registers
 	pushq %rbx
 	movq $0, %rbx
@@ -5756,12 +5826,12 @@ _block_6591:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_6593
 _nop_6593:
 	jmp _end_of_conditional_6532
 _end_of_conditional_6532:
-	cmpq $1, -88(%rbp) # true = t6582
+	cmpq $1, -112(%rbp) # true = t6582
 	jne _block_6535 # ifFalse
 	jmp _block_6507 # ifTrue
 _block_6507:
@@ -5779,40 +5849,40 @@ _block_6609:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_6611
 _nop_6611:
 	jmp _end_of_conditional_6511
 _end_of_conditional_6511:
-	cmpq $1, -88(%rbp) # true = t6600
+	cmpq $1, -112(%rbp) # true = t6600
 	jne _block_6513 # ifFalse
 	jmp _block_6510 # ifTrue
 _block_6510:
 _block_6668:
-	movq $731, -88(%rbp) # t6617 = 731
+	movq $731, -112(%rbp) # t6617 = 731
 	# t6615 = r_s45 * t6617 {canonical: (r_s45) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t6614 = t6615 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t6638 = 2193
-	# t6636 = r_s45 * t6638 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t6650 = 3
+	# t6614 = t6615 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t6638 = 2193
+	# t6636 = r_s45 * t6638 {canonical: (r_s45) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t6650 = 3
 	# t6648 = c_s45 * t6650 {canonical: (c_s45) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
+	imulq -152(%rbp), %rax
+	movq %rax, -160(%rbp)
 	# t6635 = t6636 + t6648 {canonical: ((r_s45) * (2193)) + ((c_s45) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq -104(%rbp), %rdi
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -5820,7 +5890,7 @@ _block_6668:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -144(%rbp), %rax # unsharpMask_s0[t6614] = image_s0[t6635]
+	movq -168(%rbp), %rax # unsharpMask_s0[t6614] = image_s0[t6635]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -5835,8 +5905,8 @@ _end_of_block_6510:
 	jmp _block_6508
 _block_6508:
 _block_6677:
-	movq $1, -88(%rbp) # t6673 = 1
-	movq -88(%rbp), %rax # c_s45 += t6673
+	movq $1, -112(%rbp) # t6673 = 1
+	movq -112(%rbp), %rax # c_s45 += t6673
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_6678
@@ -5855,92 +5925,35 @@ _end_of_block_6513:
 	jmp _conditional_6525
 _conditional_6525:
 _block_6704:
-	# t6688 = cols_s0 - center_s45 {canonical: (cols_s0) - (center_s45)}
+	# shared_t11402, t6688 = cols_s0 - center_s45 {canonical: (cols_s0) - (center_s45)}
 	movq _global_cols(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -88(%rbp) # shared_t11402 = (cols_s0) - (center_s45)
 	# t6686 = c_s45 < t6688 {canonical: (c_s45) < ((cols_s0) - (center_s45))}
 	movq -40(%rbp), %rax # t6686 = c_s45 < t6688 {canonical: (c_s45) < ((cols_s0) - (center_s45))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_6706
 _nop_6706:
 	jmp _end_of_conditional_6525
 _end_of_conditional_6525:
-	cmpq $1, -96(%rbp) # true = t6686
+	cmpq $1, -120(%rbp) # true = t6686
 	jne _block_6527 # ifFalse
 	jmp _block_6524 # ifTrue
 _block_6524:
 _block_7354:
-	movq $731, -88(%rbp) # t6712 = 731
+	movq $731, -112(%rbp) # t6712 = 731
 	# t6710 = r_s45 * t6712 {canonical: (r_s45) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t6709 = t6710 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
-	cmpq $750000, %rdi
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rdi
-	jl _sp_method_exit_with_status_1
-	leaq 0(,%rdi,8), %rcx
-	leaq _global_unsharpMask, %rdi
-	add %rcx, %rdi
-	movq $0, (%rdi) # unsharpMask_s0[t6709] = 0
-	movq $731, -112(%rbp) # t6735 = 731
-	# t6733 = r_s45 * t6735 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	# t6732 = t6733 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
+	# t6709 = t6710 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
 	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
 	movq %rax, -128(%rbp)
-	movq $2193, -136(%rbp) # t6759 = 2193
-	# t6757 = r_s45 * t6759 {canonical: (r_s45) * (2193)}
-	movq -32(%rbp), %rax
-	imulq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq $3, -152(%rbp) # t6770 = 3
-	# t6769 = t6770 * c_s45 {canonical: (3) * (c_s45)}
-	movq -152(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -160(%rbp)
-	# t6756 = t6757 + t6769 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -144(%rbp), %rax
-	addq -160(%rbp), %rax
-	movq %rax, -168(%rbp)
-	movq $9, -176(%rbp) # t6788 = 9
-	# t6755 = t6756 - t6788 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) - (9)}
-	movq -168(%rbp), %rax
-	subq -176(%rbp), %rax
-	movq %rax, -184(%rbp)
-	movq -184(%rbp), %rax # t6754 = image_s0[t6755]
-	cmpq $2300000, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_image(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t6754 = image_s0[t6755]
-	movq %rdx, -192(%rbp)
-	movq $0, -200(%rbp) # t6801 = 0
-	movq -200(%rbp), %rax # t6800 = unsharpKernel_s0[t6801]
-	cmpq $9, %rax
-	jge _sp_method_exit_with_status_1
-	cmpq $0, %rax
-	jl _sp_method_exit_with_status_1
-	leaq _global_unsharpKernel(%rip), %rdx
-	movq (%rdx,%rax,8), %rdx # t6800 = unsharpKernel_s0[t6801]
-	movq %rdx, -208(%rbp)
-	# t6753 = t6754 * t6800 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (9)]) * (unsharpKernel_s0[0])}
-	movq -192(%rbp), %rax
-	imulq -208(%rbp), %rax
-	movq %rax, -216(%rbp)
 	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
@@ -5949,59 +5962,119 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -216(%rbp), %rax # unsharpMask_s0[t6732] += t6753
+	movq $0, (%rdi) # unsharpMask_s0[t6709] = 0
+	movq $731, -136(%rbp) # t6735 = 731
+	# t6733 = r_s45 * t6735 {canonical: (r_s45) * (731)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	# t6732 = t6733 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
+	movq -144(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -152(%rbp)
+	movq $2193, -160(%rbp) # t6759 = 2193
+	# t6757 = r_s45 * t6759 {canonical: (r_s45) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $3, -176(%rbp) # t6770 = 3
+	# t6769 = t6770 * c_s45 {canonical: (3) * (c_s45)}
+	movq -176(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -184(%rbp)
+	# t6756 = t6757 + t6769 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
+	movq -168(%rbp), %rax
+	addq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	movq $9, -200(%rbp) # t6788 = 9
+	# t6755 = t6756 - t6788 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) - (9)}
+	movq -192(%rbp), %rax
+	subq -200(%rbp), %rax
+	movq %rax, -208(%rbp)
+	movq -208(%rbp), %rax # t6754 = image_s0[t6755]
+	cmpq $2300000, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_image(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t6754 = image_s0[t6755]
+	movq %rdx, -216(%rbp)
+	movq $0, -224(%rbp) # t6801 = 0
+	movq -224(%rbp), %rax # t6800 = unsharpKernel_s0[t6801]
+	cmpq $9, %rax
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rax
+	jl _sp_method_exit_with_status_1
+	leaq _global_unsharpKernel(%rip), %rdx
+	movq (%rdx,%rax,8), %rdx # t6800 = unsharpKernel_s0[t6801]
+	movq %rdx, -232(%rbp)
+	# t11405, t6753 = t6754 * t6800 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (9)]) * (unsharpKernel_s0[0])}
+	movq -216(%rbp), %rax
+	imulq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11405 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (9)]) * (unsharpKernel_s0[0])
+	movq -152(%rbp), %rdi
+	cmpq $750000, %rdi
+	jge _sp_method_exit_with_status_1
+	cmpq $0, %rdi
+	jl _sp_method_exit_with_status_1
+	leaq 0(,%rdi,8), %rcx
+	leaq _global_unsharpMask, %rdi
+	add %rcx, %rdi
+	movq -248(%rbp), %rax # unsharpMask_s0[t6732] += t11405 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (9)]) * (unsharpKernel_s0[0])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -224(%rbp) # t6818 = 731
+	movq $731, -256(%rbp) # t6818 = 731
 	# t6816 = r_s45 * t6818 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -224(%rbp), %rax
-	movq %rax, -232(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t6815 = t6816 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -232(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -240(%rbp)
-	movq $2193, -248(%rbp) # t6842 = 2193
+	movq %rax, -272(%rbp)
+	movq $2193, -280(%rbp) # t6842 = 2193
 	# t6840 = r_s45 * t6842 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -248(%rbp), %rax
-	movq %rax, -256(%rbp)
-	movq $3, -264(%rbp) # t6853 = 3
+	imulq -280(%rbp), %rax
+	movq %rax, -288(%rbp)
+	movq $3, -296(%rbp) # t6853 = 3
 	# t6852 = t6853 * c_s45 {canonical: (3) * (c_s45)}
-	movq -264(%rbp), %rax
+	movq -296(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -272(%rbp)
+	movq %rax, -304(%rbp)
 	# t6839 = t6840 + t6852 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -256(%rbp), %rax
-	addq -272(%rbp), %rax
-	movq %rax, -280(%rbp)
-	movq $6, -288(%rbp) # t6871 = 6
+	movq -288(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq $6, -320(%rbp) # t6871 = 6
 	# t6838 = t6839 - t6871 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) - (6)}
-	movq -280(%rbp), %rax
-	subq -288(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t6837 = image_s0[t6838]
+	movq -312(%rbp), %rax
+	subq -320(%rbp), %rax
+	movq %rax, -328(%rbp)
+	movq -328(%rbp), %rax # t6837 = image_s0[t6838]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t6837 = image_s0[t6838]
-	movq %rdx, -304(%rbp)
-	movq $1, -312(%rbp) # t6884 = 1
-	movq -312(%rbp), %rax # t6883 = unsharpKernel_s0[t6884]
+	movq %rdx, -336(%rbp)
+	movq $1, -344(%rbp) # t6884 = 1
+	movq -344(%rbp), %rax # t6883 = unsharpKernel_s0[t6884]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t6883 = unsharpKernel_s0[t6884]
-	movq %rdx, -320(%rbp)
-	# t6836 = t6837 * t6883 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (6)]) * (unsharpKernel_s0[1])}
-	movq -304(%rbp), %rax
-	imulq -320(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -240(%rbp), %rdi
+	movq %rdx, -352(%rbp)
+	# t11406, t6836 = t6837 * t6883 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (6)]) * (unsharpKernel_s0[1])}
+	movq -336(%rbp), %rax
+	imulq -352(%rbp), %rax
+	movq %rax, -360(%rbp)
+	movq %rax, -368(%rbp) # t11406 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (6)]) * (unsharpKernel_s0[1])
+	movq -272(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6009,59 +6082,60 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -328(%rbp), %rax # unsharpMask_s0[t6815] += t6836
+	movq -368(%rbp), %rax # unsharpMask_s0[t6815] += t11406 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (6)]) * (unsharpKernel_s0[1])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -336(%rbp) # t6901 = 731
+	movq $731, -376(%rbp) # t6901 = 731
 	# t6899 = r_s45 * t6901 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -336(%rbp), %rax
-	movq %rax, -344(%rbp)
+	imulq -376(%rbp), %rax
+	movq %rax, -384(%rbp)
 	# t6898 = t6899 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -344(%rbp), %rax
+	movq -384(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -352(%rbp)
-	movq $2193, -360(%rbp) # t6925 = 2193
+	movq %rax, -392(%rbp)
+	movq $2193, -400(%rbp) # t6925 = 2193
 	# t6923 = r_s45 * t6925 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq $3, -376(%rbp) # t6936 = 3
-	# t6935 = t6936 * c_s45 {canonical: (3) * (c_s45)}
-	movq -376(%rbp), %rax
-	imulq -40(%rbp), %rax
-	movq %rax, -384(%rbp)
-	# t6922 = t6923 + t6935 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -368(%rbp), %rax
-	addq -384(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq $3, -400(%rbp) # t6954 = 3
-	# t6921 = t6922 - t6954 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) - (3)}
-	movq -392(%rbp), %rax
-	subq -400(%rbp), %rax
+	imulq -400(%rbp), %rax
 	movq %rax, -408(%rbp)
-	movq -408(%rbp), %rax # t6920 = image_s0[t6921]
+	movq $3, -416(%rbp) # t6936 = 3
+	# t6935 = t6936 * c_s45 {canonical: (3) * (c_s45)}
+	movq -416(%rbp), %rax
+	imulq -40(%rbp), %rax
+	movq %rax, -424(%rbp)
+	# t6922 = t6923 + t6935 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
+	movq -408(%rbp), %rax
+	addq -424(%rbp), %rax
+	movq %rax, -432(%rbp)
+	movq $3, -440(%rbp) # t6954 = 3
+	# t6921 = t6922 - t6954 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) - (3)}
+	movq -432(%rbp), %rax
+	subq -440(%rbp), %rax
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t6920 = image_s0[t6921]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t6920 = image_s0[t6921]
-	movq %rdx, -416(%rbp)
-	movq $2, -424(%rbp) # t6967 = 2
-	movq -424(%rbp), %rax # t6966 = unsharpKernel_s0[t6967]
+	movq %rdx, -456(%rbp)
+	movq $2, -464(%rbp) # t6967 = 2
+	movq -464(%rbp), %rax # t6966 = unsharpKernel_s0[t6967]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t6966 = unsharpKernel_s0[t6967]
-	movq %rdx, -432(%rbp)
-	# t6919 = t6920 * t6966 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (3)]) * (unsharpKernel_s0[2])}
-	movq -416(%rbp), %rax
-	imulq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -352(%rbp), %rdi
+	movq %rdx, -472(%rbp)
+	# t11407, t6919 = t6920 * t6966 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (3)]) * (unsharpKernel_s0[2])}
+	movq -456(%rbp), %rax
+	imulq -472(%rbp), %rax
+	movq %rax, -480(%rbp)
+	movq %rax, -488(%rbp) # t11407 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (3)]) * (unsharpKernel_s0[2])
+	movq -392(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6069,54 +6143,55 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -440(%rbp), %rax # unsharpMask_s0[t6898] += t6919
+	movq -488(%rbp), %rax # unsharpMask_s0[t6898] += t11407 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) - (3)]) * (unsharpKernel_s0[2])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -448(%rbp) # t6984 = 731
+	movq $731, -496(%rbp) # t6984 = 731
 	# t6982 = r_s45 * t6984 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -448(%rbp), %rax
-	movq %rax, -456(%rbp)
+	imulq -496(%rbp), %rax
+	movq %rax, -504(%rbp)
 	# t6981 = t6982 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -456(%rbp), %rax
+	movq -504(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -464(%rbp)
-	movq $2193, -472(%rbp) # t7007 = 2193
+	movq %rax, -512(%rbp)
+	movq $2193, -520(%rbp) # t7007 = 2193
 	# t7005 = r_s45 * t7007 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq $3, -488(%rbp) # t7018 = 3
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	movq $3, -536(%rbp) # t7018 = 3
 	# t7017 = t7018 * c_s45 {canonical: (3) * (c_s45)}
-	movq -488(%rbp), %rax
+	movq -536(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -496(%rbp)
+	movq %rax, -544(%rbp)
 	# t7004 = t7005 + t7017 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -480(%rbp), %rax
-	addq -496(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq -504(%rbp), %rax # t7003 = image_s0[t7004]
+	movq -528(%rbp), %rax
+	addq -544(%rbp), %rax
+	movq %rax, -552(%rbp)
+	movq -552(%rbp), %rax # t7003 = image_s0[t7004]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7003 = image_s0[t7004]
-	movq %rdx, -512(%rbp)
-	movq $3, -520(%rbp) # t7039 = 3
-	movq -520(%rbp), %rax # t7038 = unsharpKernel_s0[t7039]
+	movq %rdx, -560(%rbp)
+	movq $3, -568(%rbp) # t7039 = 3
+	movq -568(%rbp), %rax # t7038 = unsharpKernel_s0[t7039]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7038 = unsharpKernel_s0[t7039]
-	movq %rdx, -528(%rbp)
-	# t7002 = t7003 * t7038 {canonical: (image_s0[((r_s45) * (2193)) + ((3) * (c_s45))]) * (unsharpKernel_s0[3])}
-	movq -512(%rbp), %rax
-	imulq -528(%rbp), %rax
-	movq %rax, -536(%rbp)
-	movq -464(%rbp), %rdi
+	movq %rdx, -576(%rbp)
+	# t11408, t7002 = t7003 * t7038 {canonical: (image_s0[((r_s45) * (2193)) + ((3) * (c_s45))]) * (unsharpKernel_s0[3])}
+	movq -560(%rbp), %rax
+	imulq -576(%rbp), %rax
+	movq %rax, -584(%rbp)
+	movq %rax, -592(%rbp) # t11408 = (image_s0[((r_s45) * (2193)) + ((3) * (c_s45))]) * (unsharpKernel_s0[3])
+	movq -512(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6124,59 +6199,60 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -536(%rbp), %rax # unsharpMask_s0[t6981] += t7002
+	movq -592(%rbp), %rax # unsharpMask_s0[t6981] += t11408 {canonical: (image_s0[((r_s45) * (2193)) + ((3) * (c_s45))]) * (unsharpKernel_s0[3])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -544(%rbp) # t7056 = 731
+	movq $731, -600(%rbp) # t7056 = 731
 	# t7054 = r_s45 * t7056 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
+	imulq -600(%rbp), %rax
+	movq %rax, -608(%rbp)
 	# t7053 = t7054 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -552(%rbp), %rax
+	movq -608(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -560(%rbp)
-	movq $2193, -568(%rbp) # t7080 = 2193
+	movq %rax, -616(%rbp)
+	movq $2193, -624(%rbp) # t7080 = 2193
 	# t7078 = r_s45 * t7080 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -568(%rbp), %rax
-	movq %rax, -576(%rbp)
-	movq $3, -584(%rbp) # t7091 = 3
+	imulq -624(%rbp), %rax
+	movq %rax, -632(%rbp)
+	movq $3, -640(%rbp) # t7091 = 3
 	# t7090 = t7091 * c_s45 {canonical: (3) * (c_s45)}
-	movq -584(%rbp), %rax
+	movq -640(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -592(%rbp)
+	movq %rax, -648(%rbp)
 	# t7077 = t7078 + t7090 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -576(%rbp), %rax
-	addq -592(%rbp), %rax
-	movq %rax, -600(%rbp)
-	movq $3, -608(%rbp) # t7109 = 3
+	movq -632(%rbp), %rax
+	addq -648(%rbp), %rax
+	movq %rax, -656(%rbp)
+	movq $3, -664(%rbp) # t7109 = 3
 	# t7076 = t7077 + t7109 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) + (3)}
-	movq -600(%rbp), %rax
-	addq -608(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq -616(%rbp), %rax # t7075 = image_s0[t7076]
+	movq -656(%rbp), %rax
+	addq -664(%rbp), %rax
+	movq %rax, -672(%rbp)
+	movq -672(%rbp), %rax # t7075 = image_s0[t7076]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7075 = image_s0[t7076]
-	movq %rdx, -624(%rbp)
-	movq $4, -632(%rbp) # t7122 = 4
-	movq -632(%rbp), %rax # t7121 = unsharpKernel_s0[t7122]
+	movq %rdx, -680(%rbp)
+	movq $4, -688(%rbp) # t7122 = 4
+	movq -688(%rbp), %rax # t7121 = unsharpKernel_s0[t7122]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7121 = unsharpKernel_s0[t7122]
-	movq %rdx, -640(%rbp)
-	# t7074 = t7075 * t7121 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (3)]) * (unsharpKernel_s0[4])}
-	movq -624(%rbp), %rax
-	imulq -640(%rbp), %rax
-	movq %rax, -648(%rbp)
-	movq -560(%rbp), %rdi
+	movq %rdx, -696(%rbp)
+	# t11409, t7074 = t7075 * t7121 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (3)]) * (unsharpKernel_s0[4])}
+	movq -680(%rbp), %rax
+	imulq -696(%rbp), %rax
+	movq %rax, -704(%rbp)
+	movq %rax, -712(%rbp) # t11409 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (3)]) * (unsharpKernel_s0[4])
+	movq -616(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6184,59 +6260,60 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -648(%rbp), %rax # unsharpMask_s0[t7053] += t7074
+	movq -712(%rbp), %rax # unsharpMask_s0[t7053] += t11409 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (3)]) * (unsharpKernel_s0[4])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -656(%rbp) # t7139 = 731
+	movq $731, -720(%rbp) # t7139 = 731
 	# t7137 = r_s45 * t7139 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
+	imulq -720(%rbp), %rax
+	movq %rax, -728(%rbp)
 	# t7136 = t7137 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -664(%rbp), %rax
+	movq -728(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -672(%rbp)
-	movq $2193, -680(%rbp) # t7163 = 2193
+	movq %rax, -736(%rbp)
+	movq $2193, -744(%rbp) # t7163 = 2193
 	# t7161 = r_s45 * t7163 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -680(%rbp), %rax
-	movq %rax, -688(%rbp)
-	movq $3, -696(%rbp) # t7174 = 3
+	imulq -744(%rbp), %rax
+	movq %rax, -752(%rbp)
+	movq $3, -760(%rbp) # t7174 = 3
 	# t7173 = t7174 * c_s45 {canonical: (3) * (c_s45)}
-	movq -696(%rbp), %rax
+	movq -760(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -704(%rbp)
+	movq %rax, -768(%rbp)
 	# t7160 = t7161 + t7173 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -688(%rbp), %rax
-	addq -704(%rbp), %rax
-	movq %rax, -712(%rbp)
-	movq $6, -720(%rbp) # t7192 = 6
+	movq -752(%rbp), %rax
+	addq -768(%rbp), %rax
+	movq %rax, -776(%rbp)
+	movq $6, -784(%rbp) # t7192 = 6
 	# t7159 = t7160 + t7192 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) + (6)}
-	movq -712(%rbp), %rax
-	addq -720(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq -728(%rbp), %rax # t7158 = image_s0[t7159]
+	movq -776(%rbp), %rax
+	addq -784(%rbp), %rax
+	movq %rax, -792(%rbp)
+	movq -792(%rbp), %rax # t7158 = image_s0[t7159]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7158 = image_s0[t7159]
-	movq %rdx, -736(%rbp)
-	movq $5, -744(%rbp) # t7205 = 5
-	movq -744(%rbp), %rax # t7204 = unsharpKernel_s0[t7205]
+	movq %rdx, -800(%rbp)
+	movq $5, -808(%rbp) # t7205 = 5
+	movq -808(%rbp), %rax # t7204 = unsharpKernel_s0[t7205]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7204 = unsharpKernel_s0[t7205]
-	movq %rdx, -752(%rbp)
-	# t7157 = t7158 * t7204 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (6)]) * (unsharpKernel_s0[5])}
-	movq -736(%rbp), %rax
-	imulq -752(%rbp), %rax
-	movq %rax, -760(%rbp)
-	movq -672(%rbp), %rdi
+	movq %rdx, -816(%rbp)
+	# t11410, t7157 = t7158 * t7204 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (6)]) * (unsharpKernel_s0[5])}
+	movq -800(%rbp), %rax
+	imulq -816(%rbp), %rax
+	movq %rax, -824(%rbp)
+	movq %rax, -832(%rbp) # t11410 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (6)]) * (unsharpKernel_s0[5])
+	movq -736(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6244,59 +6321,60 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -760(%rbp), %rax # unsharpMask_s0[t7136] += t7157
+	movq -832(%rbp), %rax # unsharpMask_s0[t7136] += t11410 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (6)]) * (unsharpKernel_s0[5])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -768(%rbp) # t7222 = 731
+	movq $731, -840(%rbp) # t7222 = 731
 	# t7220 = r_s45 * t7222 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -768(%rbp), %rax
-	movq %rax, -776(%rbp)
+	imulq -840(%rbp), %rax
+	movq %rax, -848(%rbp)
 	# t7219 = t7220 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -776(%rbp), %rax
+	movq -848(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -784(%rbp)
-	movq $2193, -792(%rbp) # t7246 = 2193
+	movq %rax, -856(%rbp)
+	movq $2193, -864(%rbp) # t7246 = 2193
 	# t7244 = r_s45 * t7246 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
-	imulq -792(%rbp), %rax
-	movq %rax, -800(%rbp)
-	movq $3, -808(%rbp) # t7257 = 3
+	imulq -864(%rbp), %rax
+	movq %rax, -872(%rbp)
+	movq $3, -880(%rbp) # t7257 = 3
 	# t7256 = t7257 * c_s45 {canonical: (3) * (c_s45)}
-	movq -808(%rbp), %rax
+	movq -880(%rbp), %rax
 	imulq -40(%rbp), %rax
-	movq %rax, -816(%rbp)
+	movq %rax, -888(%rbp)
 	# t7243 = t7244 + t7256 {canonical: ((r_s45) * (2193)) + ((3) * (c_s45))}
-	movq -800(%rbp), %rax
-	addq -816(%rbp), %rax
-	movq %rax, -824(%rbp)
-	movq $9, -832(%rbp) # t7275 = 9
+	movq -872(%rbp), %rax
+	addq -888(%rbp), %rax
+	movq %rax, -896(%rbp)
+	movq $9, -904(%rbp) # t7275 = 9
 	# t7242 = t7243 + t7275 {canonical: (((r_s45) * (2193)) + ((3) * (c_s45))) + (9)}
-	movq -824(%rbp), %rax
-	addq -832(%rbp), %rax
-	movq %rax, -840(%rbp)
-	movq -840(%rbp), %rax # t7241 = image_s0[t7242]
+	movq -896(%rbp), %rax
+	addq -904(%rbp), %rax
+	movq %rax, -912(%rbp)
+	movq -912(%rbp), %rax # t7241 = image_s0[t7242]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7241 = image_s0[t7242]
-	movq %rdx, -848(%rbp)
-	movq $6, -856(%rbp) # t7288 = 6
-	movq -856(%rbp), %rax # t7287 = unsharpKernel_s0[t7288]
+	movq %rdx, -920(%rbp)
+	movq $6, -928(%rbp) # t7288 = 6
+	movq -928(%rbp), %rax # t7287 = unsharpKernel_s0[t7288]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7287 = unsharpKernel_s0[t7288]
-	movq %rdx, -864(%rbp)
-	# t7240 = t7241 * t7287 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (9)]) * (unsharpKernel_s0[6])}
-	movq -848(%rbp), %rax
-	imulq -864(%rbp), %rax
-	movq %rax, -872(%rbp)
-	movq -784(%rbp), %rdi
+	movq %rdx, -936(%rbp)
+	# t11411, t7240 = t7241 * t7287 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (9)]) * (unsharpKernel_s0[6])}
+	movq -920(%rbp), %rax
+	imulq -936(%rbp), %rax
+	movq %rax, -944(%rbp)
+	movq %rax, -952(%rbp) # t11411 = (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (9)]) * (unsharpKernel_s0[6])
+	movq -856(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6304,36 +6382,36 @@ _block_7354:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -872(%rbp), %rax # unsharpMask_s0[t7219] += t7240
+	movq -952(%rbp), %rax # unsharpMask_s0[t7219] += t11411 {canonical: (image_s0[(((r_s45) * (2193)) + ((3) * (c_s45))) + (9)]) * (unsharpKernel_s0[6])}
 	addq %rax, (%rdi)
 	movq (%rdi), %rax
-	movq $731, -880(%rbp) # t7305 = 731
+	movq $731, -960(%rbp) # t7305 = 731
 	# t7303 = r_s45 * t7305 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -880(%rbp), %rax
-	movq %rax, -888(%rbp)
+	imulq -960(%rbp), %rax
+	movq %rax, -968(%rbp)
 	# t7302 = t7303 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -888(%rbp), %rax
+	movq -968(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -896(%rbp)
-	movq $731, -904(%rbp) # t7327 = 731
+	movq %rax, -976(%rbp)
+	movq $731, -984(%rbp) # t7327 = 731
 	# t7325 = r_s45 * t7327 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -904(%rbp), %rax
-	movq %rax, -912(%rbp)
+	imulq -984(%rbp), %rax
+	movq %rax, -992(%rbp)
 	# t7324 = t7325 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -912(%rbp), %rax
+	movq -992(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -920(%rbp)
-	movq -920(%rbp), %rax # t7323 = unsharpMask_s0[t7324]
+	movq %rax, -1000(%rbp)
+	movq -1000(%rbp), %rax # t7323 = unsharpMask_s0[t7324]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7323 = unsharpMask_s0[t7324]
-	movq %rdx, -928(%rbp)
-	movq -896(%rbp), %rdi
+	movq %rdx, -1008(%rbp)
+	movq -976(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6342,7 +6420,7 @@ _block_7354:
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
 	# unsharpMask_s0[t7302] = t7323 / kernel_sum_s0 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) / (kernel_sum_s0)}
-	movq -928(%rbp), %rax
+	movq -1008(%rbp), %rax
 	cqto
 	idivq _global_kernel_sum(%rip)
 	movq %rax, (%rdi)
@@ -6353,8 +6431,8 @@ _end_of_block_6524:
 	jmp _block_6514
 _block_6514:
 _block_7363:
-	movq $1, -88(%rbp) # t7359 = 1
-	movq -88(%rbp), %rax # c_s45 += t7359
+	movq $1, -112(%rbp) # t7359 = 1
+	movq -112(%rbp), %rax # c_s45 += t7359
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_7364
@@ -6364,10 +6442,9 @@ _end_of_block_6514:
 	jmp _conditional_6525
 _block_6527:
 _block_7376:
-	# c_s45 = cols_s0 - center_s45 {canonical: (cols_s0) - (center_s45)}
-	movq _global_cols(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -88(%rbp), %rax # c_s45 = shared_t11402 {canonical: (cols_s0) - (center_s45)}
 	movq %rax, -40(%rbp)
+	movq -40(%rbp), %rax
 	jmp _nop_7377
 _nop_7377:
 	jmp _end_of_block_6527
@@ -6380,40 +6457,40 @@ _block_7387:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_7389
 _nop_7389:
 	jmp _end_of_conditional_6531
 _end_of_conditional_6531:
-	cmpq $1, -88(%rbp) # true = t7378
+	cmpq $1, -112(%rbp) # true = t7378
 	jne _block_6504 # ifFalse
 	jmp _block_6530 # ifTrue
 _block_6530:
 _block_7446:
-	movq $731, -88(%rbp) # t7395 = 731
+	movq $731, -112(%rbp) # t7395 = 731
 	# t7393 = r_s45 * t7395 {canonical: (r_s45) * (731)}
-	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t7392 = t7393 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
-	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t7416 = 2193
-	# t7414 = r_s45 * t7416 {canonical: (r_s45) * (2193)}
 	movq -32(%rbp), %rax
 	imulq -112(%rbp), %rax
 	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t7428 = 3
+	# t7392 = t7393 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
+	movq -120(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t7416 = 2193
+	# t7414 = r_s45 * t7416 {canonical: (r_s45) * (2193)}
+	movq -32(%rbp), %rax
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t7428 = 3
 	# t7426 = c_s45 * t7428 {canonical: (c_s45) * (3)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
+	imulq -152(%rbp), %rax
+	movq %rax, -160(%rbp)
 	# t7413 = t7414 + t7426 {canonical: ((r_s45) * (2193)) + ((c_s45) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq -104(%rbp), %rdi
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6421,7 +6498,7 @@ _block_7446:
 	leaq 0(,%rdi,8), %rcx
 	leaq _global_unsharpMask, %rdi
 	add %rcx, %rdi
-	movq -144(%rbp), %rax # unsharpMask_s0[t7392] = image_s0[t7413]
+	movq -168(%rbp), %rax # unsharpMask_s0[t7392] = image_s0[t7413]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -6436,8 +6513,8 @@ _end_of_block_6530:
 	jmp _block_6528
 _block_6528:
 _block_7455:
-	movq $1, -88(%rbp) # t7451 = 1
-	movq -88(%rbp), %rax # c_s45 += t7451
+	movq $1, -112(%rbp) # t7451 = 1
+	movq -112(%rbp), %rax # c_s45 += t7451
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_7456
@@ -6447,8 +6524,8 @@ _end_of_block_6528:
 	jmp _conditional_6531
 _block_6504:
 _block_7464:
-	movq $1, -88(%rbp) # t7460 = 1
-	movq -88(%rbp), %rax # r_s45 += t7460
+	movq $1, -112(%rbp) # t7460 = 1
+	movq -112(%rbp), %rax # r_s45 += t7460
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_7465
@@ -6458,19 +6535,22 @@ _end_of_block_6504:
 	jmp _conditional_6532
 _block_6535:
 _block_7489:
-	movq -48(%rbp), %rax # t7468 = center_s45 {canonical: center_s45}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t7473 = center_s45 {canonical: center_s45}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t7472 = unsharpKernel_s0[t7473]
+	movq -48(%rbp), %rax # shared_t11403, t7468 = center_s45 {canonical: center_s45}
+	movq %rax, -112(%rbp)
+	movq %rax, -96(%rbp) # shared_t11403 = center_s45
+	movq -96(%rbp), %rax # shared_t11403, t7473 = shared_t11403 {canonical: center_s45}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq %rax, -96(%rbp) # shared_t11403 = center_s45
+	movq -120(%rbp), %rax # t7472 = unsharpKernel_s0[t7473]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7472 = unsharpKernel_s0[t7473]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6479,7 +6559,7 @@ _block_7489:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t7468] = t7472 - kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s45]) - (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	subq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	movq $0, -40(%rbp) # c_s45 = 0
@@ -6495,19 +6575,19 @@ _block_7500:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_7502
 _nop_7502:
 	jmp _end_of_conditional_6570
 _end_of_conditional_6570:
-	cmpq $1, -88(%rbp) # true = t7491
+	cmpq $1, -112(%rbp) # true = t7491
 	jne _block_6571 # ifFalse
 	jmp _block_6542 # ifTrue
 _block_6542:
 _block_7544:
 	movq -40(%rbp), %rax # t7506 = c_s45 {canonical: c_s45}
-	movq %rax, -88(%rbp)
-	movq -88(%rbp), %rax # m1_s50 = unsharpMask_s0[t7506]
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax # m1_s50 = unsharpMask_s0[t7506]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -6515,12 +6595,12 @@ _block_7544:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m1_s50 = unsharpMask_s0[t7506]
 	movq %rdx, -56(%rbp)
-	movq $731, -96(%rbp) # t7515 = 731
+	movq $731, -120(%rbp) # t7515 = 731
 	# t7513 = c_s45 + t7515 {canonical: (c_s45) + (731)}
 	movq -40(%rbp), %rax
-	addq -96(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # m2_s50 = unsharpMask_s0[t7513]
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # m2_s50 = unsharpMask_s0[t7513]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -6528,12 +6608,12 @@ _block_7544:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m2_s50 = unsharpMask_s0[t7513]
 	movq %rdx, -64(%rbp)
-	movq $1462, -112(%rbp) # t7530 = 1462
+	movq $1462, -136(%rbp) # t7530 = 1462
 	# t7528 = c_s45 + t7530 {canonical: (c_s45) + (1462)}
 	movq -40(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # m3_s50 = unsharpMask_s0[t7528]
+	addq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq -144(%rbp), %rax # m3_s50 = unsharpMask_s0[t7528]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -6554,26 +6634,26 @@ _block_7555:
 	cmpq -48(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_7557
 _nop_7557:
 	jmp _end_of_conditional_6546
 _end_of_conditional_6546:
-	cmpq $1, -88(%rbp) # true = t7546
+	cmpq $1, -112(%rbp) # true = t7546
 	jne _block_6548 # ifFalse
 	jmp _block_6545 # ifTrue
 _block_6545:
 _block_7582:
-	movq $731, -88(%rbp) # t7563 = 731
+	movq $731, -112(%rbp) # t7563 = 731
 	# t7561 = r_s45 * t7563 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t7560 = t7561 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -6589,8 +6669,8 @@ _end_of_block_6545:
 	jmp _block_6543
 _block_6543:
 _block_7591:
-	movq $1, -88(%rbp) # t7587 = 1
-	movq -88(%rbp), %rax # r_s45 += t7587
+	movq $1, -112(%rbp) # t7587 = 1
+	movq -112(%rbp), %rax # r_s45 += t7587
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_7592
@@ -6600,8 +6680,9 @@ _end_of_block_6543:
 	jmp _conditional_6546
 _block_6548:
 _block_7598:
-	movq -48(%rbp), %rax # r_s45 = center_s45 {canonical: center_s45}
+	movq -96(%rbp), %rax # r_s45 = shared_t11403 {canonical: center_s45}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_7599
 _nop_7599:
 	jmp _end_of_block_6548
@@ -6609,382 +6690,390 @@ _end_of_block_6548:
 	jmp _conditional_6563
 _conditional_6563:
 _block_7618:
-	# t7602 = rows_s0 - center_s45 {canonical: (rows_s0) - (center_s45)}
+	# shared_t11404, t7602 = rows_s0 - center_s45 {canonical: (rows_s0) - (center_s45)}
 	movq _global_rows(%rip), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
+	movq %rax, -104(%rbp) # shared_t11404 = (rows_s0) - (center_s45)
 	# t7600 = r_s45 < t7602 {canonical: (r_s45) < ((rows_s0) - (center_s45))}
 	movq -32(%rbp), %rax # t7600 = r_s45 < t7602 {canonical: (r_s45) < ((rows_s0) - (center_s45))}
-	cmpq -88(%rbp), %rax
+	cmpq -112(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -96(%rbp)
+	movq %rax, -120(%rbp)
 	jmp _nop_7620
 _nop_7620:
 	jmp _end_of_conditional_6563
 _end_of_conditional_6563:
-	cmpq $1, -96(%rbp) # true = t7600
+	cmpq $1, -120(%rbp) # true = t7600
 	jne _block_6565 # ifFalse
 	jmp _block_6562 # ifTrue
 _block_6562:
 _block_8162:
 	movq $0, -80(%rbp) # dot_s52 = 0
-	movq $731, -88(%rbp) # t7632 = 731
+	movq $731, -112(%rbp) # t7632 = 731
 	# t7630 = r_s45 * t7632 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t7629 = t7630 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # t7628 = unsharpMask_s0[t7629]
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t7628 = unsharpMask_s0[t7629]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7628 = unsharpMask_s0[t7629]
-	movq %rdx, -112(%rbp)
-	movq $0, -120(%rbp) # t7655 = 0
-	movq -120(%rbp), %rax # t7654 = unsharpKernel_s0[t7655]
+	movq %rdx, -136(%rbp)
+	movq $0, -144(%rbp) # t7655 = 0
+	movq -144(%rbp), %rax # t7654 = unsharpKernel_s0[t7655]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7654 = unsharpKernel_s0[t7655]
-	movq %rdx, -128(%rbp)
+	movq %rdx, -152(%rbp)
 	# t7652 = m1_s50 * t7654 {canonical: (m1_s50) * (unsharpKernel_s0[0])}
 	movq -56(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t7627 = t7628 + t7652 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m1_s50) * (unsharpKernel_s0[0]))}
-	movq -112(%rbp), %rax
-	addq -136(%rbp), %rax
-	movq %rax, -144(%rbp)
-	movq -144(%rbp), %rax # dot_s52 += t7627
-	addq %rax, -80(%rbp)
-	movq -80(%rbp), %rax
-	movq $731, -152(%rbp) # t7682 = 731
-	# t7680 = r_s45 * t7682 {canonical: (r_s45) * (731)}
-	movq -32(%rbp), %rax
 	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	# t7679 = t7680 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -160(%rbp), %rax
-	addq -40(%rbp), %rax
+	# t11412, t7627 = t7628 + t7652 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m1_s50) * (unsharpKernel_s0[0]))}
+	movq -136(%rbp), %rax
+	addq -160(%rbp), %rax
 	movq %rax, -168(%rbp)
-	movq -168(%rbp), %rax # t7678 = unsharpMask_s0[t7679]
+	movq %rax, -176(%rbp) # t11412 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m1_s50) * (unsharpKernel_s0[0]))
+	movq -176(%rbp), %rax # dot_s52 += t11412 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m1_s50) * (unsharpKernel_s0[0]))}
+	addq %rax, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq $731, -184(%rbp) # t7682 = 731
+	# t7680 = r_s45 * t7682 {canonical: (r_s45) * (731)}
+	movq -32(%rbp), %rax
+	imulq -184(%rbp), %rax
+	movq %rax, -192(%rbp)
+	# t7679 = t7680 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
+	movq -192(%rbp), %rax
+	addq -40(%rbp), %rax
+	movq %rax, -200(%rbp)
+	movq -200(%rbp), %rax # t7678 = unsharpMask_s0[t7679]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7678 = unsharpMask_s0[t7679]
-	movq %rdx, -176(%rbp)
-	movq $1, -184(%rbp) # t7705 = 1
-	movq -184(%rbp), %rax # t7704 = unsharpKernel_s0[t7705]
+	movq %rdx, -208(%rbp)
+	movq $1, -216(%rbp) # t7705 = 1
+	movq -216(%rbp), %rax # t7704 = unsharpKernel_s0[t7705]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7704 = unsharpKernel_s0[t7705]
-	movq %rdx, -192(%rbp)
+	movq %rdx, -224(%rbp)
 	# t7702 = m2_s50 * t7704 {canonical: (m2_s50) * (unsharpKernel_s0[1])}
 	movq -64(%rbp), %rax
-	imulq -192(%rbp), %rax
-	movq %rax, -200(%rbp)
-	# t7677 = t7678 + t7702 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m2_s50) * (unsharpKernel_s0[1]))}
-	movq -176(%rbp), %rax
-	addq -200(%rbp), %rax
-	movq %rax, -208(%rbp)
-	movq -208(%rbp), %rax # dot_s52 += t7677
+	imulq -224(%rbp), %rax
+	movq %rax, -232(%rbp)
+	# t11413, t7677 = t7678 + t7702 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m2_s50) * (unsharpKernel_s0[1]))}
+	movq -208(%rbp), %rax
+	addq -232(%rbp), %rax
+	movq %rax, -240(%rbp)
+	movq %rax, -248(%rbp) # t11413 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m2_s50) * (unsharpKernel_s0[1]))
+	movq -248(%rbp), %rax # dot_s52 += t11413 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m2_s50) * (unsharpKernel_s0[1]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -216(%rbp) # t7732 = 731
+	movq $731, -256(%rbp) # t7732 = 731
 	# t7730 = r_s45 * t7732 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -216(%rbp), %rax
-	movq %rax, -224(%rbp)
+	imulq -256(%rbp), %rax
+	movq %rax, -264(%rbp)
 	# t7729 = t7730 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -224(%rbp), %rax
+	movq -264(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -232(%rbp)
-	movq -232(%rbp), %rax # t7728 = unsharpMask_s0[t7729]
+	movq %rax, -272(%rbp)
+	movq -272(%rbp), %rax # t7728 = unsharpMask_s0[t7729]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7728 = unsharpMask_s0[t7729]
-	movq %rdx, -240(%rbp)
-	movq $2, -248(%rbp) # t7755 = 2
-	movq -248(%rbp), %rax # t7754 = unsharpKernel_s0[t7755]
+	movq %rdx, -280(%rbp)
+	movq $2, -288(%rbp) # t7755 = 2
+	movq -288(%rbp), %rax # t7754 = unsharpKernel_s0[t7755]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7754 = unsharpKernel_s0[t7755]
-	movq %rdx, -256(%rbp)
+	movq %rdx, -296(%rbp)
 	# t7752 = m3_s50 * t7754 {canonical: (m3_s50) * (unsharpKernel_s0[2])}
 	movq -72(%rbp), %rax
-	imulq -256(%rbp), %rax
-	movq %rax, -264(%rbp)
-	# t7727 = t7728 + t7752 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m3_s50) * (unsharpKernel_s0[2]))}
-	movq -240(%rbp), %rax
-	addq -264(%rbp), %rax
-	movq %rax, -272(%rbp)
-	movq -272(%rbp), %rax # dot_s52 += t7727
+	imulq -296(%rbp), %rax
+	movq %rax, -304(%rbp)
+	# t11414, t7727 = t7728 + t7752 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m3_s50) * (unsharpKernel_s0[2]))}
+	movq -280(%rbp), %rax
+	addq -304(%rbp), %rax
+	movq %rax, -312(%rbp)
+	movq %rax, -320(%rbp) # t11414 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m3_s50) * (unsharpKernel_s0[2]))
+	movq -320(%rbp), %rax # dot_s52 += t11414 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((m3_s50) * (unsharpKernel_s0[2]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -280(%rbp) # t7782 = 731
+	movq $731, -328(%rbp) # t7782 = 731
 	# t7780 = r_s45 * t7782 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -280(%rbp), %rax
-	movq %rax, -288(%rbp)
+	imulq -328(%rbp), %rax
+	movq %rax, -336(%rbp)
 	# t7779 = t7780 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -288(%rbp), %rax
+	movq -336(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -296(%rbp)
-	movq -296(%rbp), %rax # t7778 = unsharpMask_s0[t7779]
+	movq %rax, -344(%rbp)
+	movq -344(%rbp), %rax # t7778 = unsharpMask_s0[t7779]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7778 = unsharpMask_s0[t7779]
-	movq %rdx, -304(%rbp)
-	movq $731, -312(%rbp) # t7806 = 731
+	movq %rdx, -352(%rbp)
+	movq $731, -360(%rbp) # t7806 = 731
 	# t7805 = t7806 * r_s45 {canonical: (731) * (r_s45)}
-	movq -312(%rbp), %rax
+	movq -360(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -320(%rbp)
+	movq %rax, -368(%rbp)
 	# t7804 = t7805 + c_s45 {canonical: ((731) * (r_s45)) + (c_s45)}
-	movq -320(%rbp), %rax
+	movq -368(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -328(%rbp)
-	movq -328(%rbp), %rax # t7803 = unsharpMask_s0[t7804]
+	movq %rax, -376(%rbp)
+	movq -376(%rbp), %rax # t7803 = unsharpMask_s0[t7804]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7803 = unsharpMask_s0[t7804]
-	movq %rdx, -336(%rbp)
-	movq $3, -344(%rbp) # t7828 = 3
-	movq -344(%rbp), %rax # t7827 = unsharpKernel_s0[t7828]
+	movq %rdx, -384(%rbp)
+	movq $3, -392(%rbp) # t7828 = 3
+	movq -392(%rbp), %rax # t7827 = unsharpKernel_s0[t7828]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7827 = unsharpKernel_s0[t7828]
-	movq %rdx, -352(%rbp)
+	movq %rdx, -400(%rbp)
 	# t7802 = t7803 * t7827 {canonical: (unsharpMask_s0[((731) * (r_s45)) + (c_s45)]) * (unsharpKernel_s0[3])}
-	movq -336(%rbp), %rax
-	imulq -352(%rbp), %rax
-	movq %rax, -360(%rbp)
-	# t7777 = t7778 + t7802 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[((731) * (r_s45)) + (c_s45)]) * (unsharpKernel_s0[3]))}
-	movq -304(%rbp), %rax
-	addq -360(%rbp), %rax
-	movq %rax, -368(%rbp)
-	movq -368(%rbp), %rax # dot_s52 += t7777
+	movq -384(%rbp), %rax
+	imulq -400(%rbp), %rax
+	movq %rax, -408(%rbp)
+	# t11415, t7777 = t7778 + t7802 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[((731) * (r_s45)) + (c_s45)]) * (unsharpKernel_s0[3]))}
+	movq -352(%rbp), %rax
+	addq -408(%rbp), %rax
+	movq %rax, -416(%rbp)
+	movq %rax, -424(%rbp) # t11415 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[((731) * (r_s45)) + (c_s45)]) * (unsharpKernel_s0[3]))
+	movq -424(%rbp), %rax # dot_s52 += t11415 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[((731) * (r_s45)) + (c_s45)]) * (unsharpKernel_s0[3]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -376(%rbp) # t7855 = 731
+	movq $731, -432(%rbp) # t7855 = 731
 	# t7853 = r_s45 * t7855 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -376(%rbp), %rax
-	movq %rax, -384(%rbp)
+	imulq -432(%rbp), %rax
+	movq %rax, -440(%rbp)
 	# t7852 = t7853 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -384(%rbp), %rax
+	movq -440(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -392(%rbp)
-	movq -392(%rbp), %rax # t7851 = unsharpMask_s0[t7852]
+	movq %rax, -448(%rbp)
+	movq -448(%rbp), %rax # t7851 = unsharpMask_s0[t7852]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7851 = unsharpMask_s0[t7852]
-	movq %rdx, -400(%rbp)
-	movq $731, -408(%rbp) # t7880 = 731
+	movq %rdx, -456(%rbp)
+	movq $731, -464(%rbp) # t7880 = 731
 	# t7879 = t7880 * r_s45 {canonical: (731) * (r_s45)}
-	movq -408(%rbp), %rax
+	movq -464(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -416(%rbp)
+	movq %rax, -472(%rbp)
 	# t7878 = t7879 + c_s45 {canonical: ((731) * (r_s45)) + (c_s45)}
-	movq -416(%rbp), %rax
+	movq -472(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -424(%rbp)
-	movq $731, -432(%rbp) # t7899 = 731
+	movq %rax, -480(%rbp)
+	movq $731, -488(%rbp) # t7899 = 731
 	# t7877 = t7878 + t7899 {canonical: (((731) * (r_s45)) + (c_s45)) + (731)}
-	movq -424(%rbp), %rax
-	addq -432(%rbp), %rax
-	movq %rax, -440(%rbp)
-	movq -440(%rbp), %rax # t7876 = unsharpMask_s0[t7877]
+	movq -480(%rbp), %rax
+	addq -488(%rbp), %rax
+	movq %rax, -496(%rbp)
+	movq -496(%rbp), %rax # t7876 = unsharpMask_s0[t7877]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7876 = unsharpMask_s0[t7877]
-	movq %rdx, -448(%rbp)
-	movq $4, -456(%rbp) # t7912 = 4
-	movq -456(%rbp), %rax # t7911 = unsharpKernel_s0[t7912]
+	movq %rdx, -504(%rbp)
+	movq $4, -512(%rbp) # t7912 = 4
+	movq -512(%rbp), %rax # t7911 = unsharpKernel_s0[t7912]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7911 = unsharpKernel_s0[t7912]
-	movq %rdx, -464(%rbp)
+	movq %rdx, -520(%rbp)
 	# t7875 = t7876 * t7911 {canonical: (unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (731)]) * (unsharpKernel_s0[4])}
-	movq -448(%rbp), %rax
-	imulq -464(%rbp), %rax
-	movq %rax, -472(%rbp)
-	# t7850 = t7851 + t7875 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (731)]) * (unsharpKernel_s0[4]))}
-	movq -400(%rbp), %rax
-	addq -472(%rbp), %rax
-	movq %rax, -480(%rbp)
-	movq -480(%rbp), %rax # dot_s52 += t7850
+	movq -504(%rbp), %rax
+	imulq -520(%rbp), %rax
+	movq %rax, -528(%rbp)
+	# t11416, t7850 = t7851 + t7875 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (731)]) * (unsharpKernel_s0[4]))}
+	movq -456(%rbp), %rax
+	addq -528(%rbp), %rax
+	movq %rax, -536(%rbp)
+	movq %rax, -544(%rbp) # t11416 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (731)]) * (unsharpKernel_s0[4]))
+	movq -544(%rbp), %rax # dot_s52 += t11416 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (731)]) * (unsharpKernel_s0[4]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -488(%rbp) # t7939 = 731
+	movq $731, -552(%rbp) # t7939 = 731
 	# t7937 = r_s45 * t7939 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -488(%rbp), %rax
-	movq %rax, -496(%rbp)
+	imulq -552(%rbp), %rax
+	movq %rax, -560(%rbp)
 	# t7936 = t7937 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -496(%rbp), %rax
+	movq -560(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -504(%rbp)
-	movq -504(%rbp), %rax # t7935 = unsharpMask_s0[t7936]
+	movq %rax, -568(%rbp)
+	movq -568(%rbp), %rax # t7935 = unsharpMask_s0[t7936]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7935 = unsharpMask_s0[t7936]
-	movq %rdx, -512(%rbp)
-	movq $731, -520(%rbp) # t7964 = 731
+	movq %rdx, -576(%rbp)
+	movq $731, -584(%rbp) # t7964 = 731
 	# t7963 = t7964 * r_s45 {canonical: (731) * (r_s45)}
-	movq -520(%rbp), %rax
+	movq -584(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -528(%rbp)
+	movq %rax, -592(%rbp)
 	# t7962 = t7963 + c_s45 {canonical: ((731) * (r_s45)) + (c_s45)}
-	movq -528(%rbp), %rax
+	movq -592(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -536(%rbp)
-	movq $1462, -544(%rbp) # t7983 = 1462
+	movq %rax, -600(%rbp)
+	movq $1462, -608(%rbp) # t7983 = 1462
 	# t7961 = t7962 + t7983 {canonical: (((731) * (r_s45)) + (c_s45)) + (1462)}
-	movq -536(%rbp), %rax
-	addq -544(%rbp), %rax
-	movq %rax, -552(%rbp)
-	movq -552(%rbp), %rax # t7960 = unsharpMask_s0[t7961]
+	movq -600(%rbp), %rax
+	addq -608(%rbp), %rax
+	movq %rax, -616(%rbp)
+	movq -616(%rbp), %rax # t7960 = unsharpMask_s0[t7961]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7960 = unsharpMask_s0[t7961]
-	movq %rdx, -560(%rbp)
-	movq $5, -568(%rbp) # t7996 = 5
-	movq -568(%rbp), %rax # t7995 = unsharpKernel_s0[t7996]
+	movq %rdx, -624(%rbp)
+	movq $5, -632(%rbp) # t7996 = 5
+	movq -632(%rbp), %rax # t7995 = unsharpKernel_s0[t7996]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t7995 = unsharpKernel_s0[t7996]
-	movq %rdx, -576(%rbp)
+	movq %rdx, -640(%rbp)
 	# t7959 = t7960 * t7995 {canonical: (unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (1462)]) * (unsharpKernel_s0[5])}
-	movq -560(%rbp), %rax
-	imulq -576(%rbp), %rax
-	movq %rax, -584(%rbp)
-	# t7934 = t7935 + t7959 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (1462)]) * (unsharpKernel_s0[5]))}
-	movq -512(%rbp), %rax
-	addq -584(%rbp), %rax
-	movq %rax, -592(%rbp)
-	movq -592(%rbp), %rax # dot_s52 += t7934
+	movq -624(%rbp), %rax
+	imulq -640(%rbp), %rax
+	movq %rax, -648(%rbp)
+	# t11417, t7934 = t7935 + t7959 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (1462)]) * (unsharpKernel_s0[5]))}
+	movq -576(%rbp), %rax
+	addq -648(%rbp), %rax
+	movq %rax, -656(%rbp)
+	movq %rax, -664(%rbp) # t11417 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (1462)]) * (unsharpKernel_s0[5]))
+	movq -664(%rbp), %rax # dot_s52 += t11417 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (1462)]) * (unsharpKernel_s0[5]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
-	movq $731, -600(%rbp) # t8023 = 731
+	movq $731, -672(%rbp) # t8023 = 731
 	# t8021 = r_s45 * t8023 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -600(%rbp), %rax
-	movq %rax, -608(%rbp)
+	imulq -672(%rbp), %rax
+	movq %rax, -680(%rbp)
 	# t8020 = t8021 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -608(%rbp), %rax
+	movq -680(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -616(%rbp)
-	movq -616(%rbp), %rax # t8019 = unsharpMask_s0[t8020]
+	movq %rax, -688(%rbp)
+	movq -688(%rbp), %rax # t8019 = unsharpMask_s0[t8020]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8019 = unsharpMask_s0[t8020]
-	movq %rdx, -624(%rbp)
-	movq $731, -632(%rbp) # t8048 = 731
+	movq %rdx, -696(%rbp)
+	movq $731, -704(%rbp) # t8048 = 731
 	# t8047 = t8048 * r_s45 {canonical: (731) * (r_s45)}
-	movq -632(%rbp), %rax
+	movq -704(%rbp), %rax
 	imulq -32(%rbp), %rax
-	movq %rax, -640(%rbp)
+	movq %rax, -712(%rbp)
 	# t8046 = t8047 + c_s45 {canonical: ((731) * (r_s45)) + (c_s45)}
-	movq -640(%rbp), %rax
+	movq -712(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -648(%rbp)
-	movq $2193, -656(%rbp) # t8067 = 2193
+	movq %rax, -720(%rbp)
+	movq $2193, -728(%rbp) # t8067 = 2193
 	# t8045 = t8046 + t8067 {canonical: (((731) * (r_s45)) + (c_s45)) + (2193)}
-	movq -648(%rbp), %rax
-	addq -656(%rbp), %rax
-	movq %rax, -664(%rbp)
-	movq -664(%rbp), %rax # t8044 = unsharpMask_s0[t8045]
+	movq -720(%rbp), %rax
+	addq -728(%rbp), %rax
+	movq %rax, -736(%rbp)
+	movq -736(%rbp), %rax # t8044 = unsharpMask_s0[t8045]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8044 = unsharpMask_s0[t8045]
-	movq %rdx, -672(%rbp)
-	movq $6, -680(%rbp) # t8080 = 6
-	movq -680(%rbp), %rax # t8079 = unsharpKernel_s0[t8080]
+	movq %rdx, -744(%rbp)
+	movq $6, -752(%rbp) # t8080 = 6
+	movq -752(%rbp), %rax # t8079 = unsharpKernel_s0[t8080]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8079 = unsharpKernel_s0[t8080]
-	movq %rdx, -688(%rbp)
+	movq %rdx, -760(%rbp)
 	# t8043 = t8044 * t8079 {canonical: (unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (2193)]) * (unsharpKernel_s0[6])}
-	movq -672(%rbp), %rax
-	imulq -688(%rbp), %rax
-	movq %rax, -696(%rbp)
-	# t8018 = t8019 + t8043 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (2193)]) * (unsharpKernel_s0[6]))}
-	movq -624(%rbp), %rax
-	addq -696(%rbp), %rax
-	movq %rax, -704(%rbp)
-	movq -704(%rbp), %rax # dot_s52 += t8018
+	movq -744(%rbp), %rax
+	imulq -760(%rbp), %rax
+	movq %rax, -768(%rbp)
+	# t11418, t8018 = t8019 + t8043 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (2193)]) * (unsharpKernel_s0[6]))}
+	movq -696(%rbp), %rax
+	addq -768(%rbp), %rax
+	movq %rax, -776(%rbp)
+	movq %rax, -784(%rbp) # t11418 = (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (2193)]) * (unsharpKernel_s0[6]))
+	movq -784(%rbp), %rax # dot_s52 += t11418 {canonical: (unsharpMask_s0[((r_s45) * (731)) + (c_s45)]) + ((unsharpMask_s0[(((731) * (r_s45)) + (c_s45)) + (2193)]) * (unsharpKernel_s0[6]))}
 	addq %rax, -80(%rbp)
 	movq -80(%rbp), %rax
 	movq -64(%rbp), %rax # m1_s50 = m2_s50 {canonical: m2_s50}
 	movq %rax, -56(%rbp)
 	movq -72(%rbp), %rax # m2_s50 = m3_s50 {canonical: m3_s50}
 	movq %rax, -64(%rbp)
-	movq $731, -712(%rbp) # t8113 = 731
+	movq $731, -792(%rbp) # t8113 = 731
 	# t8111 = r_s45 * t8113 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -712(%rbp), %rax
-	movq %rax, -720(%rbp)
+	imulq -792(%rbp), %rax
+	movq %rax, -800(%rbp)
 	# t8110 = t8111 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -720(%rbp), %rax
+	movq -800(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -728(%rbp)
-	movq -728(%rbp), %rax # m3_s50 = unsharpMask_s0[t8110]
+	movq %rax, -808(%rbp)
+	movq -808(%rbp), %rax # m3_s50 = unsharpMask_s0[t8110]
 	cmpq $750000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
@@ -6992,16 +7081,16 @@ _block_8162:
 	leaq _global_unsharpMask(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # m3_s50 = unsharpMask_s0[t8110]
 	movq %rdx, -72(%rbp)
-	movq $731, -736(%rbp) # t8136 = 731
+	movq $731, -816(%rbp) # t8136 = 731
 	# t8134 = r_s45 * t8136 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -736(%rbp), %rax
-	movq %rax, -744(%rbp)
+	imulq -816(%rbp), %rax
+	movq %rax, -824(%rbp)
 	# t8133 = t8134 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -744(%rbp), %rax
+	movq -824(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -752(%rbp)
-	movq -752(%rbp), %rdi
+	movq %rax, -832(%rbp)
+	movq -832(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7021,8 +7110,8 @@ _end_of_block_6562:
 	jmp _block_6549
 _block_6549:
 _block_8171:
-	movq $1, -88(%rbp) # t8167 = 1
-	movq -88(%rbp), %rax # r_s45 += t8167
+	movq $1, -112(%rbp) # t8167 = 1
+	movq -112(%rbp), %rax # r_s45 += t8167
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_8172
@@ -7032,10 +7121,9 @@ _end_of_block_6549:
 	jmp _conditional_6563
 _block_6565:
 _block_8184:
-	# r_s45 = rows_s0 - center_s45 {canonical: (rows_s0) - (center_s45)}
-	movq _global_rows(%rip), %rax
-	subq -48(%rbp), %rax
+	movq -104(%rbp), %rax # r_s45 = shared_t11404 {canonical: (rows_s0) - (center_s45)}
 	movq %rax, -32(%rbp)
+	movq -32(%rbp), %rax
 	jmp _nop_8185
 _nop_8185:
 	jmp _end_of_block_6565
@@ -7048,26 +7136,26 @@ _block_8195:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -88(%rbp)
+	movq %rax, -112(%rbp)
 	jmp _nop_8197
 _nop_8197:
 	jmp _end_of_conditional_6569
 _end_of_conditional_6569:
-	cmpq $1, -88(%rbp) # true = t8186
+	cmpq $1, -112(%rbp) # true = t8186
 	jne _block_6536 # ifFalse
 	jmp _block_6568 # ifTrue
 _block_6568:
 _block_8222:
-	movq $731, -88(%rbp) # t8203 = 731
+	movq $731, -112(%rbp) # t8203 = 731
 	# t8201 = r_s45 * t8203 {canonical: (r_s45) * (731)}
 	movq -32(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
+	imulq -112(%rbp), %rax
+	movq %rax, -120(%rbp)
 	# t8200 = t8201 + c_s45 {canonical: ((r_s45) * (731)) + (c_s45)}
-	movq -96(%rbp), %rax
+	movq -120(%rbp), %rax
 	addq -40(%rbp), %rax
-	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $750000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7083,8 +7171,8 @@ _end_of_block_6568:
 	jmp _block_6566
 _block_6566:
 _block_8231:
-	movq $1, -88(%rbp) # t8227 = 1
-	movq -88(%rbp), %rax # r_s45 += t8227
+	movq $1, -112(%rbp) # t8227 = 1
+	movq -112(%rbp), %rax # r_s45 += t8227
 	addq %rax, -32(%rbp)
 	movq -32(%rbp), %rax
 	jmp _nop_8232
@@ -7094,8 +7182,8 @@ _end_of_block_6566:
 	jmp _conditional_6569
 _block_6536:
 _block_8240:
-	movq $1, -88(%rbp) # t8236 = 1
-	movq -88(%rbp), %rax # c_s45 += t8236
+	movq $1, -112(%rbp) # t8236 = 1
+	movq -112(%rbp), %rax # c_s45 += t8236
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_8241
@@ -7105,19 +7193,21 @@ _end_of_block_6536:
 	jmp _conditional_6570
 _block_6571:
 _block_8262:
-	movq -48(%rbp), %rax # t8244 = center_s45 {canonical: center_s45}
-	movq %rax, -88(%rbp)
-	movq -48(%rbp), %rax # t8249 = center_s45 {canonical: center_s45}
-	movq %rax, -96(%rbp)
-	movq -96(%rbp), %rax # t8248 = unsharpKernel_s0[t8249]
+	movq -96(%rbp), %rax # t8244 = shared_t11403 {canonical: center_s45}
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax
+	movq -96(%rbp), %rax # t8249 = shared_t11403 {canonical: center_s45}
+	movq %rax, -120(%rbp)
+	movq -120(%rbp), %rax
+	movq -120(%rbp), %rax # t8248 = unsharpKernel_s0[t8249]
 	cmpq $9, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_unsharpKernel(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8248 = unsharpKernel_s0[t8249]
-	movq %rdx, -104(%rbp)
-	movq -88(%rbp), %rdi
+	movq %rdx, -128(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $9, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7126,7 +7216,7 @@ _block_8262:
 	leaq _global_unsharpKernel, %rdi
 	add %rcx, %rdi
 	# unsharpKernel_s0[t8244] = t8248 + kernel_sum_s0 {canonical: (unsharpKernel_s0[center_s45]) + (kernel_sum_s0)}
-	movq -104(%rbp), %rax
+	movq -128(%rbp), %rax
 	addq _global_kernel_sum(%rip), %rax
 	movq %rax, (%rdi)
 	jmp _nop_8263
@@ -7437,6 +7527,7 @@ _method_levels:
 	movq $0, -200(%rbp)
 	movq $0, -208(%rbp)
 	movq $0, -216(%rbp)
+	movq $0, -224(%rbp)
 	# save callee-save registers
 	pushq %rbx
 	movq $0, %rbx
@@ -7466,12 +7557,12 @@ _block_8574:
 	cmpq _global_rows(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -72(%rbp)
+	movq %rax, -80(%rbp)
 	jmp _nop_8576
 _nop_8576:
 	jmp _end_of_conditional_8551
 _end_of_conditional_8551:
-	cmpq $1, -72(%rbp) # true = t8565
+	cmpq $1, -80(%rbp) # true = t8565
 	jne _return_8552 # ifFalse
 	jmp _block_8517 # ifTrue
 _block_8517:
@@ -7489,66 +7580,67 @@ _block_8592:
 	cmpq _global_cols(%rip), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -72(%rbp)
+	movq %rax, -80(%rbp)
 	jmp _nop_8594
 _nop_8594:
 	jmp _end_of_conditional_8550
 _end_of_conditional_8550:
-	cmpq $1, -72(%rbp) # true = t8583
+	cmpq $1, -80(%rbp) # true = t8583
 	jne _block_8514 # ifFalse
 	jmp _block_8520 # ifTrue
 _block_8520:
 _block_8700:
-	movq $2193, -72(%rbp) # t8600 = 2193
+	movq $2193, -80(%rbp) # t8600 = 2193
 	# t8598 = r_s90 * t8600 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8612 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8612 = 3
 	# t8610 = c_s90 * t8612 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8597 = t8598 + t8610 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2193, -112(%rbp) # t8635 = 2193
+	# t8597 = t8598 + t8610 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2193, -120(%rbp) # t8635 = 2193
 	# t8633 = r_s90 * t8635 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq $3, -128(%rbp) # t8647 = 3
+	imulq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $3, -136(%rbp) # t8647 = 3
 	# t8645 = c_s90 * t8647 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	# t8632 = t8633 + t8645 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -120(%rbp), %rax
-	addq -136(%rbp), %rax
+	imulq -136(%rbp), %rax
 	movq %rax, -144(%rbp)
-	movq -144(%rbp), %rax # t8631 = image_s0[t8632]
+	# t8632 = t8633 + t8645 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -128(%rbp), %rax
+	addq -144(%rbp), %rax
+	movq %rax, -152(%rbp)
+	movq -152(%rbp), %rax # t8631 = image_s0[t8632]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8631 = image_s0[t8632]
-	movq %rdx, -152(%rbp)
+	movq %rdx, -160(%rbp)
 	# t8630 = t8631 - b_s90 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) - (b_s90)}
-	movq -152(%rbp), %rax
-	subq -48(%rbp), %rax
-	movq %rax, -160(%rbp)
-	movq $255, -168(%rbp) # t8674 = 255
-	# t8629 = t8630 * t8674 {canonical: ((image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) - (b_s90)) * (255)}
 	movq -160(%rbp), %rax
-	imulq -168(%rbp), %rax
-	movq %rax, -176(%rbp)
-	# t8684 = w_s90 - b_s90 {canonical: (w_s90) - (b_s90)}
+	subq -48(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $255, -176(%rbp) # t8674 = 255
+	# t8629 = t8630 * t8674 {canonical: ((image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) - (b_s90)) * (255)}
+	movq -168(%rbp), %rax
+	imulq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	# shared_t11421, t8684 = w_s90 - b_s90 {canonical: (w_s90) - (b_s90)}
 	movq -64(%rbp), %rax
 	subq -48(%rbp), %rax
-	movq %rax, -184(%rbp)
-	movq -104(%rbp), %rdi
+	movq %rax, -192(%rbp)
+	movq %rax, -72(%rbp) # shared_t11421 = (w_s90) - (b_s90)
+	movq -112(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7557,9 +7649,9 @@ _block_8700:
 	leaq _global_image, %rdi
 	add %rcx, %rdi
 	# image_s0[t8597] = t8629 / t8684 {canonical: (((image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) - (b_s90)) * (255)) / ((w_s90) - (b_s90))}
-	movq -176(%rbp), %rax
+	movq -184(%rbp), %rax
 	cqto
-	idivq -184(%rbp)
+	idivq -192(%rbp)
 	movq %rax, (%rdi)
 	jmp _nop_8701
 _nop_8701:
@@ -7568,59 +7660,59 @@ _end_of_block_8520:
 	jmp _conditional_8529
 _conditional_8529:
 _block_8747:
-	movq $2193, -72(%rbp) # t8707 = 2193
+	movq $2193, -80(%rbp) # t8707 = 2193
 	# t8705 = r_s90 * t8707 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8719 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8719 = 3
 	# t8717 = c_s90 * t8719 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8704 = t8705 + t8717 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # t8703 = image_s0[t8704]
+	# t8704 = t8705 + t8717 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax # t8703 = image_s0[t8704]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8703 = image_s0[t8704]
-	movq %rdx, -112(%rbp)
-	movq $0, -120(%rbp) # t8738 = 0
+	movq %rdx, -120(%rbp)
+	movq $0, -128(%rbp) # t8738 = 0
 	# t8702 = t8703 < t8738 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) < (0)}
-	movq -112(%rbp), %rax # t8702 = t8703 < t8738 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) < (0)}
-	cmpq -120(%rbp), %rax
+	movq -120(%rbp), %rax # t8702 = t8703 < t8738 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) < (0)}
+	cmpq -128(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -128(%rbp)
+	movq %rax, -136(%rbp)
 	jmp _nop_8749
 _nop_8749:
 	jmp _end_of_conditional_8529
 _end_of_conditional_8529:
-	cmpq $1, -128(%rbp) # true = t8702
+	cmpq $1, -136(%rbp) # true = t8702
 	jne _conditional_8528 # ifFalse
 	jmp _block_8523 # ifTrue
 _block_8523:
 _block_8785:
-	movq $2193, -72(%rbp) # t8755 = 2193
+	movq $2193, -80(%rbp) # t8755 = 2193
 	# t8753 = r_s90 * t8755 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8767 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8767 = 3
 	# t8765 = c_s90 * t8767 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8752 = t8753 + t8765 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	# t8752 = t8753 + t8765 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7636,66 +7728,65 @@ _end_of_block_8523:
 	jmp _block_8530
 _block_8530:
 _block_8914:
-	movq $2193, -72(%rbp) # t8793 = 2193
+	movq $2193, -80(%rbp) # t8793 = 2193
 	# t8791 = r_s90 * t8793 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8805 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8805 = 3
 	# t8803 = c_s90 * t8805 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8790 = t8791 + t8803 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $1, -112(%rbp) # t8822 = 1
+	# t8790 = t8791 + t8803 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $1, -120(%rbp) # t8822 = 1
 	# t8789 = t8790 + t8822 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq $2193, -128(%rbp) # t8839 = 2193
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t8839 = 2193
 	# t8837 = r_s90 * t8839 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	movq $3, -144(%rbp) # t8851 = 3
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t8851 = 3
 	# t8849 = c_s90 * t8851 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -144(%rbp), %rax
-	movq %rax, -152(%rbp)
-	# t8836 = t8837 + t8849 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -136(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq $1, -168(%rbp) # t8868 = 1
+	# t8836 = t8837 + t8849 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $1, -176(%rbp) # t8868 = 1
 	# t8835 = t8836 + t8868 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -160(%rbp), %rax
-	addq -168(%rbp), %rax
-	movq %rax, -176(%rbp)
-	movq -176(%rbp), %rax # t8834 = image_s0[t8835]
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -184(%rbp), %rax # t8834 = image_s0[t8835]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8834 = image_s0[t8835]
-	movq %rdx, -184(%rbp)
+	movq %rdx, -192(%rbp)
 	# t8833 = t8834 - b_s90 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) - (b_s90)}
-	movq -184(%rbp), %rax
-	subq -48(%rbp), %rax
-	movq %rax, -192(%rbp)
-	movq $255, -200(%rbp) # t8888 = 255
-	# t8832 = t8833 * t8888 {canonical: ((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) - (b_s90)) * (255)}
 	movq -192(%rbp), %rax
-	imulq -200(%rbp), %rax
-	movq %rax, -208(%rbp)
-	# t8898 = w_s90 - b_s90 {canonical: (w_s90) - (b_s90)}
-	movq -64(%rbp), %rax
 	subq -48(%rbp), %rax
+	movq %rax, -200(%rbp)
+	movq $255, -208(%rbp) # t8888 = 255
+	# t8832 = t8833 * t8888 {canonical: ((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) - (b_s90)) * (255)}
+	movq -200(%rbp), %rax
+	imulq -208(%rbp), %rax
 	movq %rax, -216(%rbp)
-	movq -120(%rbp), %rdi
+	movq -72(%rbp), %rax # t8898 = shared_t11421 {canonical: (w_s90) - (b_s90)}
+	movq %rax, -224(%rbp)
+	movq -224(%rbp), %rax
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7704,9 +7795,9 @@ _block_8914:
 	leaq _global_image, %rdi
 	add %rcx, %rdi
 	# image_s0[t8789] = t8832 / t8898 {canonical: (((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) - (b_s90)) * (255)) / ((w_s90) - (b_s90))}
-	movq -208(%rbp), %rax
+	movq -216(%rbp), %rax
 	cqto
-	idivq -216(%rbp)
+	idivq -224(%rbp)
 	movq %rax, (%rdi)
 	jmp _nop_8915
 _nop_8915:
@@ -7715,69 +7806,69 @@ _end_of_block_8530:
 	jmp _conditional_8539
 _conditional_8539:
 _block_8972:
-	movq $2193, -72(%rbp) # t8922 = 2193
+	movq $2193, -80(%rbp) # t8922 = 2193
 	# t8920 = r_s90 * t8922 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8934 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8934 = 3
 	# t8932 = c_s90 * t8934 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8919 = t8920 + t8932 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $1, -112(%rbp) # t8951 = 1
+	# t8919 = t8920 + t8932 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $1, -120(%rbp) # t8951 = 1
 	# t8918 = t8919 + t8951 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # t8917 = image_s0[t8918]
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t8917 = image_s0[t8918]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t8917 = image_s0[t8918]
-	movq %rdx, -128(%rbp)
-	movq $0, -136(%rbp) # t8963 = 0
+	movq %rdx, -136(%rbp)
+	movq $0, -144(%rbp) # t8963 = 0
 	# t8916 = t8917 < t8963 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) < (0)}
-	movq -128(%rbp), %rax # t8916 = t8917 < t8963 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) < (0)}
-	cmpq -136(%rbp), %rax
+	movq -136(%rbp), %rax # t8916 = t8917 < t8963 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) < (0)}
+	cmpq -144(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -144(%rbp)
+	movq %rax, -152(%rbp)
 	jmp _nop_8974
 _nop_8974:
 	jmp _end_of_conditional_8539
 _end_of_conditional_8539:
-	cmpq $1, -144(%rbp) # true = t8916
+	cmpq $1, -152(%rbp) # true = t8916
 	jne _conditional_8538 # ifFalse
 	jmp _block_8533 # ifTrue
 _block_8533:
 _block_9021:
-	movq $2193, -72(%rbp) # t8981 = 2193
+	movq $2193, -80(%rbp) # t8981 = 2193
 	# t8979 = r_s90 * t8981 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t8993 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t8993 = 3
 	# t8991 = c_s90 * t8993 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t8978 = t8979 + t8991 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $1, -112(%rbp) # t9010 = 1
+	# t8978 = t8979 + t8991 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $1, -120(%rbp) # t9010 = 1
 	# t8977 = t8978 + t9010 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rdi
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7793,66 +7884,65 @@ _end_of_block_8533:
 	jmp _block_8540
 _block_8540:
 _block_9150:
-	movq $2193, -72(%rbp) # t9029 = 2193
+	movq $2193, -80(%rbp) # t9029 = 2193
 	# t9027 = r_s90 * t9029 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9041 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9041 = 3
 	# t9039 = c_s90 * t9041 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9026 = t9027 + t9039 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2, -112(%rbp) # t9058 = 2
+	# t9026 = t9027 + t9039 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2, -120(%rbp) # t9058 = 2
 	# t9025 = t9026 + t9058 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq $2193, -128(%rbp) # t9075 = 2193
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq $2193, -136(%rbp) # t9075 = 2193
 	# t9073 = r_s90 * t9075 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -128(%rbp), %rax
-	movq %rax, -136(%rbp)
-	movq $3, -144(%rbp) # t9087 = 3
+	imulq -136(%rbp), %rax
+	movq %rax, -144(%rbp)
+	movq $3, -152(%rbp) # t9087 = 3
 	# t9085 = c_s90 * t9087 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -144(%rbp), %rax
-	movq %rax, -152(%rbp)
-	# t9072 = t9073 + t9085 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -136(%rbp), %rax
-	addq -152(%rbp), %rax
+	imulq -152(%rbp), %rax
 	movq %rax, -160(%rbp)
-	movq $2, -168(%rbp) # t9104 = 2
+	# t9072 = t9073 + t9085 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -144(%rbp), %rax
+	addq -160(%rbp), %rax
+	movq %rax, -168(%rbp)
+	movq $2, -176(%rbp) # t9104 = 2
 	# t9071 = t9072 + t9104 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -160(%rbp), %rax
-	addq -168(%rbp), %rax
-	movq %rax, -176(%rbp)
-	movq -176(%rbp), %rax # t9070 = image_s0[t9071]
+	movq -168(%rbp), %rax
+	addq -176(%rbp), %rax
+	movq %rax, -184(%rbp)
+	movq -184(%rbp), %rax # t9070 = image_s0[t9071]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t9070 = image_s0[t9071]
-	movq %rdx, -184(%rbp)
+	movq %rdx, -192(%rbp)
 	# t9069 = t9070 - b_s90 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) - (b_s90)}
-	movq -184(%rbp), %rax
-	subq -48(%rbp), %rax
-	movq %rax, -192(%rbp)
-	movq $255, -200(%rbp) # t9124 = 255
-	# t9068 = t9069 * t9124 {canonical: ((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) - (b_s90)) * (255)}
 	movq -192(%rbp), %rax
-	imulq -200(%rbp), %rax
-	movq %rax, -208(%rbp)
-	# t9134 = w_s90 - b_s90 {canonical: (w_s90) - (b_s90)}
-	movq -64(%rbp), %rax
 	subq -48(%rbp), %rax
+	movq %rax, -200(%rbp)
+	movq $255, -208(%rbp) # t9124 = 255
+	# t9068 = t9069 * t9124 {canonical: ((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) - (b_s90)) * (255)}
+	movq -200(%rbp), %rax
+	imulq -208(%rbp), %rax
 	movq %rax, -216(%rbp)
-	movq -120(%rbp), %rdi
+	movq -72(%rbp), %rax # t9134 = shared_t11421 {canonical: (w_s90) - (b_s90)}
+	movq %rax, -224(%rbp)
+	movq -224(%rbp), %rax
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7861,9 +7951,9 @@ _block_9150:
 	leaq _global_image, %rdi
 	add %rcx, %rdi
 	# image_s0[t9025] = t9068 / t9134 {canonical: (((image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) - (b_s90)) * (255)) / ((w_s90) - (b_s90))}
-	movq -208(%rbp), %rax
+	movq -216(%rbp), %rax
 	cqto
-	idivq -216(%rbp)
+	idivq -224(%rbp)
 	movq %rax, (%rdi)
 	jmp _nop_9151
 _nop_9151:
@@ -7872,69 +7962,69 @@ _end_of_block_8540:
 	jmp _conditional_8549
 _conditional_8549:
 _block_9208:
-	movq $2193, -72(%rbp) # t9158 = 2193
+	movq $2193, -80(%rbp) # t9158 = 2193
 	# t9156 = r_s90 * t9158 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9170 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9170 = 3
 	# t9168 = c_s90 * t9170 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9155 = t9156 + t9168 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2, -112(%rbp) # t9187 = 2
+	# t9155 = t9156 + t9168 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2, -120(%rbp) # t9187 = 2
 	# t9154 = t9155 + t9187 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # t9153 = image_s0[t9154]
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t9153 = image_s0[t9154]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t9153 = image_s0[t9154]
-	movq %rdx, -128(%rbp)
-	movq $0, -136(%rbp) # t9199 = 0
+	movq %rdx, -136(%rbp)
+	movq $0, -144(%rbp) # t9199 = 0
 	# t9152 = t9153 < t9199 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) < (0)}
-	movq -128(%rbp), %rax # t9152 = t9153 < t9199 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) < (0)}
-	cmpq -136(%rbp), %rax
+	movq -136(%rbp), %rax # t9152 = t9153 < t9199 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) < (0)}
+	cmpq -144(%rbp), %rax
 	setl %al
 	movzbq %al, %rax
-	movq %rax, -144(%rbp)
+	movq %rax, -152(%rbp)
 	jmp _nop_9210
 _nop_9210:
 	jmp _end_of_conditional_8549
 _end_of_conditional_8549:
-	cmpq $1, -144(%rbp) # true = t9152
+	cmpq $1, -152(%rbp) # true = t9152
 	jne _conditional_8548 # ifFalse
 	jmp _block_8543 # ifTrue
 _block_8543:
 _block_9257:
-	movq $2193, -72(%rbp) # t9217 = 2193
+	movq $2193, -80(%rbp) # t9217 = 2193
 	# t9215 = r_s90 * t9217 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9229 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9229 = 3
 	# t9227 = c_s90 * t9229 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9214 = t9215 + t9227 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2, -112(%rbp) # t9246 = 2
+	# t9214 = t9215 + t9227 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2, -120(%rbp) # t9246 = 2
 	# t9213 = t9214 + t9246 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rdi
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -7950,8 +8040,8 @@ _end_of_block_8543:
 	jmp _block_8518
 _block_8518:
 _block_9266:
-	movq $1, -72(%rbp) # t9262 = 1
-	movq -72(%rbp), %rax # c_s90 += t9262
+	movq $1, -80(%rbp) # t9262 = 1
+	movq -80(%rbp), %rax # c_s90 += t9262
 	addq %rax, -56(%rbp)
 	movq -56(%rbp), %rax
 	jmp _nop_9267
@@ -7961,69 +8051,69 @@ _end_of_block_8518:
 	jmp _conditional_8550
 _conditional_8548:
 _block_9324:
-	movq $2193, -72(%rbp) # t9274 = 2193
+	movq $2193, -80(%rbp) # t9274 = 2193
 	# t9272 = r_s90 * t9274 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9286 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9286 = 3
 	# t9284 = c_s90 * t9286 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9271 = t9272 + t9284 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2, -112(%rbp) # t9303 = 2
+	# t9271 = t9272 + t9284 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2, -120(%rbp) # t9303 = 2
 	# t9270 = t9271 + t9303 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # t9269 = image_s0[t9270]
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t9269 = image_s0[t9270]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t9269 = image_s0[t9270]
-	movq %rdx, -128(%rbp)
-	movq $255, -136(%rbp) # t9315 = 255
+	movq %rdx, -136(%rbp)
+	movq $255, -144(%rbp) # t9315 = 255
 	# t9268 = t9269 > t9315 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) > (255)}
-	movq -128(%rbp), %rax # t9268 = t9269 > t9315 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) > (255)}
-	cmpq -136(%rbp), %rax
+	movq -136(%rbp), %rax # t9268 = t9269 > t9315 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (2)]) > (255)}
+	cmpq -144(%rbp), %rax
 	setg %al
 	movzbq %al, %rax
-	movq %rax, -144(%rbp)
+	movq %rax, -152(%rbp)
 	jmp _nop_9326
 _nop_9326:
 	jmp _end_of_conditional_8548
 _end_of_conditional_8548:
-	cmpq $1, -144(%rbp) # true = t9268
+	cmpq $1, -152(%rbp) # true = t9268
 	jne _block_8518 # ifFalse
 	jmp _block_8547 # ifTrue
 _block_8547:
 _block_9373:
-	movq $2193, -72(%rbp) # t9333 = 2193
+	movq $2193, -80(%rbp) # t9333 = 2193
 	# t9331 = r_s90 * t9333 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9345 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9345 = 3
 	# t9343 = c_s90 * t9345 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9330 = t9331 + t9343 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $2, -112(%rbp) # t9362 = 2
+	# t9330 = t9331 + t9343 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $2, -120(%rbp) # t9362 = 2
 	# t9329 = t9330 + t9362 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (2)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rdi
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -8039,69 +8129,69 @@ _end_of_block_8547:
 	jmp _block_8518
 _conditional_8538:
 _block_9431:
-	movq $2193, -72(%rbp) # t9381 = 2193
+	movq $2193, -80(%rbp) # t9381 = 2193
 	# t9379 = r_s90 * t9381 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9393 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9393 = 3
 	# t9391 = c_s90 * t9393 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9378 = t9379 + t9391 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $1, -112(%rbp) # t9410 = 1
+	# t9378 = t9379 + t9391 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $1, -120(%rbp) # t9410 = 1
 	# t9377 = t9378 + t9410 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rax # t9376 = image_s0[t9377]
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rax # t9376 = image_s0[t9377]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t9376 = image_s0[t9377]
-	movq %rdx, -128(%rbp)
-	movq $255, -136(%rbp) # t9422 = 255
+	movq %rdx, -136(%rbp)
+	movq $255, -144(%rbp) # t9422 = 255
 	# t9375 = t9376 > t9422 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) > (255)}
-	movq -128(%rbp), %rax # t9375 = t9376 > t9422 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) > (255)}
-	cmpq -136(%rbp), %rax
+	movq -136(%rbp), %rax # t9375 = t9376 > t9422 {canonical: (image_s0[(((r_s90) * (2193)) + ((c_s90) * (3))) + (1)]) > (255)}
+	cmpq -144(%rbp), %rax
 	setg %al
 	movzbq %al, %rax
-	movq %rax, -144(%rbp)
+	movq %rax, -152(%rbp)
 	jmp _nop_9433
 _nop_9433:
 	jmp _end_of_conditional_8538
 _end_of_conditional_8538:
-	cmpq $1, -144(%rbp) # true = t9375
+	cmpq $1, -152(%rbp) # true = t9375
 	jne _block_8540 # ifFalse
 	jmp _block_8537 # ifTrue
 _block_8537:
 _block_9480:
-	movq $2193, -72(%rbp) # t9440 = 2193
+	movq $2193, -80(%rbp) # t9440 = 2193
 	# t9438 = r_s90 * t9440 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9452 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9452 = 3
 	# t9450 = c_s90 * t9452 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9437 = t9438 + t9450 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq $1, -112(%rbp) # t9469 = 1
+	# t9437 = t9438 + t9450 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq $1, -120(%rbp) # t9469 = 1
 	# t9436 = t9437 + t9469 {canonical: (((r_s90) * (2193)) + ((c_s90) * (3))) + (1)}
-	movq -104(%rbp), %rax
-	addq -112(%rbp), %rax
-	movq %rax, -120(%rbp)
-	movq -120(%rbp), %rdi
+	movq -112(%rbp), %rax
+	addq -120(%rbp), %rax
+	movq %rax, -128(%rbp)
+	movq -128(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -8117,59 +8207,59 @@ _end_of_block_8537:
 	jmp _block_8540
 _conditional_8528:
 _block_9527:
-	movq $2193, -72(%rbp) # t9487 = 2193
+	movq $2193, -80(%rbp) # t9487 = 2193
 	# t9485 = r_s90 * t9487 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9499 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9499 = 3
 	# t9497 = c_s90 * t9499 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9484 = t9485 + t9497 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rax # t9483 = image_s0[t9484]
+	# t9484 = t9485 + t9497 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rax # t9483 = image_s0[t9484]
 	cmpq $2300000, %rax
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rax
 	jl _sp_method_exit_with_status_1
 	leaq _global_image(%rip), %rdx
 	movq (%rdx,%rax,8), %rdx # t9483 = image_s0[t9484]
-	movq %rdx, -112(%rbp)
-	movq $255, -120(%rbp) # t9518 = 255
+	movq %rdx, -120(%rbp)
+	movq $255, -128(%rbp) # t9518 = 255
 	# t9482 = t9483 > t9518 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) > (255)}
-	movq -112(%rbp), %rax # t9482 = t9483 > t9518 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) > (255)}
-	cmpq -120(%rbp), %rax
+	movq -120(%rbp), %rax # t9482 = t9483 > t9518 {canonical: (image_s0[((r_s90) * (2193)) + ((c_s90) * (3))]) > (255)}
+	cmpq -128(%rbp), %rax
 	setg %al
 	movzbq %al, %rax
-	movq %rax, -128(%rbp)
+	movq %rax, -136(%rbp)
 	jmp _nop_9529
 _nop_9529:
 	jmp _end_of_conditional_8528
 _end_of_conditional_8528:
-	cmpq $1, -128(%rbp) # true = t9482
+	cmpq $1, -136(%rbp) # true = t9482
 	jne _block_8530 # ifFalse
 	jmp _block_8527 # ifTrue
 _block_8527:
 _block_9565:
-	movq $2193, -72(%rbp) # t9535 = 2193
+	movq $2193, -80(%rbp) # t9535 = 2193
 	# t9533 = r_s90 * t9535 {canonical: (r_s90) * (2193)}
 	movq -40(%rbp), %rax
-	imulq -72(%rbp), %rax
-	movq %rax, -80(%rbp)
-	movq $3, -88(%rbp) # t9547 = 3
+	imulq -80(%rbp), %rax
+	movq %rax, -88(%rbp)
+	movq $3, -96(%rbp) # t9547 = 3
 	# t9545 = c_s90 * t9547 {canonical: (c_s90) * (3)}
 	movq -56(%rbp), %rax
-	imulq -88(%rbp), %rax
-	movq %rax, -96(%rbp)
-	# t9532 = t9533 + t9545 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
-	movq -80(%rbp), %rax
-	addq -96(%rbp), %rax
+	imulq -96(%rbp), %rax
 	movq %rax, -104(%rbp)
-	movq -104(%rbp), %rdi
+	# t9532 = t9533 + t9545 {canonical: ((r_s90) * (2193)) + ((c_s90) * (3))}
+	movq -88(%rbp), %rax
+	addq -104(%rbp), %rax
+	movq %rax, -112(%rbp)
+	movq -112(%rbp), %rdi
 	cmpq $2300000, %rdi
 	jge _sp_method_exit_with_status_1
 	cmpq $0, %rdi
@@ -8185,8 +8275,8 @@ _end_of_block_8527:
 	jmp _block_8530
 _block_8514:
 _block_9574:
-	movq $1, -72(%rbp) # t9570 = 1
-	movq -72(%rbp), %rax # r_s90 += t9570
+	movq $1, -80(%rbp) # t9570 = 1
+	movq -80(%rbp), %rax # r_s90 += t9570
 	addq %rax, -40(%rbp)
 	movq -40(%rbp), %rax
 	jmp _nop_9575
