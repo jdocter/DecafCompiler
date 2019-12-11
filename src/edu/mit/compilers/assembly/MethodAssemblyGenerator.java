@@ -620,12 +620,13 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         if (dst.isReg()) {
                             cfAssignTemporaryInstructions.add(cfAssign.getBinopCommand() + " " + dst.getReg1().byte0());
                             cfAssignTemporaryInstructions.add("movzbq " + dst.getReg1().byte0() + ", " + dst.getReg1());
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, dst.getReg1()));
                         } else {
                             cfAssignTemporaryInstructions.add(cfAssign.getBinopCommand() + " %al");
                             cfAssignTemporaryInstructions.add("movzbq %al, %rax");
                             cfAssignTemporaryInstructions.add("movq %rax, " + dst);
+                            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
                         }
-                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign, variableTable, Reg.RAX));
                         break;
                     case BinOp.MINUS:
                         if (dst.isReg()) {
