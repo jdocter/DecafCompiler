@@ -1,0 +1,121 @@
+CFG for main
+----------
+
+MiniCFG: UID 117 CFBlock [
+	t26 = 2
+	get_int_s0[t26]
+	a_s4 = load %rax
+	t35 = 3
+	get_int_s0[t35]
+	b_s4 = load %rax
+	c_s4 = 0
+	d_s4 = 0
+	t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}
+	t129, t59 = t129 {canonical: (a_s4) + (b_s4)}
+	t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}
+	t129, t77 = t129 {canonical: (a_s4) + (b_s4)}
+	t87 = t129 {canonical: (a_s4) + (b_s4)}
+	d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}
+	t105 = c_s4 {canonical: c_s4}
+	printf_s0["%d\n", t105]
+	t112 = d_s4 {canonical: d_s4}
+	printf_s0["%d\n", t112]
+next=118
+], Scope = 4
+UID 118 CFEndOfMiniCFG [next=20]
+
+UID 20 CFBlock [ miniCFG=117, next=21], Scope = 4
+UID 21 CFReturn
+Webs:
+	UID 145 Web (variable c_s4):
+		Spans [d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t87 = t129 {canonical: (a_s4) + (b_s4)}, t129, t77 = t129 {canonical: (a_s4) + (b_s4)}, t105 = c_s4 {canonical: c_s4}]
+		Starts at [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+		Uses at [t105 = c_s4 {canonical: c_s4}]
+	UID 150 Web (variable d_s4):
+		Spans [d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, printf_s0["%d\n", t105], t112 = d_s4 {canonical: d_s4}, t105 = c_s4 {canonical: c_s4}]
+		Starts at [d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+		Uses at [t112 = d_s4 {canonical: d_s4}]
+	UID 152 Web (variable t112):
+		Spans [printf_s0["%d\n", t112], t112 = d_s4 {canonical: d_s4}]
+		Starts at [t112 = d_s4 {canonical: d_s4}]
+		Uses at [printf_s0["%d\n", t112]]
+	UID 146 Web (variable t130):
+		Spans [d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t87 = t129 {canonical: (a_s4) + (b_s4)}, t129, t77 = t129 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+		Uses at [d_s4 = t130 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+	UID 136 Web (variable a_s4):
+		Spans [a_s4 = load %rax, c_s4 = 0, b_s4 = load %rax, t35 = 3, get_int_s0[t35], t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}, d_s4 = 0]
+		Starts at [a_s4 = load %rax]
+		Uses at [t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+	UID 142 Web (variable t49):
+		Spans [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t129, t59 = t129 {canonical: (a_s4) + (b_s4)}, t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+		Uses at [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+	UID 137 Web (variable t35):
+		Spans [t35 = 3, get_int_s0[t35]]
+		Starts at [t35 = 3]
+		Uses at [get_int_s0[t35]]
+	UID 138 Web (variable b_s4):
+		Spans [c_s4 = 0, b_s4 = load %rax, t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}, d_s4 = 0]
+		Starts at [b_s4 = load %rax]
+		Uses at [t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+	UID 143 Web (variable t59):
+		Spans [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t129, t59 = t129 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t129, t59 = t129 {canonical: (a_s4) + (b_s4)}]
+		Uses at [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}]
+	UID 141 Web (variable t129):
+		Spans [t129, t59 = t129 {canonical: (a_s4) + (b_s4)}, t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t129, t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}]
+		Uses at [t129, t59 = t129 {canonical: (a_s4) + (b_s4)}]
+	UID 144 Web (variable t129):
+		Spans [t130, c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}, t129, t59 = t129 {canonical: (a_s4) + (b_s4)}, t129, t77 = t129 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t129, t59 = t129 {canonical: (a_s4) + (b_s4)}]
+		Uses at [t129, t77 = t129 {canonical: (a_s4) + (b_s4)}]
+	UID 151 Web (variable t105):
+		Spans [printf_s0["%d\n", t105], t105 = c_s4 {canonical: c_s4}]
+		Starts at [t105 = c_s4 {canonical: c_s4}]
+		Uses at [printf_s0["%d\n", t105]]
+	UID 135 Web (variable t26):
+		Spans [t26 = 2, get_int_s0[t26]]
+		Starts at [t26 = 2]
+		Uses at [get_int_s0[t26]]
+	UID 148 Web (variable t129):
+		Spans [t87 = t129 {canonical: (a_s4) + (b_s4)}, t129, t77 = t129 {canonical: (a_s4) + (b_s4)}]
+		Starts at [t129, t77 = t129 {canonical: (a_s4) + (b_s4)}]
+		Uses at [t87 = t129 {canonical: (a_s4) + (b_s4)}]
+Adjacencies:
+	145 : {150 , 146 , 142 , 148 , 143 , 144 , 151 }
+	150 : {145 , 152 , 146 , 151 }
+	152 : {150 }
+	146 : {145 , 150 , 142 , 148 , 143 , 144 }
+	136 : {142 , 137 , 138 , 141 }
+	142 : {145 , 146 , 136 , 138 , 143 , 141 , 144 }
+	137 : {136 }
+	138 : {136 , 142 , 141 }
+	143 : {145 , 146 , 142 , 141 , 144 }
+	141 : {136 , 142 , 138 , 143 , 144 }
+	144 : {145 , 146 , 142 , 148 , 143 , 141 }
+	151 : {145 , 150 }
+	135 : no neighbors
+	148 : {145 , 146 , 144 }
+	
+----------
+CFG for get_int
+----------
+
+MiniCFG: UID 126 CFBlock [
+	t123 = x_s1 {canonical: x_s1}
+next=128
+], Scope = 2
+UID 128 CFEndOfMiniCFG [next=122]
+
+UID 122 CFReturn [miniCFG=126, returnTemp=t123]
+Webs:
+	UID 165 Web (variable t123):
+		Spans [return t123, t123 = x_s1 {canonical: x_s1}]
+		Starts at [t123 = x_s1 {canonical: x_s1}]
+		Uses at [return t123]
+Adjacencies:
+	165 : no neighbors
+	
+----------

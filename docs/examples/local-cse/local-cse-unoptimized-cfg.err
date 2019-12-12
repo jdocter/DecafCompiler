@@ -1,0 +1,40 @@
+CFG for main
+----------
+
+MiniCFG: UID 117 CFBlock [
+	t26 = 2
+	get_int_s0[t26]
+	a_s4 = load %rax
+	t35 = 3
+	get_int_s0[t35]
+	b_s4 = load %rax
+	c_s4 = 0
+	d_s4 = 0
+	t49 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}
+	t59 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}
+	c_s4 = t49 * t59 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}
+	t77 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}
+	t87 = a_s4 + b_s4 {canonical: (a_s4) + (b_s4)}
+	d_s4 = t77 * t87 {canonical: ((a_s4) + (b_s4)) * ((a_s4) + (b_s4))}
+	t105 = c_s4 {canonical: c_s4}
+	printf_s0["%d\n", t105]
+	t112 = d_s4 {canonical: d_s4}
+	printf_s0["%d\n", t112]
+next=118
+], Scope = 4
+UID 118 CFEndOfMiniCFG [next=20]
+
+UID 20 CFBlock [ miniCFG=117, next=21], Scope = 4
+UID 21 CFReturn
+----------
+CFG for get_int
+----------
+
+MiniCFG: UID 126 CFBlock [
+	t123 = x_s1 {canonical: x_s1}
+next=128
+], Scope = 2
+UID 128 CFEndOfMiniCFG [next=122]
+
+UID 122 CFReturn [miniCFG=126, returnTemp=t123]
+----------
