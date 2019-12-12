@@ -63,6 +63,11 @@ public class Temp extends UIDObject implements AssemblyVariable {
     }
 
     @Override
+    public boolean canAssignRegister(VariableTable variableTable) {
+        return true;
+    }
+
+    @Override
     public boolean isArray(VariableTable variableTable) {
         return false;
     }

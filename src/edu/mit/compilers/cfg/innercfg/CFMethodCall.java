@@ -19,6 +19,7 @@ import edu.mit.compilers.util.UIDObject;
 import edu.mit.compilers.visitor.StatementCFVisitor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CFMethodCall extends CFStatement {
 
@@ -48,10 +49,11 @@ public class CFMethodCall extends CFStatement {
     public Set<AssemblyVariable> getUsed() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
         for (Pair<Temp, StringLit> arg : arguments) {
-            // TODO exclude global?
             if (arg.getKey() != null) assemblyVariables.add(arg.getKey());
         }
-        return assemblyVariables;
+        return assemblyVariables.stream()
+                .filter((AssemblyVariable var) -> var.canAssignRegister(variableTable))
+                .collect(Collectors.toSet());
     }
 
     @Override

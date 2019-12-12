@@ -26,7 +26,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type)));
+                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type), false));
             }
 
             for (Pair<Id, IntLit> fieldArray : fieldDeclaration.fieldArrays) {
@@ -36,7 +36,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
                     throw new SemanticException(field.getLineNumber(), "Identifier '" + field.getName() + "' declared twice in the same scope.");
                 }
 
-                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type, size.posInteger()))); // TODO
+                this.put(field.getName(), new LocalDescriptor(new TypeDescriptor(fieldDeclaration.type, size.posInteger()), false)); // TODO
             }
         }
     }
@@ -46,7 +46,7 @@ public class LocalTable extends HashMap<String, LocalDescriptor> implements Vari
             if (this.containsKey(param.getValue().getName())) {
                 throw new SemanticException(param.getValue().getLineNumber(), "Identifier '" + param.getValue().getName() + "' declared twice in the same scope.");
             }
-            this.put(param.getValue().getName(), new LocalDescriptor(new TypeDescriptor(param.getKey())));
+            this.put(param.getValue().getName(), new LocalDescriptor(new TypeDescriptor(param.getKey()), true));
         }
     }
 
