@@ -1,0 +1,19 @@
+~/team$ gcc -no-pie -g temp.s -o temp_debug
+~/team$ ./temp_debug
+below output should be 18 16 14 12 10 8 6 4 2 0
+Segmentation fault (core dumped)
+~/team$ gdb ./temp_debug
+(gdb) run
+Starting program: /afs/athena.mit.edu/user/h/e/henryhu/team/temp_debug
+below output should be 18 16 14 12 10 8 6 4 2 0
+
+Program received signal SIGSEGV, Segmentation fault.
+_block_18 () at temp.s:152
+152        movq (%rax,%rax,8), %rdx # t95 = array_s0[t96]
+(gdb) backtrace
+#0  _block_18 () at temp.s:152
+#1  0x00007ffff7de59a0 in ?? () from /lib64/ld-linux-x86-64.so.2
+#2  0x0000000000000000 in ?? ()
+(gdb) frame 0
+#0  _block_18 () at temp.s:152
+152        movq (%rax,%rax,8), %rdx # t95 = array_s0[t96]

@@ -1,0 +1,111 @@
+~/team$ dcf-exec --debug --opt=all tests/dataflow/input/cse-06.dcf && cat temp.out
+Picked up JAVA_TOOL_OPTIONS: -Xmx1g
+Done calculating gen and kill
+Done calculating gen and kill
+Done calculating gen and kill
+----------
+Webs:
+    UID 166 Web (variable t19 assigned %r13):
+        Spans [return t19, t19 = x_s3 {canonical: x_s3}]
+        Starts at [t19 = x_s3 {canonical: x_s3}]
+        Uses at [return t19]
+Adjacencies:
+    166 (%r13): no neighbors
+    
+----------
+----------
+Webs:
+    UID 175 Web (variable x_s6 spilled):
+        Spans [d_s6 = 0, e_s6 = 0, c_s6 = 0, x_s6 = load %rax, t85 = x_s6 {canonical: x_s6}]
+        Starts at [x_s6 = load %rax]
+        Uses at [t85 = x_s6 {canonical: x_s6}]
+    UID 187 Web (variable shared_t164 assigned %rbx):
+        Spans [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}]
+        Starts at [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+        Uses at [e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}]
+    UID 172 Web (variable t59 assigned %r12):
+        Spans [t59 = 3, get_int_s0[t59]]
+        Starts at [t59 = 3]
+        Uses at [get_int_s0[t59]]
+    UID 184 Web (variable t120 assigned %rbx):
+        Spans [printf_s0["%d\n", t120], t120 = c_s6 {canonical: c_s6}]
+        Starts at [t120 = c_s6 {canonical: c_s6}]
+        Uses at [printf_s0["%d\n", t120]]
+    UID 183 Web (variable e_s6 assigned %r13):
+        Spans [printf_s0["%d\n", t120], t120 = c_s6 {canonical: c_s6}, t127 = d_s6 {canonical: d_s6}, printf_s0["%d\n", t127], t134 = e_s6 {canonical: e_s6}, e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}]
+        Starts at [e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}]
+        Uses at [t134 = e_s6 {canonical: e_s6}]
+    UID 173 Web (variable b_s6 assigned %r15):
+        Spans [b_s6 = load %rax, d_s6 = 0, e_s6 = 0, shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, c_s6 = 0, t68 = true, get_bool_s0[t68], x_s6 = load %rax, t85 = x_s6 {canonical: x_s6}, t85?]
+        Starts at [b_s6 = load %rax]
+        Uses at [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+    UID 179 Web (variable t85 assigned %rbx):
+        Spans [t85 = x_s6 {canonical: x_s6}, t85?]
+        Starts at [t85 = x_s6 {canonical: x_s6}]
+        Uses at [t85?]
+    UID 186 Web (variable t134 assigned %r12):
+        Spans [printf_s0["%d\n", t134], t134 = e_s6 {canonical: e_s6}]
+        Starts at [t134 = e_s6 {canonical: e_s6}]
+        Uses at [printf_s0["%d\n", t134]]
+    UID 188 Web (variable d_s6 assigned %r14):
+        Spans [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, d_s6 = 0, e_s6 = 0, b_s6 = 1, printf_s0["%d\n", t120], t120 = c_s6 {canonical: c_s6}, t127 = d_s6 {canonical: d_s6}, t85 = x_s6 {canonical: x_s6}, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}, t85?]
+        Starts at [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, d_s6 = 0]
+        Uses at [t127 = d_s6 {canonical: d_s6}]
+    UID 182 Web (variable c_s6 assigned %r12):
+        Spans [d_s6 = 0, e_s6 = 0, shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, c_s6 = 0, t120 = c_s6 {canonical: c_s6}, t85 = x_s6 {canonical: x_s6}, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, e_s6 = shared_t164 {canonical: (a_s6) + (b_s6)}, t85?]
+        Starts at [c_s6 = 0, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+        Uses at [t120 = c_s6 {canonical: c_s6}]
+    UID 171 Web (variable a_s6 assigned %r13):
+        Spans [t68 = true, t59 = 3, get_bool_s0[t68], a_s6 = load %rax, t85 = x_s6 {canonical: x_s6}, t85?, b_s6 = load %rax, d_s6 = 0, e_s6 = 0, shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, c_s6 = 0, b_s6 = 1, x_s6 = load %rax, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, get_int_s0[t59]]
+        Starts at [a_s6 = load %rax]
+        Uses at [shared_t164, d_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+    UID 174 Web (variable t68 assigned %r12):
+        Spans [t68 = true, get_bool_s0[t68]]
+        Starts at [t68 = true]
+        Uses at [get_bool_s0[t68]]
+    UID 170 Web (variable t50 assigned %r13):
+        Spans [t50 = 2, get_int_s0[t50]]
+        Starts at [t50 = 2]
+        Uses at [get_int_s0[t50]]
+    UID 180 Web (variable b_s6 assigned %r12):
+        Spans [b_s6 = 1, shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+        Starts at [b_s6 = 1]
+        Uses at [shared_t164, c_s6 = a_s6 + b_s6 {canonical: (a_s6) + (b_s6)}]
+    UID 185 Web (variable t127 assigned %r12):
+        Spans [t127 = d_s6 {canonical: d_s6}, printf_s0["%d\n", t127]]
+        Starts at [t127 = d_s6 {canonical: d_s6}]
+        Uses at [printf_s0["%d\n", t127]]
+Adjacencies:
+    175 (spilled): {173 (%r15), 179 (%rbx), 188 (%r14), 182 (%r12), 171 (%r13)}
+    187 (%rbx): {180 (%r12), 183 (%r13), 188 (%r14), 182 (%r12), 171 (%r13)}
+    172 (%r12): {171 (%r13)}
+    184 (%rbx): {183 (%r13), 188 (%r14), 182 (%r12)}
+    183 (%r13): {187 (%rbx), 184 (%rbx), 185 (%r12), 186 (%r12), 188 (%r14), 182 (%r12)}
+    173 (%r15): {175 (spilled), 179 (%rbx), 188 (%r14), 182 (%r12), 171 (%r13), 174 (%r12)}
+    179 (%rbx): {175 (spilled), 173 (%r15), 188 (%r14), 182 (%r12), 171 (%r13)}
+    186 (%r12): {183 (%r13)}
+    188 (%r14): {175 (spilled), 187 (%rbx), 184 (%rbx), 180 (%r12), 183 (%r13), 173 (%r15), 179 (%rbx), 185 (%r12), 182 (%r12), 171 (%r13)}
+    182 (%r12): {175 (spilled), 187 (%rbx), 184 (%rbx), 183 (%r13), 173 (%r15), 179 (%rbx), 188 (%r14), 171 (%r13)}
+    171 (%r13): {175 (spilled), 187 (%rbx), 172 (%r12), 180 (%r12), 173 (%r15), 179 (%rbx), 188 (%r14), 182 (%r12), 174 (%r12)}
+    174 (%r12): {173 (%r15), 171 (%r13)}
+    170 (%r13): no neighbors
+    180 (%r12): {187 (%rbx), 188 (%r14), 171 (%r13)}
+    185 (%r12): {183 (%r13), 188 (%r14)}
+    
+----------
+----------
+Webs:
+    UID 189 Web (variable t158 assigned %r13):
+        Spans [t158 = x_s1 {canonical: x_s1}, return t158]
+        Starts at [t158 = x_s1 {canonical: x_s1}]
+        Uses at [return t158]
+Adjacencies:
+    189 (%r13): no neighbors
+    
+----------
+assembly at temp.s
+exec at temp
+output at temp.out
+4
+0
+4

@@ -1,0 +1,41 @@
+CFG for main
+----------
+
+MiniCFG: UID 162 CFBlock [
+	t18 = 1
+	t22 = 8
+	t26 = 7
+	t25 = -t26
+	t21 = t22 * t25 {canonical: (8) * (MINUS[7])}
+	t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}
+	t48 = 6
+	t51 = 7
+	t47 = t48 * t51 {canonical: (6) * (7)}
+	t61 = 3
+	t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}
+	t71 = 200
+	t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}
+	t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}
+	t88 = 9
+	a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}
+	t99 = a_s2 {canonical: a_s2}
+	printf_s0["answer for a:%d\n", t99]
+	t109 = 3
+	t108 = -t109
+	t117 = 5
+	t120 = 6
+	t116 = t117 * t120 {canonical: (5) * (6)}
+	t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}
+	t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}
+	t144 = 7
+	t164, t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}
+	b_s2 -= t164 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}
+	t157 = b_s2 {canonical: b_s2}
+	printf_s0["answer for b:%d\n", t157]
+next=163
+], Scope = 2
+UID 163 CFEndOfMiniCFG [next=11]
+
+UID 11 CFBlock [ miniCFG=162, next=12], Scope = 2
+UID 12 CFReturn
+----------

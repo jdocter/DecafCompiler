@@ -1,0 +1,189 @@
+CFG for main
+----------
+
+MiniCFG: UID 162 CFBlock [
+	t18 = 1
+	t22 = 8
+	t26 = 7
+	t25 = -t26
+	t21 = t22 * t25 {canonical: (8) * (MINUS[7])}
+	t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}
+	t48 = 6
+	t51 = 7
+	t47 = t48 * t51 {canonical: (6) * (7)}
+	t61 = 3
+	t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}
+	t71 = 200
+	t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}
+	t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}
+	t88 = 9
+	a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}
+	t99 = a_s2 {canonical: a_s2}
+	printf_s0["answer for a:%d\n", t99]
+	t109 = 3
+	t108 = -t109
+	t117 = 5
+	t120 = 6
+	t116 = t117 * t120 {canonical: (5) * (6)}
+	t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}
+	t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}
+	t144 = 7
+	t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}
+	b_s2 -= t106
+	t157 = b_s2 {canonical: b_s2}
+	printf_s0["answer for b:%d\n", t157]
+next=163
+], Scope = 2
+UID 163 CFEndOfMiniCFG [next=11]
+
+UID 11 CFBlock [ miniCFG=162, next=12], Scope = 2
+UID 12 CFReturn
+Webs:
+	UID 176 Web (variable t61):
+		Spans [t61 = 3, t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}]
+		Starts at [t61 = 3]
+		Uses at [t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}]
+	UID 177 Web (variable t46):
+		Spans [t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}, t71 = 200, t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}]
+		Starts at [t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}]
+		Uses at [t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}]
+	UID 179 Web (variable t45):
+		Spans [t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}, t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+		Starts at [t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}]
+		Uses at [t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+	UID 183 Web (variable t99):
+		Spans [t99 = a_s2 {canonical: a_s2}, printf_s0["answer for a:%d\n", t99]]
+		Starts at [t99 = a_s2 {canonical: a_s2}]
+		Uses at [printf_s0["answer for a:%d\n", t99]]
+	UID 168 Web (variable t22):
+		Spans [t22 = 8, t21 = t22 * t25 {canonical: (8) * (MINUS[7])}, t26 = 7, t25 = -t26]
+		Starts at [t22 = 8]
+		Uses at [t21 = t22 * t25 {canonical: (8) * (MINUS[7])}]
+	UID 181 Web (variable t88):
+		Spans [a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}, t88 = 9]
+		Starts at [t88 = 9]
+		Uses at [a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}]
+	UID 187 Web (variable t120):
+		Spans [t120 = 6, t116 = t117 * t120 {canonical: (5) * (6)}]
+		Starts at [t120 = 6]
+		Uses at [t116 = t117 * t120 {canonical: (5) * (6)}]
+	UID 174 Web (variable t51):
+		Spans [t51 = 7, t47 = t48 * t51 {canonical: (6) * (7)}]
+		Starts at [t51 = 7]
+		Uses at [t47 = t48 * t51 {canonical: (6) * (7)}]
+	UID 178 Web (variable t71):
+		Spans [t71 = 200, t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}]
+		Starts at [t71 = 200]
+		Uses at [t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}]
+	UID 193 Web (variable b_s2):
+		Spans [b_s2 -= t106, t157 = b_s2 {canonical: b_s2}]
+		Starts at [b_s2 -= t106]
+		Uses at [t157 = b_s2 {canonical: b_s2}]
+	UID 194 Web (variable t157):
+		Spans [printf_s0["answer for b:%d\n", t157], t157 = b_s2 {canonical: b_s2}]
+		Starts at [t157 = b_s2 {canonical: b_s2}]
+		Uses at [printf_s0["answer for b:%d\n", t157]]
+	UID 173 Web (variable t48):
+		Spans [t51 = 7, t48 = 6, t47 = t48 * t51 {canonical: (6) * (7)}]
+		Starts at [t48 = 6]
+		Uses at [t47 = t48 * t51 {canonical: (6) * (7)}]
+	UID 188 Web (variable t116):
+		Spans [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, t116 = t117 * t120 {canonical: (5) * (6)}]
+		Starts at [t116 = t117 * t120 {canonical: (5) * (6)}]
+		Uses at [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}]
+	UID 191 Web (variable t144):
+		Spans [t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}, t144 = 7]
+		Starts at [t144 = 7]
+		Uses at [t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}]
+	UID 169 Web (variable t26):
+		Spans [t26 = 7, t25 = -t26]
+		Starts at [t26 = 7]
+		Uses at [t25 = -t26]
+	UID 184 Web (variable t109):
+		Spans [t108 = -t109, t109 = 3]
+		Starts at [t109 = 3]
+		Uses at [t108 = -t109]
+	UID 171 Web (variable t21):
+		Spans [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}, t21 = t22 * t25 {canonical: (8) * (MINUS[7])}]
+		Starts at [t21 = t22 * t25 {canonical: (8) * (MINUS[7])}]
+		Uses at [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}]
+	UID 175 Web (variable t47):
+		Spans [t61 = 3, t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}, t47 = t48 * t51 {canonical: (6) * (7)}]
+		Starts at [t47 = t48 * t51 {canonical: (6) * (7)}]
+		Uses at [t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}]
+	UID 186 Web (variable t117):
+		Spans [t120 = 6, t116 = t117 * t120 {canonical: (5) * (6)}, t117 = 5]
+		Starts at [t117 = 5]
+		Uses at [t116 = t117 * t120 {canonical: (5) * (6)}]
+	UID 170 Web (variable t25):
+		Spans [t21 = t22 * t25 {canonical: (8) * (MINUS[7])}, t25 = -t26]
+		Starts at [t25 = -t26]
+		Uses at [t21 = t22 * t25 {canonical: (8) * (MINUS[7])}]
+	UID 192 Web (variable t106):
+		Spans [t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}, b_s2 -= t106]
+		Starts at [t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}]
+		Uses at [b_s2 -= t106]
+	UID 185 Web (variable t108):
+		Spans [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}, t108 = -t109, t120 = 6, t116 = t117 * t120 {canonical: (5) * (6)}, t117 = 5]
+		Starts at [t108 = -t109]
+		Uses at [t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}]
+	UID 182 Web (variable a_s2):
+		Spans [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}, t108 = -t109, t120 = 6, t116 = t117 * t120 {canonical: (5) * (6)}, t99 = a_s2 {canonical: a_s2}, t109 = 3, t117 = 5, printf_s0["answer for a:%d\n", t99]]
+		Starts at [a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}]
+		Uses at [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, t99 = a_s2 {canonical: a_s2}]
+	UID 180 Web (variable t16):
+		Spans [a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}, t88 = 9, t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+		Starts at [t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+		Uses at [a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}]
+	UID 172 Web (variable t17):
+		Spans [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}, t61 = 3, t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}, t51 = 7, t48 = 6, t71 = 200, t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}, t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}, t47 = t48 * t51 {canonical: (6) * (7)}]
+		Starts at [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}]
+		Uses at [t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+	UID 167 Web (variable t18):
+		Spans [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}, t22 = 8, t21 = t22 * t25 {canonical: (8) * (MINUS[7])}, t26 = 7, t25 = -t26, t18 = 1]
+		Starts at [t18 = 1]
+		Uses at [t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}]
+	UID 196 Web (variable b_s2):
+		Spans [t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}, t26 = 7, t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}, t61 = 3, t25 = -t26, t144 = 7, t47 = t48 * t51 {canonical: (6) * (7)}, b_s2 -= t106, t48 = 6, t71 = 200, t117 = 5, t21 = t22 * t25 {canonical: (8) * (MINUS[7])}, t88 = 9, t46 = t47 * t61 {canonical: ((6) * (7)) * (3)}, t51 = 7, t116 = t117 * t120 {canonical: (5) * (6)}, t99 = a_s2 {canonical: a_s2}, t45 = t46 - t71 {canonical: (((6) * (7)) * (3)) - (200)}, t109 = 3, t18 = 1, printf_s0["answer for a:%d\n", t99], t17 = t18 + t21 {canonical: (1) + ((8) * (MINUS[7]))}, t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, t22 = 8, a_s2 = t16 + t88 {canonical: (((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))) + (9)}, t108 = -t109, t120 = 6, t16 = t17 + t45 {canonical: ((1) + ((8) * (MINUS[7]))) + ((((6) * (7)) * (3)) - (200))}]
+		Starts at [t18 = 1]
+		Uses at [b_s2 -= t106]
+	UID 190 Web (variable t107):
+		Spans [t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}, t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}, t144 = 7]
+		Starts at [t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}]
+		Uses at [t106 = t107 * t144 {canonical: ((MINUS[3]) + ((a_s2) / ((5) * (6)))) * (7)}]
+	UID 189 Web (variable t114):
+		Spans [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}, t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}]
+		Starts at [t114 = a_s2 / t116 {canonical: (a_s2) / ((5) * (6))}]
+		Uses at [t107 = t108 + t114 {canonical: (MINUS[3]) + ((a_s2) / ((5) * (6)))}]
+Adjacencies:
+	176 : {172 , 177 , 175 , 196 }
+	177 : {176 , 172 , 179 , 178 , 175 , 196 }
+	179 : {180 , 177 , 172 , 178 , 196 }
+	183 : {196 , 182 }
+	168 : {167 , 170 , 196 , 169 , 171 }
+	181 : {180 , 196 , 182 }
+	187 : {186 , 196 , 188 , 185 , 182 }
+	174 : {172 , 175 , 196 , 173 }
+	178 : {172 , 177 , 179 , 196 }
+	193 : {196 , 194 , 192 }
+	194 : {193 }
+	173 : {174 , 172 , 175 , 196 }
+	188 : {186 , 196 , 187 , 185 , 189 , 182 }
+	191 : {196 , 190 , 192 }
+	169 : {167 , 170 , 196 , 168 }
+	184 : {196 , 185 , 182 }
+	171 : {172 , 167 , 170 , 196 , 168 }
+	175 : {174 , 176 , 172 , 177 , 196 , 173 }
+	186 : {196 , 188 , 187 , 185 , 182 }
+	170 : {167 , 196 , 168 , 169 , 171 }
+	192 : {193 , 196 , 190 , 191 }
+	185 : {186 , 196 , 190 , 188 , 184 , 187 , 189 , 182 }
+	182 : {180 , 183 , 186 , 196 , 188 , 181 , 184 , 187 , 185 , 189 }
+	180 : {172 , 179 , 196 , 181 , 182 }
+	172 : {174 , 176 , 180 , 177 , 179 , 167 , 178 , 175 , 196 , 173 , 171 }
+	167 : {172 , 170 , 196 , 168 , 169 , 171 }
+	196 : {176 , 177 , 179 , 183 , 168 , 181 , 187 , 174 , 178 , 193 , 173 , 188 , 191 , 169 , 184 , 171 , 175 , 186 , 170 , 192 , 185 , 182 , 180 , 172 , 167 , 190 , 189 }
+	190 : {196 , 191 , 192 , 185 , 189 }
+	189 : {196 , 190 , 188 , 185 , 182 }
+	
+----------

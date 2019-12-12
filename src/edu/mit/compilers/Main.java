@@ -240,7 +240,8 @@ public class Main {
             if (CLI.opts[1]) { // REG
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
                     InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
-                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
+                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15,
+                            Reg.RSI, Reg.R8, Reg.R9, Reg.R10, Reg.R11)); // caller-save
 		    if (CLI.debug) {
 			System.err.println("Webs for " + methodDescriptor.getMethodName());
 			System.err.println("----------");
