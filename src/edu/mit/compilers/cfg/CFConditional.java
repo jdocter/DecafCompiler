@@ -94,7 +94,9 @@ public class CFConditional extends OuterCFNode {
 
     @Override
     public List<OuterCFNode> dfsTraverse() {
-        return List.of(ifTrue, ifFalse);
+        // to improve PEEP optimization, refer to false first.  This
+        // allows us to peephole optimize both loops and non-loops.
+        return List.of(ifFalse, ifTrue);
     }
 
     @Override

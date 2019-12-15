@@ -35,7 +35,7 @@ import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
 
-    public static final String[] optnames = {"cse", "reg", "dce"};
+    public static final String[] optnames = {"cse", "reg", "dce", "peep"};
 
   public static void main(String[] args) {
     try {
@@ -263,6 +263,30 @@ public class Main {
             }
 
             List<String> assembly = AssemblyFactory.programAssemblyGen(table);
+
+            if (CLI.opts[3]) { // PEEP
+                // go backwards so indices don't get messed up as we remove lines
+                final int secondToLast = assembly.size() - 2;
+                for (int i = secondToLast; i >= 0; i--) {
+                    String jmpLine = assembly.get(i);
+                    final int jmpIndex = jmpLine.indexOf("jmp ");
+                    if (jmpIndex != -1) {
+                        String labelLine = assembly.get(i + 1);
+                        final int labelIndex = labelLine.indexOf(":");
+                        if (labelIndex != -1) {
+                            final int lenJmp = 4;
+                            if (jmpLine.substring(jmpIndex + lenJmp)
+                                    .equals(labelLine.substring(0, labelIndex))) {
+                                // jumping to label on the following line
+                                if (CLI.debug) {
+                                    System.err.println("Removing a jmp with following label: " + labelLine);
+                                }
+                                assembly.remove(i);
+                            }
+                        }
+                    }
+                }
+            }
 
             for (String line : assembly) {
                 outputStream.println(line);
