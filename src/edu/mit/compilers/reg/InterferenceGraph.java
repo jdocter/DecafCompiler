@@ -38,15 +38,19 @@ public class InterferenceGraph {
     Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs = new HashMap<>();
     LivenessAnalyzer analysis;
 
+    // WARNING: activating this debug can cause
+    // non-deterministic errors to "disappear"!
     final boolean debug;
+    final boolean deadCodeEliminate;
 
     public InterferenceGraph(OuterCFNode methodCFG) {
-        this(methodCFG, false);
+        this(methodCFG, false, false);
     }
 
-    public InterferenceGraph(OuterCFNode methodCFG, boolean debugInterferenceGraph) {
-        debug = debugInterferenceGraph;
+    public InterferenceGraph(OuterCFNode methodCFG, boolean deadCodeEliminate, boolean debugInterferenceGraph) {
         analysis = new LivenessAnalyzer(methodCFG);
+        this.debug = debugInterferenceGraph;
+        this.deadCodeEliminate = deadCodeEliminate;
         // Algorithm description:
 
         CFNodeIterator iterator = new CFNodeIterator(methodCFG);
@@ -220,6 +224,9 @@ public class InterferenceGraph {
 
         if (web.uses.isEmpty()) {
             debugPrint("No web for " + target + " at " + def.toWebString());
+            if (deadCodeEliminate) {
+                ((CFAssign) def).markDead(target);
+            }
             return false;
         }
         if (!addedToGraph) {
