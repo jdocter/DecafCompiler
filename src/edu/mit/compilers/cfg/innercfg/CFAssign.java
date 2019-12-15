@@ -55,7 +55,7 @@ public class CFAssign extends CFStatement {
     // Optional additional source for expression, to be used for Common Subexpression Elimination
     public AssemblyVariable srcOptionalCSE;
 
-    public Set<AssemblyVariable> deadDsts = new HashSet<>();
+    public Set<AssemblyVariable> deadDsts;
 
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
@@ -66,6 +66,7 @@ public class CFAssign extends CFStatement {
     private CFAssign(Expr canonicalExpr, VariableTable variableTable) {
         this.canonicalExpr = canonicalExpr;
         this.variableTable = variableTable;
+        this.deadDsts = new HashSet<>();
     }
 
 
