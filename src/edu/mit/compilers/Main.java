@@ -278,6 +278,9 @@ public class Main {
                             if (jmpLine.substring(jmpIndex + lenJmp)
                                     .equals(labelLine.substring(0, labelIndex))) {
                                 // jumping to label on the following line
+                                if (CLI.debug) {
+                                    System.err.println("Removing a jmp with following label: " + labelLine);
+                                }
                                 assembly.remove(jmpIndex);
                             }
                         }
