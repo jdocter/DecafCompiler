@@ -39,4 +39,6 @@ public abstract class CFStatement extends CFNode {
 
     public abstract void accept(StatementCFVisitor v);
 
+    public abstract void markDead(AssemblyVariable defined);
+
 }

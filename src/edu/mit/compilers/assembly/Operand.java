@@ -11,6 +11,7 @@ public class Operand {
     private boolean isReg = false;
     private boolean isImm = false;
     private boolean isGlobalAccess = false;
+    private boolean isDead = false;
     private final String s;
 
     private Operand(String s) {
@@ -77,6 +78,11 @@ public class Operand {
         return operand;
     }
 
+    static Operand makeDead() {
+        Operand operand = new Operand(" # Dead");
+        operand.isDead = true;
+        return operand;
+    }
 
     public boolean isMemoryAccess() {
         return isMemoryAccess;
@@ -146,5 +152,9 @@ public class Operand {
 //            }
 //        }
 
+    }
+
+    public boolean isDead() {
+        return isDead;
     }
 }

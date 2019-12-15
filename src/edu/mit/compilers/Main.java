@@ -11,6 +11,7 @@ import edu.mit.compilers.cse.CommonSubExpressionEliminator;
 import edu.mit.compilers.cse.GlobalAvailableSubExpressionsAnalyzer;
 import edu.mit.compilers.cse.LocalCommonSubExpressionEliminator;
 import edu.mit.compilers.inter.*;
+import edu.mit.compilers.liveness.DeadCodeEliminator;
 import edu.mit.compilers.tools.CLI;
 import edu.mit.compilers.tools.CLI.Action;
 import edu.mit.compilers.visitor.*;
@@ -35,7 +36,7 @@ import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
 
-    public static final String[] optnames = {"cse", "reg"};
+    public static final String[] optnames = {"cse", "reg", "dce"};
 
   public static void main(String[] args) {
     try {
@@ -174,8 +175,12 @@ public class Main {
                if (CLI.opts[0]) { // CSE
                    for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
                        new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                       // copy propagate?
-                       // dead code?
+                   }
+               }
+
+               if (CLI.opts[2]) { // DCE
+                   for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                       new DeadCodeEliminator(methodDescriptor.getMethodCFG());
                    }
                }
 
@@ -232,8 +237,12 @@ public class Main {
             if (CLI.opts[0]) { // CSE
                 for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
                     new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                    // copy propagate?
-                    // dead code?
+                }
+            }
+
+            if (CLI.opts[2]) { // DCE
+                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                    new DeadCodeEliminator(methodDescriptor.getMethodCFG());
                 }
             }
 
@@ -303,8 +312,12 @@ public class Main {
                   if (CLI.opts[0]) { // CSE
                       for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
                           new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                          // copy propagate?
-                          // dead code?
+                      }
+                  }
+
+                  if (CLI.opts[2]) { // DCE
+                      for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                          new DeadCodeEliminator(methodDescriptor.getMethodCFG());
                       }
                   }
 
