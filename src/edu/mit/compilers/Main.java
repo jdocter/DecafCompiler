@@ -35,7 +35,7 @@ import edu.mit.compilers.semantics.VoidMainNoArgs;
 
 public class Main {
 
-    public static final String[] optnames = {"cse", "reg"};
+    public static final String[] optnames = {"cse", "reg", "dce"};
 
   public static void main(String[] args) {
     try {
@@ -171,11 +171,24 @@ public class Main {
 
                MethodCFGFactory.makeAndSetMethodCFGs(table);
 
-               if (CLI.opts[0]) { // CSE
-                   for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+
+               for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                   if (CLI.opts[0]) { // CSE
                        new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                       // copy propagate?
-                       // dead code?
+                   }
+
+                   boolean dce = CLI.opts[2];
+                   boolean debugInterferenceGraph = CLI.debug;
+                   InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), dce, debugInterferenceGraph);
+
+                   if (CLI.opts[1]) { // REG
+                       new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
+                   }
+                   if (CLI.debug) {
+                       System.err.println("Webs for " + methodDescriptor.getMethodName());
+                       System.err.println("----------");
+                       System.err.println(graph);
+                       System.err.println("----------");
                    }
                }
 
@@ -229,26 +242,24 @@ public class Main {
 
             MethodCFGFactory.makeAndSetMethodCFGs(table);
 
-            if (CLI.opts[0]) { // CSE
-                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+            for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                if (CLI.opts[0]) { // CSE
                     new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                    // copy propagate?
-                    // dead code?
                 }
-            }
 
-            if (CLI.opts[1]) { // REG
-                for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                    InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG());
-                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15,
-                            Reg.RSI, Reg.R8, Reg.R9, Reg.R10, Reg.R11)); // caller-save
-		    if (CLI.debug) {
-			System.err.println("Webs for " + methodDescriptor.getMethodName());
-			System.err.println("----------");
-			System.err.println(graph);
-			System.err.println("----------");
-		    }
+                boolean dce = CLI.opts[2];
+                boolean debugInterferenceGraph = CLI.debug;
+                InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), dce, debugInterferenceGraph);
+
+                if (CLI.opts[1]) { // REG
+                    new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
                 }
+        	    if (CLI.debug) {
+            		System.err.println("Webs for " + methodDescriptor.getMethodName());
+            		System.err.println("----------");
+            		System.err.println(graph);
+            		System.err.println("----------");
+        	    }
             }
 
             List<String> assembly = AssemblyFactory.programAssemblyGen(table);
@@ -300,23 +311,24 @@ public class Main {
 
                   MethodCFGFactory.makeAndSetMethodCFGs(table);
 
-                  if (CLI.opts[0]) { // CSE
-                      for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
-                          new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
-                          // copy propagate?
-                          // dead code?
-                      }
-                  }
-
                   for (MethodDescriptor methodDescriptor: table.methodTable.values()) {
+                      if (CLI.opts[0]) { // CSE
+                          new CommonSubExpressionEliminator(methodDescriptor.getMethodCFG());
+                      }
+
+                      boolean dce = CLI.opts[2];
+                      boolean debugInterferenceGraph = CLI.debug;
+                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), dce, debugInterferenceGraph);
+
                       outputStream.println("CFG for " + methodDescriptor.getMethodName());
                       outputStream.println("----------");
                       MethodCFGFactory.dfsPrint(methodDescriptor.getMethodCFG(), new HashSet<Integer>(), outputStream);
 
-                      boolean debugInterferenceGraph = CLI.debug;
-                      InterferenceGraph graph = new InterferenceGraph(methodDescriptor.getMethodCFG(), debugInterferenceGraph);
-                      outputStream.println(graph);
-                      outputStream.println("----------");
+                      if (CLI.opts[1]) { // REG
+                          new RegisterAllocator(graph.getAdjList(), Set.of(Reg.RBX, Reg.R12, Reg.R13, Reg.R14, Reg.R15));
+                      }
+                      System.err.println(graph);
+                      System.err.println("----------");
                   }
 
               } catch (DecafParseException e) {

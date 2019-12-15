@@ -38,15 +38,19 @@ public class InterferenceGraph {
     Map<CFNode, Map<AssemblyVariable, Web>> useStatementsToContainingWebs = new HashMap<>();
     LivenessAnalyzer analysis;
 
+    // WARNING: activating this debug can cause
+    // non-deterministic errors to "disappear"!
     final boolean debug;
+    final boolean deadCodeEliminate;
 
     public InterferenceGraph(OuterCFNode methodCFG) {
-        this(methodCFG, false);
+        this(methodCFG, false, false);
     }
 
-    public InterferenceGraph(OuterCFNode methodCFG, boolean debugInterferenceGraph) {
-        debug = debugInterferenceGraph;
+    public InterferenceGraph(OuterCFNode methodCFG, boolean deadCodeEliminate, boolean debugInterferenceGraph) {
         analysis = new LivenessAnalyzer(methodCFG);
+        this.debug = debugInterferenceGraph;
+        this.deadCodeEliminate = deadCodeEliminate;
         // Algorithm description:
 
         CFNodeIterator iterator = new CFNodeIterator(methodCFG);
@@ -57,7 +61,7 @@ public class InterferenceGraph {
                 // Unleash a new web builder that builds webs for each def in this node
                 for (AssemblyVariable target : nextNode.getDefined()) {
                     CFNodeIterator webBuildingIterator = new CFNodeIterator(iterator);
-                    buildWeb(target, webBuildingIterator, nextNode);
+                    buildWeb(target, webBuildingIterator, nextNode, false);
                 }
             }
             iterator.backtrackToLastBranchPoint();
@@ -102,7 +106,8 @@ public class InterferenceGraph {
         for (AssemblyVariable usedVar : analysis.getIn(first)) {
             CFNodeIterator webBuildingIterator = new CFNodeIterator(methodCFG);
             boolean unDefined = buildWeb(usedVar, webBuildingIterator,
-                    first // simulate a DEF 0 by using the first statement.
+                                         first, // simulate a DEF 0 by using the first statement.
+                                         true
                     );
             // If there is a def, this web won't be added.
             if (unDefined) {
@@ -123,7 +128,7 @@ public class InterferenceGraph {
      *
      * @return whether there was a new or updated web.
      */
-    private boolean buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def) {
+    private boolean buildWeb(AssemblyVariable target, CFNodeIterator iterator, CFNode def, boolean virtualDef) {
         Web web = new Web(analysis, def, target);
         boolean addedToGraph = false;
 
@@ -220,6 +225,10 @@ public class InterferenceGraph {
 
         if (web.uses.isEmpty()) {
             debugPrint("No web for " + target + " at " + def.toWebString());
+            if (deadCodeEliminate && !virtualDef) {
+                debugPrint("Killing " + target + " at " + def.toWebString());
+                ((CFAssign) def).markDead(target);
+            }
             return false;
         }
         if (!addedToGraph) {

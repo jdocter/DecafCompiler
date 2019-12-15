@@ -153,8 +153,8 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         instructions.add(AssemblyFactory.indent("# restore callee-saved registers"));
         instructions.add(AssemblyFactory.indent("popq " + Reg.R15 + " # dummy pop to maintain 16-alignment"));
 
-        // save callee-saved registers so that we can
-        // use them for register allocation
+        // restore callee-saved registers because
+        // we saved them in the method prologue
 
         // iterate backwards
         ListIterator<Reg> backwardsIterator = Reg.usableCalleeSaved.listIterator(Reg.usableCalleeSaved.size());
@@ -370,12 +370,17 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
             }
         } else {
             if (cfAssign.dstArrayOffset == null) {
-                if (cfAssign.hasRegisterAssignmentForDef(cfAssign.dstArrayOrLoc)) {
-                    dst = Operand.makeReg(cfAssign.getRegisterAssignmentForDef(cfAssign.dstArrayOrLoc));
+                if (cfAssign.dstArrayOrLocIsDead()) {
+                    dst = Operand.makeDead();
                 } else {
-                    dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable),Reg.RBP);
+                    if (cfAssign.hasRegisterAssignmentForDef(cfAssign.dstArrayOrLoc)) {
+                        dst = Operand.makeReg(cfAssign.getRegisterAssignmentForDef(cfAssign.dstArrayOrLoc));
+                    } else {
+                        dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable),Reg.RBP);
+                    }
                 }
             } else {
+                // even if the dstArrayOrLocIsDead, have to do runtime check.
                 Reg arrayOffset;
                 if (cfAssign.hasRegisterAssignmentForUse(cfAssign.dstArrayOffset)) {
                     arrayOffset = cfAssign.getRegisterAssignmentForUse(cfAssign.dstArrayOffset);
@@ -389,14 +394,29 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 cfAssignTemporaryInstructions.add("cmpq $0, " +arrayOffset);
                 cfAssignTemporaryInstructions.add("jl " + AssemblyFactory.METHOD_EXIT_1);
 
-                // get dest
-                dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable), Reg.RBP, arrayOffset,cfAssign.dstArrayOrLoc.getElementSize(variableTable));
+                if (cfAssign.dstArrayOrLocIsDead()) {
+                    dst = Operand.makeDead();
+                } else {
+                    // get dest
+                    dst = Operand.makeMemoryAccess(cfAssign.dstArrayOrLoc.getStackOffset(variableTable), Reg.RBP, arrayOffset,cfAssign.dstArrayOrLoc.getElementSize(variableTable));
+                }
             }
         }
         return dst;
     }
 
     private void srcToAssembly(CFAssign cfAssign, VariableTable variableTable, Operand dst) {
+        if (dst.isDead() && cfAssign.dstOptionalCSEIsDead()) {
+            return;
+        } else if (dst.isDead() && !cfAssign.dstOptionalCSEIsDead()) {
+            // replace dst with dstOptionalCSE
+            if (cfAssign.hasRegisterAssignmentForDef(cfAssign.dstOptionalCSE)) {
+                dst = Operand.makeReg(cfAssign.getRegisterAssignmentForDef(cfAssign.dstOptionalCSE));
+            } else {
+                dst = Operand.makeMemoryAccess(cfAssign.dstOptionalCSE.getStackOffset(variableTable));
+            }
+        }
+
         // First handle all cases with optional source
         switch (cfAssign.assignOp) {
             case CFAssign.MEQ:
@@ -429,13 +449,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                     }
                 }
 
-                // additional destination
-                if (dst.isReg()) {
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
-                } else {
-                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
-                }
+                addAdditionalDstToTemporaryInstructions(cfAssign, variableTable, dst);
                 return;
             case CFAssign.PEQ:
                 // if a += 1 and use and def of a not same
@@ -467,13 +481,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                     }
                 }
 
-                // additional destination
-                if (dst.isReg()) {
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
-                } else {
-                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
-                }
+                addAdditionalDstToTemporaryInstructions(cfAssign, variableTable, dst);
                 return;
             case CFAssign.INC:
                 // if a += 1 and use and def of a not same
@@ -486,13 +494,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 }
                 cfAssignTemporaryInstructions.add("incq " + dst + " # " + cfAssign.toString());
 
-                // additional destination
-                if (dst.isReg()) {
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
-                } else {
-                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
-                }
+                addAdditionalDstToTemporaryInstructions(cfAssign, variableTable, dst);
                 return;
             case CFAssign.DEC:
                 // if a += 1 and use and def of a not same
@@ -505,13 +507,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                 }
                 cfAssignTemporaryInstructions.add("decq " + dst + " # " + cfAssign.toString());
 
-                // additional destination
-                if (dst.isReg()) {
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
-                } else {
-                    cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                    cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
-                }
+                addAdditionalDstToTemporaryInstructions(cfAssign, variableTable, dst);
                 return;
             case CFAssign.ASSIGN:
                 if (cfAssign.srcOptionalCSE != null) {
@@ -528,13 +524,7 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
                         }
                     }
 
-                    // additional destination
-                    if (dst.isReg()) {
-                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
-                    } else {
-                        cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
-                        cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
-                    }
+                    addAdditionalDstToTemporaryInstructions(cfAssign, variableTable, dst);
                     return;
                 }
                 break; // everything else should be assign
@@ -715,6 +705,27 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
     }
 
     /**
+     * @param cfAssign
+     * @param variableTable
+     * @param dst
+     */
+    private void addAdditionalDstToTemporaryInstructions(CFAssign cfAssign, VariableTable variableTable, Operand dst) {
+        if (cfAssign.dstArrayOrLocIsDead() || cfAssign.dstOptionalCSEIsDead()) {
+            // if dstArrayOrLocIsDead, we moved dstOptionalCSE into dstArrayOrLoc.
+            // either way, don't generate additional dst code.
+            return;
+        }
+
+        // additional destination
+        if (dst.isReg()) {
+            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,dst.getReg1()));
+        } else {
+            cfAssignTemporaryInstructions.add("movq " + dst + ", %rax");
+            cfAssignTemporaryInstructions.addAll(additionalDestinationToAssembly(cfAssign,variableTable,Reg.RAX));
+        }
+    }
+
+    /**
      * put assembly variable into register if not existing register allocated
      * return the register that the assembly variable is in
      */
@@ -742,6 +753,12 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
 
 
     private static List<String> additionalDestinationToAssembly(CFAssign cfAssign, VariableTable variableTable, Reg src) {
+        if (cfAssign.dstArrayOrLocIsDead() || cfAssign.dstOptionalCSEIsDead()) {
+            // if dstArrayOrLocIsDead, we moved dstOptionalCSE into dstArrayOrLoc.
+            // either way, don't generate additional dst code.
+            return List.of();
+        }
+
         if (cfAssign.dstOptionalCSE != null) {
             if (cfAssign.hasRegisterAssignmentForDef(cfAssign.dstOptionalCSE)) {
                 if (cfAssign.getRegisterAssignmentForDef(cfAssign.dstOptionalCSE).equals(src))

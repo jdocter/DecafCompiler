@@ -55,6 +55,8 @@ public class CFAssign extends CFStatement {
     // Optional additional source for expression, to be used for Common Subexpression Elimination
     public AssemblyVariable srcOptionalCSE;
 
+    public Set<AssemblyVariable> deadDsts;
+
     public static final String ASSIGN = "=";
     public static final String PEQ = "+=";
     public static final String MEQ = "-=";
@@ -64,9 +66,9 @@ public class CFAssign extends CFStatement {
     private CFAssign(Expr canonicalExpr, VariableTable variableTable) {
         this.canonicalExpr = canonicalExpr;
         this.variableTable = variableTable;
+        this.deadDsts = new HashSet<>();
     }
 
-    ;
 
     public static CFAssign makeSimple(AssemblyVariable dstArrayOrLoc, AssemblyVariable arrayOffset, String assignExprOp, AssemblyVariable assignExpr, Expr canonicalExpr, VariableTable variableTable) {
         CFAssign result = new CFAssign(canonicalExpr, variableTable);
@@ -230,7 +232,7 @@ public class CFAssign extends CFStatement {
         // if not an array, should kill all usages of that ID
         // Either way, dstArrayOrLoc must not be temporary
         // (for arrays, it is never temporary)
-        if (!dstArrayOrLoc.isTemporary()) {
+        if (!dstArrayOrLoc.isTemporary() && !dstArrayOrLocIsDead()) {
             for (Expr subExpr : exprs) {
                 if (subExpr.getIds().contains(((Variable) dstArrayOrLoc).getId())) {
                     killed.add(subExpr);
@@ -249,7 +251,7 @@ public class CFAssign extends CFStatement {
     public Set<SharedTemp> getSharedTemps() {
         Set<SharedTemp> result = new HashSet<>();
 
-        if (dstOptionalCSE != null && dstOptionalCSE instanceof SharedTemp) result.add((SharedTemp) dstOptionalCSE);
+        if (dstOptionalCSE != null && !dstOptionalCSEIsDead() && dstOptionalCSE instanceof SharedTemp) result.add((SharedTemp) dstOptionalCSE);
         if (srcOptionalCSE != null && srcOptionalCSE instanceof SharedTemp) result.add((SharedTemp) srcOptionalCSE);
         return result;
     }
@@ -266,8 +268,8 @@ public class CFAssign extends CFStatement {
     @Override
     public Set<AssemblyVariable> getDefined() {
         HashSet<AssemblyVariable> assemblyVariables = new HashSet<>();
-        if (null != dstArrayOrLoc && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
-        if (null != dstOptionalCSE) assemblyVariables.add(dstOptionalCSE);
+        if (null != dstArrayOrLoc && !dstArrayOrLocIsDead() && null == dstArrayOffset) assemblyVariables.add(dstArrayOrLoc);
+        if (null != dstOptionalCSE && !dstOptionalCSEIsDead()) assemblyVariables.add(dstOptionalCSE);
         return assemblyVariables.stream()
                 .filter((AssemblyVariable var) -> var.canAssignRegister(variableTable))
                 .collect(Collectors.toSet());
@@ -295,10 +297,23 @@ public class CFAssign extends CFStatement {
     }
 
     @Override
+    public void markDead(AssemblyVariable dead) {
+        deadDsts.add(dead);
+    }
+
+    public boolean dstArrayOrLocIsDead() {
+        return deadDsts.contains(dstArrayOrLoc);
+    }
+
+    public boolean dstOptionalCSEIsDead() {
+        return dstOptionalCSE == null || deadDsts.contains(dstOptionalCSE);
+    }
+
+    @Override
     public String toString() {
         String offsetStr = dstArrayOffset == null ? "" : "[" + dstArrayOffset + "]";
 	    String additionalDst = dstOptionalCSE == null ? "" : dstOptionalCSE + ", ";
-        String dst = additionalDst + dstArrayOrLoc + offsetStr;
+        String dst = additionalDst + dstArrayOrLoc + offsetStr + " {dead: " + deadDsts + "}";
 
         if (srcOptionalCSE != null) {
             return dst + " " + assignOp + " " + srcOptionalCSE + " {canonical: " + canonicalExpr + "}";

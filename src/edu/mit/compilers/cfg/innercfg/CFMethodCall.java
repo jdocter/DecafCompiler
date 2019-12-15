@@ -104,4 +104,10 @@ public class CFMethodCall extends CFStatement {
     public String toWebString() {
         return toString();
     }
+
+    @Override
+    public void markDead(AssemblyVariable defined) {
+        throw new RuntimeException("Not implemented -- method calls should never be eliminated due to side effects");
+
+    }
 }
