@@ -4,10 +4,11 @@ import edu.mit.compilers.cfg.*;
 import edu.mit.compilers.cfg.innercfg.*;
 import edu.mit.compilers.inter.VariableTable;
 import edu.mit.compilers.visitor.CFVisitor;
+import edu.mit.compilers.visitor.MiniCFVisitor;
 
 import java.util.*;
 
-public class DeadCodeEliminator implements CFVisitor {
+public class DeadCodeEliminator implements CFVisitor, MiniCFVisitor {
 
     private final LivenessAnalyzer analysis;
     private final Set<OuterCFNode> visited = new HashSet<>();
@@ -20,11 +21,9 @@ public class DeadCodeEliminator implements CFVisitor {
         methodCFG.accept(this);
     }
 
-    private void eliminateDeadCodeInnerCFNode(InnerCFNode node) {
-        if (node.getDefined().isEmpty()) return;
-
+    private void eliminateDeadCodeInnerCFBlock(InnerCFBlock node) {
         // Only InnerCFBlock could have dead expressions
-        for (CFStatement statement : ((InnerCFBlock) node).getCfStatements()) {
+        for (CFStatement statement : node.getCfStatements()) {
             for (AssemblyVariable defined : statement.getDefined()) {
                 if (!analysis.getOut(statement).contains(defined)
                         && !defined.isGlobal(table)) {
@@ -42,7 +41,7 @@ public class DeadCodeEliminator implements CFVisitor {
 
         LinkedList<InnerCFNode> ts = cfBlock.getTS();
         for (InnerCFNode node : ts) {
-            eliminateDeadCodeInnerCFNode(node);
+            node.accept(this);
         }
 
         for (OuterCFNode neighbor : cfBlock.dfsTraverse()) {
@@ -57,7 +56,7 @@ public class DeadCodeEliminator implements CFVisitor {
 
         LinkedList<InnerCFNode> ts = cfConditional.getTS();
         for (InnerCFNode node : ts) {
-            eliminateDeadCodeInnerCFNode(node);
+            node.accept(this);
         }
 
         for (OuterCFNode neighbor : cfConditional.dfsTraverse()) {
@@ -82,11 +81,24 @@ public class DeadCodeEliminator implements CFVisitor {
 
         LinkedList<InnerCFNode> ts = cfReturn.getTS();
         for (InnerCFNode node : ts) {
-            eliminateDeadCodeInnerCFNode(node);
+            node.accept(this);
         }
 
         for (OuterCFNode neighbor : cfReturn.dfsTraverse()) {
             neighbor.accept(this);
         }
+    }
+
+    @Override
+    public void visit(InnerCFBlock cfBlock) {
+        eliminateDeadCodeInnerCFBlock(cfBlock);
+    }
+
+    @Override
+    public void visit(InnerCFConditional cfConditional) {
+    }
+
+    @Override
+    public void visit(InnerCFNop cfNop) {
     }
 }
