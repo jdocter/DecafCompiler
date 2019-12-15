@@ -83,8 +83,8 @@ public class MethodAssemblyGenerator implements CFVisitor, MiniCFVisitor, Statem
         } else {
             body.add("cmpq $1, -" + cfConditional.getBoolTemp().getOffset() + "(%rbp) # true = " + cfConditional.getBoolTemp());
         }
-        body.add("jne " + cfConditional.getIfFalse().getAssemblyLabel() + " # ifFalse");
-        body.add("jmp " + cfConditional.getIfTrue().getAssemblyLabel() + " # ifTrue");
+        body.add("je " + cfConditional.getIfTrue().getAssemblyLabel() + " # ifTrue");
+        body.add("jmp " + cfConditional.getIfFalse().getAssemblyLabel() + " # ifFalse");
 
         instructions.addAll(AssemblyFactory.indent(body));
 
