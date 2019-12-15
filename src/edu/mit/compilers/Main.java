@@ -267,7 +267,7 @@ public class Main {
             if (CLI.opts[3]) { // PEEP
                 // go backwards so indices don't get messed up as we remove lines
                 final int secondToLast = assembly.size() - 2;
-                for (int i = secondToLast; i >= 0; i++) {
+                for (int i = secondToLast; i >= 0; i--) {
                     String jmpLine = assembly.get(i);
                     final int jmpIndex = jmpLine.indexOf("jmp ");
                     if (jmpIndex != -1) {
