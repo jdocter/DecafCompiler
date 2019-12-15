@@ -281,7 +281,7 @@ public class Main {
                                 if (CLI.debug) {
                                     System.err.println("Removing a jmp with following label: " + labelLine);
                                 }
-                                assembly.remove(jmpIndex);
+                                assembly.remove(i);
                             }
                         }
                     }
